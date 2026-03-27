@@ -149,7 +149,7 @@ export default function InvitationSection({ communityId }: Props) {
                     ? 'var(--color-promising-text)'
                     : 'var(--color-text-secondary)',
                   whiteSpace: 'nowrap',
-                  minWidth: '48px',
+                  minWidth: 'var(--space-12)',
                 }}
               >
                 {link.copied ? 'Copiado' : 'Activo'}

@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import type { InvitationTokenResult } from '@/lib/types/invitations'
 
 interface Props {
   params: Promise<{ token: string }>
@@ -103,8 +104,7 @@ export default async function InvitePage({ params }: Props) {
   // El token solo aparece en la query SQL parametrizada — no en logs de URL.
 
   // Validar token via RPC SECURITY DEFINER (evita enumeración de tokens)
-  // Tipo explícito para el resultado del RPC (DB types no generados en este proyecto)
-  type InvitationTokenResult = { id: string; community_id: string; used_at: string | null }
+  // InvitationTokenResult importado de lib/types/invitations.ts (CR7-F3)
   const { data: invitation, error: rpcError } = await supabase
     .rpc('validate_invitation_token', { p_token: token })
     .maybeSingle() as { data: InvitationTokenResult | null; error: unknown }

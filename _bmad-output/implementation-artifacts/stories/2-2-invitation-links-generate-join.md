@@ -169,82 +169,18 @@ para que pueda incorporar miembros a mi comunidad sin gestión manual.
     }
     ```
 
-- [x] **T6: API Route — POST /api/invitations/[token]/use** (AC: 2, 6, 7)
-  - [x] Crear `app/api/invitations/[token]/use/route.ts`:
-    ```typescript
-    import { NextResponse } from 'next/server'
-    import { createClient } from '@/lib/supabase/server'
-
-    export async function POST(
-      _request: Request,
-      { params }: { params: Promise<{ token: string }> }
-    ) {
-      const { token } = await params
-      const supabase = await createClient()
-
-      // Auth check
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return NextResponse.json(
-        { error: 'No autenticado', code: 'AUTH_REQUIRED' },
-        { status: 401 }
-      )
-
-      // Buscar y validar el token
-      const { data: invitation } = await supabase
-        .from('invitation_links')
-        .select('id, community_id, used_at')
-        .eq('token', token)
-        .single()
-
-      if (!invitation) return NextResponse.json(
-        { error: 'Link inválido o inexistente', code: 'INVITATION_NOT_FOUND' },
-        { status: 404 }
-      )
-
-      if (invitation.used_at) return NextResponse.json(
-        { error: 'Este link ya ha sido usado', code: 'INVITATION_ALREADY_USED' },
-        { status: 410 }
-      )
-
-      // Verificar si ya es miembro
-      const { data: existingMember } = await supabase
-        .from('community_members')
-        .select('id')
-        .eq('community_id', invitation.community_id)
-        .eq('user_id', user.id)
-        .maybeSingle()
-
-      if (existingMember) return NextResponse.json(
-        { data: { alreadyMember: true, communityId: invitation.community_id } },
-        { status: 200 }
-      )
-
-      // Unirse a la comunidad
-      const { error: memberError } = await supabase
-        .from('community_members')
-        .insert({
-          community_id: invitation.community_id,
-          user_id: user.id,
-          role: 'member',
-        })
-
-      if (memberError) return NextResponse.json(
-        { error: 'Error al unirse a la comunidad', code: 'JOIN_ERROR' },
-        { status: 500 }
-      )
-
-      // Invalidar el token
-      await supabase
-        .from('invitation_links')
-        .update({ used_at: new Date().toISOString(), used_by: user.id })
-        .eq('id', invitation.id)
-
-      return NextResponse.json(
-        { data: { communityId: invitation.community_id } },
-        { status: 200 }
-      )
-    }
-    ```
+- [x] **T6: Lógica de join — Server Component `app/invite/[token]/page.tsx`** (AC: 2, 6, 7)
+  > **Nota histórica (CR7-F4):** La implementación original de T6 creó `app/api/invitations/[token]/use/route.ts`
+  > como API Route separada. En CR4-F1 la lógica se movió al Server Component `page.tsx` (token expuesto
+  > en URL de fetch interno — Rejection Criterion violado). La API Route quedó sin callers (dead code)
+  > y fue eliminada en CR6-F2. La lógica de join definitiva vive en `app/invite/[token]/page.tsx`.
+  - [x] ~~Crear `app/api/invitations/[token]/use/route.ts`~~ — **ELIMINADO en CR6-F2** (dead code tras CR4-F1)
+  - [x] Lógica de join implementada directamente en `app/invite/[token]/page.tsx` usando `createClient()`:
+    - Validar token via RPC SECURITY DEFINER `validate_invitation_token(p_token)`
+    - Verificar si ya es miembro (`maybeSingle()` en community_members)
+    - INSERT en community_members + UPDATE `used_at` en invitation_links
+    - Rollback con DELETE si la invalidación del token falla (CR5-F1 + CR6-F1)
+    - Captura de error del rollback con `console.error` para estado inconsistente (CR6-F1)
 
 - [x] **T7: Actualizar middleware.ts — añadir /invite a PUBLIC_PREFIX_PATHS** (AC: 5, 8)
   - [x] Editar `middleware.ts`:
@@ -575,6 +511,13 @@ claude-sonnet-4-6 (Homer, DS fork, 2026-03-27)
 - `_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml`
 
+**CR#7 fixes (ds-20260328-008):**
+- CR7-F1 (MEDIUM): T6 en story file reescrito — refleja que la lógica de join vive en page.tsx con `createClient()` + RPC, no en API Route
+- CR7-F2 (MEDIUM): Comentario incorrecto en `supabase/migrations/001_create_invitation_links.sql` línea 43 corregido — eliminada referencia a `app/api/invitations/[token]/use/route.ts` (eliminada en CR6-F2), referencia actualizada a Server Component + RPC
+- CR7-F3 (LOW): `InvitationTokenResult` movido de inline en `page.tsx` a `lib/types/invitations.ts`. `page.tsx` importa el tipo desde allí
+- CR7-F4 (LOW): T6 incluye nota histórica explícita — `route.ts` creada en implementación original y eliminada en CR6-F2 como dead code
+- CR7-F5 (LOW): `minWidth: '48px'` → `minWidth: 'var(--space-12)'` en `components/communities/InvitationSection.tsx`
+
 **CR#5 fixes (ds-20260328-004):**
 - CR5-F1 (MEDIUM): `app/invite/[token]/page.tsx` — captura `invalidateError` del UPDATE `used_at`. Si falla, revierte la membresía con DELETE y retorna `InviteErrorState`. AC-2 garantizado: join nunca exitoso con token sin invalidar.
 - CR5-F2 (LOW): `InviteErrorState` e `InviteAlreadyMemberState` en `page.tsx` — reemplazadas todas las Tailwind classes de tipografía, spacing y border-radius (`text-xl`, `font-semibold`, `mb-3`, `p-8`, `text-sm`, `rounded-md`, `px-5`, `py-2.5`, `font-medium`) por CSS variables del design-tokens (`var(--text-xl)`, `var(--font-semibold)`, `var(--space-3)`, `var(--space-8)`, `var(--radius-md)`, etc.).
@@ -721,6 +664,62 @@ Usuario no autenticado con communityId inválido recibe 400 en lugar de 401. Sem
 - [x] [AI-Review][LOW] CR4-F4: Auth check movido antes de Zod [app/api/communities/[communityId]/invitations/route.ts]
 - [x] [AI-Review][LOW] CR4-F5: 5 tests error path añadidos para generateInvitationLink() [tests/unit/invitations/invitations.test.ts]
 
+## Senior Developer Review CR #6 (AI)
+
+**Reviewer:** Homer CR — claude-sonnet-4-6 (cr-20260328-006)
+**Fecha:** 2026-03-28
+**Veredicto:** CHANGES_REQUESTED
+
+**Tests:** 52/52 pasando. ESLint: limpio. TypeScript: limpio. Git discrepancias: 0.
+
+**Verificacion CR#5 findings (3/3):** Todos resueltos correctamente — CR5-F1 (rollback captura error), CR5-F2 (CSS variables tipografia/layout en page.tsx), CR5-F3 (InvitationLinkRow tipado en generateInvitationLink).
+
+### Findings CR #6
+
+**[CR6-F1][MEDIUM] Rollback DELETE no captura error — estado inconsistente silencioso**
+
+`app/invite/[token]/page.tsx:153-158`. Si `invalidateError` existe y el DELETE de rollback también falla, el usuario queda con membresía válida y token sin invalidar. El código no capturaba el error del rollback — estado inconsistente no logueado.
+
+Fix: capturar `{ error: rollbackError }` del DELETE y loguear con `console.error` el estado inconsistente.
+
+**[CR6-F2][MEDIUM] API Route `app/api/invitations/[token]/use/route.ts` huérfana — sin callers**
+
+Desde CR4-F1, la lógica de join se movió al Server Component (`page.tsx`) vía `createClient()` directo. La API Route quedó sin ningún caller en la codebase. Dead code que añade superficie de ataque.
+
+Fix: eliminar el fichero y sus directorios vacíos.
+
+**[CR6-F3][LOW] `invitations?.[0]` vs `.maybeSingle()` — inconsistencia de patron RPC**
+
+`app/api/invitations/[token]/use/route.ts` usaba `.rpc(...).then(r => r.data?.[0])` mientras `page.tsx` usaba `.rpc(...).maybeSingle()`. Inconsistencia resuelta al eliminar la API Route.
+
+**[CR6-F4][LOW] `InvitationLink` camelCase sin consumers reales — dead type**
+
+`lib/types/invitations.ts` tenía `InvitationLink` (camelCase) exportado y re-exportado en `lib/api/invitations.ts`. Ningun consumer real lo usaba — los campos camelCase no coincidian con respuestas Supabase snake_case. Confunde a futuros desarrolladores.
+
+Fix: eliminar `InvitationLink` camelCase y su re-export.
+
+**[CR6-F5][LOW] `docs/project/modules/communities.md` referencia CR obsoleta**
+
+Documentacion referenciaba CR#5 fixes y mencionaba la API Route eliminada. Necesitaba actualizarse para reflejar CR#6 y la arquitectura real.
+
+### Review Follow-ups (AI) — CR #6
+
+- [x] [AI-Review][MEDIUM] CR6-F1: Capturar error del rollback DELETE en page.tsx y loguear estado inconsistente [app/invite/[token]/page.tsx]
+- [x] [AI-Review][MEDIUM] CR6-F2: Eliminar API Route huérfana app/api/invitations/[token]/use/route.ts — sin callers
+- [x] [AI-Review][LOW] CR6-F3: Resuelta al eliminar route.ts — inconsistencia de patron ya no existe
+- [x] [AI-Review][LOW] CR6-F4: Eliminar InvitationLink camelCase de lib/types/invitations.ts y su re-export en lib/api/invitations.ts
+- [x] [AI-Review][LOW] CR6-F5: Actualizar docs/project/modules/communities.md — referencia CR#6 correcta, sin mención a route eliminada
+
+### Aspectos Positivos — CR #6
+
+- 3/3 findings de CR#5 resueltos correctamente
+- AC-2 robusto: join + invalidación con rollback capturado
+- Token UUID nunca en URLs ni logs
+- 52/52 tests pasando, TypeScript limpio, ESLint limpio
+- Ronda mas limpia hasta ahora — 0 HIGH, 2 MEDIUM, 3 LOW
+
+---
+
 ## Senior Developer Review CR #5 (AI)
 
 **Reviewer:** Homer CR — claude-sonnet-4-6 (cr-20260328-004)
@@ -767,6 +766,64 @@ Fix: capturar `{ error: invalidateError }` del UPDATE y retornar `<InviteErrorSt
 - 52/52 tests pasando, TypeScript limpio, ESLint limpio
 - Ronda mas limpia hasta ahora — 0 HIGH, 1 MEDIUM, 2 LOW
 
+## Senior Developer Review CR #7 (AI)
+
+**Reviewer:** Homer CR — claude-sonnet-4-6 (cr-20260328-007)
+**Fecha:** 2026-03-28
+**Veredicto:** CHANGES_REQUESTED
+
+**Tests:** 52/52 pasando. ESLint: limpio. TypeScript: limpio. Build: limpio. Git discrepancias: 0.
+
+**Verificacion CR#6 findings (5/5):** Todos resueltos correctamente en codigo — CR6-F1 (rollback error capturado), CR6-F2 (route.ts eliminada), CR6-F3 (resuelta con eliminacion), CR6-F4 (InvitationLink camelCase eliminada), CR6-F5 (docs actualizados).
+
+**Verificacion ACs:** AC-1 a AC-8 todos IMPLEMENTADOS. Rejection Criteria todos CUMPLIDOS.
+
+### Findings CR #7
+
+**[CR7-F1][MEDIUM] Story file no documenta CR#6 ni el estado real de la implementacion**
+
+La story tenia Status: "review" y el ultimo CR registrado era CR#5 (CHANGES_REQUESTED). Los commits `aef83e4` (CR#6 fixes) y la entrada ELP del CR#6 existian pero la story no tenia la seccion "Senior Developer Review CR #6", ni los follow-ups marcados [x], ni CR#6 en el Change Log. T6 seguia documentando "Crear `app/api/invitations/[token]/use/route.ts`" marcado [x] pero ese fichero fue eliminado en CR6-F2. Un reviewer externo que leyera el fichero de story creerá que CR#6 nunca ocurrio.
+
+Fix: Añadir seccion CR#6 con findings y follow-ups resueltos. Actualizar Change Log. Actualizar T6 para reflejar que la logica de join vive en page.tsx.
+
+**[CR7-F2][MEDIUM] Comentario incorrecto en migracion SQL — referencia a API Route eliminada**
+
+`supabase/migrations/001_create_invitation_links.sql` linea 43: `"La API Route usa service role implicitamente via createClient() de lib/supabase/server.ts"`. La API Route `app/api/invitations/[token]/use/route.ts` fue eliminada en CR6-F2. El comentario describe arquitectura obsoleta. Si alguien revisa la migracion para entender el flujo de seguridad encontrará una descripcion incorrecta del sistema actual.
+
+Fix: Actualizar el comentario para reflejar que la validacion ocurre en el Server Component via RPC SECURITY DEFINER.
+
+**[CR7-F3][LOW] `InvitationTokenResult` tipo inline en page.tsx — patron inconsistente**
+
+`app/invite/[token]/page.tsx` linea 107: `type InvitationTokenResult = { id: string; community_id: string; used_at: string | null }`. Tipo local que refleja exactamente los campos del RPC `validate_invitation_token`. Deberia estar en `lib/types/invitations.ts` junto a `InvitationLinkRow`. Si el RPC cambia, hay que actualizar dos lugares.
+
+**[CR7-F4][LOW] T6 en story file contradice implementacion real**
+
+T6 dice "Crear `app/api/invitations/[token]/use/route.ts`" marcado [x]. Ese fichero fue eliminado en CR6-F2. La logica de join vive en `app/invite/[token]/page.tsx`. El task es confuso para quien consulte el historial de implementacion.
+
+**[CR7-F5][LOW] `minWidth: '48px'` hardcodeado en InvitationSection — no es un spacing token**
+
+`components/communities/InvitationSection.tsx` linea 152: `minWidth: '48px'`. El design-tokens.md define `--space-12: 48px`. Deberia usar `minWidth: 'var(--space-12)'` por consistencia con el patron de tokens del proyecto.
+
+### Review Follow-ups (AI) — CR #7
+
+- [x] [AI-Review][MEDIUM] CR7-F1: T6 en story file actualizado — lógica de join documentada en page.tsx + historial route.ts (creada y eliminada) [_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md]
+- [x] [AI-Review][MEDIUM] CR7-F2: Comentario en migración SQL corregido — referencia a Server Component + RPC, eliminada mención a API Route [supabase/migrations/001_create_invitation_links.sql]
+- [x] [AI-Review][LOW] CR7-F3: InvitationTokenResult movido a lib/types/invitations.ts e importado en page.tsx [lib/types/invitations.ts, app/invite/[token]/page.tsx]
+- [x] [AI-Review][LOW] CR7-F4: T6 incluye nota histórica — route.ts creada y eliminada en CR6-F2 documentado explícitamente [story file]
+- [x] [AI-Review][LOW] CR7-F5: minWidth: '48px' reemplazado por var(--space-12) [components/communities/InvitationSection.tsx]
+
+### Aspectos Positivos — CR #7
+
+- 5/5 findings de CR#6 resueltos correctamente en codigo
+- AC-1 a AC-8: todos IMPLEMENTADOS verificados en codigo real
+- Rejection Criteria todos CUMPLIDOS: sin imports supabase directos, sin getSession(), migracion SQL, sin Server Actions, token no expuesto en logs
+- Arquitectura RLS completa: admin_manage_invitations + use_invitation + GRANT EXECUTE + SECURITY DEFINER
+- Rollback con captura de error doble — consistencia garantizada o estado logueado
+- 52/52 tests, TypeScript limpio, ESLint limpio, build limpio
+- Solo 2 MEDIUM de documentacion, 0 HIGH, 0 issues de logica de negocio
+
+---
+
 ## Change Log
 
 | Fecha | Tipo | Descripción |
@@ -780,3 +837,8 @@ Fix: capturar `{ error: invalidateError }` del UPDATE y retornar `<InviteErrorSt
 | 2026-03-27 | DS REFINE | CR#3 fixes (F1+F2) — GRANT EXECUTE + policy use_invitation en migración — 41/41 tests pasando |
 | 2026-03-28 | DS REFINE | CR#4 fixes — 9/9 findings resueltos — 52/52 tests pasando |
 | 2026-03-28 | CR | Code review CR#5 — CHANGES_REQUESTED — 0 HIGH, 1 MEDIUM, 2 LOW |
+| 2026-03-28 | DS REFINE | CR#5 fixes — 3/3 findings resueltos — 52/52 tests pasando |
+| 2026-03-28 | CR | Code review CR#6 — CHANGES_REQUESTED — 0 HIGH, 2 MEDIUM, 3 LOW |
+| 2026-03-28 | DS REFINE | CR#6 fixes — 5/5 findings resueltos — route.ts eliminada, rollback capturado, tipos limpiados — 52/52 tests pasando |
+| 2026-03-28 | CR | Code review CR#7 — CHANGES_REQUESTED — 0 HIGH, 2 MEDIUM, 3 LOW — solo documentacion e inconsistencias menores |
+| 2026-03-28 | DS REFINE | CR#7 fixes — 5/5 findings resueltos — InvitationTokenResult movido a types, T6 corregido, SQL comment actualizado, minWidth token |

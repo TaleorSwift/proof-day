@@ -1,4 +1,14 @@
 /**
+ * InvitationTokenResult — result of validate_invitation_token() RPC.
+ * Used in app/invite/[token]/page.tsx to type the RPC response.
+ */
+export interface InvitationTokenResult {
+  id: string
+  community_id: string
+  used_at: string | null
+}
+
+/**
  * InvitationLinkRow — matches Supabase/DB response (snake_case).
  * Use this when typing raw API/Supabase query responses.
  */
