@@ -1,23 +1,71 @@
 workflows:
   - id: "cr-20260328-005"
     timestamp: "2026-03-28T14:00:00"
+    completed: "2026-03-28T14:45:00"
     agent: Homer
     trigger: "/cr"
     workflow: "code-review"
     mode: VERIFY
-    result: STARTED
+    result: SUCCESS
+    duration_estimate: "45 minutes"
     story: "2.1 — Create Community (PR #4 — feat/2-1-create-community)"
     pr: "https://github.com/TaleorSwift/proof-day/pull/4"
+    veredicto: "CHANGES_REQUESTED"
+    findings: "1 CRITICAL, 2 HIGH, 2 MEDIUM, 3 LOW = 8 total"
+    summary: |
+      CR #2 adversarial de story 2.1 (post CR#1 fixes). Veredicto: CHANGES_REQUESTED.
+      Todos los ACs de Story 2.1 verificados como IMPLEMENTADOS. Rejection criteria CUMPLIDOS.
+      El veredicto se debe a la mezcla de commits de Story 2.2 en la rama de PR #4.
+      CRITICAL: 2 commits de Story 2.2 (ca37cde, 5763a23) presentes en feat/2-1-create-community.
+        Si se mergea PR #4 tal cual, código de invitation links entra en develop sin ciclo
+        de review independiente. 12 ficheros de Story 2.2 incluidos en el diff de este PR.
+      CR2-F1 (HIGH): community_members sin políticas UPDATE/DELETE en RLS — deny-by-default
+        implícito. Deuda técnica para stories de gestión de miembros. Documentar.
+      CR2-F2 (HIGH): GET /api/communities confía 100% en RLS sin filtro explícito por
+        user_id. Si RLS deshabilitado en dev, retorna todas las comunidades. Defense in depth.
+      CR2-M1 (MEDIUM): middleware.ts modificado — Story 2.1 Dev Notes especifica
+        explícitamente que Story 2.1 NO toca el middleware. Cambio introducido por commit 2.2.
+      CR2-M2 (MEDIUM): Status story file = "review" correcto en la rama — no hay issue activo.
+      CR2-L1 (LOW): toSlug sin test para nombre puramente numérico (edge case menor).
+      CR2-L2 (LOW): Error COMMUNITY_NAME_TAKEN (409) aparece como banner genérico, no como
+        error inline bajo el campo "name". AC-4 implementado pero UX mejorable.
+      CR2-L3 (LOW): docs/project/modules/communities.md documenta Story 2.2 — si se mergea
+        PR #4, develop tendrá docs de funcionalidad no implementada aún.
+      Opciones para Javi: A) Rebase para limpiar PR #4 de commits 2.2 + PR #5 independiente.
+        B) Mergear ambas stories juntas via PR #4, cancelar PR #5.
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+      - "_bmad-output/implementation-artifacts/stories/2-1-create-community.md"
+    errors: []
+    next_recommended: "Javi decide Opción A o B para el merge. Si A: rebase feat/2-1-create-community, mergear PR #4, luego QA (Edna) sobre story 2.1."
 
   - id: "ds-20260328-004"
     timestamp: "2026-03-28T13:00:00"
+    completed: "2026-03-28T13:30:00"
     agent: Homer
     trigger: "/ds"
     workflow: "dev-story"
     mode: REFINE
-    result: STARTED
+    result: SUCCESS
+    duration_estimate: "30 minutes"
     story: "2.2 — Invitation Links: Generate & Join (CR#5 fixes)"
     branch: "feat/2-2-invitation-links"
+    commit: "a073b42 fix(communities): resolve CR#5 findings for story 2.2 invitation links"
+    tests: "52/52 pasando. TypeScript: sin errores. ESLint: sin errores."
+    summary: |
+      Story 2.2 CR#5 fixes aplicados. 3/3 findings resueltos.
+      CR5-F1 (MEDIUM): captura de invalidateError en page.tsx — si UPDATE used_at
+        falla, se revierte la membresía con DELETE antes de retornar error. AC-2 garantizado.
+      CR5-F2 (LOW): InviteErrorState e InviteAlreadyMemberState — todas las Tailwind classes
+        de tipografía/spacing/radius reemplazadas por CSS variables del design-tokens.
+      CR5-F3 (LOW): generateInvitationLink() — data tipado explícitamente como InvitationLinkRow.
+    artifacts_modified:
+      - "app/invite/[token]/page.tsx"
+      - "lib/api/invitations.ts"
+      - "_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, /cr — nuevo code review adversarial de story 2.2 (PR#5) tras CR#5 fixes"
 
   - id: "cr-20260328-004"
     timestamp: "2026-03-28T12:00:00"
