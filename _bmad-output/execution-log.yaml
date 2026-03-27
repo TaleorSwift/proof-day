@@ -1,4 +1,13 @@
 workflows:
+  - id: "ds-20260327-016"
+    timestamp: "2026-03-27T17:00:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: REFINE
+    result: STARTED
+    summary: "Story 2.2 CR #1 fixes — resolver 3 HIGH (T12/T13 checkboxes, token invalidation error handling, RLS policy seguridad), 5 MEDIUM (prop dead, Zod en API, mutaciones Server Component, tipos no importados, mensaje error), 3 LOW (color hardcodeado, tests /invite, communities.md)"
+
   - id: "cr-20260327-015"
     timestamp: "2026-03-27T16:00:00"
     completed: "2026-03-27T16:40:00"
@@ -40,6 +49,40 @@ workflows:
     mode: REFINE
     result: STARTED
     summary: "Story 2.1 CR fixes — resolver 8 findings (4 MEDIUM, 4 LOW): F1 race condition 23505→409, F2 CTA interactivo, F3 tipo Community snake_case, F4 next/image remotePatterns, F5 trigger updated_at, F6 slug vacío, F7 test description >500, F8 try/catch json"
+
+  - id: "ds-20260327-014"
+    timestamp: "2026-03-27T10:30:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: REFINE
+    result: SUCCESS
+    duration_estimate: "30 minutes"
+    story: "2.1 — Create Community (CR fixes)"
+    commit: "8b08a37 fix(communities): resolve 8 CR findings for story 2.1"
+    branch: "feat/2-1-create-community"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/4"
+    tests: "50/50 pasando (14 en tests/unit/communities/ — 1 nuevo F7). TypeScript: sin errores."
+    summary: |
+      Story 2.1 CR fixes — 8/8 findings resueltos.
+      MEDIUM: F1 race condition 23505→409, F2 CTA Button disabled (AC5 correcto),
+      F3 tipo Community alineado con snake_case Supabase, F4 images.remotePatterns en next.config.ts.
+      LOW: F5 trigger set_updated_at en migración SQL, F6 validación slug no vacío,
+      F7 test description >500 chars añadido, F8 try/catch en error path lib/api/communities.ts.
+      PR#4 actualizado. Story status: review.
+    artifacts_modified:
+      - "app/api/communities/route.ts"
+      - "components/communities/EmptyCommunitiesState.tsx"
+      - "lib/api/communities.ts"
+      - "lib/types/communities.ts"
+      - "next.config.ts"
+      - "supabase/migrations/002_create_communities.sql"
+      - "tests/unit/communities/createCommunity.test.ts"
+      - "docs/project/modules/communities.md"
+      - "_bmad-output/implementation-artifacts/stories/2-1-create-community.md"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, CR — nuevo code review adversarial de story 2.1 (PR#4). Verificar que los 8 findings están correctamente resueltos."
 
   - id: "cr-20260327-013"
     timestamp: "2026-03-27T23:30:00"
