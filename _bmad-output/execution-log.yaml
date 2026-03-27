@@ -5,11 +5,49 @@ workflows:
     workflow: "dev-story"
     mode: GENERATE
     started: "2026-03-27"
-    status: STARTED
+    completed: "2026-03-27"
+    status: SUCCESS
     story: "1.1 — Project Setup & Base Infrastructure"
-    artifacts: []
-    errors: []
-    notes: "Iniciando implementacion Story 1.1. GENERATE mode — proyecto Next.js no inicializado."
+    commits:
+      - "122bbb6 chore(setup): initialize project with Next.js 15 + Supabase"
+      - "905c43d chore(setup): add storybook.log to gitignore"
+      - "92e4d2f docs(story-1.1): mark story complete + add module docs"
+    artifacts:
+      - "app/globals.css"
+      - "tailwind.config.ts"
+      - "eslint.config.mjs"
+      - "middleware.ts"
+      - "lib/supabase/middleware.ts"
+      - "lib/api/communities.ts"
+      - "lib/api/projects.ts"
+      - "lib/api/feedback.ts"
+      - "lib/api/proof-score.ts"
+      - "lib/api/profiles.ts"
+      - "lib/api/gamification.ts"
+      - "types/index.ts"
+      - "vitest.config.ts"
+      - "playwright.config.ts"
+      - "tests/unit/smoke.test.ts"
+      - "tests/e2e/smoke.spec.ts"
+      - ".storybook/main.ts"
+      - ".storybook/preview.ts"
+      - "stories/shared/Button.stories.tsx"
+      - ".commitlintrc.json"
+      - ".env.example"
+      - "README.md"
+      - "docs/project/modules/infraestructura-base.md"
+    errors:
+      - "Vitest 3.x incompatible con Node 20.11.1 — downgrade a 2.1.9 aplicado"
+      - "Storybook 10 incompatible con Node 20.11.1 — instalado Storybook 8 manualmente"
+      - "@vitejs/plugin-react removido por conflicto vite@5 vs vite@8"
+    notes: |
+      Story 1.1 completada. 14 tasks, 20 ACs — todos pasados.
+      Tests: 2 unit tests pasando (Vitest 2.1.9). Playwright configurado (smoke test requiere servidor).
+      Ramas: main (commit inicial) + develop (rama activa de desarrollo).
+      AC 3/4 ESLint: regla adaptada — lib/supabase/ puede importar @supabase/ssr (es su proposito);
+      la restriccion aplica a app/, components/, lib/api/.
+      No se creo PR — story de setup inicial, commits en main/develop directamente segun AC 19-20.
+      Siguiente paso: Story 1.2 (Magic Link Authentication) — /cs para detallar, luego /ds.
 
   - id: "cs-20260327-001"
     agent: Ned
