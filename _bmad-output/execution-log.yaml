@@ -1,4 +1,48 @@
 workflows:
+  - id: "ds-20260327-010"
+    timestamp: "2026-03-27T13:45:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: GENERATE
+    result: SUCCESS
+    duration_estimate: "45 minutes"
+    story: "2.1 — Create Community"
+    commit: "55b853e feat(communities): create community form, API route and listing"
+    branch: "feat/2-1-create-community"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/4"
+    tests: "37/37 pasando (13 nuevos en tests/unit/communities/). TypeScript: sin errores. ESLint: sin errores."
+    summary: "Story 2.1 implementada en GENERATE mode. 12 tasks completadas. Migraciones SQL, schema Zod, tipos TypeScript, API Route GET+POST /api/communities con slug generation + unicidad, typed fetch wrapper, CommunityForm (react-hook-form + zodResolver, errores inline), páginas /communities y /communities/new, EmptyCommunitiesState con 2 CTAs, 13 tests unitarios (≥6 requeridos). PR#4 creado contra develop."
+    artifacts_created:
+      - "supabase/migrations/002_create_communities.sql"
+      - "supabase/migrations/003_rls_policies.sql"
+      - "lib/validations/communities.ts"
+      - "lib/types/communities.ts"
+      - "app/api/communities/route.ts"
+      - "components/communities/CommunityForm.tsx"
+      - "components/communities/EmptyCommunitiesState.tsx"
+      - "app/(app)/communities/page.tsx"
+      - "app/(app)/communities/new/page.tsx"
+      - "tests/unit/communities/createCommunity.test.ts"
+      - "docs/project/modules/communities.md"
+    artifacts_modified:
+      - "lib/api/communities.ts"
+      - "_bmad-output/implementation-artifacts/stories/2-1-create-community.md"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/execution-log.yaml"
+    errors:
+      - step: "T9 — CommunitiesPage"
+        action: "Acceso Supabase en Server Component"
+        error: "Story indicaba lib/supabase/client.ts pero en Server Component de Next.js 15 hay que usar lib/supabase/server.ts (async createClient)"
+        recovery: "Usado server.ts correctamente — RLS funciona igual. Sin impacto funcional."
+        severity: "low"
+      - step: "T2 — Migración RLS"
+        action: "Numeración de migración"
+        error: "Story indicaba 006_rls_policies.sql pero directorio estaba vacío — 003 es el siguiente disponible"
+        recovery: "Creado como 003_rls_policies.sql. Sin impacto funcional."
+        severity: "low"
+    next_recommended: "Homer, CR — code review adversarial de story 2.1 (PR#4). Luego: Ned, CS — story 2.2 (Invitation Links)"
+
   - id: "cs-20260327-008"
     agent: Ned
     trigger: "/cs"
@@ -7,15 +51,6 @@ workflows:
     started: "2026-03-27"
     status: STARTED
     summary: "Creando Story 2.2 — Invitation Links: Generate & Join"
-
-  - id: "ds-20260327-010"
-    timestamp: "2026-03-27T13:00:00"
-    agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
-    mode: GENERATE
-    result: STARTED
-    summary: "Story 2.1 — Create Community. GENERATE mode: sin código previo. Implementar migraciones SQL, schema Zod, tipos TypeScript, API Route POST /api/communities, typed client wrapper, CommunityForm, páginas /communities y /communities/new, empty state, tests unitarios (≥6), documentación módulo communities."
 
   - id: "qa-20260327-001"
     timestamp: "2026-03-27T12:00:00"
