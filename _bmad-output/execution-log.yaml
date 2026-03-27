@@ -5,9 +5,29 @@ workflows:
     workflow: "dev-story"
     mode: REFINE
     started: "2026-03-27"
-    status: STARTED
+    completed: "2026-03-27"
+    status: SUCCESS
     story: "1.3 — Auth Middleware & Route Protection (CR fixes)"
-    summary: "Resolviendo CHANGES_REQUESTED del CR: tests updateSession (AC 8), eliminar test-tmp, actualizar AC 5, ESLint @supabase/supabase-js, git push + PR"
+    commit: "0069376 fix(auth): resolve CR changes-requested for story 1.3"
+    branch: "feat/1-3-auth-middleware-route-protection"
+    tests: "17 passing (15 middleware unit: 9 isPublicPath + 6 updateSession; 2 smoke). ESLint: sin errores. TS: sin errores."
+    artifacts_modified:
+      - "tests/unit/middleware/middleware.test.ts"
+      - "middleware.ts"
+      - "eslint.config.mjs"
+      - "_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md"
+      - "_bmad-output/execution-log.yaml"
+    artifacts_deleted:
+      - "app/test-tmp/bad-import.ts"
+    errors: []
+    notes: |
+      CR fixes resueltos: 5 de 6 issues cerrados.
+      F1 (HIGH): 6 tests updateSession anadidos — contrato { response, user } verificado.
+      F3 (MEDIUM): AC 5 actualizado: getClaims() en lugar de getUser().
+      F4 (MEDIUM): app/test-tmp/ eliminado.
+      F5 (LOW): ESLint no-restricted-imports para @supabase/supabase-js anadida.
+      F6 (LOW): images/ anadido al matcher.
+      F2 (HIGH): git push + PR pendientes — sin remote configurado. El usuario debe configurar origin.
 
   - id: "cr-20260327-005"
     agent: Homer
