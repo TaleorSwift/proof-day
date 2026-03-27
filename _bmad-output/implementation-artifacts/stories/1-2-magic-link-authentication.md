@@ -1,6 +1,6 @@
 # Story 1.2: Magic Link Authentication
 
-Status: review
+Status: done
 
 ## Story
 
@@ -300,6 +300,28 @@ claude-sonnet-4-6
 - T8: 6 tests unitarios pasando (Vitest). Test E2E creado (requiere servidor corriendo — no verificable en CI sin Supabase mock)
 - T9: `stories/auth/LoginForm.stories.tsx` — 2 stories: Default y WithLinkInvalidError
 - T10: commit + PR (sin remote configurado — pendiente push cuando se conecte origin)
+
+### Senior Developer Review (AI)
+
+**Reviewer:** Homer (CR fork) | **Fecha:** 2026-03-27 | **Veredicto:** APPROVED
+
+**Checks ejecutados:**
+- Git vs File List: 0 discrepancias — 15 ficheros coinciden exactamente
+- TypeScript: sin errores (`tsc --noEmit` limpio)
+- ESLint: sin errores ni warnings sobre ficheros de la story
+- Tests: 8/8 pasan (6 unit auth + 2 smoke)
+- Rejection criteria: cumplidos (sin password, sin toast, sin getSession(), sin import directo supabase fuera de lib/)
+- ACs 1-13: todos implementados
+
+**Issues documentados — Review Follow-ups (AI):**
+
+- [ ] [AI-Review][HIGH] Open redirect en `/auth/callback`: parámetro `next` de searchParams no validado. Un atacante puede forzar redirect a dominio externo. Solución: `const safeNext = next?.startsWith('/') ? next : '/communities'` [app/auth/callback/route.ts:7-12]
+- [ ] [AI-Review][MEDIUM] `aria-describedby` inoperativo: `Input` está dentro de `FormControl` (Radix Slot), cuya prop `aria-describedby` apunta al `formMessageId` auto-generado, pero el `Input` sobrescribe esa prop con `aria-describedby="email-error"`. `FormMessage` tiene `id={formMessageId}` (no `"email-error"`) → la conexión accesible no funciona. Solución: eliminar la prop `aria-describedby` manual del `Input` y confiar en `FormControl` [components/auth/LoginForm.tsx:109-119]
+- [ ] [AI-Review][MEDIUM] `NEXT_PUBLIC_SITE_URL` sin fallback: si la variable no está definida, `emailRedirectTo` resulta en `"undefined/auth/callback"`. Añadir guard o fallback a `VERCEL_URL` / `localhost:3000` [app/(auth)/login/actions.ts:14]
+- [ ] [AI-Review][MEDIUM] CTA "Solicitar un nuevo link" usa `<button>` HTML nativo con CSS hardcodeado en vez de componente `Button` shadcn/ui con `variant="link"`. Además, el CTA solo aparece cuando `errorParam === 'link-invalid'`, no cuando el error es de servidor en reintento [components/auth/LoginForm.tsx:88-98]
+- [ ] [AI-Review][LOW] Tras hacer clic en "Solicitar un nuevo link", el form no hace `form.setFocus('email')` — el usuario puede quedar desorientado [components/auth/LoginForm.tsx:91-94]
+- [ ] [AI-Review][LOW] Test E2E "muestra success state" falla en CI sin Supabase — considerar marcar como `test.skip` en CI o mockear Server Action [tests/e2e/auth/login.spec.ts:37-53]
+- [ ] [AI-Review][LOW] `docs/project/modules/auth.md` no documenta el NFR-P1 (entrega < 30s) ni cómo monitorearlo [docs/project/modules/auth.md]
 
 ### File List
 
