@@ -255,7 +255,7 @@ para que pueda incorporar miembros a mi comunidad sin gestión manual.
     - Añadir test: `isPublicPath('/invite')` → `true`
 
 - [x] **T8: Página /invite/[token] — Server Component** (AC: 5, 6, 7)
-  - [ ] Crear `app/invite/[token]/page.tsx`:
+  - [x] Crear `app/invite/[token]/page.tsx`:
     ```typescript
     import { redirect } from 'next/navigation'
     import { createClient } from '@/lib/supabase/server'
@@ -291,7 +291,7 @@ para que pueda incorporar miembros a mi comunidad sin gestión manual.
       // Llamar a la lógica de negocio directamente sin HTTP
     }
     ```
-  - [ ] **IMPLEMENTACIÓN RECOMENDADA**: En lugar de `fetch()` interno (problemático en Server Components por forwarding de cookies), implementar la lógica de join directamente en el Server Component usando `createClient()`:
+  - [x] **IMPLEMENTACIÓN RECOMENDADA**: En lugar de `fetch()` interno (problemático en Server Components por forwarding de cookies), implementar la lógica de join directamente en el Server Component usando `createClient()`:
     ```typescript
     import { redirect } from 'next/navigation'
     import { createClient } from '@/lib/supabase/server'
@@ -346,22 +346,22 @@ para que pueda incorporar miembros a mi comunidad sin gestión manual.
       redirect('/communities')
     }
     ```
-  - [ ] Crear componentes de estado en el mismo fichero o como ficheros separados:
+  - [x] Crear componentes de estado en el mismo fichero o como ficheros separados:
     - `InviteErrorState`: mensaje de error + "Solicitar nuevo link" (texto explicativo, no CTA funcional en MVP)
     - `InviteAlreadyMemberState`: "Ya eres miembro" + Button → `/communities`
 
 - [x] **T9: Página de settings — /communities/[slug]/settings** (AC: 1, 4)
-  - [ ] Crear `app/(app)/communities/[slug]/settings/page.tsx`:
+  - [x] Crear `app/(app)/communities/[slug]/settings/page.tsx`:
     - Server Component: verifica que el usuario es admin de la comunidad (redirect a `/communities` si no)
     - Renderiza `<InvitationSection communityId={community.id} />`
-  - [ ] Crear `components/communities/InvitationSection.tsx` — Client Component:
+  - [x] Crear `components/communities/InvitationSection.tsx` — Client Component:
     - Botón "Generar link de invitación" → llama a `generateInvitationLink(communityId)`
     - Al generar: muestra el link en un Input readonly + botón "Copiar link"
     - Al copiar: `navigator.clipboard.writeText(link)` → texto del botón cambia a "¡Copiado!" por 2s
     - Cada link generado se añade a una lista local (session state) con indicación "Activo" / ya copiado
 
 - [x] **T10: lib/api client wrappers** (AC: 1, 5)
-  - [ ] Actualizar o crear `lib/api/invitations.ts`:
+  - [x] Actualizar o crear `lib/api/invitations.ts`:
     ```typescript
     export async function generateInvitationLink(communityId: string): Promise<string> {
       const res = await fetch(`/api/communities/${communityId}/invitations`, {
@@ -374,8 +374,8 @@ para que pueda incorporar miembros a mi comunidad sin gestión manual.
     ```
 
 - [x] **T11: Actualizar auth/callback para soporte de `next` param** (AC: 5)
-  - [ ] Verificar `app/auth/callback/route.ts` — ya soporta el parámetro `next` validado (fix BUG-QA-002 ya aplicado)
-  - [ ] El flujo post-auth join funciona automáticamente: login → callback → redirect `/invite/[token]` → join + redirect `/communities`
+  - [x] Verificar `app/auth/callback/route.ts` — ya soporta el parámetro `next` validado (fix BUG-QA-002 ya aplicado)
+  - [x] El flujo post-auth join funciona automáticamente: login → callback → redirect `/invite/[token]` → join + redirect `/communities`
 
 - [x] **T12: Tests unitarios** (AC: 2, 3, 7)
   - [ ] Crear `tests/unit/invitations/invitations.test.ts`:
