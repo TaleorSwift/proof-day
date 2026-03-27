@@ -1,4 +1,28 @@
 workflows:
+  - id: "cr-20260327-012"
+    timestamp: "2026-03-27T23:25:00"
+    completed: "2026-03-27T23:45:00"
+    agent: Homer
+    trigger: "/cr"
+    workflow: "code-review"
+    mode: VERIFY
+    result: SUCCESS
+    duration_estimate: "20 minutes"
+    story: "2.1 — Create Community (PR#4)"
+    veredicto: "CHANGES_REQUESTED"
+    summary: |
+      CR adversarial de story 2.1. Veredicto: CHANGES_REQUESTED.
+      Tests: 13/13 passing (communities). TypeScript: limpio. ESLint: limpio.
+      9 findings: 2 HIGH (F1 type mismatch Community camelCase vs Supabase snake_case,
+      F2 RLS privilege escalation community_members),
+      4 MEDIUM (F3 non-atomic community creation orphan risk, F4 next/image sin remotePatterns,
+      F5 AC5 segundo CTA no interactivo, F6 updated_at sin trigger),
+      3 LOW (F7 no layout auth en (app), F8 getCommunities sin consumidor, F9 toSlug slug vacío).
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, DS — resolver F1 (tipo Community snake_case) + F2 (RLS role restriction) + F3 (atomic creation) + F4 (next/image remotePatterns) + F5 (CTA interactivo). Luego nuevo /cr."
+
   - id: "qa-20260327-001"
     timestamp: "2026-03-27T12:00:00"
     agent: Edna
