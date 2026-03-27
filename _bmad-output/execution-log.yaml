@@ -1,4 +1,61 @@
 workflows:
+  - id: "ds-20260327-011"
+    timestamp: "2026-03-27T15:00:00"
+    completed: "2026-03-27T15:45:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: GENERATE
+    result: SUCCESS
+    duration_estimate: "45 minutes"
+    story: "2.2 — Invitation Links: Generate & Join"
+    commit: "78dabf1 feat(communities): add invitation links generate and join flow"
+    branch: "feat/2-2-invitation-links"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/5"
+    tests: "49/49 pasando (10 nuevos en tests/unit/invitations/). TypeScript: sin errores. ESLint: sin errores."
+    summary: "Story 2.2 implementada en GENERATE mode. 14 tasks completadas. Migración SQL, tipos, Zod schema, 2 API Routes (generate + use/join), Server Component /invite/[token] (3 estados), settings page, InvitationSection Client Component (generate + copy 2s feedback), lib/api wrapper, 10 tests. PR#5 contra develop."
+    artifacts_created:
+      - "supabase/migrations/001_create_invitation_links.sql"
+      - "lib/types/invitations.ts"
+      - "lib/validations/invitations.ts"
+      - "app/api/communities/[communityId]/invitations/route.ts"
+      - "app/api/invitations/[token]/use/route.ts"
+      - "app/invite/[token]/page.tsx"
+      - "app/(app)/communities/[slug]/settings/page.tsx"
+      - "components/communities/InvitationSection.tsx"
+      - "lib/api/invitations.ts"
+      - "tests/unit/invitations/invitations.test.ts"
+      - "docs/project/modules/communities.md"
+    artifacts_modified:
+      - "middleware.ts"
+      - "eslint.config.mjs"
+      - "_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/execution-log.yaml"
+    errors:
+      - step: "T7 — middleware.ts"
+        error: "Linter revirtió /invite en PUBLIC_PREFIX_PATHS tras stash/pop"
+        recovery: "Reaplicado manualmente. Sin impacto funcional."
+        severity: "low"
+      - step: "T2 — Migración SQL"
+        error: "Story indicaba 005_create_invitations.sql — develop no tenía migraciones previas"
+        recovery: "Creado como 001_create_invitation_links.sql."
+        severity: "low"
+      - step: "T13 — communities.md"
+        error: "docs/project/modules/communities.md no existía en develop (venía de rama 2.1 no mergeada)"
+        recovery: "Creado desde cero con reglas de stories 2.1 y 2.2."
+        severity: "low"
+    next_recommended: "Homer, CR — code review adversarial de story 2.2 (PR#5). Luego: Ned, CS — story 2.3 (Community Access Control & Listing)"
+
+  - id: "ds-20260327-010"
+    timestamp: "2026-03-27T23:50:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: VERIFY
+    result: STARTED
+    summary: "Story 2.2 — Invitation Links Generate & Join. VERIFY mode: código ya implementado y staged, 36/36 tests pasando, TypeScript y ESLint limpios. Completar checkboxes, commit, push y PR."
+
   - id: "cr-20260327-012"
     timestamp: "2026-03-27T23:25:00"
     completed: "2026-03-27T23:45:00"
