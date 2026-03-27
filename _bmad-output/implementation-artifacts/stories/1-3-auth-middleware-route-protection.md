@@ -365,3 +365,42 @@ claude-sonnet-4-6
 - TypeScript sin errores (tsc --noEmit limpio)
 - `lib/supabase/middleware.ts` correcto: getClaims(), contrato { response, user }, sin lógica de redirect
 - Documentación `auth.md` completa y actualizada
+
+---
+
+## Senior Developer Review (AI) — CR #3
+
+**Reviewer:** Homer (cr-20260327-009) — 2026-03-27
+**Veredicto:** CHANGES_REQUESTED
+
+### Resultado de validación — CR #3
+
+**Ejecución de tests:** 24/24 pasando (10 isPublicPath + 6 updateSession + 6 auth-schema + 2 smoke)
+**TypeScript:** sin errores (`tsc --noEmit` limpio)
+**ESLint:** sin errores en todos los ficheros de la story
+**ACs 1–10:** todos implementados correctamente en código
+
+### Review Follow-ups (AI) — CR #3
+
+- [ ] [AI-Review][MEDIUM] `docs/project/modules/auth.md` en `develop` es la versión de story 1.2 — el merge del PR#1 (commit 95dd169) no incluyó auth.md, y el merge posterior de story 1.2 sobrescribió el contenido. En el HEAD de develop, auth.md no contiene: regla de middleware, fichero clave `middleware.ts`, regla ESLint de imports, ni la distinción PUBLIC_EXACT/PUBLIC_PREFIX (story 1.3). T8 marcado [x] pero el artefacto no está en develop. [`docs/project/modules/auth.md` — comparar `git show HEAD:docs/project/modules/auth.md` vs commits de rama 1.3]
+- [ ] [AI-Review][MEDIUM] `sprint-status.yaml` muestra `1-3-auth-middleware-route-protection: backlog` — T9 declara haberlo actualizado a `review` pero el archivo en develop tiene `backlog`. Falsa reclamación de completado. [`_bmad-output/implementation-artifacts/sprint-status.yaml:47`]
+- [ ] [AI-Review][LOW] `updateSession` no tiene manejo de excepciones: si `getClaims()` lanza una excepción (timeout, network error), el middleware crashea con 500 sin fallback. Considerar try/catch que devuelva `{ response: NextResponse.next({ request }), user: null }` en caso de error. [`lib/supabase/middleware.ts:44-46`]
+- [ ] [AI-Review][LOW] Tipo de retorno restrictivo: `user: { sub: string } | null` — las claims reales de Supabase incluyen `email`, `aud`, `role`, etc. Si en el futuro middleware.ts necesita acceder a `user.email` para logging o headers, TypeScript lo rechazará. Considerar `user: Record<string, unknown> & { sub: string } | null` o importar el tipo `JWTPayload` de `@supabase/ssr`. [`lib/supabase/middleware.ts:13`]
+
+### Findings Detail — CR #3
+
+| Ref | Severidad | Descripción | Archivo |
+|-----|-----------|-------------|---------|
+| F1 | MEDIUM | `auth.md` en develop es versión story 1.2 — cambios de story 1.3 perdidos en merge | `docs/project/modules/auth.md` |
+| F2 | MEDIUM | `sprint-status.yaml` muestra `backlog` — T9 reclamó `review` falsamente | `sprint-status.yaml:47` |
+| F3 | LOW | `updateSession` sin try/catch — crash con 500 si getClaims() lanza excepción | `lib/supabase/middleware.ts:44-46` |
+| F4 | LOW | Tipo de retorno restrictivo para `user` — puede bloquear usos futuros legítimos | `lib/supabase/middleware.ts:13` |
+
+### Aspectos Positivos — CR #3
+
+- Todos los findings del CR #2 resueltos correctamente: proxy.ts eliminado, tests con vi.importActual, ESLint scope ampliado, /login/anything privada
+- 24 tests pasando (18 middleware + 6 auth-schema) — ninguna regresión
+- `middleware.ts` raíz: implementación correcta, PUBLIC_EXACT/PREFIX_PATHS separados, matcher completo
+- `lib/supabase/middleware.ts`: getClaims() correcto, contrato { response, user } sin redirect
+- ESLint cubre middleware.ts raíz y tests/** — no hay escape de restricciones
+- PR#1 mergeado correctamente a develop (confirmado vía git log)

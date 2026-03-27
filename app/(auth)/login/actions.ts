@@ -15,6 +15,9 @@ export async function sendMagicLink(formData: FormData) {
     },
   })
 
-  if (error) return { error: 'No pudimos enviar el email. Inténtalo de nuevo.' }
+  if (error) {
+    console.error('[sendMagicLink] Supabase error:', error.message, error.status)
+    return { error: 'No pudimos enviar el email. Inténtalo de nuevo.' }
+  }
   return { success: true }
 }

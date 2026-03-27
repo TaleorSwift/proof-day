@@ -48,8 +48,8 @@ development_status:
   epic-1-retrospective: optional
 
   # ── EPIC 2: Comunidades ──────────────────────────────────────────
-  epic-2: backlog
-  2-1-create-community: backlog
+  epic-2: in-progress
+  2-1-create-community: ready-for-dev
   2-2-invitation-links-generate-join: backlog
   2-3-community-access-control-listing: backlog
   epic-2-retrospective: optional
