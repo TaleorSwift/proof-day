@@ -62,3 +62,16 @@ $$;
 -- Revocar acceso directo de SELECT a invitation_links para roles no-admin
 -- La función SECURITY DEFINER ejecuta con privilegios del owner (postgres/service_role)
 -- y solo expone los campos necesarios para validar un token específico.
+
+-- CR3-F2: GRANT EXECUTE para que el rol authenticated pueda llamar la función RPC.
+-- PostgreSQL no hereda EXECUTE automáticamente — sin este GRANT, el RPC falla con
+-- "permission denied for function validate_invitation_token" en producción.
+GRANT EXECUTE ON FUNCTION validate_invitation_token(text) TO authenticated;
+
+-- CR3-F1: Policy RLS para que un usuario autenticado pueda invalidar (UPDATE used_at)
+-- su propio token de invitación. La política admin_manage_invitations solo cubre admins.
+-- Sin esta policy, el UPDATE de used_at falla silenciosamente — AC-2 violado (token reutilizable).
+CREATE POLICY "use_invitation"
+  ON invitation_links FOR UPDATE
+  USING (auth.uid() IS NOT NULL AND used_at IS NULL)
+  WITH CHECK (auth.uid() IS NOT NULL);

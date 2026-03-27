@@ -573,3 +573,156 @@ claude-sonnet-4-6 (Homer, DS fork, 2026-03-27)
 - `docs/project/modules/communities.md` — reglas completas story 2.1 + 2.2 [L3 fix]
 - `_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml`
+
+---
+
+## Senior Developer Review CR #3 (AI)
+
+**Reviewer:** Homer CR — claude-sonnet-4-6 (cr-20260327-018)
+**Fecha:** 2026-03-27
+**Veredicto:** CHANGES_REQUESTED
+
+**Tests:** 55/55 pasando. ESLint: limpio. TypeScript: limpio. 11 findings del CR#1 resueltos correctamente.
+
+### Findings CR #3
+
+**[CR3-F1][HIGH/SECURITY] RLS bloquea UPDATE de `used_at` para usuario no-admin — AC-2 roto en produccion**
+
+`app/api/invitations/[token]/use/route.ts:62-70` + `supabase/migrations/001_create_invitation_links.sql`.
+
+`createClient()` usa `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (anon key). Con RLS activo, `authenticated` solo puede operar en `invitation_links` via `admin_manage_invitations` (requiere ser admin). Un usuario normal que usa un token:
+1. `rpc('validate_invitation_token')` — OK (SECURITY DEFINER bypasa RLS)
+2. `insert` en `community_members` — OK (policy distinta)
+3. `update { used_at }` en `invitation_links` — **BLOQUEADO** — usuario no es admin
+
+Resultado: join exitoso, token sin invalidar. AC-2 violado — el token puede reusarse. El comentario en la migracion que dice "La API Route usa service role implicitamente" es incorrecto.
+
+Fix: añadir policy RLS en migracion:
+```sql
+CREATE POLICY "use_invitation"
+  ON invitation_links FOR UPDATE
+  USING (auth.uid() IS NOT NULL AND used_at IS NULL)
+  WITH CHECK (auth.uid() IS NOT NULL);
+```
+
+**[CR3-F2][HIGH] GRANT EXECUTE faltante — `validate_invitation_token` inaccesible para rol `authenticated`**
+
+`supabase/migrations/001_create_invitation_links.sql`. Sin `GRANT EXECUTE ON FUNCTION validate_invitation_token(text) TO authenticated;`, el rol `authenticated` recibira "permission denied for function validate_invitation_token" en produccion. PostgreSQL no hereda EXECUTE automaticamente. Todo el flujo de join falla por RPC inaccesible.
+
+Fix: añadir al final de la migracion:
+```sql
+GRANT EXECUTE ON FUNCTION validate_invitation_token(text) TO authenticated;
+```
+
+**[CR3-F3][MEDIUM] Tests de isPublicPath /invite en archivo incorrecto — T7 incumplido**
+
+T7 especifica: "Actualizar tests en `tests/unit/middleware/middleware.test.ts`". Los 6 tests de /invite estan en `tests/unit/invitations/invitations.test.ts`. `middleware.test.ts` no tiene ningun test de `/invite`. Coverage existe pero en el archivo incorrecto.
+
+**[CR3-F4][MEDIUM] T14 documenta branch incorrecto**
+
+T14 dice `git push origin feat/2-1-create-community`. La rama correcta es `feat/2-2-invitation-links` (confirmado via PR #5).
+
+**[CR3-F5][LOW] T12 declara 15 tests — archivo tiene 17**
+
+4 schema + 2 uuid + 6 isPublicPath /invite + 5 regresion = 17. La nota de T12 dice 15.
+
+**[CR3-F6][LOW] InviteErrorState e InviteAlreadyMemberState usan Tailwind color classes directas**
+
+`app/invite/[token]/page.tsx:13-47`. `text-red-800`, `bg-red-50`, `border-red-200`, `text-blue-600` etc. en lugar de CSS variables del design-tokens. CLAUDE.md exige CSS variables. El fix L1 del CR#1 corrijo InvitationSection, pero no estos componentes.
+
+**[CR3-F7][LOW] Arquitectura RLS incompleta — falta GRANT y policy de UPDATE**
+
+La solucion SECURITY DEFINER del H3 resolvio la enumeracion de tokens (SELECT), pero no completo la arquitectura para el UPDATE de invalidacion. Sin policy `use_invitation` (F1) y sin GRANT EXECUTE (F2), el flujo completo de join no funciona en produccion.
+
+### Review Follow-ups (AI) — CR #3
+
+- [ ] [AI-Review][HIGH] CR3-F1: Añadir policy `use_invitation` para UPDATE en invitation_links por usuario autenticado con token no usado [supabase/migrations/001_create_invitation_links.sql]
+- [ ] [AI-Review][HIGH] CR3-F2: Añadir `GRANT EXECUTE ON FUNCTION validate_invitation_token(text) TO authenticated;` en migracion [supabase/migrations/001_create_invitation_links.sql]
+- [ ] [AI-Review][MEDIUM] CR3-F3: Mover tests de isPublicPath /invite a middleware.test.ts para cumplir T7, o actualizar T7 documentando invitations.test.ts como ubicacion definitiva
+- [ ] [AI-Review][MEDIUM] CR3-F4: Corregir branch en T14 — `feat/2-2-invitation-links` no `feat/2-1-create-community`
+- [ ] [AI-Review][LOW] CR3-F5: Actualizar count de tests en T12 de 15 a 17
+- [ ] [AI-Review][LOW] CR3-F6: Reemplazar Tailwind color classes en InviteErrorState/InviteAlreadyMemberState por CSS variables [app/invite/[token]/page.tsx]
+- [ ] [AI-Review][LOW] CR3-F7: Documentar arquitectura RLS completa en Dev Notes — policy + GRANT son prerequisitos de produccion
+
+### Aspectos Positivos — CR #3
+
+- 11/11 findings del CR#1 resueltos correctamente (H1 checkboxes, H2 error capture, H3 SECURITY DEFINER, M1-M5, L1-L3)
+- 55/55 tests pasando, ESLint limpio, TypeScript limpio
+- Pattern cookie forwarding correcto en InvitePage (M3)
+- generateInvitationSchema.safeParse() en API Route (M2)
+- Mensaje unificado "Este link ya no es valido" (M5)
+- communities.md completo y actualizado (L3)
+- lib/api/invitations.ts re-exporta tipos correctamente (M4)
+
+## Senior Developer Review CR #4 (AI)
+
+**Reviewer:** Homer CR — claude-sonnet-4-6 (cr-20260327-019)
+**Fecha:** 2026-03-27
+**Veredicto:** CHANGES_REQUESTED
+
+**Tests:** 41/41 pasando. Build: limpio. Lint: limpio. Git discrepancias: 0.
+
+**Contexto:** La rama feat/2-2-invitation-links tiene como último commit 744904b (fix CR#1). Los findings H1+H2 del CR#3 (GRANT EXECUTE + policy UPDATE) NO han sido resueltos — no hay ningún commit posterior al fix del CR#1.
+
+### Estado Findings CR #3
+
+**[CR3-F1][HIGH/SECURITY] — SIN RESOLVER**
+Falta policy RLS `use_invitation` para UPDATE en `invitation_links` por usuario autenticado no-admin. `createClient()` usa anon key — el rol `authenticated` no puede hacer UPDATE. Join exitoso → token sin invalidar → AC-2 roto en producción.
+
+**[CR3-F2][HIGH] — SIN RESOLVER**
+Falta `GRANT EXECUTE ON FUNCTION validate_invitation_token(text) TO authenticated;` en la migración. Sin GRANT, el rol `authenticated` recibe "permission denied for function" → todo el flujo de join falla en producción.
+
+**[CR3-F3][MEDIUM] — SIN RESOLVER**
+Tests de isPublicPath /invite en `invitations.test.ts`, no en `middleware.test.ts` como especifica T7. Confirmado: 0 referencias a /invite en middleware.test.ts.
+
+**[CR3-F4][MEDIUM] — SIN RESOLVER**
+T14 sigue documentando `git push origin feat/2-1-create-community`. La rama correcta es `feat/2-2-invitation-links`.
+
+**[CR3-F5][LOW] — SIN RESOLVER**
+T12 sigue declarando 15 tests. El archivo tiene 17.
+
+**[CR3-F6][LOW] — SIN RESOLVER**
+`InviteErrorState` e `InviteAlreadyMemberState` en `app/invite/[token]/page.tsx` usan Tailwind hardcoded: `text-red-800`, `bg-red-50`, `border-red-200`, `text-red-700`, `text-red-600`, `bg-blue-50`, `border-blue-200`, `text-blue-800`, `text-blue-700`, `bg-blue-600`, `hover:bg-blue-700`.
+
+### Nuevos Findings CR #4
+
+**[CR4-F1][HIGH] Token expuesto en URL de fetch interno — Rejection Criterion violado**
+`app/invite/[token]/page.tsx:68`: `fetch(\`${siteUrl}/api/invitations/${token}/use\`, ...)`. Token UUID en URL aparece en logs de Next.js y cualquier APM/proxy. Rejection Criterion explícito: "NO exponer el token en logs". CR2-F3 fue documentado como MEDIUM action item pero sigue sin resolver. Severidad reescalada a HIGH porque viola un Rejection Criterion explícito.
+
+**[CR4-F2][MEDIUM] `InvitationLink` camelCase vs API snake_case — CR2-F2 sin resolver**
+`lib/types/invitations.ts`: campos en camelCase no coinciden con respuesta Supabase snake_case. Cualquier consumer que tipee la respuesta JSON contra `InvitationLink` recibirá `undefined` en todos los campos.
+
+**[CR4-F3][MEDIUM] Sin navegación a settings desde la app — CR2-F5 sin resolver**
+No existe enlace alguno a `/communities/[slug]/settings`. AC-1 es funcionalmente inaccesible sin teclear la URL.
+
+**[CR4-F4][LOW] Zod antes de auth check en `/api/communities/[communityId]/invitations` — CR2-F6**
+Usuario no autenticado con communityId inválido recibe 400 en lugar de 401. Semántica REST rota.
+
+**[CR4-F5][LOW] Sin tests para error path de `generateInvitationLink()` — CR2-F8**
+`lib/api/invitations.ts`: no hay tests para respuesta non-ok, error parsing JSON, construcción de URL.
+
+### Review Follow-ups (AI) — CR #4
+
+- [x] [AI-Review][HIGH] CR3-F1: Añadir policy `use_invitation` en migración para UPDATE por usuario autenticado con token no usado [supabase/migrations/001_create_invitation_links.sql]
+- [x] [AI-Review][HIGH] CR3-F2: Añadir `GRANT EXECUTE ON FUNCTION validate_invitation_token(text) TO authenticated;` [supabase/migrations/001_create_invitation_links.sql]
+- [ ] [AI-Review][HIGH] CR4-F1: Mover token del URL path al body del POST interno o rediseñar ruta para evitar exposición en logs [app/invite/[token]/page.tsx:68]
+- [ ] [AI-Review][MEDIUM] CR3-F3: Mover tests isPublicPath /invite a middleware.test.ts (T7) [tests/unit/invitations/invitations.test.ts]
+- [ ] [AI-Review][MEDIUM] CR3-F4: Corregir branch en T14 — `feat/2-2-invitation-links` no `feat/2-1-create-community`
+- [ ] [AI-Review][MEDIUM] CR4-F2: Alinear `InvitationLink` a snake_case o mapear en API Route [lib/types/invitations.ts]
+- [ ] [AI-Review][MEDIUM] CR4-F3: Añadir enlace/botón a settings desde lista de comunidades del admin
+- [ ] [AI-Review][LOW] CR3-F5: Actualizar count de tests en T12 de 15 a 17
+- [ ] [AI-Review][LOW] CR3-F6: Reemplazar Tailwind hardcoded en InviteErrorState/AlreadyMemberState por CSS variables [app/invite/[token]/page.tsx:13-47]
+- [ ] [AI-Review][LOW] CR4-F4: Mover auth check antes de Zod [app/api/communities/[communityId]/invitations/route.ts:12-27]
+- [ ] [AI-Review][LOW] CR4-F5: Añadir tests error path para generateInvitationLink() [lib/api/invitations.ts]
+
+## Change Log
+
+| Fecha | Tipo | Descripción |
+|-------|------|-------------|
+| 2026-03-27 | DS | Story implementada — Homer (claude-sonnet-4-6) |
+| 2026-03-27 | CR | Code review CR#1 — CHANGES_REQUESTED — 3 HIGH, 5 MEDIUM, 3 LOW |
+| 2026-03-27 | DS REFINE | CR#1 fixes — 11/11 findings resueltos — 55/55 tests pasando |
+| 2026-03-27 | CR | Code review CR#2 — CHANGES_REQUESTED — 1 HIGH, 4 MEDIUM, 3 LOW |
+| 2026-03-27 | CR | Code review CR#3 — CHANGES_REQUESTED — 2 HIGH, 2 MEDIUM, 3 LOW |
+| 2026-03-27 | CR | Code review CR#4 — CHANGES_REQUESTED — 3 HIGH, 4 MEDIUM, 4 LOW — findings CR#3 sin resolver |
+| 2026-03-27 | DS REFINE | CR#3 fixes (F1+F2) — GRANT EXECUTE + policy use_invitation en migración — 41/41 tests pasando |

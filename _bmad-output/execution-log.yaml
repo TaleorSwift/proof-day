@@ -1,4 +1,83 @@
 workflows:
+  - id: "ds-20260327-019"
+    timestamp: "2026-03-27T20:00:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: REFINE
+    result: STARTED
+    story: "2.2 — Invitation Links: Generate & Join (CR#3 fixes — CR3-F1 + CR3-F2)"
+    branch: "feat/2-2-invitation-links"
+    scope: "supabase/migrations/001_create_invitation_links.sql — GRANT EXECUTE + policy use_invitation"
+
+  - id: "cr-20260327-019"
+    timestamp: "2026-03-27T20:00:00"
+    completed: "2026-03-27T20:50:00"
+    agent: Homer
+    trigger: "/cr"
+    workflow: "code-review"
+    mode: VERIFY
+    result: SUCCESS
+    duration_estimate: "50 minutes"
+    story: "2.2 — Invitation Links: Generate & Join (CR #4, post CR#3)"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/5"
+    veredicto: "CHANGES_REQUESTED"
+    findings: "3 HIGH, 4 MEDIUM, 4 LOW = 11 total"
+    summary: |
+      CR #4 adversarial de story 2.2 post CR#3. Veredicto: CHANGES_REQUESTED.
+      Rama feat/2-2-invitation-links sin commits de fix post-CR#3 (último: 744904b fix CR#1).
+      CR3-F1 (HIGH/SECURITY): Sin policy RLS use_invitation — usuario no-admin no puede
+        hacer UPDATE de used_at — token nunca invalidado — AC-2 roto en producción.
+      CR3-F2 (HIGH): Sin GRANT EXECUTE para validate_invitation_token(text) TO authenticated
+        — permission denied en producción — flujo join completamente inaccesible.
+      CR4-F1 (HIGH): Token UUID en URL del fetch interno (page.tsx:68) viola Rejection
+        Criterion "NO exponer token en logs". Reescalado de MEDIUM a HIGH.
+      CR3-F3 (MEDIUM): Tests isPublicPath /invite en invitations.test.ts, no middleware.test.ts.
+      CR3-F4 (MEDIUM): T14 branch incorrecto feat/2-1-create-community.
+      CR4-F2 (MEDIUM): InvitationLink camelCase vs API snake_case — CR2-F2 heredado.
+      CR4-F3 (MEDIUM): Sin enlace a settings — AC-1 inaccesible UX — CR2-F5 heredado.
+      CR3-F5/F6 (LOW): T12 count 15 vs 17 reales, Tailwind hardcoded InviteErrorState.
+      CR4-F4/F5 (LOW): Zod antes auth check, sin tests error path generateInvitationLink.
+      Tests: 41/41 pasando. Build: limpio. Lint: limpio.
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer DS REFINE — resolver CR3-F1 (policy use_invitation), CR3-F2 (GRANT EXECUTE), CR4-F1 (token en URL fetch). 3 HIGH bloqueantes de producción."
+
+  - id: "cr-20260327-018"
+    timestamp: "2026-03-27T19:00:00"
+    completed: "2026-03-27T19:50:00"
+    agent: Homer
+    trigger: "/cr"
+    workflow: "code-review"
+    mode: VERIFY
+    result: SUCCESS
+    duration_estimate: "50 minutes"
+    story: "2.2 — Invitation Links: Generate & Join (CR #3)"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/5"
+    veredicto: "CHANGES_REQUESTED"
+    findings: "2 HIGH, 2 MEDIUM, 3 LOW = 7 total"
+    summary: |
+      CR #3 adversarial de story 2.2 post CR#2 fixes. Veredicto: CHANGES_REQUESTED.
+      55/55 tests pasando. ESLint limpio. TypeScript limpio.
+      11 findings del CR#1 resueltos correctamente (H1-H3, M1-M5, L1-L3).
+      CR3-F1 (HIGH/SECURITY): RLS bloquea UPDATE used_at para usuario no-admin.
+        createClient() usa anon key. admin_manage_invitations requiere ser admin.
+        Token NO se invalida cuando usuario normal usa invitation. AC-2 violado.
+      CR3-F2 (HIGH): GRANT EXECUTE faltante en validate_invitation_token para authenticated.
+        RPC falla con permission denied en produccion. Todo el flujo de join roto.
+      CR3-F3 (MEDIUM): Tests isPublicPath /invite en invitations.test.ts, no middleware.test.ts (T7 incumplido).
+      CR3-F4 (MEDIUM): T14 documenta push a feat/2-1-create-community (incorrecto).
+      CR3-F5 (LOW): T12 dice 15 tests — archivo tiene 17.
+      CR3-F6 (LOW): InviteErrorState con Tailwind color classes directas, no CSS vars.
+      CR3-F7 (LOW): Arquitectura RLS incompleta — GRANT + policy use_invitation son prerequisitos de produccion.
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, DS REFINE — resolver CR3-F1 (policy use_invitation) + CR3-F2 (GRANT EXECUTE). Ambos son en 001_create_invitation_links.sql. Luego /cr o /qa."
+
   - id: "ds-20260327-016"
     timestamp: "2026-03-27T17:00:00"
     completed: "2026-03-27T17:45:00"
