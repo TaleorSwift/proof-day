@@ -2,7 +2,7 @@
 
 ## Qué hace
 
-Gestiona la autenticación de usuarios mediante magic links (sin contraseña). El usuario introduce su email en `/login`, recibe un link por email (via Resend SMTP configurado en Supabase Auth), y al hacer clic queda autenticado y redirigido a `/communities`. Si el usuario ya tiene sesión activa, `/login` redirige directamente a `/communities`.
+Gestiona la autenticación de usuarios mediante magic links (sin contraseña). El usuario introduce su email en `/login`, recibe un link por email (via Resend SMTP configurado en Supabase Auth), y al hacer clic queda autenticado y redirigido a `/communities`. Todas las rutas de la aplicación excepto las públicas están protegidas por middleware — sin sesión activa, se redirige automáticamente a `/login`.
 
 ## Reglas de comportamiento
 
@@ -15,16 +15,21 @@ Gestiona la autenticación de usuarios mediante magic links (sin contraseña). E
 - Un usuario autenticado que visita `/login` es redirigido automáticamente a `/communities`. (story 1.2)
 - Supabase crea la cuenta automáticamente si el email no existe — no hay formulario de registro separado. (story 1.2)
 - No existe campo de contraseña en ningún flujo. (story 1.2)
-- `getSession()` está prohibido en toda la app (ESLint); se usa `getUser()` siempre. (story 1.1)
+- `getSession()` está prohibido en toda la app (ESLint); se usa `getClaims()` en middleware y `getUser()` en Server Components. (story 1.1)
+- Las importaciones directas de `@supabase/supabase-js` y `@supabase/ssr` fuera de `lib/supabase/` están bloqueadas por ESLint — usar `lib/supabase/client.ts` o `lib/supabase/server.ts`. (story 1.3)
+- Rutas públicas exactas (sin subrutas): `/` y `/login`. Rutas públicas con subrutas: `/auth/callback`. El resto requieren sesión activa. (story 1.3)
+- El middleware redirige a `/login` automáticamente cualquier request sin sesión a ruta protegida. (story 1.3)
+- La sesión se refresca en cada request via `updateSession()` de `lib/supabase/middleware.ts` — el token se mantiene activo sin logout inesperado. (story 1.3)
 
 ## Ficheros clave
 
+- `middleware.ts` — auth gate completo: PUBLIC_PATHS, isPublicPath, redirect a /login
+- `lib/supabase/middleware.ts` — updateSession(): refresca sesión y retorna { response, user }
 - `app/(auth)/login/page.tsx` — Server Component de la pantalla /login
 - `app/(auth)/login/actions.ts` — Server Action: sendMagicLink
 - `components/auth/LoginForm.tsx` — Client Component del formulario
 - `app/auth/callback/route.ts` — Route Handler del magic link
-- `lib/validations/auth.ts` — Zod schema de validación de email
 
 ## Última actualización
 
-Story 1.2 — 2026-03-27
+Story 1.3 — 2026-03-27

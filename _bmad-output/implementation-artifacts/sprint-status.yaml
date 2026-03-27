@@ -41,10 +41,10 @@ story_location: "_bmad-output/implementation-artifacts/stories"
 
 development_status:
   # ── EPIC 1: Infraestructura & Autenticación ──────────────────────
-  epic-1: in-progress
+  epic-1: done
   1-1-project-setup-base-infrastructure: done
   1-2-magic-link-authentication: done
-  1-3-auth-middleware-route-protection: backlog
+  1-3-auth-middleware-route-protection: done
   epic-1-retrospective: optional
 
   # ── EPIC 2: Comunidades ──────────────────────────────────────────
