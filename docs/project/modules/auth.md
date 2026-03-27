@@ -16,6 +16,7 @@ Gestiona la autenticación de usuarios mediante magic links (sin contraseña). E
 - Supabase crea la cuenta automáticamente si el email no existe — no hay formulario de registro separado. (story 1.2)
 - No existe campo de contraseña en ningún flujo. (story 1.2)
 - `getSession()` está prohibido en toda la app (ESLint); se usa `getClaims()` en middleware y `getUser()` en Server Components. (story 1.1)
+- Las importaciones directas de `@supabase/supabase-js` y `@supabase/ssr` fuera de `lib/supabase/` están bloqueadas por ESLint — usar `lib/supabase/client.ts` o `lib/supabase/server.ts`. (story 1.3)
 - Todas las rutas excepto `/`, `/login` y `/auth/callback` requieren sesión activa — el middleware redirige a `/login` automáticamente. (story 1.3)
 - La sesión se refresca en cada request via `updateSession()` de `lib/supabase/middleware.ts` — el token se mantiene activo sin logout inesperado. (story 1.3)
 
