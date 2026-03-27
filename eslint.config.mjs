@@ -40,6 +40,24 @@ const eslintConfig = [
       "lib/utils/**/*.{ts,tsx}",
     ],
     rules: {
+      // Bloquear importaciones directas de Supabase fuera de lib/supabase/
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@supabase/supabase-js",
+              message:
+                "No importar @supabase/supabase-js directamente. Usa lib/supabase/client.ts o lib/supabase/server.ts.",
+            },
+            {
+              name: "@supabase/ssr",
+              message:
+                "No importar @supabase/ssr directamente. Usa lib/supabase/client.ts o lib/supabase/server.ts.",
+            },
+          ],
+        },
+      ],
       // Bloquear creacion de clientes Supabase directamente fuera de lib/supabase/
       // Nota: imports de tipos (@supabase/supabase-js types) SI estan permitidos
       "no-restricted-syntax": [

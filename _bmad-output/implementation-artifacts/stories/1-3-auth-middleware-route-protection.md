@@ -14,7 +14,7 @@ para que ningún usuario no autenticado pueda ver contenido de la plataforma (NF
 2. Request sin sesión válida a ruta protegida → `redirect('/login')` (302)
 3. Request con sesión válida → pasa sin modificación; headers de sesión refrescados
 4. Rutas públicas excluidas del interceptor via `matcher`: `/` (landing), `/login`, `/auth/callback`, y assets estáticos (`/_next/`, `/favicon.ico`, `/images/`, etc.)
-5. Sesión verificada con `getUser()` — NUNCA `getSession()` (ESLint ya lo bloquea)
+5. Sesión verificada con `getClaims()` — NUNCA `getSession()` (ESLint ya lo bloquea). `getClaims()` verifica el JWT localmente sin llamada al servidor — correcto para `@supabase/ssr@0.9.0`
 6. Middleware llama a `updateSession(request)` de `lib/supabase/middleware.ts` para refrescar el token en cada request
 7. Acceso directo por URL a `/communities`, `/profile`, o cualquier ruta `(app)/` sin sesión → redirect a `/login`
 8. Tests unitarios: función `updateSession` retorna respuesta con headers correctos cuando hay sesión válida
@@ -120,14 +120,12 @@ para que ningún usuario no autenticado pueda ver contenido de la plataforma (NF
   - [x] Verificar que el matcher no excluye `/communities`, `/profile`, ni `/communities/[slug]`
 
 - [x] **T4: Tests unitarios — middleware logic** (AC: 8)
-  - [ ] Crear `tests/unit/middleware/middleware.test.ts`:
-    - Mockear `updateSession` para devolver `{ response: NextResponse.next(), user: null }`
-    - Verificar que request a `/communities` sin sesión retorna redirect a `/login`
-    - Verificar que request a `/communities` CON sesión retorna `NextResponse.next()`
-    - Verificar que request a `/login` sin sesión pasa sin redirect (ruta pública)
-    - Verificar que request a `/` sin sesión pasa sin redirect (ruta pública)
-    - **Nota sobre testing de middleware Next.js:** el middleware es difícil de testear en unidad directa porque depende de `NextRequest/NextResponse`. Alternativa: testear la función `isPublicPath` de forma aislada + el test E2E para el comportamiento completo.
-  - [x] Si mockear `NextRequest` es complejo con Vitest, documentar en Debug Log y cubrir con E2E
+  - [x] Crear `tests/unit/middleware/middleware.test.ts`:
+    - [x] 9 tests de `isPublicPath` (función pura exportada): /, /login, /auth/callback, subrutas, rutas protegidas, edge case /loginextra
+    - [x] 6 tests de `updateSession`: contrato { response, user }, user null sin sesión, response status 200, claves del objeto, importación real del módulo
+    - **Total: 15 tests de middleware + 2 smoke = 17 tests pasando**
+    - **Nota sobre testing de middleware Next.js:** NextRequest/NextResponse mockeados via vi.mock("next/server") + vi.mock("@supabase/ssr"). `getClaims()` controlado por test.
+  - [x] Tests de updateSession cubren AC 8 completamente
 
 - [x] **T5: Test E2E — route protection** (AC: 9)
   - [x] Crear `tests/e2e/auth/route-protection.spec.ts`:
@@ -264,32 +262,73 @@ claude-sonnet-4-6
 - `lib/supabase/proxy.ts` (template original) usaba `getClaims()` — API correcto para @supabase/ssr@0.9.0 + @supabase/supabase-js@2.100.1. No requiere llamada al servidor; verifica JWT localmente. Se mantiene en proxy.ts sin modificar.
 - `lib/supabase/middleware.ts` reescrito para devolver `{ response, user }` — necesario para que middleware.ts (raiz) decida el redirect. La logica de redirect ya no está en updateSession sino en middleware.ts.
 - `proxy.ts` redirigía a `/auth/login` (incorrecto) — la nueva arquitectura evita este problema porque middleware.ts gestiona el redirect.
-- Tests unitarios de middleware: NextRequest/NextResponse son difíciles de mockear en Vitest — se testea `isPublicPath` (función pura exportada) + mocks de módulos. Comportamiento completo cubierto en E2E.
+- Tests unitarios de middleware: NextRequest/NextResponse mockeados via `vi.mock("next/server")` + `vi.mock("@supabase/ssr")`. `getClaims()` controlado por test. 15 tests de middleware pasando (9 isPublicPath + 6 updateSession).
+- [CR FIXES ds-20260327-006] AC 5 actualizado: getClaims() en lugar de getUser(). app/test-tmp/ eliminado. ESLint no-restricted-imports añadida para @supabase/supabase-js. matcher actualizado con images/. 6 tests updateSession añadidos — 17 tests passing total.
 
 ### Completion Notes List
 
 - T1: rama `feat/1-3-auth-middleware-route-protection` creada desde `develop`
 - T2: `lib/supabase/middleware.ts` reescrito — ahora devuelve `{ response: NextResponse, user }` en lugar de hacer redirect internamente. proxy.ts se mantiene sin modificar (referencia interna del template).
-- T3: `middleware.ts` reemplazado — PUBLIC_PATHS, isPublicPath (exportada), lógica de redirect a /login, matcher completo con sitemap.xml, robots.txt, woff/woff2
-- T4: `tests/unit/middleware/middleware.test.ts` — 9 tests de isPublicPath pasando (Vitest). Mocks de next/server y @/lib/supabase/middleware aplicados.
+- T3: `middleware.ts` reemplazado — PUBLIC_PATHS, isPublicPath (exportada), lógica de redirect a /login, matcher completo con sitemap.xml, robots.txt, woff/woff2, images/
+- T4: `tests/unit/middleware/middleware.test.ts` — 15 tests: 9 isPublicPath + 6 updateSession (Vitest). Mocks de next/server, @supabase/ssr y @/lib/supabase/middleware aplicados. **AC 8 cubierto.**
 - T5: `tests/e2e/auth/route-protection.spec.ts` — 4 tests E2E creados (Playwright, requieren servidor)
 - T6: ESLint sin errores en middleware.ts y lib/supabase/middleware.ts
 - T7: TypeScript sin errores (npx tsc --noEmit)
 - T8: `docs/project/modules/auth.md` actualizado con reglas de story 1.3 y middleware.ts como fichero clave
-- T9: commit + PR listos (remote no configurado — push pendiente)
+- T9: commit realizado en rama feat/1-3-auth-middleware-route-protection. Push + PR pendientes (sin remote git configurado).
 
 ### File List
 
 **Modificados:**
-- `middleware.ts` — reemplazado placeholder de Story 1.1: PUBLIC_PATHS, isPublicPath, redirect a /login, matcher completo
+- `middleware.ts` — reemplazado placeholder de Story 1.1: PUBLIC_PATHS, isPublicPath, redirect a /login, matcher completo (incluyendo images/)
 - `lib/supabase/middleware.ts` — reescrito: devuelve { response, user } en lugar de redirect interno
 - `docs/project/modules/auth.md` — añadidas reglas de story 1.3 (middleware, rutas protegidas)
+- `eslint.config.mjs` — añadida regla no-restricted-imports para @supabase/supabase-js y @supabase/ssr [CR fix F5]
 
 **Creados:**
-- `tests/unit/middleware/middleware.test.ts` — 9 tests unitarios de isPublicPath (Vitest)
+- `tests/unit/middleware/middleware.test.ts` — 15 tests unitarios: 9 isPublicPath + 6 updateSession (Vitest) [CR fix F1]
 - `tests/e2e/auth/route-protection.spec.ts` — 4 tests E2E de protección de rutas (Playwright)
 
+**Eliminados:**
+- `app/test-tmp/bad-import.ts` — fichero huérfano con import violando arquitectura [CR fix F4]
+
 **Tracking:**
-- `_bmad-output/implementation-artifacts/sprint-status.yaml` — 1-3: in-progress → review
-- `_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md` — tasks completados + Dev Agent Record
-- `_bmad-output/execution-log.yaml` — entrada ds-20260327-004
+- `_bmad-output/implementation-artifacts/sprint-status.yaml` — 1-3: review (sin cambio)
+- `_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md` — tasks completados + Dev Agent Record actualizado + CR fixes
+- `_bmad-output/execution-log.yaml` — entrada ds-20260327-006
+
+## Senior Developer Review (AI)
+
+**Reviewer:** Homer (cr-20260327-005) — 2026-03-27
+**Veredicto:** CHANGES_REQUESTED
+
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][HIGH] AC 8 NO CUBIERTO: RESUELTO — 6 tests de `updateSession` añadidos a `tests/unit/middleware/middleware.test.ts`. Contrato { response, user } verificado. Total: 15 tests middleware + 2 smoke = 17 passing.
+- [ ] [AI-Review][HIGH] T9 RECLAMACIÓN FALSA: `git push` y PR pendientes — sin remote configurado. Se resolverá en el commit de estos fixes (ds-20260327-006).
+- [x] [AI-Review][MEDIUM] AC 5 IMPRECISO: RESUELTO — AC 5 actualizado: "Sesión verificada con `getClaims()` — NUNCA `getSession()`". Refleja la implementación real.
+- [x] [AI-Review][MEDIUM] FICHERO HUÉRFANO: RESUELTO — `app/test-tmp/` eliminado con `rm -rf`.
+- [x] [AI-Review][LOW] GAP ESLint: RESUELTO — añadida regla `no-restricted-imports` en `eslint.config.mjs` para `@supabase/supabase-js` y `@supabase/ssr` en app/, components/, lib/api/.
+- [x] [AI-Review][LOW] AC 4 PARCIAL: RESUELTO — `images/` añadido al patrón de exclusión del matcher en `middleware.ts`.
+
+### Findings Detail
+
+| Ref | Severidad | Descripción | Archivo:línea |
+|-----|-----------|-------------|---------------|
+| F1 | HIGH | AC 8 no implementado: tests solo cubren `isPublicPath`, no `updateSession` | `tests/unit/middleware/middleware.test.ts` |
+| F2 | HIGH | T9 falsa reclamación: push/PR [x] pero sin remote configurado | Dev Notes T9 |
+| F3 | MEDIUM | AC 5 incorrecto: dice `getUser()`, implementación usa `getClaims()` | `lib/supabase/middleware.ts:44` |
+| F4 | MEDIUM | `app/test-tmp/bad-import.ts` sin rastrear, no gitignoreado | `app/test-tmp/bad-import.ts:1` |
+| F5 | LOW | ESLint no bloquea imports directos de `@supabase/supabase-js` | `eslint.config.mjs` |
+| F6 | LOW | AC 4: `/images/` directorio no excluido del matcher | `middleware.ts:42` |
+
+### Aspectos Positivos
+
+- Implementación de `middleware.ts` correcta y completa: PUBLIC_PATHS, isPublicPath exportada, redirect a /login
+- `updateSession` correctamente refactorizada para devolver `{ response, user }` — separación de responsabilidades correcta
+- `getClaims()` en lugar de `getSession()` — decisión técnicamente sólida para `@supabase/ssr@0.9.0`
+- 9 tests unitarios de `isPublicPath` con cobertura de edge cases (incluyendo `/loginextra` vs `/login`)
+- 4 tests E2E cubriendo `/communities`, `/login`, `/` y `/profile`
+- ESLint y TypeScript sin errores en todos los archivos revisados
+- Documentación en `auth.md` actualizada y precisa
+- Matcher regex correcto: excluye `_next/static`, `_next/image`, favicon, sitemap, fonts

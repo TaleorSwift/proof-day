@@ -1,4 +1,40 @@
 workflows:
+  - id: "ds-20260327-006"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: REFINE
+    started: "2026-03-27"
+    status: STARTED
+    story: "1.3 — Auth Middleware & Route Protection (CR fixes)"
+    summary: "Resolviendo CHANGES_REQUESTED del CR: tests updateSession (AC 8), eliminar test-tmp, actualizar AC 5, ESLint @supabase/supabase-js, git push + PR"
+
+  - id: "cr-20260327-005"
+    agent: Homer
+    trigger: "CR"
+    workflow: "code-review"
+    mode: VERIFY
+    started: "2026-03-27"
+    status: STARTED
+    summary: "Code review adversarial de story 1.3 — Auth Middleware & Route Protection"
+
+  - id: "cr-20260327-005"
+    agent: Homer
+    trigger: "CR"
+    workflow: "code-review"
+    mode: VERIFY
+    started: "2026-03-27"
+    completed: "2026-03-27"
+    status: SUCCESS
+    duration_estimate: "10 minutes"
+    summary: "Code review adversarial de story 1.3. Veredicto: CHANGES_REQUESTED. 6 issues encontrados (2 HIGH, 2 MEDIUM, 2 LOW). Implementación core correcta, tests de updateSession ausentes y T9 git push no completado."
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, DS — resolver issues HIGH: añadir tests de updateSession (AC 8) y completar push+PR (T9)"
+
   - id: "ds-20260327-004"
     agent: Homer
     trigger: "/ds"
