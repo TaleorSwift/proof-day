@@ -1,4 +1,54 @@
 workflows:
+  - id: "cr-20260328-005"
+    timestamp: "2026-03-28T14:00:00"
+    agent: Homer
+    trigger: "/cr"
+    workflow: "code-review"
+    mode: VERIFY
+    result: STARTED
+    story: "2.1 — Create Community (PR #4 — feat/2-1-create-community)"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/4"
+
+  - id: "ds-20260328-004"
+    timestamp: "2026-03-28T13:00:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: REFINE
+    result: STARTED
+    story: "2.2 — Invitation Links: Generate & Join (CR#5 fixes)"
+    branch: "feat/2-2-invitation-links"
+
+  - id: "cr-20260328-004"
+    timestamp: "2026-03-28T12:00:00"
+    completed: "2026-03-28T12:45:00"
+    agent: Homer
+    trigger: "/cr"
+    workflow: "code-review"
+    mode: VERIFY
+    result: SUCCESS
+    duration_estimate: "45 minutes"
+    story: "2.2 — Invitation Links: Generate & Join (PR#5 — ronda final tras CR#4 fixes)"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/5"
+    veredicto: "CHANGES_REQUESTED"
+    findings: "0 HIGH, 1 MEDIUM, 2 LOW = 3 total"
+    summary: |
+      CR #5 adversarial de story 2.2. Veredicto: CHANGES_REQUESTED.
+      9/9 findings de CR#4 verificados y resueltos en codigo — ronda mas limpia hasta ahora.
+      CR5-F1 (MEDIUM): Token invalidation silenciosa en page.tsx:129-133 — UPDATE de used_at
+        sin captura de error. Si RLS falla, join exitoso pero token reutilizable — AC-2 violado
+        en silencio. Contraste con use/route.ts que captura invalidateError correctamente.
+      CR5-F2 (LOW): Tailwind classes de tipografia/layout en InviteErrorState e
+        InviteAlreadyMemberState — text-xl, font-semibold, mb-3, p-8, etc. no reemplazados
+        por CSS variables. CR3-F6 solo corrigio colores, no layout/tipografia.
+      CR5-F3 (LOW): InvitationLinkRow declarada pero no aplicada para tipar data en
+        generateInvitationLink() — acceso a data.token sin tipado explicito.
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, /ds — fix CR5 findings (1 MEDIUM + 2 LOW) en feat/2-2-invitation-links"
+
   - id: "ds-20260328-003"
     timestamp: "2026-03-28T10:00:00"
     completed: "2026-03-28T10:45:00"

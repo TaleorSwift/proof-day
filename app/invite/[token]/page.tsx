@@ -7,27 +7,33 @@ interface Props {
 }
 
 // Component: token inválido, ya usado o inexistente
-// CR3-F6: CSS variables instead of Tailwind hardcoded colors
+// CR3-F6 + CR5-F2: CSS variables for colors, typography, and spacing
 function InviteErrorState({ message }: { message: string }) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-6">
+    <div className="flex min-h-screen flex-col items-center justify-center" style={{ padding: 'var(--space-6)' }}>
       <div
-        className="w-full max-w-md rounded-lg p-8 text-center"
+        className="w-full max-w-md text-center"
         style={{
           border: '1px solid var(--color-border)',
           backgroundColor: 'var(--color-weak-bg)',
+          borderRadius: 'var(--radius-md)',
+          padding: 'var(--space-8)',
         }}
       >
         <h1
-          className="mb-3 text-xl font-semibold"
-          style={{ color: 'var(--color-weak-text)' }}
+          style={{
+            color: 'var(--color-weak-text)',
+            fontSize: 'var(--text-xl)',
+            fontWeight: 'var(--font-semibold)',
+            marginBottom: 'var(--space-3)',
+          }}
         >
           Link inválido
         </h1>
-        <p className="mb-6" style={{ color: 'var(--color-weak-text)' }}>
+        <p style={{ color: 'var(--color-weak-text)', marginBottom: 'var(--space-6)' }}>
           {message}
         </p>
-        <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+        <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)' }}>
           Solicita un nuevo link de invitación al administrador de la comunidad.
         </p>
       </div>
@@ -36,32 +42,42 @@ function InviteErrorState({ message }: { message: string }) {
 }
 
 // Component: usuario ya es miembro de la comunidad (AC 6)
-// CR3-F6: CSS variables instead of Tailwind hardcoded colors
+// CR3-F6 + CR5-F2: CSS variables for colors, typography, and spacing
 function InviteAlreadyMemberState() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-6">
+    <div className="flex min-h-screen flex-col items-center justify-center" style={{ padding: 'var(--space-6)' }}>
       <div
-        className="w-full max-w-md rounded-lg p-8 text-center"
+        className="w-full max-w-md text-center"
         style={{
           border: '1px solid var(--color-border)',
           backgroundColor: 'var(--color-promising-bg)',
+          borderRadius: 'var(--radius-md)',
+          padding: 'var(--space-8)',
         }}
       >
         <h1
-          className="mb-3 text-xl font-semibold"
-          style={{ color: 'var(--color-promising-text)' }}
+          style={{
+            color: 'var(--color-promising-text)',
+            fontSize: 'var(--text-xl)',
+            fontWeight: 'var(--font-semibold)',
+            marginBottom: 'var(--space-3)',
+          }}
         >
           Ya eres miembro de esta comunidad
         </h1>
-        <p className="mb-6" style={{ color: 'var(--color-text-secondary)' }}>
+        <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-6)' }}>
           Ya formas parte de esta comunidad. Puedes acceder directamente.
         </p>
         <Link
           href="/communities"
-          className="inline-block rounded-md px-5 py-2.5 text-sm font-medium"
           style={{
+            display: 'inline-block',
             backgroundColor: 'var(--color-primary)',
             color: 'var(--color-surface)',
+            borderRadius: 'var(--radius-md)',
+            padding: 'var(--space-2) var(--space-5)',
+            fontSize: 'var(--text-sm)',
+            fontWeight: 'var(--font-medium)',
           }}
         >
           Ver mis comunidades
@@ -126,11 +142,22 @@ export default async function InvitePage({ params }: Props) {
     return <InviteErrorState message="Error al procesar el link. Por favor, inténtalo de nuevo." />
   }
 
-  // Invalidar token (AC 2) — policy use_invitation permite UPDATE a usuario autenticado
-  await supabase
+  // Invalidar token (AC 2) — CR5-F1: capturar error de invalidación para evitar
+  // que un fallo silencioso de RLS deje el token reutilizable tras join exitoso.
+  const { error: invalidateError } = await supabase
     .from('invitation_links')
     .update({ used_at: new Date().toISOString(), used_by: user.id })
     .eq('id', invitation.id)
+
+  if (invalidateError) {
+    // Token no invalidado — revertir membresía para mantener consistencia (AC 2)
+    await supabase
+      .from('community_members')
+      .delete()
+      .eq('community_id', invitation.community_id)
+      .eq('user_id', user.id)
+    return <InviteErrorState message="Error al procesar el link. Por favor, inténtalo de nuevo." />
+  }
 
   // Join exitoso → redirect a comunidades (AC 5)
   redirect('/communities')

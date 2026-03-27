@@ -575,6 +575,11 @@ claude-sonnet-4-6 (Homer, DS fork, 2026-03-27)
 - `_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml`
 
+**CR#5 fixes (ds-20260328-004):**
+- CR5-F1 (MEDIUM): `app/invite/[token]/page.tsx` — captura `invalidateError` del UPDATE `used_at`. Si falla, revierte la membresía con DELETE y retorna `InviteErrorState`. AC-2 garantizado: join nunca exitoso con token sin invalidar.
+- CR5-F2 (LOW): `InviteErrorState` e `InviteAlreadyMemberState` en `page.tsx` — reemplazadas todas las Tailwind classes de tipografía, spacing y border-radius (`text-xl`, `font-semibold`, `mb-3`, `p-8`, `text-sm`, `rounded-md`, `px-5`, `py-2.5`, `font-medium`) por CSS variables del design-tokens (`var(--text-xl)`, `var(--font-semibold)`, `var(--space-3)`, `var(--space-8)`, `var(--radius-md)`, etc.).
+- CR5-F3 (LOW): `lib/api/invitations.ts` — `data` en `generateInvitationLink()` tipado explícitamente como `InvitationLinkRow` (ya importado). Acceso a `data.token` con tipo completo.
+
 ---
 
 ## Senior Developer Review CR #3 (AI)
@@ -716,6 +721,52 @@ Usuario no autenticado con communityId inválido recibe 400 en lugar de 401. Sem
 - [x] [AI-Review][LOW] CR4-F4: Auth check movido antes de Zod [app/api/communities/[communityId]/invitations/route.ts]
 - [x] [AI-Review][LOW] CR4-F5: 5 tests error path añadidos para generateInvitationLink() [tests/unit/invitations/invitations.test.ts]
 
+## Senior Developer Review CR #5 (AI)
+
+**Reviewer:** Homer CR — claude-sonnet-4-6 (cr-20260328-004)
+**Fecha:** 2026-03-28
+**Veredicto:** CHANGES_REQUESTED
+
+**Tests:** 52/52 pasando. ESLint: limpio. TypeScript: limpio. Git discrepancias: 0.
+
+**Verificacion CR#4 findings (9/9):** Todos resueltos correctamente en codigo — CR4-F1 (token en URL), CR3-F1 (policy use_invitation), CR3-F2 (GRANT EXECUTE), CR3-F3 (tests middleware.test.ts), CR3-F4 (branch T14), CR4-F2 (InvitationLinkRow), CR4-F3 (enlace settings), CR3-F5 (count T12), CR3-F6 (colores CSS variables), CR4-F4 (auth antes Zod), CR4-F5 (tests error path).
+
+### Nuevos Findings CR #5
+
+**[CR5-F1][MEDIUM] Token invalidation silenciosa en page.tsx — AC-2 en riesgo**
+
+`app/invite/[token]/page.tsx:129-133`. El UPDATE de `used_at` no captura ni maneja el error. Si la policy `use_invitation` no esta activa en produccion o el RLS falla, el join ocurre exitosamente pero el token no se invalida — redirect a `/communities` sin avisar al usuario. Token reutilizable silenciosamente. AC-2 violado en modo fallo.
+
+Contraste: `app/api/invitations/[token]/use/route.ts:62-70` captura `invalidateError` y retorna 500 correctamente.
+
+Fix: capturar `{ error: invalidateError }` del UPDATE y retornar `<InviteErrorState>` si falla.
+
+**[CR5-F2][LOW] Clases Tailwind de tipografia y layout en page.tsx — design tokens incompletos**
+
+`app/invite/[token]/page.tsx` usa `text-xl`, `font-semibold`, `font-medium`, `text-sm`, `mb-3`, `mb-6`, `p-6`, `p-8`, `max-w-md`, `rounded-lg` en `InviteErrorState` e `InviteAlreadyMemberState`. CR3-F6 solo corrigio colores. Los tokens de tipografia (`var(--text-xl)`, `var(--font-semibold)`), espaciado (`var(--space-3)`, `var(--space-6)`) y radio (`var(--radius-lg)`) estan definidos en design-tokens.md. `settings/page.tsx` e `InvitationSection.tsx` usan CSS variables correctamente — `page.tsx` no es consistente.
+
+**[CR5-F3][LOW] InvitationLinkRow declarada pero no usada para tipar respuestas**
+
+`lib/api/invitations.ts:24`: `const { data } = await res.json()` — tipo `any`. `data.token` accedido sin tipado. `InvitationLinkRow` exportada pero ninguna funcion la aplica para tipar la respuesta del API. Type safety incompleta — CR4-F2 declaro el tipo pero no lo aplico donde se usa.
+
+### Review Follow-ups (AI) — CR #5
+
+- [ ] [AI-Review][MEDIUM] CR5-F1: Capturar error de UPDATE used_at en page.tsx — retornar InviteErrorState si invalidateError [app/invite/[token]/page.tsx:129-133]
+- [ ] [AI-Review][LOW] CR5-F2: Reemplazar clases Tailwind de tipografia/layout en InviteErrorState e InviteAlreadyMemberState por CSS variables [app/invite/[token]/page.tsx]
+- [ ] [AI-Review][LOW] CR5-F3: Tipar data en generateInvitationLink() con InvitationLinkRow (o tipo inline) para eliminar acceso any [lib/api/invitations.ts:24]
+
+### Aspectos Positivos — CR #5
+
+- 9/9 findings de CR#4 resueltos correctamente en codigo
+- RLS arquitectura completa y correcta: admin_manage_invitations + use_invitation + GRANT EXECUTE + SECURITY DEFINER
+- Sin imports directos de Supabase fuera de lib/supabase/ — ESLint enforcea
+- Sin getSession() en toda la codebase
+- Token UUID nunca en URLs — solo en parametros SQL
+- auth/callback valida next param con startsWith('/') — sin open redirect
+- Tests isPublicPath en middleware.test.ts (T7 cumplido) + invitations.test.ts
+- 52/52 tests pasando, TypeScript limpio, ESLint limpio
+- Ronda mas limpia hasta ahora — 0 HIGH, 1 MEDIUM, 2 LOW
+
 ## Change Log
 
 | Fecha | Tipo | Descripción |
@@ -728,3 +779,4 @@ Usuario no autenticado con communityId inválido recibe 400 en lugar de 401. Sem
 | 2026-03-27 | CR | Code review CR#4 — CHANGES_REQUESTED — 3 HIGH, 4 MEDIUM, 4 LOW — findings CR#3 sin resolver |
 | 2026-03-27 | DS REFINE | CR#3 fixes (F1+F2) — GRANT EXECUTE + policy use_invitation en migración — 41/41 tests pasando |
 | 2026-03-28 | DS REFINE | CR#4 fixes — 9/9 findings resueltos — 52/52 tests pasando |
+| 2026-03-28 | CR | Code review CR#5 — CHANGES_REQUESTED — 0 HIGH, 1 MEDIUM, 2 LOW |

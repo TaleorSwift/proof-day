@@ -21,6 +21,6 @@ export async function generateInvitationLink(communityId: string): Promise<strin
     throw new Error(body.error ?? 'Error al generar el link de invitación')
   }
 
-  const { data } = await res.json()
+  const { data }: { data: InvitationLinkRow } = await res.json()
   return `${window.location.origin}/invite/${data.token}`
 }
