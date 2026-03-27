@@ -27,4 +27,4 @@ Permite a usuarios autenticados crear y listar comunidades privadas. El admin pu
 - `supabase/migrations/001_create_invitation_links.sql` — tabla + RLS + RPC SECURITY DEFINER
 
 ## Última actualización
-Story 2.2 — 2026-03-28 (CR#6 fixes)
+Story 2.2 — 2026-03-28 (CR#8 fixes)
