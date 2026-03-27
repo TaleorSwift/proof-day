@@ -297,21 +297,21 @@ claude-sonnet-4-6
 - `_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md` — tasks completados + Dev Agent Record actualizado + CR fixes
 - `_bmad-output/execution-log.yaml` — entrada ds-20260327-006
 
-## Senior Developer Review (AI)
+## Senior Developer Review (AI) — CR #1
 
 **Reviewer:** Homer (cr-20260327-005) — 2026-03-27
 **Veredicto:** CHANGES_REQUESTED
 
-### Review Follow-ups (AI)
+### Review Follow-ups (AI) — CR #1
 
 - [x] [AI-Review][HIGH] AC 8 NO CUBIERTO: RESUELTO — 6 tests de `updateSession` añadidos a `tests/unit/middleware/middleware.test.ts`. Contrato { response, user } verificado. Total: 15 tests middleware + 2 smoke = 17 passing.
-- [ ] [AI-Review][HIGH] T9 RECLAMACIÓN FALSA: `git push` y PR pendientes — sin remote configurado. Se resolverá en el commit de estos fixes (ds-20260327-006).
+- [x] [AI-Review][HIGH] T9 RECLAMACIÓN FALSA: `git push` y PR pendientes — sin remote configurado. RESUELTO: rama pusheada a origin.
 - [x] [AI-Review][MEDIUM] AC 5 IMPRECISO: RESUELTO — AC 5 actualizado: "Sesión verificada con `getClaims()` — NUNCA `getSession()`". Refleja la implementación real.
 - [x] [AI-Review][MEDIUM] FICHERO HUÉRFANO: RESUELTO — `app/test-tmp/` eliminado con `rm -rf`.
 - [x] [AI-Review][LOW] GAP ESLint: RESUELTO — añadida regla `no-restricted-imports` en `eslint.config.mjs` para `@supabase/supabase-js` y `@supabase/ssr` en app/, components/, lib/api/.
 - [x] [AI-Review][LOW] AC 4 PARCIAL: RESUELTO — `images/` añadido al patrón de exclusión del matcher en `middleware.ts`.
 
-### Findings Detail
+### Findings Detail — CR #1
 
 | Ref | Severidad | Descripción | Archivo:línea |
 |-----|-----------|-------------|---------------|
@@ -322,13 +322,44 @@ claude-sonnet-4-6
 | F5 | LOW | ESLint no bloquea imports directos de `@supabase/supabase-js` | `eslint.config.mjs` |
 | F6 | LOW | AC 4: `/images/` directorio no excluido del matcher | `middleware.ts:42` |
 
-### Aspectos Positivos
+---
 
-- Implementación de `middleware.ts` correcta y completa: PUBLIC_PATHS, isPublicPath exportada, redirect a /login
-- `updateSession` correctamente refactorizada para devolver `{ response, user }` — separación de responsabilidades correcta
-- `getClaims()` en lugar de `getSession()` — decisión técnicamente sólida para `@supabase/ssr@0.9.0`
-- 9 tests unitarios de `isPublicPath` con cobertura de edge cases (incluyendo `/loginextra` vs `/login`)
-- 4 tests E2E cubriendo `/communities`, `/login`, `/` y `/profile`
-- ESLint y TypeScript sin errores en todos los archivos revisados
-- Documentación en `auth.md` actualizada y precisa
-- Matcher regex correcto: excluye `_next/static`, `_next/image`, favicon, sitemap, fonts
+## Senior Developer Review (AI) — CR #2
+
+**Reviewer:** Homer (cr-20260327-007) — 2026-03-27
+**Veredicto:** CHANGES_REQUESTED
+
+### Review Follow-ups (AI) — CR #2
+
+- [ ] [AI-Review][HIGH] PROXY.TS CONFLICTIVO: `lib/supabase/proxy.ts` contiene otra `updateSession()` que redirige a `/auth/login` (ruta inexistente) y devuelve `NextResponse` sin el contrato `{ response, user }`. Sin ESLint rule ni test que prevenga su uso accidental. Acción: eliminar `proxy.ts` o añadir ESLint rule `no-restricted-imports` para `@/lib/supabase/proxy`. `lib/supabase/proxy.ts:5-76`
+- [ ] [AI-Review][MEDIUM] TESTS DE UPDATEESSION VERIFICAN EL MOCK: La Suite 2 de `updateSession` usa `vi.mock("@/lib/supabase/middleware", ...)` globalmente — todas las llamadas van al mock, no a la implementación real. AC 8 queda cubierto solo en forma de contrato de tipos. `tests/unit/middleware/middleware.test.ts:42-47`
+- [ ] [AI-Review][MEDIUM] ESLINT SCOPE INCOMPLETO: `no-restricted-imports` y `no-restricted-syntax` no cubren `middleware.ts` raíz ni `tests/**`. Un import directo de `@supabase/ssr` en `middleware.ts` raíz no es bloqueado. `eslint.config.mjs:35-41`
+- [ ] [AI-Review][MEDIUM] PR NO CONFIRMADO: La rama está en origin pero no hay evidencia de PR abierto contra `develop`. T9 marks como completo pero PR es prerequisito del flujo de merge. Verificar/crear PR en GitHub.
+- [ ] [AI-Review][LOW] TESTS DUPLICADOS: `"modulo exporta updateSession como funcion"` y `"modulo real de updateSession — firma correcta"` verifican lo mismo dos veces. `tests/unit/middleware/middleware.test.ts:138-159`
+- [ ] [AI-Review][LOW] ESLINT NO CUBRE GETESSION EN LIB/SUPABASE/: La regla `no-restricted-syntax` que bloquea `getSession()` está en scope restringido — no aplica a `lib/supabase/proxy.ts`. `eslint.config.mjs:63-78`
+- [ ] [AI-Review][LOW] SUBRUTAS DE /LOGIN/ INADVERTIDAMENTE PUBLICAS: `isPublicPath('/login/anything')` retorna `true`. Sin impacto ahora, pero si se añade `/login/[token]` como ruta privada fallará. `middleware.ts:7-11`
+- [ ] [AI-Review][LOW] COMPLETION NOTE T9 DESACTUALIZADA: Dev Agent Record sigue diciendo "Push + PR pendientes (sin remote configurado)" — texto del CR #1 no actualizado tras resolver F2. Story file, Dev Agent Record.
+
+### Findings Detail — CR #2
+
+| Ref | Severidad | Descripción | Archivo:línea |
+|-----|-----------|-------------|---------------|
+| F1 | HIGH | `proxy.ts` contiene `updateSession()` con contrato roto y redirect a `/auth/login` | `lib/supabase/proxy.ts:5-76` |
+| F2 | MEDIUM | Tests de `updateSession` verifican el mock, no la implementación real | `tests/unit/middleware/middleware.test.ts:42-47` |
+| F3 | MEDIUM | ESLint `no-restricted-imports/syntax` no cubre `middleware.ts` raíz ni `tests/` | `eslint.config.mjs:35-41` |
+| F4 | MEDIUM | PR no confirmado contra `develop` — T9 marcado completo pero PR es prerequisito | Story T9 |
+| F5 | LOW | Tests de `updateSession` duplicados y triviales | `tests/unit/middleware/middleware.test.ts:138-159` |
+| F6 | LOW | `no-restricted-syntax` no cubre `lib/supabase/proxy.ts` | `eslint.config.mjs:63-78` |
+| F7 | LOW | `/login/anything` es involuntariamente pública (riesgo latente) | `middleware.ts:7-11` |
+| F8 | LOW | Completion Note T9 no actualizada tras resolución F2 del CR #1 | Story Dev Agent Record |
+
+### Aspectos Positivos — CR #2
+
+- Todos los findings HIGH del CR #1 resueltos (AC 8 con 6 tests, push a origin completado)
+- Los 2 findings MEDIUM del CR #1 resueltos (AC 5 corregido, test-tmp/ eliminado)
+- Los 2 findings LOW del CR #1 resueltos (ESLint no-restricted-imports añadido, images/ en matcher)
+- 17 tests pasando (15 middleware + 2 smoke) — todos en verde
+- ESLint sin errores en todos los archivos revisados
+- TypeScript sin errores (tsc --noEmit limpio)
+- `lib/supabase/middleware.ts` correcto: getClaims(), contrato { response, user }, sin lógica de redirect
+- Documentación `auth.md` completa y actualizada
