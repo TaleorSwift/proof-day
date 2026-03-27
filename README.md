@@ -45,7 +45,27 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGc...              # solo en servidor
 
 # Resend — obtener en https://resend.com/api-keys
 RESEND_API_KEY=re_xxx
+
+# URL pública de la app — para magic links
+NEXT_PUBLIC_SITE_URL=http://localhost:3000        # en producción: tu dominio real
 ```
+
+### 4. Configurar Resend SMTP en Supabase Auth (magic links)
+
+Supabase Auth gestiona el envío de magic links. Para usar Resend como proveedor SMTP:
+
+1. Ir a Supabase Dashboard → **Authentication → SMTP Settings**
+2. Activar "Enable custom SMTP"
+3. Configurar:
+   - **Host**: `smtp.resend.com`
+   - **Port**: `465` (SSL)
+   - **Username**: `resend`
+   - **Password**: tu `RESEND_API_KEY`
+   - **Sender name**: `Proof Day`
+   - **Sender email**: `noreply@tudominio.com`
+4. Guardar y verificar el dominio en Resend si es necesario
+
+> No requiere código adicional en la app — Supabase gestiona el envío completamente.
 
 ### 3. Iniciar desarrollo
 

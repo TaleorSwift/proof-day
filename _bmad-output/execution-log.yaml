@@ -1,4 +1,27 @@
 workflows:
+  - id: "ds-20260327-003"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: GENERATE
+    started: "2026-03-27"
+    status: STARTED
+    story: "1.2 — Magic Link Authentication"
+    summary: "Implementando story 1.2 desde cero. Feature branch: feat/1-2-magic-link-authentication. 10 tasks: Zod schema, /login page, LoginForm, Server Action, /auth/callback, Resend SMTP docs, tests unitarios, test E2E, Storybook stories, PR."
+
+  - id: "cs-20260327-002"
+    agent: Ned
+    trigger: "/cs"
+    workflow: "create-story"
+    mode: GENERATE
+    started: "2026-03-27"
+    completed: "2026-03-27"
+    status: SUCCESS
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/1-2-magic-link-authentication.md"
+    errors: []
+    notes: "Story 1.2 creada — Magic Link Authentication. 10 tasks, 13 ACs, 5 rejection criteria. Learnings de Story 1.1 incorporados. Status: ready-for-dev."
+
   - id: "ds-20260327-002"
     agent: Homer
     trigger: "DS"
