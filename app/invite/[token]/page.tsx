@@ -13,8 +13,11 @@ function InviteErrorState({ message }: { message: string }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center" style={{ padding: 'var(--space-6)' }}>
       <div
-        className="w-full max-w-md text-center"
+        className="text-center"
         style={{
+          /* max-w-md (28rem) — no hay token CSS equivalente en design-tokens.md (story 2.2) */
+          width: '100%',
+          maxWidth: '28rem',
           border: '1px solid var(--color-border)',
           backgroundColor: 'var(--color-weak-bg)',
           borderRadius: 'var(--radius-md)',
@@ -48,8 +51,11 @@ function InviteAlreadyMemberState() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center" style={{ padding: 'var(--space-6)' }}>
       <div
-        className="w-full max-w-md text-center"
+        className="text-center"
         style={{
+          /* max-w-md (28rem) — no hay token CSS equivalente en design-tokens.md (story 2.2) */
+          width: '100%',
+          maxWidth: '28rem',
           border: '1px solid var(--color-border)',
           backgroundColor: 'var(--color-promising-bg)',
           borderRadius: 'var(--radius-md)',
@@ -107,7 +113,7 @@ export default async function InvitePage({ params }: Props) {
   // InvitationTokenResult importado de lib/types/invitations.ts (CR7-F3)
   const { data: invitation, error: rpcError } = await supabase
     .rpc('validate_invitation_token', { p_token: token })
-    .maybeSingle() as { data: InvitationTokenResult | null; error: unknown }
+    .maybeSingle<InvitationTokenResult>()
 
   if (rpcError || !invitation) {
     return <InviteErrorState message="Este link ya no es válido" />

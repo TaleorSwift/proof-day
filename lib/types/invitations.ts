@@ -21,11 +21,3 @@ export interface InvitationLinkRow {
   used_by: string | null
   created_at: string
 }
-
-export interface InvitationLinkWithCommunity extends InvitationLinkRow {
-  community: {
-    id: string
-    name: string
-    slug: string
-  }
-}

@@ -42,6 +42,7 @@ export default async function CommunitySettingsPage({ params }: Props) {
         padding: 'var(--space-8)',
       }}
     >
+      {/* maxWidth: 640px — no hay token CSS equivalente en design-tokens.md (story 2.2) */}
       <div style={{ maxWidth: '640px', margin: '0 auto' }}>
         {/* Header */}
         <div style={{ marginBottom: 'var(--space-8)' }}>
