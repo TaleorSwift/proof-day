@@ -1,4 +1,75 @@
 workflows:
+  - id: "ds-20260327-004"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: REFINE
+    started: "2026-03-27"
+    status: STARTED
+    story: "1.3 — Auth Middleware & Route Protection"
+
+  - id: "cs-20260327-003"
+    agent: Ned
+    trigger: "/cs"
+    workflow: "create-story"
+    mode: GENERATE
+    started: "2026-03-27"
+    completed: "2026-03-27"
+    status: SUCCESS
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md"
+    errors: []
+    notes: "Story 1.3 creada — Auth Middleware & Route Protection. 9 tasks, 10 ACs. Última story del Epic 1. Learnings 1.1+1.2 incorporados. Status: ready-for-dev."
+
+  - id: "ds-20260327-003"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: GENERATE
+    started: "2026-03-27"
+    completed: "2026-03-27"
+    status: SUCCESS
+    story: "1.2 — Magic Link Authentication"
+    commit: "92dfe0c feat(auth): add magic link login page and callback"
+    branch: "feat/1-2-magic-link-authentication"
+    tests: "8 unit tests passing (Vitest) — 0 regressions. 4 E2E tests created (Playwright, require server)."
+    artifacts_created:
+      - "lib/validations/auth.ts"
+      - "app/(auth)/layout.tsx"
+      - "app/(auth)/login/page.tsx"
+      - "app/(auth)/login/actions.ts"
+      - "components/auth/LoginForm.tsx"
+      - "app/auth/callback/route.ts"
+      - "tests/unit/auth/login-schema.test.ts"
+      - "tests/e2e/auth/login.spec.ts"
+      - "stories/auth/LoginForm.stories.tsx"
+      - "docs/project/modules/auth.md"
+    artifacts_modified:
+      - ".env.example"
+      - "README.md"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/implementation-artifacts/stories/1-2-magic-link-authentication.md"
+    errors: []
+    notes: |
+      Story 1.2 completada. 10 tasks, 13 ACs — todos cubiertos.
+      Zod, react-hook-form y @hookform/resolvers ya estaban instalados.
+      ESLint: sin errores. TypeScript: sin errores.
+      No hay remote git configurado — push y PR pendientes cuando se conecte origin.
+      Siguiente: Story 1.3 (Auth Middleware & Route Protection) — /cs para crear, luego /ds.
+
+  - id: "cs-20260327-002"
+    agent: Ned
+    trigger: "/cs"
+    workflow: "create-story"
+    mode: GENERATE
+    started: "2026-03-27"
+    completed: "2026-03-27"
+    status: SUCCESS
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/1-2-magic-link-authentication.md"
+    errors: []
+    notes: "Story 1.2 creada — Magic Link Authentication. 10 tasks, 13 ACs, 5 rejection criteria. Learnings de Story 1.1 incorporados. Status: ready-for-dev."
+
   - id: "ds-20260327-002"
     agent: Homer
     trigger: "DS"
