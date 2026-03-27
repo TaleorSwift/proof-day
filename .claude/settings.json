@@ -1,0 +1,47 @@
+{
+  "model": "opusplan",
+  "permissions": {
+    "allow": [
+      "Read", "Glob", "Grep",
+      "Bash(cat:*)", "Bash(ls:*)", "Bash(find:*)", "Bash(mkdir:*)",
+      "Bash(cp:*)", "Bash(mv:*)", "Bash(date:*)", "Bash(head:*)",
+      "Bash(tail:*)", "Bash(wc:*)", "Bash(grep:*)", "Bash(git:*)",
+      "Write", "Edit", "MultiEdit"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": ".claude/hooks/elp-safety-net.sh" },
+          { "type": "command", "command": ".claude/hooks/ralph-loop.sh" }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": ".claude/hooks/protect-core.sh" },
+          { "type": "command", "command": ".claude/hooks/restrict-readonly-agents.sh" }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": ".claude/hooks/preflight-deploy.sh" }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          { "type": "command", "command": ".claude/hooks/notify.sh" }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "0"
+  }
+}

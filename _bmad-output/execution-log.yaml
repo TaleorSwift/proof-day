@@ -1,0 +1,97 @@
+workflows:
+  - id: "ds-20260327-001"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: GENERATE
+    started: "2026-03-27"
+    status: STARTED
+    story: "1.1 — Project Setup & Base Infrastructure"
+    artifacts: []
+    errors: []
+    notes: "Iniciando implementacion Story 1.1. GENERATE mode — proyecto Next.js no inicializado."
+
+  - id: "cs-20260327-001"
+    agent: Ned
+    trigger: "/cs"
+    workflow: "create-story"
+    mode: GENERATE
+    started: "2026-03-27"
+    completed: "2026-03-27"
+    status: SUCCESS
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/1-1-project-setup-base-infrastructure.md"
+    errors: []
+    notes: "Story 1.1 creada — Project Setup & Base Infrastructure. 14 tasks, 20 ACs. Status: ready-for-dev. Epic-1 actualizado a in-progress."
+
+  - id: "sp-20260327-001"
+    agent: Ned
+    trigger: "/sp"
+    workflow: "sprint-planning"
+    mode: GENERATE
+    started: "2026-03-27"
+    completed: "2026-03-27"
+    status: SUCCESS
+    artifacts:
+      - "_bmad-output/planning-artifacts/epic-1-infraestructura-auth.md"
+      - "_bmad-output/planning-artifacts/epic-2-comunidades.md"
+      - "_bmad-output/planning-artifacts/epic-3-proyectos.md"
+      - "_bmad-output/planning-artifacts/epic-4-feedback.md"
+      - "_bmad-output/planning-artifacts/epic-5-proof-score-decision.md"
+      - "_bmad-output/planning-artifacts/epic-6-perfiles-gamificacion.md"
+      - "_bmad-output/planning-artifacts/epic-7-landing-page.md"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+    errors: []
+    notes: "Sprint Planning completado. 7 épicas, 17 stories derivadas del PRD (31 FRs). Epic files creados desde cero. sprint-status.yaml generado. Todos los items en backlog — listos para CS."
+
+  - id: "cu-20260327-001"
+    agent: Marge
+    trigger: "/cu"
+    workflow: "create-ux-design"
+    mode: REFINE
+    started: "2026-03-27"
+    completed: "2026-03-27"
+    status: SUCCESS
+    artifacts:
+      - "_bmad-output/planning-artifacts/ux-design-specification.md"
+      - "docs/project/design-tokens.md"
+    errors: []
+    notes: "UX Design completo. 14 pasos ejecutados (3 skipped: step-04 emotional, step-05 inspiration, step-09 design-directions — pre-existing design rules REFINE mode). Sistema visual extraído del prototipo Lovable. Design tokens completos. 7 custom components definidos. Journey flows con Mermaid. Responsive desktop-first. Accessibility best-effort WCAG AA."
+
+  - id: "ca-20260327-001"
+    agent: Frink
+    trigger: "/ca"
+    workflow: "create-architecture"
+    mode: GENERATE
+    started: "2026-03-27"
+    completed: "2026-03-27"
+    status: SUCCESS
+    artifacts:
+      - "_bmad-output/planning-artifacts/architecture.md"
+    errors: []
+    notes: "Arquitectura completa generada. 8 pasos ejecutados. Stack: Next.js 15 + Supabase + Vercel + Resend. Patrones enforceables via ESLint + husky + Vitest. Proof Score ADR documentado. 31/31 FRs cubiertos."
+
+  - id: "vp-20260327-001"
+    agent: Lisa
+    trigger: "/vp"
+    workflow: "validate-prd"
+    mode: VERIFY
+    started: "2026-03-27"
+    completed: "2026-03-27"
+    status: SUCCESS
+    artifacts:
+      - "_bmad-output/planning-artifacts/prd-validation-report.md"
+    errors: []
+    notes: "Validación completada. 12 checks ejecutados. Overall: PASS. Holistic Quality: 4/5. 0 critical issues, 1 contextual warning (NFR leakage aceptado). PRD listo para arquitectura."
+
+  - id: "cp-20260327-001"
+    agent: Lisa
+    trigger: "/cp"
+    workflow: "create-prd"
+    mode: GENERATE
+    started: "2026-03-27"
+    status: SUCCESS
+    artifacts:
+      - "_bmad-output/planning-artifacts/prd.md"
+    errors: []
+    notes: "PRD generado desde cero. Artefactos de entrada: Briefing, EARS, HUs, Gherkin."
