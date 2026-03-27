@@ -1,13 +1,41 @@
 workflows:
   - id: "ds-20260328-007"
     timestamp: "2026-03-28T23:58:00"
+    completed: "2026-03-29T00:33:00"
     agent: Homer
     trigger: "/ds"
     workflow: "dev-story"
     mode: REFINE
-    result: STARTED
+    result: SUCCESS
+    duration_estimate: "35 minutes"
     story: "2.2 — Invitation Links (fix CR#6 findings)"
     branch: "feat/2-2-invitation-links"
+    commit: "aef83e4"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/5"
+    summary: |
+      Fix CR#6 findings (5/5) para story 2.2 Invitation Links.
+      Tests: 52/52 pasando. TypeScript limpio. ESLint limpio.
+      CR6-F1 (MEDIUM): captura error del rollback DELETE en invite/page.tsx — estado inconsistente
+        loguado si ambas ops fallan (token invalidation + rollback). Token no queda reutilizable.
+      CR6-F2 (MEDIUM): eliminada API Route huérfana app/api/invitations/[token]/use/route.ts —
+        sin callers desde CR4-F1. Directorios vacíos eliminados.
+      CR6-F3 (LOW): resuelta al eliminar route.ts — inconsistencia invitations?.[0] vs .maybeSingle()
+        ya no existe. page.tsx usa .maybeSingle() de forma consistente.
+      CR6-F4 (LOW): eliminado tipo InvitationLink camelCase de lib/types/invitations.ts y su
+        re-export en lib/api/invitations.ts. Sin consumers reales, campos camelCase incompatibles
+        con respuesta Supabase snake_case.
+      CR6-F5 (LOW): actualizado docs/project/modules/communities.md — referencia CR#6, eliminada
+        mención a route huérfana, añadida regla de comportamiento CR6-F1 rollback.
+    artifacts_modified:
+      - "app/invite/[token]/page.tsx"
+      - "lib/types/invitations.ts"
+      - "lib/api/invitations.ts"
+      - "docs/project/modules/communities.md"
+      - "_bmad-output/execution-log.yaml"
+    artifacts_deleted:
+      - "app/api/invitations/[token]/use/route.ts"
+    errors: []
+    next_recommended: "CR #7 (Homer): code review final de story 2.2 post CR#6 fixes."
 
   - id: "cr-20260328-006"
     timestamp: "2026-03-28T23:30:00"
