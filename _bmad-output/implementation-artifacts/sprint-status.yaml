@@ -43,8 +43,8 @@ development_status:
   # ── EPIC 1: Infraestructura & Autenticación ──────────────────────
   epic-1: in-progress
   1-1-project-setup-base-infrastructure: done
-  1-2-magic-link-authentication: review
-  1-3-auth-middleware-route-protection: review
+  1-2-magic-link-authentication: done
+  1-3-auth-middleware-route-protection: backlog
   epic-1-retrospective: optional
 
   # ── EPIC 2: Comunidades ──────────────────────────────────────────
