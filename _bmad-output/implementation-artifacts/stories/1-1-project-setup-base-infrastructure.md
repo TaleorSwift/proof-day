@@ -89,7 +89,7 @@ para que todos los agentes puedan implementar stories sobre una base consistente
   - [x] NO modificar ningún fichero de `components/ui/` — son generados
 
 - [x] **T9: Tipos base** (AC: 17)
-  - [ ] Crear `types/index.ts` con interfaces TypeScript base:
+  - [x] Crear `types/index.ts` con interfaces TypeScript base:
     ```typescript
     export type ProjectStatus = 'draft' | 'live' | 'inactive'
     export type ProofScoreState = 'Promising' | 'Needs iteration' | 'Weak'

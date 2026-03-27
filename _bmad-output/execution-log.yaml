@@ -1,4 +1,13 @@
 workflows:
+  - id: "ds-20260327-002"
+    agent: Homer
+    trigger: "DS"
+    workflow: "dev-story"
+    mode: VERIFY
+    started: "2026-03-27"
+    status: STARTED
+    summary: "Verificando story 1.1 — Project Setup & Base Infrastructure. Corrigiendo inconsistencias: subtask T9 sin marcar y sprint-status desincronizado."
+
   - id: "ds-20260327-001"
     agent: Homer
     trigger: "/ds"
