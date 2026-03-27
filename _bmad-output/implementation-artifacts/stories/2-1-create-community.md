@@ -440,6 +440,16 @@ claude-sonnet-4-6 (Homer DS, 2026-03-27)
 - T10: 13 tests unitarios (≥6 requeridos) — todos pasando. `toSlug` exportada para ser importable en tests.
 - T11: `docs/project/modules/communities.md` creado.
 - T12: 37/37 tests pasando. TypeScript: sin errores. ESLint: sin errores.
+- CR-Fixes (DS REFINE 2026-03-27): 8/8 findings resueltos.
+  - ✅ Resolved review finding [MEDIUM]: F1 race condition 23505→409 en route.ts
+  - ✅ Resolved review finding [MEDIUM]: F2 CTA "Usar link de invitación" ahora es Button disabled
+  - ✅ Resolved review finding [MEDIUM]: F3 tipo Community alineado con snake_case de Supabase
+  - ✅ Resolved review finding [MEDIUM]: F4 images.remotePatterns añadido en next.config.ts
+  - ✅ Resolved review finding [LOW]: F5 trigger set_updated_at añadido en migración SQL
+  - ✅ Resolved review finding [LOW]: F6 validación slug no vacío antes del INSERT
+  - ✅ Resolved review finding [LOW]: F7 test description > 500 chars añadido (14 tests, ≥6 requeridos)
+  - ✅ Resolved review finding [LOW]: F8 try/catch en error path de lib/api/communities.ts
+  - Suite: 50/50 tests pasando. TypeScript: sin errores.
 
 ### File List
 
@@ -457,3 +467,57 @@ claude-sonnet-4-6 (Homer DS, 2026-03-27)
 - `docs/project/modules/communities.md` — CREADO
 - `_bmad-output/implementation-artifacts/stories/2-1-create-community.md` — MODIFICADO
 - `_bmad-output/implementation-artifacts/sprint-status.yaml` — MODIFICADO
+- `next.config.ts` — MODIFICADO (CR-Fix F4: images.remotePatterns)
+
+## Senior Developer Review (AI)
+
+**Reviewer:** Homer CR — claude-sonnet-4-6
+**Fecha:** 2026-03-27
+**Veredicto:** CHANGES_REQUESTED → **RESUELTO** (DS REFINE 2026-03-27)
+
+**Tests:** 37/37 pasando. TypeScript: sin errores. ESLint: sin errores. ACs core implementados.
+
+### Findings
+
+**[CR-F1][MEDIUM] Race condition en unicidad de slug — retorna 500 en vez de 409**
+`app/api/communities/route.ts:76-107`. El SELECT de unicidad y el INSERT no son atómicos. Si dos requests concurrentes pasan el check, la segunda falla con error UNIQUE de PostgreSQL (code 23505) y la route devuelve genérico 500 (`COMMUNITY_CREATE_ERROR`) en lugar de 409 (`COMMUNITY_NAME_TAKEN`). Solución: inspeccionar `insertError.code === '23505'` y retornar 409.
+
+**[CR-F2][MEDIUM] AC5 — segundo CTA "Usar link de invitación" no es elemento interactivo**
+`components/communities/EmptyCommunitiesState.tsx:29-37`. Es un `<p>` con texto estático sin href ni interactividad. El AC especifica "dos CTAs". Debe ser al menos un botón o link con estado disabled hasta que exista Story 2.2 (o mostrar instrucción más clara como "Pide un link a tu admin").
+
+**[CR-F3][MEDIUM] Tipo `Community` (camelCase) no coincide con el JSON snake_case de Supabase**
+`lib/types/communities.ts` — `imageUrl`, `createdBy`, `createdAt`, `updatedAt`. La API route devuelve la fila de Supabase directamente (snake_case: `image_url`, `created_by`, etc.). `lib/api/communities.ts` declara `Promise<Community>` pero recibe snake_case en runtime. TypeScript no lo detecta por ser `fetch` → `unknown`. Cualquier consumer que acceda a `community.imageUrl` obtendrá `undefined`. Solución: o se mapea en la API route antes de retornar, o el tipo usa snake_case, o ambos convergen.
+
+**[CR-F4][MEDIUM] `next/image` requiere `remotePatterns` para URLs externas — no configurado**
+`next.config.ts` no tiene `images.remotePatterns`. En producción, Next.js bloqueará cualquier URL de imagen externa con error 400. El AC6 ("imagen soporta URL externa") no funcionará en producción. Solución: añadir `images: { remotePatterns: [{ protocol: 'https', hostname: '**' }] }` o similar en `next.config.ts`.
+
+**[CR-F5][LOW] `updated_at` sin trigger de auto-actualización**
+`supabase/migrations/002_create_communities.sql:13`. El `DEFAULT now()` solo aplica en INSERT. Sin un trigger `BEFORE UPDATE`, futuros updates de la comunidad dejarán `updated_at` con la fecha de creación. Deuda técnica para stories de edición.
+
+**[CR-F6][LOW] `toSlug` puede retornar string vacío — no validado antes del INSERT**
+Si `name` es solo caracteres especiales (e.g., "!!!"), `toSlug` retorna `""`. La route no valida que el slug resultante sea no-vacío. El INSERT fallará con error genérico 500.
+
+**[CR-F7][LOW] Test de `description` max length (500 chars) ausente**
+`tests/unit/communities/createCommunity.test.ts` — cubre min length de nombre y descripción, y max length de nombre (60), pero no max length de descripción (500 chars). La restricción existe en el schema pero no está cubierta por test.
+
+**[CR-F8][LOW] Double JSON parse sin protección en `lib/api/communities.ts`**
+`lib/api/communities.ts:10,16`. Si la respuesta de error no es JSON válido, `res.json()` lanza una excepción que oculta el error original. Añadir try/catch en el bloque de error.
+
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][MEDIUM] F1: Inspeccionar `insertError.code === '23505'` en POST y retornar 409 [app/api/communities/route.ts:102-107]
+- [x] [AI-Review][MEDIUM] F2: Cambiar segundo CTA de `<p>` a elemento interactivo (button disabled o link con aviso) [components/communities/EmptyCommunitiesState.tsx:29-37]
+- [x] [AI-Review][MEDIUM] F3: Alinear tipo `Community` con snake_case de Supabase, o añadir mapeo en route.ts antes del return [lib/types/communities.ts + app/api/communities/route.ts]
+- [x] [AI-Review][MEDIUM] F4: Añadir `images.remotePatterns` en `next.config.ts` para URLs externas [next.config.ts]
+- [x] [AI-Review][LOW] F5: Añadir trigger `set_updated_at` en migración SQL para `communities` [supabase/migrations/]
+- [x] [AI-Review][LOW] F6: Validar slug no vacío en route.ts antes del INSERT [app/api/communities/route.ts:73-74]
+- [x] [AI-Review][LOW] F7: Añadir test para `description` > 500 chars [tests/unit/communities/createCommunity.test.ts]
+- [x] [AI-Review][LOW] F8: Proteger `res.json()` en error path con try/catch [lib/api/communities.ts]
+
+## Change Log
+
+| Fecha | Tipo | Descripción |
+|-------|------|-------------|
+| 2026-03-27 | DS | Story implementada — Homer (claude-sonnet-4-6) |
+| 2026-03-27 | CR | Code review — CHANGES_REQUESTED — 4 MEDIUM, 4 LOW |
+| 2026-03-27 | DS REFINE | CR fixes — 8/8 findings resueltos — 50/50 tests pasando |

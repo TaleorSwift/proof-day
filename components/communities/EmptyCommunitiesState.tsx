@@ -26,15 +26,9 @@ export function EmptyCommunitiesState() {
           <Link href="/communities/new">Crear comunidad</Link>
         </Button>
 
-        <p
-          className="text-sm flex items-center"
-          style={{ color: 'var(--color-text-secondary)' }}
-        >
-          ¿Tienes un link de invitación?{' '}
-          <span className="ml-1" style={{ color: 'var(--color-text-muted)' }}>
-            Pídelo a un admin de tu comunidad
-          </span>
-        </p>
+        <Button variant="outline" disabled aria-label="Usar link de invitación (próximamente)">
+          Usar link de invitación
+        </Button>
       </div>
     </div>
   )

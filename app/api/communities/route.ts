@@ -72,6 +72,14 @@ export async function POST(request: Request) {
   const { name, description, imageUrl } = result.data
   const slug = toSlug(name)
 
+  // Validar que el slug no esté vacío (p.ej. nombre con solo caracteres especiales)
+  if (!slug) {
+    return NextResponse.json(
+      { error: 'El nombre no produce un identificador válido. Usa letras o números.', code: 'INVALID_SLUG' },
+      { status: 400 }
+    )
+  }
+
   // Verificar unicidad del slug/nombre
   const { data: existing } = await supabase
     .from('communities')
@@ -100,6 +108,14 @@ export async function POST(request: Request) {
     .single()
 
   if (insertError || !community) {
+    // Race condition: si dos requests concurrentes pasan el check de unicidad,
+    // el segundo falla con error UNIQUE de PostgreSQL (code 23505) → retornar 409
+    if (insertError?.code === '23505') {
+      return NextResponse.json(
+        { error: 'Ya existe una comunidad con ese nombre', code: 'COMMUNITY_NAME_TAKEN' },
+        { status: 409 }
+      )
+    }
     return NextResponse.json(
       { error: 'Error al crear la comunidad', code: 'COMMUNITY_CREATE_ERROR' },
       { status: 500 }

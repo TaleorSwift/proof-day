@@ -1,4 +1,94 @@
 workflows:
+  - id: "cr-20260327-015"
+    timestamp: "2026-03-27T16:00:00"
+    completed: "2026-03-27T16:40:00"
+    agent: Homer
+    trigger: "/cr"
+    workflow: "code-review"
+    mode: VERIFY
+    result: SUCCESS
+    duration_estimate: "40 minutes"
+    story: "2.2 — Invitation Links: Generate & Join"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/5"
+    veredicto: "CHANGES_REQUESTED"
+    findings: "3 HIGH, 5 MEDIUM, 3 LOW = 11 total"
+    summary: |
+      CR adversarial de story 2.2. Veredicto: CHANGES_REQUESTED.
+      H1: T12/T13 marcadas [x] con subtasks en [ ] — story file tracking inconsistente.
+      H2: Token invalidation sin verificar error en UPDATE — violación silenciosa de AC-2 (single-use).
+      H3 (SECURITY): RLS policy authenticated_read_by_token expone TODA la tabla invitation_links
+        a cualquier usuario autenticado — enumeración de tokens activos de todas las comunidades.
+      M1: communitySlug prop dead en InvitationSection.
+      M2: generateInvitationSchema Zod no usada en API Route — validación ausente.
+      M3: Mutaciones en Server Component viola Rejection Criterion (todas las mutaciones por API Route).
+      M4: lib/types/invitations.ts tipos no importados en ningún fichero — code dead.
+      M5: AC-7 mensaje "Este link ya ha sido usado" vs spec "Este link ya no es válido".
+      L1: Color #FFFFFF hardcodeado en InvitationSection.
+      L2: Tests /invite sin regresión /auth/callback.
+      L3: communities.md incompleto vs T13 spec.
+      Bloqueantes para APPROVED: H1 (trivial), H2 (manejo error UPDATE), H3 (RLS crítica).
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, DS — resolver H1 (checkboxes story), H2 (capturar error UPDATE token), H3 (RLS policy restricción). Recomendado también M2 (usar Zod en API Route) y M4 (importar tipos). Luego nuevo /cr."
+
+  - id: "ds-20260327-014"
+    timestamp: "2026-03-27T10:00:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: REFINE
+    result: STARTED
+    summary: "Story 2.1 CR fixes — resolver 8 findings (4 MEDIUM, 4 LOW): F1 race condition 23505→409, F2 CTA interactivo, F3 tipo Community snake_case, F4 next/image remotePatterns, F5 trigger updated_at, F6 slug vacío, F7 test description >500, F8 try/catch json"
+
+  - id: "cr-20260327-013"
+    timestamp: "2026-03-27T23:30:00"
+    completed: "2026-03-27T23:59:00"
+    agent: Homer
+    trigger: "/cr"
+    workflow: "code-review"
+    mode: VERIFY
+    result: SUCCESS
+    duration_estimate: "29 minutes"
+    story: "1.3 — Auth Middleware & Route Protection (CR #4)"
+    veredicto: "APPROVED"
+    summary: |
+      CR #4 adversarial de story 1.3. Veredicto: APPROVED.
+      F1 y F2 MEDIUM del CR #3 resueltos (auth.md y sprint-status correctos en develop, commit 1c637d9).
+      F3 y F4 LOW del CR #3 sin resolver (try/catch en updateSession, tipo restrictivo) — no bloqueantes.
+      3 nuevos findings LOW (F5 middleware sin test unitario, F6 inconsistencia status corregida en este CR, F7 /invite no documentado).
+      36/36 tests pasando. TypeScript sin errores. ESLint sin errores. 10 ACs implementados.
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Siguiente: QA (Edna) o Ned ER (Epic 1 retrospective). Story 1.3 DONE."
+
+  - id: "cr-20260327-011"
+    agent: Homer
+    trigger: "/cr"
+    workflow: "code-review"
+    mode: VERIFY
+    started: "2026-03-27"
+    completed: "2026-03-27"
+    status: SUCCESS
+    duration_estimate: "15 minutes"
+    story: "2.1 — Create Community"
+    veredicto: "CHANGES_REQUESTED"
+    summary: |
+      CR de story 2.1. Tests: 37/37 pasando. TypeScript: sin errores. ESLint: sin errores.
+      ACs core implementados correctamente. 8 findings: 4 MEDIUM, 4 LOW.
+      MEDIUM críticos: F1 race condition slug→500 (debería 409), F2 segundo CTA no interactivo (AC5),
+      F3 tipo Community camelCase vs snake_case Supabase (mismatch en runtime),
+      F4 next/image sin remotePatterns (falla en producción con URLs externas).
+      CHANGES_REQUESTED por los 4 MEDIUM.
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/2-1-create-community.md"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, DS — resolver F1-F4 (4 MEDIUM): race condition 23505, CTA interactivo, tipo Community snake_case, next.config.ts remotePatterns. Luego nuevo /cr."
+
   - id: "ds-20260327-010"
     timestamp: "2026-03-27T13:45:00"
     agent: Homer

@@ -28,3 +28,17 @@ CREATE TABLE community_members (
 
 CREATE INDEX idx_community_members_community_id ON community_members(community_id);
 CREATE INDEX idx_community_members_user_id ON community_members(user_id);
+
+-- Trigger: auto-actualizar updated_at en UPDATE de communities
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER communities_set_updated_at
+  BEFORE UPDATE ON communities
+  FOR EACH ROW
+  EXECUTE FUNCTION set_updated_at();

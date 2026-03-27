@@ -84,6 +84,17 @@ describe('createCommunitySchema', () => {
       expect(result.error.issues[0].message).toBe('URL de imagen inválida')
     }
   })
+
+  it('rechaza descripción mayor de 500 caracteres', () => {
+    const result = createCommunitySchema.safeParse({
+      name: 'Mi comunidad',
+      description: 'A'.repeat(501),
+    })
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.error.issues[0].message).toBe('La descripción no puede superar 500 caracteres')
+    }
+  })
 })
 
 describe('toSlug', () => {
