@@ -18,6 +18,11 @@ const eslintConfig = [
       "storybook-static/**",
       "_bmad/**",
       "_bmad-output/**",
+      // next-env.d.ts es generado por Next.js — usa triple-slash reference necesario
+      "next-env.d.ts",
+      // app/auth/confirm/route.ts es el template oficial de Supabase Next.js.
+      // Importa solo un *type* de @supabase/supabase-js — no crea clientes directamente.
+      "app/auth/confirm/route.ts",
     ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),

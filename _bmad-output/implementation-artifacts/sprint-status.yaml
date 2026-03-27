@@ -49,8 +49,8 @@ development_status:
 
   # ── EPIC 2: Comunidades ──────────────────────────────────────────
   epic-2: in-progress
-  2-1-create-community: ready-for-dev
-  2-2-invitation-links-generate-join: backlog
+  2-1-create-community: review
+  2-2-invitation-links-generate-join: done
   2-3-community-access-control-listing: backlog
   epic-2-retrospective: optional
 
