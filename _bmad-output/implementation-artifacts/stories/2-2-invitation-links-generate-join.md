@@ -1,6 +1,6 @@
 # Story 2.2: Invitation Links — Generate & Join
 
-Status: review
+Status: done
 
 ## Story
 
@@ -904,6 +904,44 @@ Fix: mismo patron que CR8-F4 — preguntar si se necesita token de contenedor o 
 
 ---
 
+## Senior Developer Review CR #9 (AI)
+
+**Reviewer:** Homer CR — claude-sonnet-4-6 (cr-20260328-010)
+**Fecha:** 2026-03-28
+**Veredicto:** APPROVED
+
+**Tests:** 52/52 pasando. ESLint: limpio. TypeScript: limpio. Build: limpio. Git discrepancias: 0.
+
+**Verificacion CR#8 findings (5/5):** Todos resueltos correctamente —
+- CR8-F1 (MEDIUM): `InvitationLinkWithCommunity` eliminada — confirmado, 0 referencias en codebase
+- CR8-F2 (MEDIUM): Falso positivo — no implementado, fuera de scope story 2.2 (story 2.1)
+- CR8-F3 (LOW): `.maybeSingle<InvitationTokenResult>()` genérico en page.tsx:116 — SDK-aligned, correcto
+- CR8-F4 (LOW): `maxWidth: '640px'` documentado con comentario explicativo en settings/page.tsx:45
+- CR8-F5 (LOW): `max-w-md` reemplazado por `maxWidth: '28rem'` con comentario en ambos componentes de estado
+
+**Verificacion ACs:** AC-1 a AC-8 todos IMPLEMENTADOS. Rejection Criteria todos CUMPLIDOS.
+
+### Findings CR #9
+
+**[CR9-L1][LOW] `console.error` ausente para error de DB en POST invitations**
+
+`app/api/communities/[communityId]/invitations/route.ts:54-57`. Si `supabase.from('invitation_links').insert(...)` falla, el error de Supabase se descarta silenciosamente — retorna 500 sin loguear el motivo real. No viola ACs ni Rejection Criteria. Patrón de MVP aceptado en la codebase. Finding informativo — no bloquea merge.
+
+### Aspectos Positivos — CR #9
+
+- 4/5 findings de CR#8 resueltos correctamente en codigo (1 falso positivo correctamente omitido)
+- AC-1 a AC-8: todos IMPLEMENTADOS en codigo real — verificacion completa
+- Rejection Criteria todos CUMPLIDOS: sin imports supabase directos fuera de lib/, sin getSession(), migracion SQL versionada, sin Server Actions para mutaciones de story 2.2, token no expuesto en logs
+- Arquitectura RLS completa: admin_manage_invitations + use_invitation + GRANT EXECUTE + SECURITY DEFINER
+- Rollback con captura de error doble — estado inconsistente logueado sin exponer token
+- `.maybeSingle<InvitationTokenResult>()` — tipado generico SDK-aligned
+- Dead type `InvitationLinkWithCommunity` eliminado — tipos limpios y sin consumers fantasma
+- Dead route `app/api/invitations/[token]/use/route.ts` eliminada — sin superficie de ataque innecesaria
+- 52/52 tests, TypeScript limpio, ESLint limpio, build limpio
+- 0 HIGH, 0 MEDIUM, 1 LOW de observabilidad — la ronda mas limpia de todas
+
+---
+
 ## Change Log
 
 | Fecha | Tipo | Descripción |
@@ -923,3 +961,5 @@ Fix: mismo patron que CR8-F4 — preguntar si se necesita token de contenedor o 
 | 2026-03-28 | CR | Code review CR#7 — CHANGES_REQUESTED — 0 HIGH, 2 MEDIUM, 3 LOW — solo documentacion e inconsistencias menores |
 | 2026-03-28 | DS REFINE | CR#7 fixes — 5/5 findings resueltos — InvitationTokenResult movido a types, T6 corregido, SQL comment actualizado, minWidth token |
 | 2026-03-28 | CR | Code review CR#8 — CHANGES_REQUESTED — 0 HIGH, 2 MEDIUM, 3 LOW — dead type, navegacion settings, type assertion |
+| 2026-03-28 | DS REFINE | CR#8 fixes — 4/5 findings resueltos (1 falso positivo) — InvitationLinkWithCommunity eliminada, type cast SDK-aligned, maxWidth documentado, max-w-md inline CSS |
+| 2026-03-28 | CR | Code review CR#9 — APPROVED — 0 HIGH, 0 MEDIUM, 1 LOW (observabilidad MVP) — AC-1 a AC-8 IMPLEMENTADOS, Rejection Criteria CUMPLIDOS, 52/52 tests |
