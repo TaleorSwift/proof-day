@@ -1,0 +1,126 @@
+import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { createCommunitySchema } from '@/lib/validations/communities'
+
+export function toSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+export async function GET() {
+  const supabase = await createClient()
+
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) {
+    return NextResponse.json(
+      { error: 'No autenticado', code: 'AUTH_REQUIRED' },
+      { status: 401 }
+    )
+  }
+
+  // RLS filtra automáticamente las comunidades del usuario
+  const { data: communities, error } = await supabase
+    .from('communities')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    return NextResponse.json(
+      { error: 'Error al obtener comunidades', code: 'COMMUNITIES_FETCH_ERROR' },
+      { status: 500 }
+    )
+  }
+
+  return NextResponse.json({ data: communities })
+}
+
+export async function POST(request: Request) {
+  const supabase = await createClient()
+
+  // Auth check
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) {
+    return NextResponse.json(
+      { error: 'No autenticado', code: 'AUTH_REQUIRED' },
+      { status: 401 }
+    )
+  }
+
+  // Validación Zod
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json(
+      { error: 'Cuerpo de la petición inválido', code: 'INVALID_BODY' },
+      { status: 400 }
+    )
+  }
+
+  const result = createCommunitySchema.safeParse(body)
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error.issues[0].message, code: 'VALIDATION_ERROR' },
+      { status: 400 }
+    )
+  }
+
+  const { name, description, imageUrl } = result.data
+  const slug = toSlug(name)
+
+  // Verificar unicidad del slug/nombre
+  const { data: existing } = await supabase
+    .from('communities')
+    .select('id')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (existing) {
+    return NextResponse.json(
+      { error: 'Ya existe una comunidad con ese nombre', code: 'COMMUNITY_NAME_TAKEN' },
+      { status: 409 }
+    )
+  }
+
+  // Crear comunidad
+  const { data: community, error: insertError } = await supabase
+    .from('communities')
+    .insert({
+      name,
+      slug,
+      description,
+      image_url: imageUrl || null,
+      created_by: user.id,
+    })
+    .select()
+    .single()
+
+  if (insertError || !community) {
+    return NextResponse.json(
+      { error: 'Error al crear la comunidad', code: 'COMMUNITY_CREATE_ERROR' },
+      { status: 500 }
+    )
+  }
+
+  // Insertar creador como admin en community_members
+  const { error: memberError } = await supabase
+    .from('community_members')
+    .insert({
+      community_id: community.id,
+      user_id: user.id,
+      role: 'admin',
+    })
+
+  if (memberError) {
+    return NextResponse.json(
+      { error: 'Error al registrar membresía', code: 'MEMBER_INSERT_ERROR' },
+      { status: 500 }
+    )
+  }
+
+  return NextResponse.json({ data: community }, { status: 201 })
+}
