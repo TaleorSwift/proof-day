@@ -552,3 +552,12 @@ workflows:
       - "_bmad-output/planning-artifacts/prd.md"
     errors: []
     notes: "PRD generado desde cero. Artefactos de entrada: Briefing, EARS, HUs, Gherkin."
+
+  - id: "cr-20260327-017"
+    timestamp: "2026-03-27T18:00:00"
+    agent: Homer
+    trigger: "/cr"
+    workflow: "code-review"
+    mode: VERIFY
+    result: STARTED
+    summary: "Code review adversarial de story 2.2 — Invitation Links post-CR-fixes. Verificando claims del Dev Agent contra implementacion real."

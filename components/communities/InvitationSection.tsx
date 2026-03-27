@@ -5,7 +5,6 @@ import { generateInvitationLink } from '@/lib/api/invitations'
 
 interface Props {
   communityId: string
-  communitySlug: string
 }
 
 interface GeneratedLink {
@@ -95,7 +94,7 @@ export default function InvitationSection({ communityId }: Props) {
           backgroundColor: isGenerating
             ? 'var(--color-text-muted)'
             : 'var(--color-primary)',
-          color: '#FFFFFF',
+          color: 'var(--color-surface)',
           border: 'none',
           borderRadius: 'var(--radius-md)',
           padding: 'var(--space-3) var(--space-5)',

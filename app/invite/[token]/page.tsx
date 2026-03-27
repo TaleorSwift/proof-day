@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
@@ -23,7 +24,7 @@ function InviteErrorState({ message }: { message: string }) {
   )
 }
 
-// Component: usuario ya es miembro de la comunidad
+// Component: usuario ya es miembro de la comunidad (AC 6)
 function InviteAlreadyMemberState() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-6">
@@ -56,55 +57,43 @@ export default async function InvitePage({ params }: Props) {
     redirect(`/login?next=/invite/${token}`)
   }
 
-  // Validar token — buscar en invitation_links (AC 7)
-  const { data: invitation } = await supabase
-    .from('invitation_links')
-    .select('id, community_id, used_at')
-    .eq('token', token)
-    .single()
+  // Delegar mutaciones a API Route (M3 fix — Rejection Criterion: mutaciones van por API Route)
+  // Forward cookies para mantener la sesión autenticada
+  const cookieStore = await cookies()
+  const cookieHeader = cookieStore.getAll()
+    .map(({ name, value }) => `${name}=${value}`)
+    .join('; ')
 
-  if (!invitation) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+  const res = await fetch(`${siteUrl}/api/invitations/${token}/use`, {
+    method: 'POST',
+    headers: {
+      Cookie: cookieHeader,
+    },
+  })
+
+  if (res.status === 404 || res.status === 410) {
     return <InviteErrorState message="Este link ya no es válido" />
   }
 
-  if (invitation.used_at) {
-    return <InviteErrorState message="Este link ya ha sido usado" />
+  if (res.status === 401) {
+    redirect(`/login?next=/invite/${token}`)
   }
 
-  // Verificar si ya es miembro (AC 6)
-  const { data: existing } = await supabase
-    .from('community_members')
-    .select('id')
-    .eq('community_id', invitation.community_id)
-    .eq('user_id', user.id)
-    .maybeSingle()
-
-  if (existing) {
-    return <InviteAlreadyMemberState />
+  if (res.status === 500) {
+    return <InviteErrorState message="Error al procesar el link. Por favor, inténtalo de nuevo." />
   }
 
-  // Unirse a la comunidad (AC 2)
-  const { error: memberError } = await supabase
-    .from('community_members')
-    .insert({
-      community_id: invitation.community_id,
-      user_id: user.id,
-      role: 'member',
-    })
-
-  if (memberError) {
-    return <InviteErrorState message="Error al unirse a la comunidad. Por favor, inténtalo de nuevo." />
+  if (res.ok) {
+    const body = await res.json()
+    // Si ya era miembro, mostrar estado correspondiente (AC 6)
+    if (body.data?.alreadyMember) {
+      return <InviteAlreadyMemberState />
+    }
+    // Join exitoso → redirect a comunidades (AC 5)
+    redirect('/communities')
   }
 
-  // Invalidar el token — single use (AC 2)
-  await supabase
-    .from('invitation_links')
-    .update({
-      used_at: new Date().toISOString(),
-      used_by: user.id,
-    })
-    .eq('id', invitation.id)
-
-  // Redirect a comunidades tras join exitoso (AC 5)
-  redirect('/communities')
+  // Fallback — error inesperado
+  return <InviteErrorState message="Error inesperado. Por favor, inténtalo de nuevo." />
 }

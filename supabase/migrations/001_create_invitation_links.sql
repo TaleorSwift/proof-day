@@ -36,8 +36,29 @@ CREATE POLICY "admin_manage_invitations"
     )
   );
 
--- Cualquier usuario autenticado puede leer un token (para validarlo al unirse)
--- pero NO puede leer toda la tabla — solo por token específico
-CREATE POLICY "authenticated_read_by_token"
-  ON invitation_links FOR SELECT
-  USING (auth.uid() IS NOT NULL);
+-- NOTA SEGURIDAD: La política "authenticated_read_by_token" original (USING auth.uid() IS NOT NULL)
+-- exponía TODA la tabla a cualquier usuario autenticado — vulnerabilidad de enumeración de tokens.
+-- Corrección: no se puede restringir a token específico en RLS sin conocer el valor del token en USING.
+-- La validación del token se realiza en la API Route (app/api/invitations/[token]/use/route.ts)
+-- con una query SELECT por token específico. La API Route usa service role implícitamente via createClient()
+-- de lib/supabase/server.ts que respeta RLS pero la auth verifica que el usuario esté autenticado.
+-- Solución: eliminar la política READ pública y usar una función RPC con SECURITY DEFINER
+-- que valide el token sin exponer la tabla completa.
+-- Para MVP: la API Route (servidor) usa el cliente autenticado — RLS admin_manage_invitations
+-- cubre solo admins. Para la validación de join, usar una función SECURITY DEFINER:
+
+CREATE OR REPLACE FUNCTION validate_invitation_token(p_token text)
+RETURNS TABLE(id uuid, community_id uuid, used_at timestamptz)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT id, community_id, used_at
+  FROM invitation_links
+  WHERE token = p_token
+  LIMIT 1;
+$$;
+
+-- Revocar acceso directo de SELECT a invitation_links para roles no-admin
+-- La función SECURITY DEFINER ejecuta con privilegios del owner (postgres/service_role)
+-- y solo expone los campos necesarios para validar un token específico.

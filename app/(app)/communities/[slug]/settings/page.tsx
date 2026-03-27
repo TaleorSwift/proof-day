@@ -60,7 +60,7 @@ export default async function CommunitySettingsPage({ params }: Props) {
         </div>
 
         {/* Invitation Links Section */}
-        <InvitationSection communityId={community.id} communitySlug={community.slug} />
+        <InvitationSection communityId={community.id} />
       </div>
     </div>
   )

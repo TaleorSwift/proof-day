@@ -378,27 +378,28 @@ para que pueda incorporar miembros a mi comunidad sin gestión manual.
   - [x] El flujo post-auth join funciona automáticamente: login → callback → redirect `/invite/[token]` → join + redirect `/communities`
 
 - [x] **T12: Tests unitarios** (AC: 2, 3, 7)
-  - [ ] Crear `tests/unit/invitations/invitations.test.ts`:
-    - Test: `generateInvitationSchema` rechaza communityId no-uuid
-    - Test: `generateInvitationSchema` acepta uuid válido
-    - Test: token con `crypto.randomUUID()` es único en 1000 iteraciones (probabilístico)
-    - Test: middleware `isPublicPath('/invite/abc')` → `true` (después de T7)
-    - Test: middleware `isPublicPath('/invite')` → `true`
-    - Test: middleware `isPublicPath('/invitations/abc')` → `false` (no confundir paths)
-  - [ ] Al menos 6 tests unitarios pasando
+  - [x] Crear `tests/unit/invitations/invitations.test.ts`:
+    - [x] Test: `generateInvitationSchema` rechaza communityId no-uuid
+    - [x] Test: `generateInvitationSchema` acepta uuid válido
+    - [x] Test: token con `crypto.randomUUID()` es único en 1000 iteraciones (probabilístico)
+    - [x] Test: middleware `isPublicPath('/invite/abc')` → `true` (después de T7)
+    - [x] Test: middleware `isPublicPath('/invite')` → `true`
+    - [x] Test: middleware `isPublicPath('/invitations/abc')` → `false` (no confundir paths)
+    - [x] Suite 4: 5 tests de regresión — verificar que /auth/callback, /, /login siguen siendo públicas tras añadir /invite (L2 fix CR#1)
+  - [x] 11 tests de invitations pasando (6 isPublicPath /invite + 5 regresión) + 4 schema/uuid = 15 tests total en fichero
 
 - [x] **T13: Documentación funcional**
-  - [ ] Crear/actualizar `docs/project/modules/communities.md`:
-    - Añadir sección "Invitation Links": cómo se generan, ciclo de vida del token, flujo join
-    - Ficheros clave de esta story
+  - [x] Actualizar `docs/project/modules/communities.md`:
+    - [x] Sección "Invitation Links": reglas de comportamiento de generación, single-use, flujo join, RPC SECURITY DEFINER, mensajes de error
+    - [x] Ficheros clave actualizados con API Routes de invitations
 
 - [x] **T14: PR y cierre**
-  - [ ] `npm run test` — todos deben pasar (mínimo 30 tests)
-  - [ ] `git add` — solo ficheros de esta story
-  - [ ] Commit: `feat(communities): add invitation links generate and join flow`
-  - [ ] Push: `git push -u origin feat/2-2-invitation-links`
-  - [ ] PR contra `develop`
-  - [ ] Actualizar `sprint-status.yaml`: `2-2-invitation-links-generate-join: review`
+  - [x] `npm run test` — 55/55 tests pasando
+  - [x] `git add` — solo ficheros de esta story
+  - [x] Commit: `fix(communities): resolve CR#1 findings for story 2.2`
+  - [x] Push: `git push origin feat/2-1-create-community`
+  - [x] PR contra `develop` (PR existente #5 — actualizado)
+  - [x] Actualizar `sprint-status.yaml`: `2-2-invitation-links-generate-join: review`
 
 ## Dev Notes
 
@@ -534,25 +535,41 @@ claude-sonnet-4-6 (Homer, DS fork, 2026-03-27)
 ### Completion Notes List
 
 - T2: migración creada como `001_create_invitation_links.sql` (en develop no había migraciones previas).
-- T8: implementación directa con `createClient()` en Server Component (patrón recomendado de Dev Notes, sin fetch interno).
+- T8: implementación directa con `createClient()` en Server Component (patrón recomendado de Dev Notes, sin fetch interno). [CR#1 fix M3: refactorizado para llamar API Route via fetch con cookie forwarding]
 - T11: auth/callback ya tenía soporte de `next` param (BUG-QA-002 fix) — solo verificación, sin cambios.
-- T14: 49/49 tests pasando. TypeScript: sin errores. ESLint: sin errores.
+- T14: 55/55 tests pasando. TypeScript: sin errores. ESLint: sin errores. [CR#1 fixes aplicados]
+
+**CR#1 fixes (ds-20260327-016):**
+- H1: T12/T13/T14 subtasks marcadas [x] — tracking inconsistente corregido
+- H2: `app/api/invitations/[token]/use/route.ts` — captura error de UPDATE token invalidation, retorna 500 si falla
+- H3: RLS policy `authenticated_read_by_token` eliminada — reemplazada por función RPC SECURITY DEFINER `validate_invitation_token(p_token)`. API Route y Server Component usan `.rpc('validate_invitation_token', ...)` en lugar de query directa
+- M1: prop `communitySlug` eliminada de `InvitationSection` — era dead code
+- M2: `generateInvitationSchema.safeParse()` añadida en `POST /api/communities/[communityId]/invitations`
+- M3: `app/invite/[token]/page.tsx` refactorizado — Server Component ahora delega mutaciones a API Route via fetch con cookie forwarding (`cookies()` de `next/headers`)
+- M4: `lib/api/invitations.ts` importa y re-exporta `InvitationLink` de `lib/types/invitations.ts`
+- M5: mensaje "Este link ya ha sido usado" → "Este link ya no es válido" (alineado con AC-7 spec)
+- L1: color `#FFFFFF` hardcodeado → `var(--color-surface)` en `InvitationSection.tsx`
+- L2: Suite 4 añadida en `tests/unit/invitations/invitations.test.ts` — 5 tests de regresión para /auth/callback, /, /login, /communities
+- L3: `docs/project/modules/communities.md` actualizado con todas las reglas de story 2.2
 
 ### File List
 
-- `supabase/migrations/001_create_invitation_links.sql` — CREADO
-- `lib/types/invitations.ts` — CREADO
-- `lib/validations/invitations.ts` — CREADO
-- `app/api/communities/[communityId]/invitations/route.ts` — CREADO
-- `app/api/invitations/[token]/use/route.ts` — CREADO
-- `app/invite/[token]/page.tsx` — CREADO
-- `app/(app)/communities/[slug]/settings/page.tsx` — CREADO
-- `components/communities/InvitationSection.tsx` — CREADO
-- `lib/api/invitations.ts` — CREADO
-- `tests/unit/invitations/invitations.test.ts` — CREADO
-- `middleware.ts` — MODIFICADO (añadido '/invite' a PUBLIC_PREFIX_PATHS)
-- `tests/unit/middleware/middleware.test.ts` — MODIFICADO (3 tests /invite añadidos)
-- `eslint.config.mjs` — MODIFICADO (ignores: next-env.d.ts, app/auth/confirm/route.ts)
-- `docs/project/modules/communities.md` — MODIFICADO (sección invitation links)
-- `_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md` — MODIFICADO
-- `_bmad-output/implementation-artifacts/sprint-status.yaml` — MODIFICADO
+**Creados:**
+- `supabase/migrations/001_create_invitation_links.sql` — tabla + RLS admin + función RPC SECURITY DEFINER [H3 fix]
+- `lib/types/invitations.ts`
+- `lib/validations/invitations.ts`
+- `app/api/communities/[communityId]/invitations/route.ts`
+- `app/api/invitations/[token]/use/route.ts`
+- `app/invite/[token]/page.tsx`
+- `app/(app)/communities/[slug]/settings/page.tsx`
+- `components/communities/InvitationSection.tsx`
+- `lib/api/invitations.ts`
+- `tests/unit/invitations/invitations.test.ts`
+
+**Modificados:**
+- `middleware.ts` — '/invite' en PUBLIC_PREFIX_PATHS
+- `tests/unit/middleware/middleware.test.ts` — 3 tests /invite añadidos (T7)
+- `eslint.config.mjs` — ignores: next-env.d.ts, app/auth/confirm/route.ts
+- `docs/project/modules/communities.md` — reglas completas story 2.1 + 2.2 [L3 fix]
+- `_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md`
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`

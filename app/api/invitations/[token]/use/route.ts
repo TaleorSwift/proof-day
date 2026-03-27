@@ -15,20 +15,19 @@ export async function POST(
     { status: 401 }
   )
 
-  // Buscar y validar el token
-  const { data: invitation } = await supabase
-    .from('invitation_links')
-    .select('id, community_id, used_at')
-    .eq('token', token)
-    .single()
+  // Buscar y validar el token via RPC (SECURITY DEFINER — no expone tabla completa, H3 fix)
+  const { data: invitations } = await supabase
+    .rpc('validate_invitation_token', { p_token: token })
+
+  const invitation = invitations?.[0] ?? null
 
   if (!invitation) return NextResponse.json(
-    { error: 'Link inválido o inexistente', code: 'INVITATION_NOT_FOUND' },
+    { error: 'Este link ya no es válido', code: 'INVITATION_NOT_FOUND' },
     { status: 404 }
   )
 
   if (invitation.used_at) return NextResponse.json(
-    { error: 'Este link ya ha sido usado', code: 'INVITATION_ALREADY_USED' },
+    { error: 'Este link ya no es válido', code: 'INVITATION_ALREADY_USED' },
     { status: 410 }
   )
 
@@ -59,11 +58,16 @@ export async function POST(
     { status: 500 }
   )
 
-  // Invalidar el token
-  await supabase
+  // Invalidar el token — verificar error (AC 2: single-use crítico)
+  const { error: invalidateError } = await supabase
     .from('invitation_links')
     .update({ used_at: new Date().toISOString(), used_by: user.id })
     .eq('id', invitation.id)
+
+  if (invalidateError) return NextResponse.json(
+    { error: 'Error al registrar el uso del link', code: 'TOKEN_INVALIDATION_ERROR' },
+    { status: 500 }
+  )
 
   return NextResponse.json(
     { data: { communityId: invitation.community_id } },

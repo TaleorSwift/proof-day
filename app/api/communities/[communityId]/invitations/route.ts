@@ -1,11 +1,22 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { generateInvitationSchema } from '@/lib/validations/invitations'
 
 export async function POST(
   _request: Request,
   { params }: { params: Promise<{ communityId: string }> }
 ) {
   const { communityId } = await params
+
+  // Validar communityId con Zod (M2 fix — schema ahora usado en API Route)
+  const validation = generateInvitationSchema.safeParse({ communityId })
+  if (!validation.success) {
+    return NextResponse.json(
+      { error: 'ID de comunidad inválido', code: 'VALIDATION_ERROR' },
+      { status: 400 }
+    )
+  }
+
   const supabase = await createClient()
 
   // Auth check

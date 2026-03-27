@@ -109,3 +109,30 @@ describe('isPublicPath — rutas /invite (story 2.2, AC 8)', () => {
     expect(isPublicPath('/invite-extra')).toBe(false)
   })
 })
+
+// ---------------------------------------------------------------------------
+// Suite 4: isPublicPath — regresión /auth/callback (L2 fix)
+// Verificar que añadir /invite a PUBLIC_PREFIX_PATHS no rompe /auth/callback
+// ---------------------------------------------------------------------------
+
+describe('isPublicPath — regresión rutas existentes (L2 fix)', () => {
+  it('/auth/callback sigue siendo pública tras añadir /invite', () => {
+    expect(isPublicPath('/auth/callback')).toBe(true)
+  })
+
+  it('/auth/callback/subruta sigue siendo pública', () => {
+    expect(isPublicPath('/auth/callback/something')).toBe(true)
+  })
+
+  it('/ sigue siendo pública', () => {
+    expect(isPublicPath('/')).toBe(true)
+  })
+
+  it('/login sigue siendo pública (sin subrutas)', () => {
+    expect(isPublicPath('/login')).toBe(true)
+  })
+
+  it('/communities sigue siendo privada', () => {
+    expect(isPublicPath('/communities')).toBe(false)
+  })
+})
