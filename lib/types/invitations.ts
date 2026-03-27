@@ -12,20 +12,6 @@ export interface InvitationLinkRow {
   created_at: string
 }
 
-/**
- * InvitationLink — camelCase alias kept for backwards compatibility.
- * For Supabase query responses, use InvitationLinkRow to avoid undefined fields.
- */
-export interface InvitationLink {
-  id: string
-  token: string
-  communityId: string
-  createdBy: string
-  usedAt: string | null
-  usedBy: string | null
-  createdAt: string
-}
-
 export interface InvitationLinkWithCommunity extends InvitationLinkRow {
   community: {
     id: string

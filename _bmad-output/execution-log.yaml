@@ -1,4 +1,48 @@
 workflows:
+  - id: "ds-20260328-007"
+    timestamp: "2026-03-28T23:58:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: REFINE
+    result: STARTED
+    story: "2.2 — Invitation Links (fix CR#6 findings)"
+    branch: "feat/2-2-invitation-links"
+
+  - id: "cr-20260328-006"
+    timestamp: "2026-03-28T23:30:00"
+    completed: "2026-03-28T23:55:00"
+    agent: Homer
+    trigger: "/cr"
+    workflow: "code-review"
+    mode: VERIFY
+    result: SUCCESS
+    duration_estimate: "25 minutes"
+    story: "2.2 — Invitation Links (feat/2-2-invitation-links)"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/5"
+    veredicto: "CHANGES_REQUESTED"
+    findings: "0 CRITICAL, 0 HIGH, 2 MEDIUM, 3 LOW = 5 total"
+    summary: |
+      CR #6 adversarial de story 2.2 (post CR#5 fixes). Veredicto: CHANGES_REQUESTED.
+      Tests: 52/52 pasando. TypeScript limpio. ESLint limpio.
+      CR#5 findings (3/3): todos resueltos correctamente — CR5-F1 rollback, CR5-F2 CSS vars, CR5-F3 tipado.
+      Todos los ACs verificados como IMPLEMENTADOS. Rejection Criteria CUMPLIDOS.
+      CR6-F1 (MEDIUM): rollback DELETE en page.tsx:153-158 no captura error — si el DELETE falla,
+        el usuario queda con membresía válida y token sin invalidar (estado inconsistente silencioso).
+        AC-2 puede violarse en modo fallo de rollback.
+      CR6-F2 (MEDIUM): app/api/invitations/[token]/use/route.ts es código huérfano — desde CR4-F1
+        fix, page.tsx usa createClient() directamente. La API Route no tiene ningún caller en el
+        codebase. Lógica duplicada (con pequeñas inconsistencias) mantenida sin propósito.
+      CR6-F3 (LOW): dos patrones distintos para consumir RPC validate_invitation_token —
+        route.ts usa invitations?.[0], page.tsx usa .maybeSingle(). Inconsistencia entre archivos.
+      CR6-F4 (LOW): InvitationLink camelCase exportado en lib/api/invitations.ts sin consumer real.
+        Dead type que puede confundir — sus campos camelCase no coinciden con respuesta Supabase.
+      CR6-F5 (LOW): communities.md dice "CR#4 fixes" — debería decir "CR#5 fixes" (2026-03-28).
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer DS: fix CR6-F1 (captura error rollback) + decidir CR6-F2 (eliminar route huérfana o documentar) + LOW fixes opcionales."
+
   - id: "cr-20260328-005"
     timestamp: "2026-03-28T14:00:00"
     completed: "2026-03-28T14:45:00"

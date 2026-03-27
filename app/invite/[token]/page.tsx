@@ -151,11 +151,22 @@ export default async function InvitePage({ params }: Props) {
 
   if (invalidateError) {
     // Token no invalidado — revertir membresía para mantener consistencia (AC 2)
-    await supabase
+    // CR6-F1: capturar error del rollback para loguear estado inconsistente si ambas ops fallan
+    const { error: rollbackError } = await supabase
       .from('community_members')
       .delete()
       .eq('community_id', invitation.community_id)
       .eq('user_id', user.id)
+    if (rollbackError) {
+      // Estado inconsistente: membresía insertada + token no invalidado + rollback fallido
+      // No hay forma de recuperarse en el servidor — loguear para operaciones
+      console.error('[invite] Rollback failed after token invalidation error', {
+        invalidateError,
+        rollbackError,
+        communityId: invitation.community_id,
+        // token omitido intencionadamente — Rejection Criterion: no exponer token en logs
+      })
+    }
     return <InviteErrorState message="Error al procesar el link. Por favor, inténtalo de nuevo." />
   }
 
