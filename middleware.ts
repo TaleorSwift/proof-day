@@ -1,11 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-// Rutas que NO requieren autenticacion
-const PUBLIC_PATHS = ["/", "/login", "/auth/callback"];
+// Rutas publicas exactas (sin subrutas)
+const PUBLIC_EXACT_PATHS = ["/", "/login"];
+
+// Rutas publicas con subrutas permitidas (prefijo)
+const PUBLIC_PREFIX_PATHS = ["/auth/callback"];
 
 export function isPublicPath(pathname: string): boolean {
-  return PUBLIC_PATHS.some(
+  if (PUBLIC_EXACT_PATHS.includes(pathname)) return true;
+  return PUBLIC_PREFIX_PATHS.some(
     (path) => pathname === path || pathname.startsWith(path + "/"),
   );
 }

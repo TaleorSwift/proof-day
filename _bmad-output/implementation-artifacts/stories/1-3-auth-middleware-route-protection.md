@@ -275,7 +275,7 @@ claude-sonnet-4-6
 - T6: ESLint sin errores en middleware.ts y lib/supabase/middleware.ts
 - T7: TypeScript sin errores (npx tsc --noEmit)
 - T8: `docs/project/modules/auth.md` actualizado con reglas de story 1.3 y middleware.ts como fichero clave
-- T9: commit realizado en rama feat/1-3-auth-middleware-route-protection. Push + PR pendientes (sin remote git configurado).
+- T9: commit realizado en rama feat/1-3-auth-middleware-route-protection. Push completado a origin. PR creado contra develop. [CR #2 fix F8 — nota actualizada]
 
 ### File List
 
@@ -290,7 +290,9 @@ claude-sonnet-4-6
 - `tests/e2e/auth/route-protection.spec.ts` — 4 tests E2E de protección de rutas (Playwright)
 
 **Eliminados:**
-- `app/test-tmp/bad-import.ts` — fichero huérfano con import violando arquitectura [CR fix F4]
+- `app/test-tmp/bad-import.ts` — fichero huérfano con import violando arquitectura [CR #1 fix F4]
+- `lib/supabase/proxy.ts` — template original con updateSession de contrato roto eliminado [CR #2 fix F1]
+- `proxy.ts` — template raiz obsoleto que importaba lib/supabase/proxy eliminado [CR #2 fix F1]
 
 **Tracking:**
 - `_bmad-output/implementation-artifacts/sprint-status.yaml` — 1-3: review (sin cambio)
@@ -331,14 +333,14 @@ claude-sonnet-4-6
 
 ### Review Follow-ups (AI) — CR #2
 
-- [ ] [AI-Review][HIGH] PROXY.TS CONFLICTIVO: `lib/supabase/proxy.ts` contiene otra `updateSession()` que redirige a `/auth/login` (ruta inexistente) y devuelve `NextResponse` sin el contrato `{ response, user }`. Sin ESLint rule ni test que prevenga su uso accidental. Acción: eliminar `proxy.ts` o añadir ESLint rule `no-restricted-imports` para `@/lib/supabase/proxy`. `lib/supabase/proxy.ts:5-76`
-- [ ] [AI-Review][MEDIUM] TESTS DE UPDATEESSION VERIFICAN EL MOCK: La Suite 2 de `updateSession` usa `vi.mock("@/lib/supabase/middleware", ...)` globalmente — todas las llamadas van al mock, no a la implementación real. AC 8 queda cubierto solo en forma de contrato de tipos. `tests/unit/middleware/middleware.test.ts:42-47`
-- [ ] [AI-Review][MEDIUM] ESLINT SCOPE INCOMPLETO: `no-restricted-imports` y `no-restricted-syntax` no cubren `middleware.ts` raíz ni `tests/**`. Un import directo de `@supabase/ssr` en `middleware.ts` raíz no es bloqueado. `eslint.config.mjs:35-41`
-- [ ] [AI-Review][MEDIUM] PR NO CONFIRMADO: La rama está en origin pero no hay evidencia de PR abierto contra `develop`. T9 marks como completo pero PR es prerequisito del flujo de merge. Verificar/crear PR en GitHub.
-- [ ] [AI-Review][LOW] TESTS DUPLICADOS: `"modulo exporta updateSession como funcion"` y `"modulo real de updateSession — firma correcta"` verifican lo mismo dos veces. `tests/unit/middleware/middleware.test.ts:138-159`
-- [ ] [AI-Review][LOW] ESLINT NO CUBRE GETESSION EN LIB/SUPABASE/: La regla `no-restricted-syntax` que bloquea `getSession()` está en scope restringido — no aplica a `lib/supabase/proxy.ts`. `eslint.config.mjs:63-78`
-- [ ] [AI-Review][LOW] SUBRUTAS DE /LOGIN/ INADVERTIDAMENTE PUBLICAS: `isPublicPath('/login/anything')` retorna `true`. Sin impacto ahora, pero si se añade `/login/[token]` como ruta privada fallará. `middleware.ts:7-11`
-- [ ] [AI-Review][LOW] COMPLETION NOTE T9 DESACTUALIZADA: Dev Agent Record sigue diciendo "Push + PR pendientes (sin remote configurado)" — texto del CR #1 no actualizado tras resolver F2. Story file, Dev Agent Record.
+- [x] [AI-Review][HIGH] PROXY.TS CONFLICTIVO: RESUELTO — `lib/supabase/proxy.ts` eliminado. También eliminado `proxy.ts` raiz (template obsoleto que importaba de lib/supabase/proxy). La implementacion correcta esta en `lib/supabase/middleware.ts`.
+- [x] [AI-Review][MEDIUM] TESTS DE UPDATEESSION VERIFICAN EL MOCK: RESUELTO — Suite 2 reescrita usando `vi.importActual` para testear la implementacion REAL. `mockGetClaims` (mock de `@supabase/ssr`) controla el comportamiento de getClaims() en cada test. 6 tests cubren: contrato { response, user }, user null sin sesion, user no null con sesion valida, response status 200, response no es redirect. 16 tests unitarios + 2 smoke = 18 passing.
+- [x] [AI-Review][MEDIUM] ESLINT SCOPE INCOMPLETO: RESUELTO — `no-restricted-imports` y `no-restricted-syntax` ampliadas para cubrir `middleware.ts` raiz y `tests/**`. ESLint limpio en todos los ficheros.
+- [x] [AI-Review][MEDIUM] PR NO CONFIRMADO: RESUELTO — PR creado contra develop.
+- [x] [AI-Review][LOW] TESTS DUPLICADOS: RESUELTO — Suite 2 reescrita sin tests duplicados. Los 2 tests de firma colapsados en uno: `updateSession es una funcion asincrona que acepta un parametro`.
+- [x] [AI-Review][LOW] ESLINT NO CUBRE GETESSION EN LIB/SUPABASE/: RESUELTO — `proxy.ts` eliminado. La regla `no-restricted-syntax` aplica ahora a `middleware.ts` raiz y `tests/**`. `lib/supabase/middleware.ts` usa getClaims() correctamente y es la unica implementacion.
+- [x] [AI-Review][LOW] SUBRUTAS DE /LOGIN/ INADVERTIDAMENTE PUBLICAS: RESUELTO — `isPublicPath` refactorizada: `PUBLIC_EXACT_PATHS` (sin subrutas: `/`, `/login`) y `PUBLIC_PREFIX_PATHS` (con subrutas: `/auth/callback`). Test anadido: `/login/anything` retorna false.
+- [x] [AI-Review][LOW] COMPLETION NOTE T9 DESACTUALIZADA: RESUELTO — Completion Notes actualizadas. Ver nota T9 en Dev Agent Record.
 
 ### Findings Detail — CR #2
 
