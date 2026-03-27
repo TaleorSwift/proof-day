@@ -92,6 +92,31 @@ describe("isPublicPath", () => {
     expect(isPublicPath("/login/anything")).toBe(false);
     expect(isPublicPath("/login/reset")).toBe(false);
   });
+
+  // CR3-F3 fix (T7 story 2.2): tests de /invite en middleware.test.ts (ubicación correcta)
+  it("retorna true para /invite (ruta exacta) — AC 8 story 2.2", () => {
+    expect(isPublicPath("/invite")).toBe(true);
+  });
+
+  it("retorna true para /invite/abc-123 (subruta con token UUID) — AC 8 story 2.2", () => {
+    expect(isPublicPath("/invite/abc-123")).toBe(true);
+  });
+
+  it("retorna true para /invite/ (trailing slash) — AC 8 story 2.2", () => {
+    expect(isPublicPath("/invite/")).toBe(true);
+  });
+
+  it("retorna false para /invitations/abc (no confundir con /invite) — story 2.2", () => {
+    expect(isPublicPath("/invitations/abc")).toBe(false);
+  });
+
+  it("retorna false para /invited (no es subruta de /invite) — story 2.2", () => {
+    expect(isPublicPath("/invited")).toBe(false);
+  });
+
+  it("retorna false para /invite-extra (prefijo estricto) — story 2.2", () => {
+    expect(isPublicPath("/invite-extra")).toBe(false);
+  });
 });
 
 // ---------------------------------------------------------------------------

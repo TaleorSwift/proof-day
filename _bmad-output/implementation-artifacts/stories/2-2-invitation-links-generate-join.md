@@ -386,7 +386,8 @@ para que pueda incorporar miembros a mi comunidad sin gestión manual.
     - [x] Test: middleware `isPublicPath('/invite')` → `true`
     - [x] Test: middleware `isPublicPath('/invitations/abc')` → `false` (no confundir paths)
     - [x] Suite 4: 5 tests de regresión — verificar que /auth/callback, /, /login siguen siendo públicas tras añadir /invite (L2 fix CR#1)
-  - [x] 11 tests de invitations pasando (6 isPublicPath /invite + 5 regresión) + 4 schema/uuid = 15 tests total en fichero
+  - [x] Suite 4: 5 tests error path `generateInvitationLink()` (CR4-F5 fix)
+  - [x] 22 tests en fichero: 4 schema + 2 uuid + 6 isPublicPath /invite (CR3-F3: también en middleware.test.ts) + 5 regresión + 5 error path generateInvitationLink
 
 - [x] **T13: Documentación funcional**
   - [x] Actualizar `docs/project/modules/communities.md`:
@@ -397,7 +398,7 @@ para que pueda incorporar miembros a mi comunidad sin gestión manual.
   - [x] `npm run test` — 55/55 tests pasando
   - [x] `git add` — solo ficheros de esta story
   - [x] Commit: `fix(communities): resolve CR#1 findings for story 2.2`
-  - [x] Push: `git push origin feat/2-1-create-community`
+  - [x] Push: `git push origin feat/2-2-invitation-links` (CR3-F4 fix: rama correcta)
   - [x] PR contra `develop` (PR existente #5 — actualizado)
   - [x] Actualizar `sprint-status.yaml`: `2-2-invitation-links-generate-join: review`
 
@@ -705,15 +706,15 @@ Usuario no autenticado con communityId inválido recibe 400 en lugar de 401. Sem
 
 - [x] [AI-Review][HIGH] CR3-F1: Añadir policy `use_invitation` en migración para UPDATE por usuario autenticado con token no usado [supabase/migrations/001_create_invitation_links.sql]
 - [x] [AI-Review][HIGH] CR3-F2: Añadir `GRANT EXECUTE ON FUNCTION validate_invitation_token(text) TO authenticated;` [supabase/migrations/001_create_invitation_links.sql]
-- [ ] [AI-Review][HIGH] CR4-F1: Mover token del URL path al body del POST interno o rediseñar ruta para evitar exposición en logs [app/invite/[token]/page.tsx:68]
-- [ ] [AI-Review][MEDIUM] CR3-F3: Mover tests isPublicPath /invite a middleware.test.ts (T7) [tests/unit/invitations/invitations.test.ts]
-- [ ] [AI-Review][MEDIUM] CR3-F4: Corregir branch en T14 — `feat/2-2-invitation-links` no `feat/2-1-create-community`
-- [ ] [AI-Review][MEDIUM] CR4-F2: Alinear `InvitationLink` a snake_case o mapear en API Route [lib/types/invitations.ts]
-- [ ] [AI-Review][MEDIUM] CR4-F3: Añadir enlace/botón a settings desde lista de comunidades del admin
-- [ ] [AI-Review][LOW] CR3-F5: Actualizar count de tests en T12 de 15 a 17
-- [ ] [AI-Review][LOW] CR3-F6: Reemplazar Tailwind hardcoded en InviteErrorState/AlreadyMemberState por CSS variables [app/invite/[token]/page.tsx:13-47]
-- [ ] [AI-Review][LOW] CR4-F4: Mover auth check antes de Zod [app/api/communities/[communityId]/invitations/route.ts:12-27]
-- [ ] [AI-Review][LOW] CR4-F5: Añadir tests error path para generateInvitationLink() [lib/api/invitations.ts]
+- [x] [AI-Review][HIGH] CR4-F1: Eliminado fetch interno — Server Component usa createClient() + RPC directamente — token solo en SQL param, nunca en URL [app/invite/[token]/page.tsx]
+- [x] [AI-Review][MEDIUM] CR3-F3: Tests isPublicPath /invite añadidos a middleware.test.ts (T7 cumplido) [tests/unit/middleware/middleware.test.ts]
+- [x] [AI-Review][MEDIUM] CR3-F4: Branch corregido en T14 — `feat/2-2-invitation-links`
+- [x] [AI-Review][MEDIUM] CR4-F2: Añadida InvitationLinkRow (snake_case) en lib/types/invitations.ts — InvitationLink camelCase mantenida por compatibilidad
+- [x] [AI-Review][MEDIUM] CR4-F3: Enlace "← Mis comunidades" añadido en settings page [app/(app)/communities/[slug]/settings/page.tsx]
+- [x] [AI-Review][LOW] CR3-F5: Count de tests en T12 actualizado — 22 tests en fichero
+- [x] [AI-Review][LOW] CR3-F6: Tailwind hardcoded reemplazado por CSS variables en InviteErrorState/AlreadyMemberState [app/invite/[token]/page.tsx]
+- [x] [AI-Review][LOW] CR4-F4: Auth check movido antes de Zod [app/api/communities/[communityId]/invitations/route.ts]
+- [x] [AI-Review][LOW] CR4-F5: 5 tests error path añadidos para generateInvitationLink() [tests/unit/invitations/invitations.test.ts]
 
 ## Change Log
 
@@ -726,3 +727,4 @@ Usuario no autenticado con communityId inválido recibe 400 en lugar de 401. Sem
 | 2026-03-27 | CR | Code review CR#3 — CHANGES_REQUESTED — 2 HIGH, 2 MEDIUM, 3 LOW |
 | 2026-03-27 | CR | Code review CR#4 — CHANGES_REQUESTED — 3 HIGH, 4 MEDIUM, 4 LOW — findings CR#3 sin resolver |
 | 2026-03-27 | DS REFINE | CR#3 fixes (F1+F2) — GRANT EXECUTE + policy use_invitation en migración — 41/41 tests pasando |
+| 2026-03-28 | DS REFINE | CR#4 fixes — 9/9 findings resueltos — 52/52 tests pasando |

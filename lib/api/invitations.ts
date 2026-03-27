@@ -2,9 +2,9 @@
  * Client-side API wrapper for invitation links.
  * Used exclusively in Client Components (browser context).
  */
-import type { InvitationLink } from '@/lib/types/invitations'
+import type { InvitationLink, InvitationLinkRow } from '@/lib/types/invitations'
 
-export type { InvitationLink }
+export type { InvitationLink, InvitationLinkRow }
 
 /**
  * Generates an invitation link for a community.

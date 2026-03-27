@@ -7,6 +7,14 @@ export async function POST(
   { params }: { params: Promise<{ communityId: string }> }
 ) {
   const { communityId } = await params
+  const supabase = await createClient()
+
+  // CR4-F4 fix: Auth check ANTES de Zod — semántica REST correcta (401 antes de 400)
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json(
+    { error: 'No autenticado', code: 'AUTH_REQUIRED' },
+    { status: 401 }
+  )
 
   // Validar communityId con Zod (M2 fix — schema ahora usado en API Route)
   const validation = generateInvitationSchema.safeParse({ communityId })
@@ -16,15 +24,6 @@ export async function POST(
       { status: 400 }
     )
   }
-
-  const supabase = await createClient()
-
-  // Auth check
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json(
-    { error: 'No autenticado', code: 'AUTH_REQUIRED' },
-    { status: 401 }
-  )
 
   // Verificar que el usuario es admin de la comunidad
   const { data: membership } = await supabase

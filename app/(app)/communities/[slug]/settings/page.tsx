@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 import InvitationSection from '@/components/communities/InvitationSection'
 
 interface Props {
@@ -44,6 +45,21 @@ export default async function CommunitySettingsPage({ params }: Props) {
       <div style={{ maxWidth: '640px', margin: '0 auto' }}>
         {/* Header */}
         <div style={{ marginBottom: 'var(--space-8)' }}>
+          {/* CR4-F3: Enlace de vuelta a la lista de comunidades */}
+          <Link
+            href="/communities"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 'var(--space-2)',
+              fontSize: 'var(--text-sm)',
+              color: 'var(--color-text-secondary)',
+              textDecoration: 'none',
+              marginBottom: 'var(--space-4)',
+            }}
+          >
+            ← Mis comunidades
+          </Link>
           <h1
             style={{
               fontSize: 'var(--text-2xl)',

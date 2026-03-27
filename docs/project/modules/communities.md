@@ -17,13 +17,15 @@ Permite a usuarios autenticados crear y listar comunidades privadas. El admin pu
 - Usuario ya miembro de la comunidad que usa un link: recibe mensaje "Ya eres miembro" con link a `/communities` — no error. (story 2.2)
 - Token ya usado o inexistente: muestra "Este link ya no es válido". (story 2.2)
 - La validación del token usa una función RPC SECURITY DEFINER para no exponer la tabla completa a usuarios autenticados. (story 2.2)
+- El token NO aparece en logs de URL: `/invite/[token]/page.tsx` usa `createClient()` + RPC directamente, sin fetch interno. (story 2.2, CR4-F1 fix)
+- La API Route `/api/invitations/[token]/use` aplica auth check antes de validación Zod — REST semántico correcto. (story 2.2, CR4-F4 fix)
 
 ## Ficheros clave
-- `app/api/communities/route.ts` — GET y POST communities
 - `app/api/communities/[communityId]/invitations/route.ts` — POST generar invitation link
-- `app/api/invitations/[token]/use/route.ts` — POST usar/validar token
+- `app/api/invitations/[token]/use/route.ts` — POST usar/validar token (client-side use)
 - `components/communities/InvitationSection.tsx` — Client Component: generar y copiar links
-- `app/invite/[token]/page.tsx` — Server Component público: procesa join via API Route
+- `app/invite/[token]/page.tsx` — Server Component público: procesa join directamente via Supabase
+- `supabase/migrations/001_create_invitation_links.sql` — tabla + RLS + RPC SECURITY DEFINER
 
 ## Última actualización
-Story 2.2 — 2026-03-27
+Story 2.2 — 2026-03-28 (CR#4 fixes)

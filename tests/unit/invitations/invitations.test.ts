@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 // ---------------------------------------------------------------------------
 // Mocks — antes de imports que los usan
@@ -22,6 +22,7 @@ vi.mock('@supabase/ssr', () => ({
 // ---------------------------------------------------------------------------
 
 import { generateInvitationSchema } from '../../../lib/validations/invitations'
+import { generateInvitationLink } from '../../../lib/api/invitations'
 import { isPublicPath } from '../../../middleware'
 
 // ---------------------------------------------------------------------------
@@ -134,5 +135,86 @@ describe('isPublicPath — regresión rutas existentes (L2 fix)', () => {
 
   it('/communities sigue siendo privada', () => {
     expect(isPublicPath('/communities')).toBe(false)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Suite 5: generateInvitationLink — error paths (CR4-F5)
+// ---------------------------------------------------------------------------
+
+describe('generateInvitationLink — error paths', () => {
+  const originalFetch = global.fetch
+  const mockWindowLocation = { origin: 'http://localhost:3000' }
+
+  beforeEach(() => {
+    // Mock window.location.origin
+    Object.defineProperty(global, 'window', {
+      value: { location: mockWindowLocation },
+      writable: true,
+    })
+  })
+
+  afterEach(() => {
+    global.fetch = originalFetch
+  })
+
+  it('lanza Error cuando la respuesta no es ok (status 500)', async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: 'Error al generar el link' }),
+    } as Response)
+
+    await expect(generateInvitationLink('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'))
+      .rejects
+      .toThrow('Error al generar el link')
+  })
+
+  it('lanza Error con mensaje por defecto cuando el body no tiene campo error', async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({}),
+    } as Response)
+
+    await expect(generateInvitationLink('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'))
+      .rejects
+      .toThrow('Error al generar el link de invitación')
+  })
+
+  it('lanza Error cuando el JSON del error no se puede parsear', async () => {
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: false,
+      json: async () => { throw new SyntaxError('Invalid JSON') },
+    } as unknown as Response)
+
+    await expect(generateInvitationLink('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'))
+      .rejects
+      .toThrow('Error al generar el link de invitación')
+  })
+
+  it('construye URL correctamente con window.location.origin y token retornado', async () => {
+    const fakeToken = 'abc12345-0000-0000-0000-000000000001'
+    global.fetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ data: { token: fakeToken } }),
+    } as Response)
+
+    const result = await generateInvitationLink('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11')
+    expect(result).toBe(`http://localhost:3000/invite/${fakeToken}`)
+  })
+
+  it('llama al endpoint correcto con método POST', async () => {
+    const communityId = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
+    const mockFetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ data: { token: 'some-token' } }),
+    } as Response)
+    global.fetch = mockFetch
+
+    await generateInvitationLink(communityId)
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      `/api/communities/${communityId}/invitations`,
+      { method: 'POST' }
+    )
   })
 })
