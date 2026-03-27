@@ -1,4 +1,30 @@
 workflows:
+  - id: "ds-20260327-019"
+    timestamp: "2026-03-27T20:00:00"
+    completed: "2026-03-27T20:20:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: REFINE
+    result: SUCCESS
+    story: "2.2 — Invitation Links: Generate & Join (CR#3 fixes — CR3-F1 + CR3-F2)"
+    branch: "feat/2-2-invitation-links"
+    commit: "9aff209 fix(communities): resolve CR3-F1 and CR3-F2 for story 2.2 invitation links"
+    tests: "41/41 pasando."
+    artifacts_modified:
+      - "supabase/migrations/001_create_invitation_links.sql"
+      - "_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md"
+    summary: |
+      CR3-F1 (HIGH/SECURITY): Añadida policy RLS use_invitation para UPDATE en invitation_links.
+        USING (auth.uid() IS NOT NULL AND used_at IS NULL) — solo tokens no usados.
+        WITH CHECK (auth.uid() IS NOT NULL) — cualquier usuario autenticado puede invalidar.
+        Resultado: AC-2 (single-use) funciona en producción para usuarios no-admin.
+      CR3-F2 (HIGH): Añadido GRANT EXECUTE ON FUNCTION validate_invitation_token(text) TO authenticated.
+        Sin este GRANT, el rol authenticated recibía permission denied — todo el flujo de join roto.
+        Resultado: RPC funciona en producción para rol authenticated.
+    errors: []
+    next_recommended: "Pendientes F3-F7 CR#3 y F1-F5 CR#4 (fuera scope). Recomendado /cr para verificar estado."
+
   - id: "ds-20260327-016"
     timestamp: "2026-03-27T17:00:00"
     agent: Homer
