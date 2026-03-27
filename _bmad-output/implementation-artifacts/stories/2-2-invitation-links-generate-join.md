@@ -824,6 +824,86 @@ T6 dice "Crear `app/api/invitations/[token]/use/route.ts`" marcado [x]. Ese fich
 
 ---
 
+## Senior Developer Review CR #8 (AI)
+
+**Reviewer:** Homer CR — claude-sonnet-4-6 (cr-20260328-008)
+**Fecha:** 2026-03-28
+**Veredicto:** CHANGES_REQUESTED
+
+**Tests:** 52/52 pasando. ESLint: limpio. TypeScript: limpio. Build: limpio. Git discrepancias: 0.
+
+**Verificacion CR#7 findings (5/5):** Todos resueltos correctamente en codigo —
+- CR7-F1 (MEDIUM): T6 reescrito con logica real en page.tsx y nota historica de route.ts
+- CR7-F2 (MEDIUM): Comentario SQL migration corregido — referencia al Server Component, sin mencionar route.ts eliminada
+- CR7-F3 (LOW): InvitationTokenResult movido a lib/types/invitations.ts e importado en page.tsx
+- CR7-F4 (LOW): Nota historica incluida en T6 — route.ts creada y eliminada en CR6-F2
+- CR7-F5 (LOW): minWidth: 'var(--space-12)' en InvitationSection.tsx — sin hardcoded '48px'
+
+**Verificacion ACs:** AC-1 a AC-8 todos IMPLEMENTADOS. Rejection Criteria todos CUMPLIDOS.
+
+### Findings CR #8
+
+**[CR8-F1][MEDIUM] `InvitationLinkWithCommunity` — dead type sin consumers en codebase**
+
+`lib/types/invitations.ts:25-31`. Interface exportada que extiende `InvitationLinkRow` con un campo `community`. No existe ningun consumer en `app/`, `components/`, `lib/api/` ni `tests/`. Patron identico a `InvitationLink` camelCase eliminada en CR6-F4 por la misma razon. Si `InvitationLinkRow` cambia, hay que actualizar tambien este interface sin que ningun compilador lo detecte como necesario. Dead type que aumenta la superficie de mantenimiento sin valor.
+
+Fix: eliminar `InvitationLinkWithCommunity` de `lib/types/invitations.ts`. Si es necesaria en el futuro, se puede crear en ese momento.
+
+**[CR8-F2][MEDIUM] No existe punto de entrada navegable a `/communities/[slug]/settings` — AC-1 inaccesible sin URL manual**
+
+`app/(app)/communities/` — no existe `page.tsx` en este directorio ni en ningun componente un link hacia `/communities/[slug]/settings`. CR4-F3 añadio el link "← Mis comunidades" dentro de `settings/page.tsx` (link de VUELTA, no de entrada). Un usuario normal que visite `/communities` (que segun la story es el redirect post-join) no puede llegar a settings para generar un link. AC-1 requiere que el admin pueda generar links desde settings — pero no hay forma de llegar a settings sin teclear la URL.
+
+Nota: la pagina `/communities` puede existir fuera del scope de story 2.2 (story 2.1 probablemente la tiene). Si existe en la codebase el componente de lista de comunidades que muestra el link de settings para admins, este finding es FALSO POSITIVO. Dado que `app/(app)/communities/` no existe en el file tree actual, se clasifica como MEDIUM.
+
+Fix: verificar si story 2.1 incluye una pagina de lista de comunidades con link de settings para admins. Si no existe, anadir el link en la pagina de comunidades o documentar que es scope de otra story.
+
+**[CR8-F3][LOW] Type assertion forzado en `.rpc().maybeSingle()` — oculta cambios de tipo del SDK**
+
+`app/invite/[token]/page.tsx:110`: `.maybeSingle() as { data: InvitationTokenResult | null; error: unknown }`. El cast force-overrides el tipo inferido por el SDK de Supabase. Esto significa que si el SDK cambia la firma de retorno de `.rpc().maybeSingle()`, TypeScript no lo detectara. La forma menos invasiva es tipar solo `data`:
+
+```typescript
+const { data: invitation, error: rpcError } = await supabase
+  .rpc('validate_invitation_token', { p_token: token })
+  .maybeSingle()
+const typedInvitation = invitation as InvitationTokenResult | null
+```
+
+O usar una declaracion de tipo intermedia que preserve los tipos de error del SDK.
+
+**[CR8-F4][LOW] `maxWidth: '640px'` hardcodeado en settings/page.tsx — viola design-tokens**
+
+`app/(app)/communities/[slug]/settings/page.tsx:45`: `style={{ maxWidth: '640px', margin: '0 auto' }}`. El design-tokens.md no define tokens de max-width de contenedores. Los CRs previos establecieron la norma: ningun valor hardcodeado — usar CSS variables. `640px` no tiene token equivalente definido en design-tokens.md. Misma clase de violacion que CR7-F5 (`48px` sin token) y CR5-F2 (clases Tailwind en lugar de tokens).
+
+Fix: consultar con el usuario si se necesita un nuevo token `--container-md: 640px` en design-tokens.md, o si el patron correcto es usar `max-w-2xl` de Tailwind (672px ≈ 640px).
+
+**[CR8-F5][LOW] `max-w-md` Tailwind sin token CSS en `InviteErrorState` e `InviteAlreadyMemberState`**
+
+`app/invite/[token]/page.tsx:16,51`: `className="w-full max-w-md text-center"`. Los CRs previos (CR3-F6, CR5-F2) corrigieron colores, tipografia y spacing via CSS variables. El `max-w-md` (448px Tailwind) permanece como clase directa. El design-tokens.md no define un token para esta anchura. Inconsistencia con el resto del componente que usa CSS variables exclusivamente en inline styles.
+
+Fix: mismo patron que CR8-F4 — preguntar si se necesita token de contenedor o si Tailwind `max-w-md` es aceptable como excepcion documentada.
+
+### Review Follow-ups (AI) — CR #8
+
+- [ ] [AI-Review][MEDIUM] CR8-F1: Eliminar `InvitationLinkWithCommunity` de lib/types/invitations.ts — dead type sin consumers [lib/types/invitations.ts:25-31]
+- [ ] [AI-Review][MEDIUM] CR8-F2: Verificar si existe pagina de lista de comunidades con link a settings para admins — si no existe, documentar o crear [app/(app)/communities/]
+- [ ] [AI-Review][LOW] CR8-F3: Reemplazar type assertion forzado en .rpc().maybeSingle() por tipado menos invasivo [app/invite/[token]/page.tsx:110]
+- [ ] [AI-Review][LOW] CR8-F4: Resolver maxWidth: '640px' hardcodeado — token nuevo o patron Tailwind documentado [app/(app)/communities/[slug]/settings/page.tsx:45]
+- [ ] [AI-Review][LOW] CR8-F5: Resolver max-w-md en InviteErrorState/AlreadyMemberState — token nuevo o excepcion documentada [app/invite/[token]/page.tsx:16,51]
+
+### Aspectos Positivos — CR #8
+
+- 5/5 findings de CR#7 resueltos correctamente
+- AC-1 a AC-8: todos IMPLEMENTADOS en codigo
+- Rejection Criteria todos CUMPLIDOS: sin imports supabase directos, sin getSession(), migracion SQL, sin Server Actions, token no expuesto en logs
+- Arquitectura RLS completa: admin_manage_invitations + use_invitation + GRANT EXECUTE + SECURITY DEFINER
+- InvitationTokenResult centralizado en lib/types — single source of truth para el tipo RPC
+- Rollback con captura de error doble — estado inconsistente logueado
+- 52/52 tests, TypeScript limpio, ESLint limpio, build limpio
+- 0 HIGH, 2 MEDIUM (1 posible falso positivo segun scope), 3 LOW
+- Esta es la ronda mas limpia hasta ahora — ningun issue de logica de negocio ni seguridad
+
+---
+
 ## Change Log
 
 | Fecha | Tipo | Descripción |
@@ -842,3 +922,4 @@ T6 dice "Crear `app/api/invitations/[token]/use/route.ts`" marcado [x]. Ese fich
 | 2026-03-28 | DS REFINE | CR#6 fixes — 5/5 findings resueltos — route.ts eliminada, rollback capturado, tipos limpiados — 52/52 tests pasando |
 | 2026-03-28 | CR | Code review CR#7 — CHANGES_REQUESTED — 0 HIGH, 2 MEDIUM, 3 LOW — solo documentacion e inconsistencias menores |
 | 2026-03-28 | DS REFINE | CR#7 fixes — 5/5 findings resueltos — InvitationTokenResult movido a types, T6 corregido, SQL comment actualizado, minWidth token |
+| 2026-03-28 | CR | Code review CR#8 — CHANGES_REQUESTED — 0 HIGH, 2 MEDIUM, 3 LOW — dead type, navegacion settings, type assertion |

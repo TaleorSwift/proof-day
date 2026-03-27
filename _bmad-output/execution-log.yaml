@@ -1,13 +1,103 @@
 workflows:
-  - id: "ds-20260328-008"
-    timestamp: "2026-03-28T10:00:00"
+  - id: "ds-20260328-009"
+    timestamp: "2026-03-28T12:00:00"
+    completed: "2026-03-28T12:30:00"
     agent: Homer
     trigger: "/ds"
     workflow: "dev-story"
     mode: REFINE
-    result: STARTED
+    result: SUCCESS
+    duration_estimate: "30 minutes"
+    story: "2.2 — Invitation Links (fix CR#8 findings)"
+    branch: "feat/2-2-invitation-links"
+    commit: "371ab09"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/5"
+    summary: |
+      CR#8 fixes for story 2.2. 4 findings resolved, 1 false positive (F2) skipped.
+      CR8-F1: InvitationLinkWithCommunity dead type removed from lib/types/invitations.ts.
+      CR8-F2: FALSE POSITIVE — out of scope (story 2.1). Not implemented.
+      CR8-F3: .maybeSingle() cast replaced with .maybeSingle<InvitationTokenResult>() generic.
+      CR8-F4: maxWidth 640px documented with comment — no token in design-tokens.md.
+      CR8-F5: max-w-md Tailwind classes replaced with inline CSS in both InviteErrorState
+        and InviteAlreadyMemberState — consistent with CSS variable pattern in component.
+      Tests: 52/52 passing. TypeScript clean. ESLint clean.
+    artifacts_modified:
+      - "lib/types/invitations.ts"
+      - "app/invite/[token]/page.tsx"
+      - "app/(app)/communities/[slug]/settings/page.tsx"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "CR (Homer): code review para los fixes de CR#8."
+
+  - id: "cr-20260328-008"
+    timestamp: "2026-03-28T11:00:00"
+    completed: "2026-03-28T11:40:00"
+    agent: Homer
+    trigger: "/cr"
+    workflow: "code-review"
+    mode: VERIFY
+    result: SUCCESS
+    duration_estimate: "40 minutes"
+    story: "2.2 — Invitation Links (post CR#7 fixes)"
+    branch: "feat/2-2-invitation-links"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/5"
+    veredicto: "CHANGES_REQUESTED"
+    findings: "0 CRITICAL, 0 HIGH, 2 MEDIUM, 3 LOW = 5 total"
+    summary: |
+      CR #8 adversarial de story 2.2 (post CR#7 fixes). Veredicto: CHANGES_REQUESTED.
+      Tests: 52/52 pasando. TypeScript limpio. ESLint limpio. Build limpio.
+      CR#7 findings (5/5): todos resueltos correctamente.
+      ACs 1-8: todos IMPLEMENTADOS. Rejection Criteria: todos CUMPLIDOS.
+      CR8-F1 (MEDIUM): InvitationLinkWithCommunity dead type sin consumers — mismo patron
+        que InvitationLink camelCase eliminada en CR6-F4. Aumenta superficie de mantenimiento sin valor.
+      CR8-F2 (MEDIUM): No existe punto de entrada navegable a /communities/[slug]/settings
+        desde ningun componente de la app. Posible falso positivo si story 2.1 tiene pagina de
+        lista de comunidades fuera del file tree de story 2.2.
+      CR8-F3 (LOW): Type assertion forzado en .rpc().maybeSingle() oculta cambios de tipo del SDK.
+      CR8-F4 (LOW): maxWidth: '640px' hardcodeado en settings/page.tsx — no hay token CSS equivalente.
+      CR8-F5 (LOW): max-w-md Tailwind en InviteErrorState/AlreadyMemberState — patron Tailwind
+        mezclado con CSS variables inline en el mismo componente.
+      0 issues de logica de negocio ni seguridad — ronda mas limpia hasta ahora.
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "DS REFINE (Homer): aplicar CR#8 fixes — eliminar dead type, resolver hardcoded values."
+
+  - id: "ds-20260328-008"
+    timestamp: "2026-03-28T10:00:00"
+    completed: "2026-03-28T10:30:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: REFINE
+    result: SUCCESS
+    duration_estimate: "30 minutes"
     story: "2.2 — Invitation Links (fix CR#7 findings)"
     branch: "feat/2-2-invitation-links"
+    commit: "dea2834"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/5"
+    summary: |
+      Fix CR#7 findings (5/5) para story 2.2 Invitation Links.
+      Tests: 52/52 pasando. TypeScript limpio. ESLint limpio.
+      CR7-F1 (MEDIUM): T6 en story file reescrito — lógica de join documentada en page.tsx,
+        no en API Route eliminada. Historia completa de la evolución incluida.
+      CR7-F2 (MEDIUM): Comentario incorrecto en SQL migration (línea 43) corregido —
+        eliminada referencia a route.ts (eliminada en CR6-F2), actualizado a Server Component + RPC.
+      CR7-F3 (LOW): InvitationTokenResult movido de inline en page.tsx a lib/types/invitations.ts.
+        page.tsx importa el tipo desde allí. Single source of truth para el tipo RPC.
+      CR7-F4 (LOW): T6 incluye nota histórica explícita — route.ts creada en implementación
+        original y eliminada en CR6-F2 como dead code. Confusión eliminada para historial.
+      CR7-F5 (LOW): minWidth: '48px' → var(--space-12) en InvitationSection.tsx.
+        Consistente con design-tokens.md (--space-12: 48px).
+    artifacts_modified:
+      - "app/invite/[token]/page.tsx"
+      - "components/communities/InvitationSection.tsx"
+      - "lib/types/invitations.ts"
+      - "supabase/migrations/001_create_invitation_links.sql"
+      - "_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md"
+    errors: []
+    next_recommended: "CR (Homer): nuevo code review adversarial de story 2.2 post CR#7 fixes."
 
   - id: "cr-20260328-007"
     timestamp: "2026-03-28T00:35:00"
