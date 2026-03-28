@@ -1,4 +1,13 @@
 workflows:
+  - id: "bart-QD-20260328-middleware-login-fix"
+    timestamp: "2026-03-28T23:59:00"
+    agent: "Bart"
+    trigger: "QD"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Fix middleware.ts — redirect a /auth/login cambiado a /login, y /login añadido a PUBLIC_EXACT_PATHS para evitar loop infinito."
+
   - id: "20260328-160000-homer-DS-cr-fixes"
     timestamp: "2026-03-28T16:30:00"
     agent: "Homer"

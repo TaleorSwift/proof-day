@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 // Rutas publicas exactas (sin subrutas)
-const PUBLIC_EXACT_PATHS = ["/"];
+const PUBLIC_EXACT_PATHS = ["/", "/login"];
 
 // Rutas publicas con subrutas permitidas (prefijo)
 const PUBLIC_PREFIX_PATHS = ["/auth", "/invite"];
@@ -24,9 +24,9 @@ export async function middleware(request: NextRequest) {
 
   const { response, user } = await updateSession(request);
 
-  // Sin sesion → redirect a /auth/login
+  // Sin sesion → redirect a /login
   if (!user) {
-    const loginUrl = new URL("/auth/login", request.url);
+    const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
 
