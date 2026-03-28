@@ -1,4 +1,42 @@
 workflows:
+  - id: "ds-20260328-034"
+    timestamp: "2026-03-28T23:50:00"
+    completed: "2026-03-28T23:58:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    result: SUCCESS
+    story: "3-4-project-list-view-in-community"
+    summary: "Story 3.4 — Project List View in Community. GET /api/projects con verificación de membresía, getProjects en lib/api/projects.ts, ProjectCard (skeleton + estados), ProjectGrid, ProjectsEmptyState, StatusBadge, Storybook 5 stories, integración en /communities/[slug] Server Component, 6 tests unitarios (visibilidad + ordenación). Todos 108 tests pasan."
+    artifacts_created:
+      - "app/api/projects/route.ts (GET handler añadido)"
+      - "components/projects/StatusBadge.tsx"
+      - "components/projects/ProjectCard.tsx"
+      - "components/projects/ProjectGrid.tsx"
+      - "components/projects/ProjectsEmptyState.tsx"
+      - "stories/projects/ProjectCard.stories.tsx"
+      - "tests/unit/projects/projectList.test.ts"
+      - "docs/project/modules/projects.md"
+    artifacts_modified:
+      - "lib/api/projects.ts (getProjects + ProjectListItem añadidos)"
+      - "app/(app)/communities/[slug]/page.tsx (integrar ProjectGrid)"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    tests: "108 passed (9 test files)"
+    next_recommended: "Homer, /cr — code review de feat/3-4-project-list-view-in-community"
+
+  - id: "ds-20260328-033"
+    timestamp: "2026-03-28T23:45:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    result: STARTED
+    story: "3-3-publish-manage-project-states"
+    summary: "Story 3.3 — Publish & Manage Project States. Implementando API Route PATCH /api/projects/[id]/status con máquina de estados, lib/types/projects.ts, lib/api/projects.ts wrappers publishProject/deactivateProject, componentes ProjectStateActions/InactiveBanner/StatusBadge, vista proyecto con estados, tests unitarios."
+
   - id: "cr-20260328-7-1"
     timestamp: "2026-03-28T22:00:00"
     agent: Homer
