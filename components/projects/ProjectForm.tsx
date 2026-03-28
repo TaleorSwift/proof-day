@@ -69,6 +69,7 @@ export function ProjectForm({
   const onSubmit = async (data: FormValues) => {
     try {
       if (isEdit && projectId) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { communityId: _cid, ...updateData } = data
         await updateProject(projectId, updateData)
         router.refresh()
