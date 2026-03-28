@@ -75,7 +75,14 @@ export async function POST(
   }
 
   // Build path: {userId}/{projectId}/{timestamp}.{ext}
-  const ext = file.name.split('.').pop()
+  const MIME_TO_EXT: Record<string, string> = {
+    'image/jpeg': 'jpg',
+    'image/jpg': 'jpg',
+    'image/png': 'png',
+    'image/webp': 'webp',
+    'image/gif': 'gif',
+  }
+  const ext = MIME_TO_EXT[file.type] ?? 'jpg'
   const filename = `${Date.now()}.${ext}`
   const path = `${user.id}/${projectId}/${filename}`
 
