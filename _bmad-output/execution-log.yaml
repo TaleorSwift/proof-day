@@ -1,4 +1,28 @@
 workflows:
+  - id: "dc-20260328-001"
+    timestamp: "2026-03-28T00:00:00"
+    agent: Wiggum
+    trigger: "/dc"
+    workflow: "deploy-configure"
+    mode: GENERATE
+    result: SUCCESS
+    platform: Vercel
+    ci_cd: GitHub Actions
+    summary: "CI/CD configurado para Vercel + Supabase + GitHub Actions. Pipeline de seguridad con Gitleaks, Semgrep, Trivy y npm audit. Imagen Docker en ghcr.io. Deploy bloqueado si quality gate falla."
+    artifacts_created:
+      - "Dockerfile"
+      - ".dockerignore"
+      - ".github/workflows/ci.yml"
+      - ".github/workflows/deploy.yml"
+      - "vercel.json"
+      - "docs/project/deployment-setup.md"
+    artifacts_modified:
+      - ".env.example"
+      - "next.config.ts"
+    manual_steps_pending:
+      - "Configurar 5 secrets en GitHub Actions"
+      - "Ejecutar vercel link desde local para primer deploy"
+
   - id: "cs-20260327-006"
     timestamp: "2026-03-27T01:10:00"
     agent: Ned

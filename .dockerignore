@@ -1,0 +1,50 @@
+# Dependencies
+node_modules
+npm-debug.log
+
+# Git
+.git
+.gitignore
+
+# Environment — never in image
+.env
+.env.*
+!.env.example
+
+# Next.js build output (rebuilt in Docker)
+.next
+out
+
+# Tests
+coverage
+tests
+playwright.config.ts
+vitest.config.ts
+
+# Dev tooling — not needed in runtime
+.husky
+.storybook
+stories
+eslint.config.mjs
+tailwind.config.ts
+postcss.config.mjs
+tsconfig.json
+
+# IDE
+.idea
+.vscode
+
+# Claude Code
+.claude
+CLAUDE.md
+
+# BMAD
+_bmad
+_bmad-output
+
+# Docs & CI
+docs
+.github
+
+# Misc
+*.md
