@@ -1,4 +1,30 @@
 workflows:
+  - id: "ds-20260328-053"
+    timestamp: "2026-03-28T12:00:00"
+    completed: "2026-03-28T13:00:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    story: "5-3-builder-decision-registration"
+    branch: "feat/5-3-builder-decision-registration"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/19"
+    result: SUCCESS
+    summary: "Story 5.3 — Builder Decision Registration. GENERATE mode. POST /api/projects/[id]/decision con Zod validation, auth getUser(), 409 guard irreversibilidad, 404/403. registerDecision() helper en lib/api/projects.ts. DecisionBadge (full + compact) con design tokens. DecisionDialog con 3 Cards seleccionables, loading state, advertencia irreversible. ProofScoreSidebar actualizado: boton solo visible cuando score disponible, DecisionBadge post-registro. ProjectCard: prop decision, compact badge. 9 tests unitarios, 164 tests totales."
+    artifacts:
+      - "app/api/projects/[id]/decision/route.ts (CREATED)"
+      - "lib/api/projects.ts (MODIFIED — registerDecision)"
+      - "components/projects/DecisionBadge.tsx (CREATED)"
+      - "components/projects/DecisionDialog.tsx (CREATED)"
+      - "components/proof-score/ProofScoreSidebar.tsx (MODIFIED)"
+      - "components/projects/ProjectCard.tsx (MODIFIED)"
+      - "tests/unit/projects/decisionRegistration.test.ts (CREATED — 9 tests)"
+    tests:
+      total: 164
+      new: 9
+      status: all passing
+    errors: []
+
   - id: "ds-20260328-052b"
     timestamp: "2026-03-28T15:00:00"
     completed: "2026-03-28T15:20:00"
