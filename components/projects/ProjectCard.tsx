@@ -125,7 +125,7 @@ export function ProjectCard({
             {project.title}
           </p>
 
-          {/* Decision Badge — compact, bajo el título */}
+          {/* Decision Badge — compact, bajo el titulo */}
           {decision !== null && decision !== undefined && (
             <div style={{ marginBottom: 'var(--space-2)' }}>
               <DecisionBadge decision={decision} compact />

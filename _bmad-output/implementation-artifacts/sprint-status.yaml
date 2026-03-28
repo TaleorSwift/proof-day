@@ -70,8 +70,8 @@ development_status:
 
   # ── EPIC 5: Proof Score & Decisión ───────────────────────────────
   epic-5: in-progress
-  5-1-proof-score-calculation-algorithm: review
-  5-2-proof-score-display-waiting-state: review
+  5-1-proof-score-calculation-algorithm: done  # QA PASS 2026-03-28 — Edna qa-20260328-051
+  5-2-proof-score-display-waiting-state: done  # QA PASS 2026-03-28 — Edna qa-20260328-052
   5-3-builder-decision-registration: review
   epic-5-retrospective: optional
 
