@@ -6,7 +6,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from '@/components/projects/StatusBadge'
-import type { ProjectStatus } from '@/lib/types/projects'
+import { DecisionBadge } from '@/components/projects/DecisionBadge'
+import type { ProjectDecision, ProjectStatus } from '@/lib/types/projects'
 
 type ProofScoreValue = 'Promising' | 'Needs iteration' | 'Weak'
 
@@ -27,6 +28,7 @@ export interface ProjectCardProps {
   communitySlug: string
   feedbackCount?: number
   proofScore?: ProofScoreValue | null
+  decision?: ProjectDecision | null
   isLoading?: boolean
 }
 
@@ -35,6 +37,7 @@ export function ProjectCard({
   communitySlug,
   feedbackCount = 0,
   proofScore = null,
+  decision = null,
   isLoading = false,
 }: ProjectCardProps) {
   // Skeleton loading state
@@ -121,6 +124,13 @@ export function ProjectCard({
           >
             {project.title}
           </p>
+
+          {/* Decision Badge — compact, bajo el título */}
+          {decision !== null && decision !== undefined && (
+            <div style={{ marginBottom: 'var(--space-2)' }}>
+              <DecisionBadge decision={decision} compact />
+            </div>
+          )}
 
           {/* Fila: StatusBadge + contador feedbacks */}
           <div
