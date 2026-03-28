@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DraftBanner } from '@/components/projects/DraftBanner'
+import { FeedbackButton } from '@/components/feedback/FeedbackButton'
 import type { ProjectRow } from '@/lib/types/projects'
 
 interface Props {
@@ -60,26 +61,35 @@ export default async function ProjectPage({ params }: Props) {
               {typedProject.title}
             </h1>
           </div>
-          {isOwner && typedProject.status === 'draft' && (
-            <Link
-              href={`/communities/${slug}/projects/${id}/edit`}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                padding: 'var(--space-2) var(--space-4)',
-                backgroundColor: 'var(--color-surface)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                fontSize: 'var(--text-sm)',
-                fontWeight: 'var(--font-medium)',
-                color: 'var(--color-text-primary)',
-                textDecoration: 'none',
-                boxShadow: 'var(--shadow-sm)',
-              }}
-            >
-              Editar
-            </Link>
-          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', flexShrink: 0 }}>
+            {isOwner && typedProject.status === 'draft' && (
+              <Link
+                href={`/communities/${slug}/projects/${id}/edit`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: 'var(--space-2) var(--space-4)',
+                  backgroundColor: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-md)',
+                  fontSize: 'var(--text-sm)',
+                  fontWeight: 'var(--font-medium)',
+                  color: 'var(--color-text-primary)',
+                  textDecoration: 'none',
+                  boxShadow: 'var(--shadow-sm)',
+                }}
+              >
+                Editar
+              </Link>
+            )}
+            {/* AC-1: Botón "Dar feedback" — solo en proyectos live y para no-builders */}
+            {typedProject.status === 'live' && !isOwner && (
+              <FeedbackButton
+                projectId={typedProject.id}
+                communityId={typedProject.community_id}
+              />
+            )}
+          </div>
         </div>
 
         {/* Problema */}
