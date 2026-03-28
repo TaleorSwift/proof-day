@@ -110,7 +110,15 @@ export default async function CommunityPage({ params }: Props) {
                 Proyectos
               </h2>
               <Link href={`/communities/${slug}/projects/new`}>
-                <Button variant="default">Nuevo proyecto</Button>
+                <Button
+                  variant="default"
+                  style={{
+                    backgroundColor: 'var(--color-primary)',
+                    color: '#fff',
+                  }}
+                >
+                  Nuevo proyecto
+                </Button>
               </Link>
             </div>
 
