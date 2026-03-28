@@ -5,65 +5,65 @@
 @layer base {
   :root {
     /* shadcn/ui tokens (requeridos por componentes) */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
+    --background: 36 33% 98%;         /* warm off-white */
+    --foreground: 60 3% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
+    --card-foreground: 60 3% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --popover-foreground: 60 3% 10%;
+    --primary: 24.6 95% 53.1%;        /* orange #F97316 */
+    --primary-foreground: 0 0% 100%;  /* white */
+    --secondary: 36 20% 95%;
+    --secondary-foreground: 60 3% 10%;
+    --muted: 36 20% 95%;
+    --muted-foreground: 60 5% 42%;
+    --accent: 24.6 95% 53.1%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
+    --border: 33 15% 88%;             /* warm subtle border */
+    --input: 33 15% 88%;
+    --ring: 24.6 95% 53.1%;           /* orange focus ring */
+    --chart-1: 24.6 95% 53.1%;
+    --chart-2: 142 71% 45%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    --radius: 0.75rem;                /* 12px — rounder */
 
     /* === PROOF DAY DESIGN TOKENS === */
 
     /* === COLORES BASE === */
-    --color-background:   #FAFAF8;  /* fondo general — off-white calido */
+    --color-background:   #FAF9F6;  /* fondo general — warm off-white */
     --color-surface:      #FFFFFF;  /* cards, paneles, modales */
-    --color-border:       #E5E5E0;  /* bordes generales — gris calido suave */
+    --color-border:       #E8E4DC;  /* bordes — warm subtle */
 
     /* === PATRON HIPOTESIS / "EN JUEGO" === */
-    --color-hypothesis-bg:     #FDF0E8;  /* peach/cream muy claro */
-    --color-hypothesis-border: #F0C9A8;  /* peach mid */
+    --color-hypothesis-bg:     #FFF7ED;  /* warm orange-tinted cream */
+    --color-hypothesis-border: #FED7AA;  /* orange-200 */
 
     /* === TEXTO === */
-    --color-text-primary:   #1A1A18;  /* casi negro calido — body principal */
-    --color-text-secondary: #6B6B63;  /* gris calido — subtitulos, metadata */
-    --color-text-muted:     #9B9B8F;  /* gris apagado — placeholders, disabled */
+    --color-text-primary:   #1C1917;  /* casi negro calido */
+    --color-text-secondary: #6B7280;  /* gris medio */
+    --color-text-muted:     #9CA3AF;  /* gris claro */
 
     /* === PROOF SCORE (semantico) === */
-    --color-promising-text: #2D7A4F;
-    --color-promising-bg:   #E8F5EE;
-    --color-needs-text:     #A05C00;
-    --color-needs-bg:       #FEF3E2;
+    --color-promising-text: #15803D;
+    --color-promising-bg:   #DCFCE7;
+    --color-needs-text:     #B45309;
+    --color-needs-bg:       #FEF3C7;
     --color-weak-text:      #B91C1C;
     --color-weak-bg:        #FEE2E2;
 
     /* === DECISION DEL BUILDER (estado "cerrado") === */
-    --color-decision-bg:     #F0F0F0;
-    --color-decision-border: #D0D0C8;
+    --color-decision-bg:     #F5F5F4;
+    --color-decision-border: #D6D3D1;
 
     /* === INTERACTIVO === */
-    --color-primary:       #1A1A18;  /* CTA principal */
-    --color-primary-hover: #3A3A32;
-    --color-accent:        #E87D4A;  /* peach saturado — acciones de enfasis */
-    --color-accent-hover:  #D4683A;
+    --color-primary:       #F97316;  /* orange-500 — CTA principal */
+    --color-primary-hover: #EA6C00;  /* orange-600 */
+    --color-accent:        #F97316;
+    --color-accent-hover:  #EA6C00;
 
     /* === TIPOGRAFIA === */
     --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,

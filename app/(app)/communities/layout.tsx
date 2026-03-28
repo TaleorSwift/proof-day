@@ -41,14 +41,30 @@ export default async function CommunitiesLayout({ children }: Props) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
           <Link
             href="/communities"
-            style={{
-              fontSize: 'var(--text-base)',
-              fontWeight: 'var(--font-semibold)',
-              color: 'var(--color-text-primary)',
-              textDecoration: 'none',
-            }}
+            style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', textDecoration: 'none' }}
           >
-            Proof Day
+            {/* Logo naranja circular */}
+            <div
+              aria-hidden="true"
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 'var(--radius-full)',
+                backgroundColor: 'var(--color-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2a7 7 0 0 1 5 11.9V17a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-3.1A7 7 0 0 1 12 2z"/>
+                <path d="M9 21h6"/>
+              </svg>
+            </div>
+            <span style={{ fontSize: 'var(--text-base)', fontWeight: 'var(--font-semibold)', color: 'var(--color-text-primary)' }}>
+              Proof Day
+            </span>
           </Link>
 
           {/* CommunitySwitcher: solo visible con 1+ comunidades (AC-6) */}
