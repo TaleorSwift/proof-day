@@ -1,89 +1,86 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { createProjectSchema } from '@/lib/validations/projects'
+import { requireAuth } from '@/lib/api/middleware/require-auth'
+import { createProjectsRepository } from '@/lib/repositories/projects.repository'
+import { createProjectsService } from '@/lib/services/projects.service'
 
 export async function GET(request: Request) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json(
-    { error: 'No autenticado', code: 'AUTH_REQUIRED' }, { status: 401 }
-  )
+  const auth = await requireAuth()
+  if (auth.error) return auth.error
 
+  const { user, supabase } = auth
   const { searchParams } = new URL(request.url)
   const communityId = searchParams.get('communityId')
-  if (!communityId) return NextResponse.json(
-    { error: 'communityId es requerido', code: 'VALIDATION_ERROR' }, { status: 400 }
-  )
 
-  // Verificar membresía
-  const { data: member } = await supabase
-    .from('community_members')
-    .select('id')
-    .eq('community_id', communityId)
-    .eq('user_id', user.id)
-    .single()
-  if (!member) return NextResponse.json(
-    { error: 'No eres miembro de esta comunidad', code: 'COMMUNITY_ACCESS_DENIED' }, { status: 403 }
-  )
+  if (!communityId)
+    return NextResponse.json(
+      { error: 'communityId es requerido', code: 'VALIDATION_ERROR' },
+      { status: 400 }
+    )
 
-  // El RLS ya filtra: los miembros ven live+inactive, el builder ve sus drafts
-  const { data: projects, error } = await supabase
-    .from('projects')
-    .select('id, title, image_urls, status, builder_id, created_at')
-    .eq('community_id', communityId)
-    .order('created_at', { ascending: false })
+  const projectsService = createProjectsService(supabase)
+  const membership = await projectsService.validateMembership(communityId, user.id)
+  if (!membership.ok)
+    return NextResponse.json({ error: membership.error, code: membership.code }, { status: membership.status })
 
-  if (error) return NextResponse.json(
-    { error: 'Error al obtener proyectos', code: 'PROJECTS_FETCH_ERROR' }, { status: 500 }
-  )
+  const projectsRepo = createProjectsRepository(supabase)
+  const { data: projects, error } = await projectsRepo.findByCommunity(communityId)
+
+  if (error)
+    return NextResponse.json(
+      { error: 'Error al obtener proyectos', code: 'PROJECTS_FETCH_ERROR' },
+      { status: 500 }
+    )
 
   return NextResponse.json({ data: projects ?? [], count: projects?.length ?? 0 })
 }
 
 export async function POST(request: Request) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json(
-    { error: 'No autenticado', code: 'AUTH_REQUIRED' }, { status: 401 }
-  )
+  const auth = await requireAuth()
+  if (auth.error) return auth.error
 
-  const body = await request.json()
+  const { user, supabase } = auth
+
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json(
+      { error: 'Cuerpo de la petición inválido', code: 'INVALID_BODY' },
+      { status: 400 }
+    )
+  }
+
   const result = createProjectSchema.safeParse(body)
-  if (!result.success) return NextResponse.json(
-    { error: result.error.issues[0].message, code: 'VALIDATION_ERROR' }, { status: 400 }
-  )
+  if (!result.success)
+    return NextResponse.json(
+      { error: result.error.issues[0].message, code: 'VALIDATION_ERROR' },
+      { status: 400 }
+    )
 
   const { communityId, ...projectData } = result.data
 
-  // Verificar membresía
-  const { data: member } = await supabase
-    .from('community_members')
-    .select('id')
-    .eq('community_id', communityId)
-    .eq('user_id', user.id)
-    .single()
-  if (!member) return NextResponse.json(
-    { error: 'No eres miembro de esta comunidad', code: 'COMMUNITY_ACCESS_DENIED' }, { status: 403 }
-  )
+  const projectsService = createProjectsService(supabase)
+  const membership = await projectsService.validateMembership(communityId, user.id)
+  if (!membership.ok)
+    return NextResponse.json({ error: membership.error, code: membership.code }, { status: membership.status })
 
-  const { data: project, error } = await supabase
-    .from('projects')
-    .insert({
-      community_id: communityId,
-      builder_id: user.id,
-      title: projectData.title,
-      problem: projectData.problem,
-      solution: projectData.solution,
-      hypothesis: projectData.hypothesis,
-      image_urls: projectData.imageUrls,
-      status: 'draft',
-    })
-    .select()
-    .single()
+  const projectsRepo = createProjectsRepository(supabase)
+  const { data: project, error } = await projectsRepo.create({
+    communityId,
+    builderId: user.id,
+    title: projectData.title,
+    problem: projectData.problem,
+    solution: projectData.solution,
+    hypothesis: projectData.hypothesis,
+    imageUrls: projectData.imageUrls ?? [],
+  })
 
-  if (error || !project) return NextResponse.json(
-    { error: 'Error al crear el proyecto', code: 'PROJECT_CREATE_ERROR' }, { status: 500 }
-  )
+  if (error || !project)
+    return NextResponse.json(
+      { error: 'Error al crear el proyecto', code: 'PROJECT_CREATE_ERROR' },
+      { status: 500 }
+    )
 
   return NextResponse.json({ data: project }, { status: 201 })
 }
