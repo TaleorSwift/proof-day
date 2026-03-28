@@ -191,11 +191,6 @@ describe('validateFeedbackSubmission — reglas de asociacion', () => {
 
   // Test 7: El mismo reviewer puede dar feedback en distintos proyectos
   it('permite al reviewer dar feedback en proyectos distintos', () => {
-    const otherProject: Project = {
-      ...liveProject,
-      id: VALID_UUID_2,
-    }
-
     const feedbackInOtherProject: FeedbackRecord = {
       id: 'fb-002',
       project_id: VALID_UUID_2,
