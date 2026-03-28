@@ -25,7 +25,7 @@ export default async function ProjectPage({ params }: Props) {
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id, title, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at')
+    .select('id, title, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at, decision')
     .eq('id', id)
     .single()
 
@@ -287,6 +287,7 @@ export default async function ProjectPage({ params }: Props) {
                 projectId={project.id}
                 isBuilder={isOwner}
                 feedbackCount={feedbackCount}
+                initialDecision={project.decision as import('@/lib/types/projects').ProjectDecision | null}
               />
             </aside>
           )}
