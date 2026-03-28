@@ -180,9 +180,10 @@ export function ProjectStateActions({
 
       {error && (
         <p
+          role="alert"
           style={{
             fontSize: 'var(--text-sm)',
-            color: 'var(--color-text-secondary)',
+            color: 'var(--color-weak-text)',
             margin: 0,
           }}
         >

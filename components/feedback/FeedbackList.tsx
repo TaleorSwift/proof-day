@@ -28,8 +28,10 @@ function getRelativeTime(dateString: string): string {
 }
 
 function getInitials(name: string): string {
+  if (!name.trim()) return '?'
   return name
     .split(' ')
+    .filter(Boolean)
     .map((part) => part[0])
     .slice(0, 2)
     .join('')
@@ -165,7 +167,7 @@ export function FeedbackList({ projectId, isBuilder }: FeedbackListProps) {
           textAlign: 'center',
         }}
       >
-        Aun no has recibido feedback
+        Aún no has recibido feedback
       </p>
     )
   }

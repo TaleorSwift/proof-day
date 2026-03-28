@@ -56,7 +56,7 @@ export async function GET(request: Request) {
     // Si el error es por tabla profiles inexistente, intentar sin el join
     const { data: feedbacksBasic, error: errorBasic } = await supabase
       .from('feedbacks')
-      .select('id, text_responses, created_at, reviewer_id')
+      .select('id, text_responses, created_at')
       .eq('project_id', projectId)
       .order('created_at', { ascending: false })
 

@@ -1,3 +1,5 @@
+'use client'
+
 interface FeedbackCounterProps {
   count: number
 }
