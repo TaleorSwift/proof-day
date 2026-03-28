@@ -55,7 +55,7 @@ export async function PATCH(
   // Verify ownership
   const { data: project } = await supabase
     .from('projects')
-    .select('id, builder_id')
+    .select('id, builder_id, image_urls')
     .eq('id', projectId)
     .single()
 
@@ -69,6 +69,19 @@ export async function PATCH(
     return NextResponse.json(
       { error: 'Sin permiso', code: 'PROJECT_FORBIDDEN' },
       { status: 403 }
+    )
+  }
+
+  // Verificar que imagePaths contiene exactamente los mismos elementos que image_urls actuales
+  const currentImageUrls: string[] = project.image_urls ?? []
+  const sameLength = imagePaths.length === currentImageUrls.length
+  const sameElements =
+    sameLength &&
+    [...imagePaths].sort().join('|') === [...currentImageUrls].sort().join('|')
+  if (!sameElements) {
+    return NextResponse.json(
+      { error: 'imagePaths debe contener exactamente las mismas imágenes del proyecto', code: 'IMAGE_PATHS_MISMATCH' },
+      { status: 400 }
     )
   }
 

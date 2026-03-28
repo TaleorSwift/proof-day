@@ -14,6 +14,17 @@ export async function GET(request: Request) {
     { error: 'communityId requerido', code: 'VALIDATION_ERROR' }, { status: 400 }
   )
 
+  // Verificar membresía en la comunidad
+  const { data: membership } = await supabase
+    .from('community_members')
+    .select('id')
+    .eq('community_id', communityId)
+    .eq('user_id', user.id)
+    .single()
+  if (!membership) return NextResponse.json(
+    { error: 'No perteneces a esta comunidad', code: 'COMMUNITY_ACCESS_DENIED' }, { status: 403 }
+  )
+
   const { count, error } = await supabase
     .from('feedbacks')
     .select('id', { count: 'exact', head: true })

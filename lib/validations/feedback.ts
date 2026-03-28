@@ -11,10 +11,10 @@ export const submitFeedbackSchema = z.object({
     p3: scoreSchema,
   }),
   textResponses: z.object({
-    p1: z.string().optional(),
-    p2: z.string().optional(),
-    p3: z.string().optional(),
-    p4: z.string().min(10, 'Escribe al menos 10 caracteres en tu respuesta'),
+    p1: z.string().max(2000).optional(),
+    p2: z.string().max(2000).optional(),
+    p3: z.string().max(2000).optional(),
+    p4: z.string().min(10, 'Escribe al menos 10 caracteres en tu respuesta').max(2000),
   }),
 })
 

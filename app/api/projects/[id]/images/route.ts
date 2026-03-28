@@ -75,7 +75,14 @@ export async function POST(
   }
 
   // Build path: {userId}/{projectId}/{timestamp}.{ext}
-  const ext = file.name.split('.').pop()
+  const MIME_TO_EXT: Record<string, string> = {
+    'image/jpeg': 'jpg',
+    'image/jpg': 'jpg',
+    'image/png': 'png',
+    'image/webp': 'webp',
+    'image/gif': 'gif',
+  }
+  const ext = MIME_TO_EXT[file.type] ?? 'jpg'
   const filename = `${Date.now()}.${ext}`
   const path = `${user.id}/${projectId}/${filename}`
 
@@ -160,6 +167,15 @@ export async function DELETE(
     return NextResponse.json(
       { error: 'Sin permiso', code: 'PROJECT_FORBIDDEN' },
       { status: 403 }
+    )
+  }
+
+  // Verificar que el path pertenece al proyecto
+  const currentImageUrls: string[] = project.image_urls ?? []
+  if (!currentImageUrls.includes(path)) {
+    return NextResponse.json(
+      { error: 'La imagen no pertenece a este proyecto', code: 'IMAGE_NOT_FOUND' },
+      { status: 400 }
     )
   }
 
