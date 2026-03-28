@@ -1,4 +1,5 @@
-import type { ProjectRow } from '@/lib/types/projects'
+import type { Project, ProjectRow } from '@/lib/types/projects'
+import { projectFromRow } from '@/lib/types/projects'
 import type { CreateProjectInput, UpdateProjectInput } from '@/lib/validations/projects'
 
 export async function createProject(data: CreateProjectInput): Promise<ProjectRow> {
@@ -146,4 +147,23 @@ export async function getProjects(communityId: string): Promise<ProjectListItem[
     builderId: r.builder_id,
     createdAt: r.created_at,
   }))
+}
+
+// ── Story 5.3: Builder Decision Registration ──────────────────────────────────
+
+/**
+ * Register an irreversible builder decision for a project.
+ * Returns the updated Project (camelCase).
+ */
+export async function registerDecision(
+  projectId: string,
+  decision: 'iterate' | 'scale' | 'abandon'
+): Promise<Project> {
+  const res = await fetch(`/api/projects/${projectId}/decision`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ decision }),
+  })
+  if (!res.ok) throw new Error((await res.json()).error)
+  return projectFromRow((await res.json()).data)
 }

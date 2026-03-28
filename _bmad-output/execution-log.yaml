@@ -1,13 +1,25 @@
 workflows:
   - id: "ds-20260328-052"
     timestamp: "2026-03-28T11:00:00"
+    completed: "2026-03-28T11:30:00"
     agent: Homer
     trigger: DS
     workflow: dev-story
     mode: GENERATE
     story: "5-2-proof-score-display-waiting-state"
-    result: STARTED
-    summary: "Story 5.2 — Proof Score Display & Waiting State. Modo YOLO. Creando ProofScoreWaiting, ProofScoreBadge, ProofScoreSidebar, Storybook y tests unitarios."
+    result: SUCCESS
+    pr: "18"
+    branch: "feat/5-2-proof-score-display-waiting-state"
+    summary: "Story 5.2 — Proof Score Display & Waiting State. ProofScoreWaiting (skeleton/progress+singular-plural), ProofScoreBadge (full/compact, a11y role+aria-live), ProofScoreSidebar (client, retorna null si !isBuilder). Integrado en project page. Storybook 4 stories. 6 tests unitarios. 155 tests totales pasan."
+    artifacts:
+      - "components/proof-score/ProofScoreWaiting.tsx"
+      - "components/proof-score/ProofScoreBadge.tsx"
+      - "components/proof-score/ProofScoreSidebar.tsx"
+      - "stories/proof-score/ProofScoreBadge.stories.tsx"
+      - "tests/unit/proof-score/proofScoreDisplay.test.ts"
+      - "app/(app)/communities/[slug]/projects/[id]/page.tsx (integración)"
+    tests: "155 passed (13 test files)"
+    errors: []
 
   - id: "ds-20260328-051"
     timestamp: "2026-03-28T10:00:00"
