@@ -5,6 +5,7 @@ import { DraftBanner } from '@/components/projects/DraftBanner'
 import { StatusBadge } from '@/components/projects/StatusBadge'
 import { InactiveBanner } from '@/components/projects/InactiveBanner'
 import { ProjectStateActions } from '@/components/projects/ProjectStateActions'
+import { FeedbackButton } from '@/components/feedback/FeedbackButton'
 
 interface Props {
   params: Promise<{ slug: string; id: string }>
@@ -69,26 +70,35 @@ export default async function ProjectPage({ params }: Props) {
               <StatusBadge status={project.status as 'draft' | 'live' | 'inactive'} />
             </div>
           </div>
-          {isOwner && project.status === 'draft' && (
-            <Link
-              href={`/communities/${slug}/projects/${id}/edit`}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                padding: 'var(--space-2) var(--space-4)',
-                backgroundColor: 'var(--color-surface)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                fontSize: 'var(--text-sm)',
-                fontWeight: 'var(--font-medium)',
-                color: 'var(--color-text-primary)',
-                textDecoration: 'none',
-                boxShadow: 'var(--shadow-sm)',
-              }}
-            >
-              Editar
-            </Link>
-          )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', flexShrink: 0 }}>
+            {isOwner && project.status === 'draft' && (
+              <Link
+                href={`/communities/${slug}/projects/${id}/edit`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  padding: 'var(--space-2) var(--space-4)',
+                  backgroundColor: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-md)',
+                  fontSize: 'var(--text-sm)',
+                  fontWeight: 'var(--font-medium)',
+                  color: 'var(--color-text-primary)',
+                  textDecoration: 'none',
+                  boxShadow: 'var(--shadow-sm)',
+                }}
+              >
+                Editar
+              </Link>
+            )}
+            {/* AC-1: Botón "Dar feedback" — solo en proyectos live y para no-builders */}
+            {project.status === 'live' && !isOwner && (
+              <FeedbackButton
+                projectId={project.id}
+                communityId={project.community_id}
+              />
+            )}
+          </div>
         </div>
 
         {/* Acciones de estado — solo para el builder */}

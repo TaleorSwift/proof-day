@@ -323,10 +323,30 @@ P4: "Comparte qué cambiarías, qué falta, o qué mejorarías."
 
 ### Agent Model Used
 
-_pendiente_
+claude-sonnet-4-6
 
 ### Debug Log References
 
+ds-20260328-4-1
+
 ### Completion Notes List
 
+- FeedbackButton.tsx creado como wrapper Client Component para inyectar el dialog en el Server Component de la vista de proyecto
+- community_id obtenido directamente de typedProject.community_id (ya disponible en el row de Supabase)
+- 10 tests unitarios pasando (118 total en la suite)
+- Migración 008 (siguiente tras 007_create_projects.sql)
+
 ### File List
+
+- lib/types/feedback.ts (nuevo)
+- lib/validations/feedback.ts (nuevo)
+- supabase/migrations/008_create_feedbacks.sql (nuevo)
+- app/api/feedback/route.ts (nuevo)
+- lib/api/feedback.ts (modificado)
+- components/feedback/FeedbackQuestion.tsx (nuevo)
+- components/feedback/FeedbackDialog.tsx (nuevo)
+- components/feedback/FeedbackButton.tsx (nuevo)
+- app/(app)/communities/[slug]/projects/[id]/page.tsx (modificado)
+- tests/unit/feedback/submitFeedback.test.ts (nuevo)
+- _bmad-output/implementation-artifacts/sprint-status.yaml (modificado)
+- _bmad-output/execution-log.yaml (modificado)
