@@ -34,21 +34,24 @@ export function ConfirmButton({
     setIsLoading(true)
     setError(null)
 
-    const supabase = createClient()
-    const params = buildConfirmParams({ token, type })
+    try {
+      const supabase = createClient()
+      const params = buildConfirmParams({ token, type })
 
-    const { error: otpError } = await supabase.auth.verifyOtp({
-      token_hash: params.token_hash,
-      type: params.type as EmailOtpType,
-    })
+      const { error: otpError } = await supabase.auth.verifyOtp({
+        token_hash: params.token_hash,
+        type: params.type as EmailOtpType,
+      })
 
-    if (otpError) {
-      setError('El enlace ha expirado. Solicita uno nuevo.')
+      if (otpError) {
+        setError('El enlace ha expirado. Solicita uno nuevo.')
+        return
+      }
+
+      router.push(redirectTo)
+    } finally {
       setIsLoading(false)
-      return
     }
-
-    router.push(redirectTo)
   }
 
   return (

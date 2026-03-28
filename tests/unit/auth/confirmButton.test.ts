@@ -106,6 +106,45 @@ describe("validateConfirmSearchParams", () => {
     if (!result.valid) throw new Error("Se esperaba valid:true");
     expect(result.redirectTo).toBe("/my-custom-path");
   });
+
+  // H1 — open redirect: rutas externas deben ser rechazadas
+  it("ignora redirect_to con URL absoluta y usa fallback /communities", () => {
+    const result = validateConfirmSearchParams({
+      token: "abc123",
+      type: "email",
+      redirect_to: "https://evil.com/steal",
+    });
+    if (!result.valid) throw new Error("Se esperaba valid:true");
+    expect(result.redirectTo).toBe("/communities");
+  });
+
+  it("ignora redirect_to con protocol-relative URL y usa fallback /communities", () => {
+    const result = validateConfirmSearchParams({
+      token: "abc123",
+      type: "email",
+      redirect_to: "//evil.com/steal",
+    });
+    if (!result.valid) throw new Error("Se esperaba valid:true");
+    expect(result.redirectTo).toBe("/communities");
+  });
+
+  // M2 — type inválido: debe retornar valid:false
+  it("retorna valid:false cuando type no es un EmailOtpType válido", () => {
+    const result = validateConfirmSearchParams({
+      token: "abc123",
+      type: "notavalidtype",
+      redirect_to: "/communities",
+    });
+    expect(result.valid).toBe(false);
+  });
+
+  it("retorna valid:true para todos los tipos válidos de EmailOtpType", () => {
+    const validTypes = ["signup", "invite", "magiclink", "recovery", "email_change", "email"] as const;
+    for (const type of validTypes) {
+      const result = validateConfirmSearchParams({ token: "tok", type, redirect_to: undefined });
+      expect(result.valid).toBe(true);
+    }
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -131,6 +170,12 @@ describe("buildConfirmParams", () => {
 
   it("usa email como type por defecto cuando no se especifica", () => {
     const params = buildConfirmParams({ token: "tok789", type: undefined });
+    expect(params.type).toBe("email");
+  });
+
+  // M2 — type inválido en buildConfirmParams: debe usar fallback "email"
+  it("usa email como fallback cuando type no es un EmailOtpType válido", () => {
+    const params = buildConfirmParams({ token: "tok999", type: "hackedtype" });
     expect(params.type).toBe("email");
   });
 });
