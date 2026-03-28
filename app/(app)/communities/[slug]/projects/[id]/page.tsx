@@ -8,6 +8,7 @@ import { ProjectStateActions } from '@/components/projects/ProjectStateActions'
 import { FeedbackButton } from '@/components/feedback/FeedbackButton'
 import { FeedbackList } from '@/components/feedback/FeedbackList'
 import { FeedbackCounter } from '@/components/feedback/FeedbackCounter'
+import { ProofScoreSidebar } from '@/components/proof-score/ProofScoreSidebar'
 
 interface Props {
   params: Promise<{ slug: string; id: string }>
@@ -280,6 +281,13 @@ export default async function ProjectPage({ params }: Props) {
 
                 <FeedbackList projectId={project.id} isBuilder={isOwner} />
               </div>
+
+              {/* Proof Score — solo para el builder */}
+              <ProofScoreSidebar
+                projectId={project.id}
+                isBuilder={isOwner}
+                feedbackCount={feedbackCount}
+              />
             </aside>
           )}
         </div>
