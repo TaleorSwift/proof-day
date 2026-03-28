@@ -11,13 +11,26 @@ workflows:
 
   - id: "ds-20260328-051"
     timestamp: "2026-03-28T10:00:00"
+    completed: "2026-03-28T10:30:00"
     agent: Homer
     trigger: DS
     workflow: dev-story
     mode: GENERATE
     story: "5-1-proof-score-calculation-algorithm"
-    result: STARTED
-    summary: "Story 5.1 — Proof Score Calculation Algorithm. Modo YOLO. Creando tipos, función pura, API route, wrapper y tests."
+    branch: "feat/5-1-proof-score-calculation-algorithm"
+    pr: "17"
+    result: SUCCESS
+    summary: "Story 5.1 — Proof Score Calculation Algorithm. Función pura calculateProofScore, API Route GET /api/proof-score/[projectId] (solo builder, getUser()), tipos ProofScoreLabel/ProofScoreResult, wrapper getProofScore(). 11 tests nuevos (149 total, todos pasan). Calculado on-demand, nunca almacenado en DB."
+    artifacts_created:
+      - "lib/types/proof-score.ts"
+      - "lib/utils/proof-score.ts"
+      - "app/api/proof-score/[projectId]/route.ts"
+      - "tests/unit/proof-score/calculateProofScore.test.ts"
+    artifacts_modified:
+      - "lib/api/proof-score.ts"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+    tests: "149 passed (12 test files)"
+    errors: []
 
   - id: "sprint-20260328-021"
     timestamp: "2026-03-28T00:10:00"
