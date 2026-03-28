@@ -49,39 +49,39 @@ development_status:
 
   # ── EPIC 2: Comunidades ──────────────────────────────────────────
   epic-2: in-progress
-  2-1-create-community: ready-for-dev
+  2-1-create-community: review
   2-2-invitation-links-generate-join: backlog
   2-3-community-access-control-listing: backlog
   epic-2-retrospective: optional
 
-  # ── EPIC 3: Proyectos ──── SPRINT 3 ──────────────────────────────
-  epic-3: in-progress
-  3-1-create-edit-project-draft: ready-for-dev
-  3-2-image-gallery-upload: ready-for-dev
-  3-3-publish-manage-project-states: ready-for-dev
-  3-4-project-list-view-in-community: ready-for-dev
+  # ── EPIC 3: Proyectos ────────────────────────────────────────────
+  epic-3: backlog
+  3-1-create-edit-project-draft: backlog
+  3-2-image-gallery-upload: backlog
+  3-3-publish-manage-project-states: backlog
+  3-4-project-list-view-in-community: backlog
   epic-3-retrospective: optional
 
-  # ── EPIC 4: Feedback ──── SPRINT 4 ───────────────────────────────
-  epic-4: in-progress
-  4-1-feedback-form-4-guided-questions: ready-for-dev
-  4-2-feedback-submission-association: ready-for-dev
+  # ── EPIC 4: Feedback ─────────────────────────────────────────────
+  epic-4: backlog
+  4-1-feedback-form-4-guided-questions: backlog
+  4-2-feedback-submission-association: backlog
   epic-4-retrospective: optional
 
-  # ── EPIC 5: Proof Score & Decisión ──── SPRINT 5 ─────────────────
-  epic-5: in-progress
-  5-1-proof-score-calculation-algorithm: ready-for-dev
-  5-2-proof-score-display-waiting-state: ready-for-dev
-  5-3-builder-decision-registration: ready-for-dev
+  # ── EPIC 5: Proof Score & Decisión ───────────────────────────────
+  epic-5: backlog
+  5-1-proof-score-calculation-algorithm: backlog
+  5-2-proof-score-display-waiting-state: backlog
+  5-3-builder-decision-registration: backlog
   epic-5-retrospective: optional
 
-  # ── EPIC 6: Perfiles & Gamificación ──── SPRINT 6 ────────────────
-  epic-6: in-progress
-  6-1-user-profile-view-edit: ready-for-dev
-  6-2-feedback-counter-top-reviewer-widget: ready-for-dev
+  # ── EPIC 6: Perfiles & Gamificación ──────────────────────────────
+  epic-6: backlog
+  6-1-user-profile-view-edit: backlog
+  6-2-feedback-counter-top-reviewer-widget: backlog
   epic-6-retrospective: optional
 
-  # ── EPIC 7: Landing Page ──── SPRINT 7 ───────────────────────────
-  epic-7: in-progress
-  7-1-landing-page-public-seo-optimized: ready-for-dev
+  # ── EPIC 7: Landing Page ─────────────────────────────────────────
+  epic-7: backlog
+  7-1-landing-page-public-seo-optimized: backlog
   epic-7-retrospective: optional
