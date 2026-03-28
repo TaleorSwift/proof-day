@@ -67,7 +67,10 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - `lib/types/projects.ts` — `ProjectStatus`, `Project`, `ProjectRow`, helpers
 
 ### API Routes
-- `app/api/projects/route.ts` — POST (crear) + GET (listar por comunidad)
+- `app/api/projects/route.ts` — thin controller: POST (crear) + GET (listar por comunidad)
+- `lib/repositories/projects.repository.ts` — queries Supabase (DIP)
+- `lib/services/projects.service.ts` — validateOwnership, validateMembership
+- `lib/api/middleware/require-auth.ts` — auth compartida
 - `app/api/projects/[id]/route.ts` — GET (detalle) + PUT (editar)
 - `app/api/projects/[id]/status/route.ts` — PATCH (cambiar estado)
 - `app/api/projects/[id]/images/route.ts` — POST/DELETE (imágenes)

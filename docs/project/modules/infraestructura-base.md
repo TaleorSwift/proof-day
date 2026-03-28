@@ -14,12 +14,21 @@ Sin esta infraestructura ningun modulo funcional puede implementarse.
 - Los commits siguen Conventional Commits — mensajes que no cumplan son rechazados automaticamente por Husky (story 1.1)
 - El desarrollo va en ramas `feat/{story-key}-descripcion` desde `develop` — nunca directo a `main` (story 1.1)
 
+## Reglas de comportamiento (arquitectura — Arch Fase 3)
+- Todos los API routes usan `requireAuth()` de `lib/api/middleware/require-auth.ts` — nunca duplican el pattern auth inline (Arch Fase 3)
+- Las queries a Supabase van por repositories en `lib/repositories/` — los route handlers no tocan Supabase directamente (Arch Fase 3)
+- La lógica de negocio va en services en `lib/services/` — los route handlers son thin controllers (~50 líneas) (Arch Fase 3)
+- Utilidades de UI (`getRelativeTime`, `getInitials`) van en `lib/utils/` — nunca inline en componentes (Arch Fase 3)
+
 ## Ficheros clave
 - `lib/supabase/client.ts` — client para Client Components
 - `lib/supabase/server.ts` — client para Server Components y API Routes
+- `lib/api/middleware/require-auth.ts` — auth middleware compartido para API routes
+- `lib/repositories/` — capa de acceso a datos (5 repositorios)
+- `lib/services/` — capa de lógica de negocio (3 servicios)
+- `lib/utils/date.ts`, `lib/utils/string.ts` — utilidades compartidas
 - `middleware.ts` — auth gate (placeholder hasta story 1.3)
 - `app/globals.css` — design tokens CSS custom properties
-- `tailwind.config.ts` — extensiones Tailwind con tokens de Proof Day
 
 ## Ultima actualizacion
-Story 1.1 — 2026-03-27
+Story 1.1 — 2026-03-27 | Arch Fase 3 — 2026-03-28

@@ -1,14 +1,44 @@
 workflows:
   - id: "ds-20260328-arch-fase3"
     timestamp: "2026-03-28T20:00:00"
+    completed: "2026-03-28T21:30:00"
     agent: Homer
     trigger: DS-inline
     workflow: dev-story
     mode: GENERATE
     story: "arch-fase3-service-layer"
-    branch: "feat/arch-fase3-service-layer"
-    result: STARTED
-    summary: "Refactor arquitectónico Fase 3 — 6 pasos: auth middleware compartido, repository layer (5 repos), service layer (3 services), refactor 3 route handlers, extraer utils, eliminar scaffold legacy."
+    branch: "develop"
+    result: SUCCESS
+    summary: "Refactor arquitectónico Fase 3 completado. 6 pasos ejecutados: (1) auth middleware compartido lib/api/middleware/require-auth.ts, (2) repository layer con 5 repos (communities, projects, feedback, profiles, gamification), (3) service layer con 3 services (feedback, projects, communities), (4) refactor 3 route handlers a thin controllers (~50-80 líneas), (5) utils extraídos a lib/utils/date.ts y lib/utils/string.ts, (6) scaffold legacy eliminado (4 componentes + 6 páginas + app/protected/). Tests: 16/16 passed, 181/181. Lint: 0 errores. TypeCheck: clean."
+    artifacts:
+      created:
+        - lib/api/middleware/require-auth.ts
+        - lib/repositories/communities.repository.ts
+        - lib/repositories/projects.repository.ts
+        - lib/repositories/feedback.repository.ts
+        - lib/repositories/profiles.repository.ts
+        - lib/repositories/gamification.repository.ts
+        - lib/services/feedback.service.ts
+        - lib/services/projects.service.ts
+        - lib/services/communities.service.ts
+        - lib/utils/date.ts
+        - lib/utils/string.ts
+      modified:
+        - app/api/feedback/route.ts
+        - app/api/communities/route.ts
+        - app/api/projects/route.ts
+        - components/feedback/FeedbackList.tsx
+      deleted:
+        - components/sign-up-form.tsx
+        - components/forgot-password-form.tsx
+        - components/update-password-form.tsx
+        - components/login-form.tsx
+        - app/protected/layout.tsx
+        - app/protected/page.tsx
+        - app/auth/login/page.tsx
+        - app/auth/sign-up/page.tsx
+        - app/auth/forgot-password/page.tsx
+        - app/auth/update-password/page.tsx
 
 
   - id: "ds-20260328-061-062"
