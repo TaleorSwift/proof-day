@@ -1,4 +1,14 @@
 workflows:
+  - id: "ds-20260328-011"
+    timestamp: "2026-03-28T14:00:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: REFINE
+    result: STARTED
+    story: "2.1 — Create Community (CR2 fixes)"
+    branch: "feat/2-1-create-community"
+
   - id: "ds-20260327-019"
     timestamp: "2026-03-27T20:00:00"
     completed: "2026-03-27T20:20:00"

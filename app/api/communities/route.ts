@@ -22,10 +22,13 @@ export async function GET() {
     )
   }
 
-  // RLS filtra automáticamente las comunidades del usuario
+  // RLS filtra automáticamente las comunidades del usuario.
+  // Filtro explícito como segunda línea de defensa (CR2-F2):
+  // obtenemos solo comunidades donde el usuario tiene membresía activa.
   const { data: communities, error } = await supabase
     .from('communities')
-    .select('*')
+    .select('*, community_members!inner(user_id)')
+    .eq('community_members.user_id', user.id)
     .order('created_at', { ascending: false })
 
   if (error) {

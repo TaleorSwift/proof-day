@@ -117,4 +117,8 @@ describe('toSlug', () => {
   it('convierte nombre con ñ', () => {
     expect(toSlug('España Innovación')).toBe('espana-innovacion')
   })
+
+  it('nombre puramente numérico conserva los dígitos (CR2-L1)', () => {
+    expect(toSlug('12345')).toBe('12345')
+  })
 })

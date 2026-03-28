@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
-import { createCommunity } from '@/lib/api/communities'
+import { createCommunity, ApiError } from '@/lib/api/communities'
 import { createCommunitySchema, type CreateCommunityInput } from '@/lib/validations/communities'
 import type { Community } from '@/lib/types/communities'
 
@@ -23,6 +23,7 @@ export function CommunityForm({ onSuccess }: CommunityFormProps) {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<CreateCommunityInput>({
     resolver: zodResolver(createCommunitySchema),
@@ -38,6 +39,11 @@ export function CommunityForm({ onSuccess }: CommunityFormProps) {
         router.push('/communities')
       }
     } catch (err) {
+      // CR2-L2: mostrar COMMUNITY_NAME_TAKEN como error inline bajo el campo name
+      if (err instanceof ApiError && err.code === 'COMMUNITY_NAME_TAKEN') {
+        setError('name', { message: err.message })
+        return
+      }
       setServerError(err instanceof Error ? err.message : 'Error al crear la comunidad')
     }
   }
