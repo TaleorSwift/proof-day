@@ -1,15 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createCommunitySchema } from '@/lib/validations/communities'
-
-export function toSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-}
+import { toSlug } from '@/lib/utils/slug'
 
 export async function GET() {
   const supabase = await createClient()

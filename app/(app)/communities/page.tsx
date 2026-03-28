@@ -16,7 +16,7 @@ export default async function CommunitiesPage({ searchParams }: Props) {
 
   const user = authData.user
 
-  const { error: searchError } = await searchParams
+  const { error: errorParam } = await searchParams
 
   // Obtener comunidades del usuario con filtro explícito de membresía (segunda línea de defensa).
   // getUserCommunities está memoizada con React.cache — si layout.tsx ya la llamó
@@ -38,7 +38,7 @@ export default async function CommunitiesPage({ searchParams }: Props) {
     >
       <div style={{ maxWidth: '960px', margin: '0 auto' }}>
         {/* AC-2: Banner de error cuando se redirige desde una comunidad sin acceso */}
-        {searchError === 'no-access' && (
+        {errorParam === 'no-access' && (
           <div
             role="alert"
             style={{

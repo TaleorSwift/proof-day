@@ -40,6 +40,7 @@ export function CommunitySwitcher({ communities, activeCommunitySlug }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
+        type="button"
         style={{
           display: 'inline-flex',
           alignItems: 'center',

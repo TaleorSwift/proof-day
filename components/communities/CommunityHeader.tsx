@@ -100,7 +100,6 @@ export function CommunityHeader({ community, isAdmin }: Props) {
             style={{
               fontSize: 'var(--text-sm)',
               color: 'var(--color-text-secondary)',
-              marginBottom: 'var(--space-3)',
               margin: 0,
             }}
           >

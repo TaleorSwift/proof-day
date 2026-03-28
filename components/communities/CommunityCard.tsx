@@ -15,24 +15,14 @@ export function CommunityCard({ community }: Props) {
       style={{ textDecoration: 'none', display: 'block' }}
     >
       <div
+        className="community-card"
         style={{
           backgroundColor: 'var(--color-surface)',
           border: '1px solid var(--color-border)',
           borderRadius: 'var(--radius-md)',
           padding: 'var(--space-5)',
           boxShadow: 'var(--shadow-sm)',
-          transition: 'box-shadow 0.15s ease, border-color 0.15s ease',
           cursor: 'pointer',
-        }}
-        onMouseEnter={(e) => {
-          const el = e.currentTarget as HTMLDivElement
-          el.style.boxShadow = 'var(--shadow-md)'
-          el.style.borderColor = 'var(--color-text-muted)'
-        }}
-        onMouseLeave={(e) => {
-          const el = e.currentTarget as HTMLDivElement
-          el.style.boxShadow = 'var(--shadow-sm)'
-          el.style.borderColor = 'var(--color-border)'
         }}
       >
         {/* Imagen o avatar con inicial */}
