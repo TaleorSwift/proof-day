@@ -1,0 +1,4 @@
+-- Migration 005: placeholder — numbering gap
+-- This migration intentionally left blank.
+-- The sequence jumped from 004 to 006 during Story 2.3 development.
+-- Migration 006 (rls_communities_member_access) follows directly.
