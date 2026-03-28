@@ -29,13 +29,24 @@ workflows:
 
   - id: "ds-20260328-033"
     timestamp: "2026-03-28T23:45:00"
+    completed: "2026-03-28T23:59:00"
     agent: Homer
     trigger: DS
     workflow: dev-story
     mode: GENERATE
-    result: STARTED
+    result: SUCCESS
     story: "3-3-publish-manage-project-states"
-    summary: "Story 3.3 — Publish & Manage Project States. Implementando API Route PATCH /api/projects/[id]/status con máquina de estados, lib/types/projects.ts, lib/api/projects.ts wrappers publishProject/deactivateProject, componentes ProjectStateActions/InactiveBanner/StatusBadge, vista proyecto con estados, tests unitarios."
+    summary: "Story 3.3 — Publish & Manage Project States. API Route PATCH /api/projects/[id]/status con máquina de estados (draft→live→inactive), validación de transiciones, guard de imágenes. publishProject/deactivateProject en lib/api/projects.ts. ProjectStateActions (inline confirm, no Dialog), InactiveBanner, StatusBadge. Vista proyecto actualizada con banners de estado. 8 tests unitarios. PR #9 contra develop."
+    artifacts_created:
+      - "app/api/projects/[id]/status/route.ts"
+      - "lib/api/projects.ts (publishProject, deactivateProject añadidos)"
+      - "components/projects/ProjectStateActions.tsx"
+      - "components/projects/InactiveBanner.tsx"
+      - "components/projects/StatusBadge.tsx"
+      - "app/(app)/communities/[slug]/projects/[id]/page.tsx (actualizado con estados)"
+      - "tests/unit/projects/projectStateTransitions.test.ts"
+    pr_url: "https://github.com/TaleorSwift/proof-day/pull/9"
+    tests: "128 passed (8 nuevos tests de transición de estado)"
 
   - id: "cr-20260328-7-1"
     timestamp: "2026-03-28T22:00:00"
