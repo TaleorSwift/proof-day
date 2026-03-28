@@ -28,7 +28,7 @@ export async function GET(
           .from('community_members')
           .select('community_id')
           .eq('user_id', id)
-        ).data?.map((m) => m.community_id) ?? []
+        ).data?.map((m: Record<string, unknown>) => m.community_id) ?? []
       )
       .limit(1)
 

@@ -38,21 +38,22 @@ export const getUserCommunities = cache(async (userId: string): Promise<Communit
   if (communities.length === 0) return []
 
   // Obtener conteo de miembros para todas las comunidades en una sola query
-  const communityIds = communities.map((c) => c.id)
+  const communityIds = communities.map((c: Record<string, unknown>) => c.id as string)
   const { data: memberData } = await supabase
     .from('community_members')
     .select('community_id')
     .in('community_id', communityIds)
 
-  const memberCounts: Record<string, number> = (memberData ?? []).reduce<Record<string, number>>(
-    (acc, row) => {
-      acc[row.community_id] = (acc[row.community_id] ?? 0) + 1
+  const memberCounts: Record<string, number> = (memberData ?? []).reduce(
+    (acc: Record<string, number>, row: Record<string, unknown>) => {
+      const id = row.community_id as string
+      acc[id] = (acc[id] ?? 0) + 1
       return acc
     },
     {},
   )
 
-  return communities.map((c) => ({
+  return communities.map((c: Record<string, unknown>) => ({
     id: c.id,
     name: c.name,
     slug: c.slug,
@@ -61,6 +62,6 @@ export const getUserCommunities = cache(async (userId: string): Promise<Communit
     created_by: c.created_by,
     created_at: c.created_at,
     updated_at: c.updated_at,
-    member_count: memberCounts[c.id] ?? 0,
+    member_count: memberCounts[c.id as string] ?? 0,
   }))
 })
