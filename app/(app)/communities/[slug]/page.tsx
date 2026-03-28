@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { CommunityHeader } from '@/components/communities/CommunityHeader'
 import { ProjectGrid } from '@/components/projects/ProjectGrid'
 import { Button } from '@/components/ui/button'
+import { PersonalFeedbackCounter } from '@/components/gamification/PersonalFeedbackCounter'
+import { TopReviewerWidget } from '@/components/gamification/TopReviewerWidget'
 import type { ProjectListItem } from '@/lib/api/projects'
 
 interface Props {
@@ -76,7 +78,7 @@ export default async function CommunityPage({ params }: Props) {
         padding: 'var(--space-8)',
       }}
     >
-      <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <CommunityHeader
           community={{
             ...community,
@@ -85,28 +87,45 @@ export default async function CommunityPage({ params }: Props) {
           isAdmin={isAdmin}
         />
 
-        {/* Sección proyectos — Story 3.4 */}
-        <div style={{ marginTop: 'var(--space-8)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <h2
-              style={{
-                fontSize: 'var(--text-xl)',
-                fontWeight: 'var(--font-semibold)',
-                color: 'var(--color-text-primary)',
-              }}
-            >
-              Proyectos
-            </h2>
-            <Link href={`/communities/${slug}/projects/new`}>
-              <Button variant="default">Nuevo proyecto</Button>
-            </Link>
+        {/* Layout de 2 columnas: proyectos + sidebar gamificación */}
+        <div
+          style={{
+            marginTop: 'var(--space-8)',
+            display: 'grid',
+            gridTemplateColumns: '1fr 280px',
+            gap: 'var(--space-8)',
+            alignItems: 'start',
+          }}
+        >
+          {/* Columna principal: proyectos — Story 3.4 */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h2
+                style={{
+                  fontSize: 'var(--text-xl)',
+                  fontWeight: 'var(--font-semibold)',
+                  color: 'var(--color-text-primary)',
+                }}
+              >
+                Proyectos
+              </h2>
+              <Link href={`/communities/${slug}/projects/new`}>
+                <Button variant="default">Nuevo proyecto</Button>
+              </Link>
+            </div>
+
+            <ProjectGrid
+              projects={projects}
+              communitySlug={slug}
+              canCreate={canCreate}
+            />
           </div>
 
-          <ProjectGrid
-            projects={projects}
-            communitySlug={slug}
-            canCreate={canCreate}
-          />
+          {/* Sidebar derecho: gamificación — Story 6.2 */}
+          <aside style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <PersonalFeedbackCounter communityId={community.id} />
+            <TopReviewerWidget communityId={community.id} />
+          </aside>
         </div>
       </div>
     </main>

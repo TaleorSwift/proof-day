@@ -76,9 +76,9 @@ development_status:
   epic-5-retrospective: optional
 
   # ── EPIC 6: Perfiles & Gamificación ──────────────────────────────
-  epic-6: backlog
-  6-1-user-profile-view-edit: backlog
-  6-2-feedback-counter-top-reviewer-widget: backlog
+  epic-6: in-progress
+  6-1-user-profile-view-edit: review  # PR#20 — feat/6-1-user-profile-view-edit
+  6-2-feedback-counter-top-reviewer-widget: review
   epic-6-retrospective: optional
 
   # ── EPIC 7: Landing Page ─────────────────────────────────────────

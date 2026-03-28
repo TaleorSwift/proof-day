@@ -253,10 +253,30 @@ El cálculo del inicio de semana usa UTC para consistencia entre zonas horarias.
 
 ### Agent Model Used
 
-_pendiente_
+claude-sonnet-4-6
 
 ### Debug Log References
 
+N/A — 172/172 tests pasan. Sin errores.
+
 ### Completion Notes List
 
+- Función pura `calculateTopReviewer` + `getWeekStart` en lib/utils/gamification.ts para testabilidad
+- API Route GET /api/gamification/top-reviewer: verificación membresía, período lunes-domingo UTC, empate por firstAt
+- API Route GET /api/gamification/feedback-count: contador personal por comunidad
+- TopReviewerWidget: skeleton loading, empty state "Sé el primero", avatar con link a /profile/[id], fondo hypothesis-bg
+- PersonalFeedbackCounter: texto "Has dado N feedbacks en esta comunidad" con singular/plural
+- Integración en página de comunidad con sidebar de 280px (layout 2 columnas)
+- 8 tests unitarios (172 total, todos pasan)
+
 ### File List
+
+- `lib/types/gamification.ts` (CREATED)
+- `lib/utils/gamification.ts` (CREATED — funciones puras calculateTopReviewer + getWeekStart)
+- `app/api/gamification/top-reviewer/route.ts` (CREATED)
+- `app/api/gamification/feedback-count/route.ts` (CREATED)
+- `lib/api/gamification.ts` (MODIFIED — implementación completa)
+- `components/gamification/TopReviewerWidget.tsx` (CREATED)
+- `components/gamification/PersonalFeedbackCounter.tsx` (CREATED)
+- `app/(app)/communities/[slug]/page.tsx` (MODIFIED — sidebar gamificación)
+- `tests/unit/gamification/topReviewer.test.ts` (CREATED — 8 tests)
