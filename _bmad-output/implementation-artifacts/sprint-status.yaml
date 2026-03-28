@@ -55,11 +55,11 @@ development_status:
   epic-2-retrospective: optional
 
   # ── EPIC 3: Proyectos ────────────────────────────────────────────
-  epic-3: backlog
-  3-1-create-edit-project-draft: backlog
-  3-2-image-gallery-upload: backlog
-  3-3-publish-manage-project-states: backlog
-  3-4-project-list-view-in-community: backlog
+  epic-3: in-progress
+  3-1-create-edit-project-draft: review
+  3-2-image-gallery-upload: review
+  3-3-publish-manage-project-states: review
+  3-4-project-list-view-in-community: review
   epic-3-retrospective: optional
 
   # ── EPIC 4: Feedback ─────────────────────────────────────────────
