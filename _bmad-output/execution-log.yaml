@@ -16,6 +16,16 @@ workflows:
       - "components/proof-score/ProofScoreBadge.tsx (CSS variables)"
       - "components/proof-score/ProofScoreSidebar.tsx (scope creep eliminado)"
     errors: []
+
+  - id: "ds-20260328-053"
+    timestamp: "2026-03-28T12:00:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    story: "5-3-builder-decision-registration"
+    result: STARTED
+    summary: "Story 5.3 — Builder Decision Registration. Modo YOLO. Creando API route POST /api/projects/[id]/decision, DecisionBadge, DecisionDialog (Cards seleccionables), integración en ProofScoreSidebar y ProjectCard, tests unitarios."
   - id: "ds-20260328-052"
     timestamp: "2026-03-28T11:00:00"
     completed: "2026-03-28T11:30:00"
