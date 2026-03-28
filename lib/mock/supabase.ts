@@ -6,6 +6,13 @@
 
 import { MOCK_USER, MOCK_DB } from './data'
 
+// Genera un UUID v4 válido para pasar validación Zod
+function mockUuid(): string {
+  const hex = () => Math.floor(Math.random() * 16).toString(16)
+  const s = (n: number) => Array.from({ length: n }, hex).join('')
+  return `${s(8)}-${s(4)}-4${s(3)}-${['8','9','a','b'][Math.floor(Math.random()*4)]}${s(3)}-${s(12)}`
+}
+
 type Row = Record<string, any>
 
 // ── Query Builder ──────────────────────────────────────────
@@ -140,7 +147,7 @@ class MockQueryBuilder {
     if (this._insertData !== undefined) {
       const rows = Array.isArray(this._insertData) ? this._insertData : [this._insertData]
       const newRows = rows.map(r => ({
-        id: r.id ?? `mock-${this._table}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        id: r.id ?? mockUuid(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         ...r,

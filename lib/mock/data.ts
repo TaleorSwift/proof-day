@@ -4,14 +4,14 @@
 // IDs son UUIDs válidos para pasar validación Zod
 // ============================================================
 
-// ── IDs estáticos (exportados para usarlos en tests y referencias) ──
-export const MOCK_USER_ID    = '00000000-0000-0000-0000-000000000001'
-export const MOCK_USER_2_ID  = '00000000-0000-0000-0000-000000000002'
-export const MOCK_COMM_1_ID  = '00000000-0000-0000-1000-000000000001'
-export const MOCK_COMM_2_ID  = '00000000-0000-0000-1000-000000000002'
-export const MOCK_PROJ_1_ID  = '00000000-0000-0000-2000-000000000001'
-export const MOCK_PROJ_2_ID  = '00000000-0000-0000-2000-000000000002'
-export const MOCK_PROJ_3_ID  = '00000000-0000-0000-2000-000000000003'
+// ── IDs estáticos — UUID v4 válidos (grupo 3 empieza con 4, grupo 4 con 8/9/a/b) ──
+export const MOCK_USER_ID    = 'a0000000-0000-4000-8000-000000000001'
+export const MOCK_USER_2_ID  = 'a0000000-0000-4000-8000-000000000002'
+export const MOCK_COMM_1_ID  = 'b0000000-0000-4000-8000-000000000001'
+export const MOCK_COMM_2_ID  = 'b0000000-0000-4000-8000-000000000002'
+export const MOCK_PROJ_1_ID  = 'c0000000-0000-4000-8000-000000000001'
+export const MOCK_PROJ_2_ID  = 'c0000000-0000-4000-8000-000000000002'
+export const MOCK_PROJ_3_ID  = 'c0000000-0000-4000-8000-000000000003'
 
 export const MOCK_USER = {
   id: MOCK_USER_ID,
@@ -44,9 +44,9 @@ export const MOCK_DB: Record<string, any[]> = {
   ],
 
   community_members: [
-    { id: '00000000-0000-0000-3000-000000000001', community_id: MOCK_COMM_1_ID, user_id: MOCK_USER_ID,   role: 'admin',  joined_at: '2026-01-10T10:00:00Z' },
-    { id: '00000000-0000-0000-3000-000000000002', community_id: MOCK_COMM_2_ID, user_id: MOCK_USER_ID,   role: 'member', joined_at: '2026-02-01T09:00:00Z' },
-    { id: '00000000-0000-0000-3000-000000000003', community_id: MOCK_COMM_1_ID, user_id: MOCK_USER_2_ID, role: 'member', joined_at: '2026-01-12T08:00:00Z' },
+    { id: 'd0000000-0000-4000-8000-000000000001', community_id: MOCK_COMM_1_ID, user_id: MOCK_USER_ID,   role: 'admin',  joined_at: '2026-01-10T10:00:00Z' },
+    { id: 'd0000000-0000-4000-8000-000000000002', community_id: MOCK_COMM_2_ID, user_id: MOCK_USER_ID,   role: 'member', joined_at: '2026-02-01T09:00:00Z' },
+    { id: 'd0000000-0000-4000-8000-000000000003', community_id: MOCK_COMM_1_ID, user_id: MOCK_USER_2_ID, role: 'member', joined_at: '2026-01-12T08:00:00Z' },
   ],
 
   projects: [
@@ -54,15 +54,12 @@ export const MOCK_DB: Record<string, any[]> = {
       id: MOCK_PROJ_1_ID,
       community_id: MOCK_COMM_1_ID,
       builder_id: MOCK_USER_ID,
-      name: 'PulseCheck',
-      tagline: 'Seguimiento anónimo del estado del equipo cada semana',
+      title: 'PulseCheck',
       problem: 'Los equipos remotos no detectan el burnout a tiempo.',
       solution: 'Una encuesta semanal de pulso con visualización de tendencias para managers.',
-      target_user: 'Managers de ingeniería con 5+ reportes remotos.',
       hypothesis: 'Si los managers ven tendencias de ánimo semanalmente, intervendrán 2x más rápido en caídas de moral.',
       status: 'live',
       decision: null,
-      decided_at: null,
       image_urls: [],
       created_at: '2026-02-10T10:00:00Z',
       updated_at: '2026-02-15T12:00:00Z',
@@ -71,15 +68,12 @@ export const MOCK_DB: Record<string, any[]> = {
       id: MOCK_PROJ_2_ID,
       community_id: MOCK_COMM_1_ID,
       builder_id: MOCK_USER_ID,
-      name: 'DocBridge',
-      tagline: 'Genera onboarding docs desde conversaciones de Slack',
+      title: 'DocBridge',
       problem: 'El conocimiento tribal se pierde cuando alguien sale del equipo.',
       solution: 'Auto-generar documentación desde hilos de Slack con IA.',
-      target_user: 'CTOs de startups de 10-50 personas.',
       hypothesis: 'Si el onboarding se documenta automáticamente, la curva de aprendizaje de nuevos empleados baja un 40%.',
       status: 'draft',
       decision: null,
-      decided_at: null,
       image_urls: [],
       created_at: '2026-03-01T08:00:00Z',
       updated_at: '2026-03-01T08:00:00Z',
@@ -88,15 +82,12 @@ export const MOCK_DB: Record<string, any[]> = {
       id: MOCK_PROJ_3_ID,
       community_id: MOCK_COMM_1_ID,
       builder_id: MOCK_USER_2_ID,
-      name: 'Carbon Ledger',
-      tagline: 'Rastrea la huella de carbono de tu infraestructura cloud',
+      title: 'Carbon Ledger',
       problem: 'Los equipos de ingeniería no tienen visibilidad del impacto ambiental de su infra.',
       solution: 'Dashboard de emisiones CO2 integrado con AWS, GCP y Azure.',
-      target_user: 'Engineering leads en empresas con objetivos ESG.',
       hypothesis: 'Con visibilidad de emisiones en tiempo real, los equipos optimizan recursos un 20% más.',
       status: 'live',
       decision: null,
-      decided_at: null,
       image_urls: [],
       created_at: '2026-02-20T11:00:00Z',
       updated_at: '2026-03-20T15:00:00Z',
@@ -105,14 +96,18 @@ export const MOCK_DB: Record<string, any[]> = {
 
   feedbacks: [
     {
-      id: '00000000-0000-0000-4000-000000000001',
+      id: 'e0000000-0000-4000-8000-000000000001',
       project_id: MOCK_PROJ_1_ID,
       community_id: MOCK_COMM_1_ID,
       reviewer_id: MOCK_USER_2_ID,
-      understands_problem: 5,
-      would_use: 4,
-      relevance: 4,
-      suggestion: 'Integración con Slack sería clave para la adopción.',
+      scores: { p1: 'yes', p2: 'yes', p3: 'maybe' },
+      text_responses: {
+        p1: null,
+        p2: null,
+        p3: null,
+        p4: 'Integración con Slack sería clave para la adopción.',
+      },
+      profiles: { id: MOCK_USER_2_ID, name: 'Sara Medina', avatar_url: null },
       created_at: '2026-02-20T14:00:00Z',
     },
   ],
@@ -140,7 +135,7 @@ export const MOCK_DB: Record<string, any[]> = {
 
   invitation_links: [
     {
-      id: '00000000-0000-0000-5000-000000000001',
+      id: 'f0000000-0000-4000-8000-000000000001',
       community_id: MOCK_COMM_1_ID,
       token: 'mock-invite-token-abc123',
       created_by: MOCK_USER_ID,

@@ -138,7 +138,6 @@ export default async function ProjectPage({ params }: Props) {
                 projectId={project.id}
                 currentStatus={project.status as 'draft' | 'live' | 'inactive'}
                 isBuilder={isOwner}
-                onStatusChange={() => {}}
               />
             )}
 
