@@ -13,6 +13,7 @@ export interface Community {
   created_by: string
   created_at: string
   updated_at: string
+  member_count: number  // número de miembros — añadido en story 2.3
 }
 
 export interface CommunityMember {

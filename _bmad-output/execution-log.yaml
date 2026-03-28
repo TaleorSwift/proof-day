@@ -1,4 +1,100 @@
 workflows:
+  - id: "ds-20260328-014"
+    timestamp: "2026-03-28T17:00:00"
+    completed: "2026-03-28T17:45:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: GENERATE
+    result: SUCCESS
+    duration_estimate: "45 minutes"
+    story: "2.3 — Community Access Control & Listing"
+    branch: "feat/2-3-community-access-control-listing"
+    summary: |
+      Story 2.3 implementada completa. 11 tasks completados.
+      T2: Migration 006 — RLS SELECT con EXISTS (replace policy IN de migration 003).
+      T3: Community type extendido con member_count.
+      T4: GET /api/communities con memberCounts separado + mapeo camelCase completo. Devuelve { data, count }.
+      T5+T8: CommunitiesPage — filtro explícito, redirect automático 1 comunidad (AC-5), banner error no-access.
+      T6: CommunityList (grid) + CommunityCard (fallback avatar accent, desc 2 líneas, memberCount).
+      T7: [slug]/page.tsx — RLS como access gate, redirect /communities?error=no-access si null. CommunityHeader con isAdmin.
+      T9: CommunitySwitcher + CommunitySwitcherClient (pathname) + layout.tsx Navbar con selector.
+      T10: 17 tests — 84/84 suite completa pasa. TypeScript 0 errores. ESLint 0 warnings.
+      T11: communities.md actualizado con reglas de story 2.3.
+    artifacts_created:
+      - "supabase/migrations/006_rls_communities_member_access.sql"
+      - "app/(app)/communities/[slug]/page.tsx"
+      - "app/(app)/communities/layout.tsx"
+      - "components/communities/CommunityList.tsx"
+      - "components/communities/CommunityCard.tsx"
+      - "components/communities/CommunityHeader.tsx"
+      - "components/communities/CommunitySwitcher.tsx"
+      - "components/communities/CommunitySwitcherClient.tsx"
+      - "tests/unit/communities/communitiesListing.test.ts"
+    artifacts_modified:
+      - "lib/types/communities.ts"
+      - "app/api/communities/route.ts"
+      - "app/(app)/communities/page.tsx"
+      - "docs/project/modules/communities.md"
+      - "_bmad-output/implementation-artifacts/stories/2-3-community-access-control-listing.md"
+    errors: []
+    next_recommended: "/cr (Homer) — story 2.3 feat/2-3-community-access-control-listing"
+
+  - id: "cs-20260328-013"
+    timestamp: "2026-03-28T16:00:00"
+    agent: Ned
+    trigger: "CS"
+    workflow: "create-story"
+    mode: GENERATE
+    result: STARTED
+    summary: "Creando story 2.3 — Community Access Control & Listing (Epic 2). Story incluirá ACs de acceso por membresía, RLS, listing con cards, redirect automático y navbar con selector de comunidad."
+
+  - id: "cs-20260328-013"
+    timestamp: "2026-03-28T16:15:00"
+    completed: "2026-03-28T16:15:00"
+    agent: Ned
+    trigger: "CS"
+    workflow: "create-story"
+    mode: GENERATE
+    result: SUCCESS
+    duration_estimate: "15 minutes"
+    summary: |
+      Story 2.3 — Community Access Control & Listing creada y marcada ready-for-dev.
+      8 ACs definidos: listing por membresía (FR8), acceso por URL con redirect, RLS reforzada,
+      CommunityCard con memberCount, redirect automático para 1 sola comunidad, navbar CommunitySwitcher,
+      API GET con memberCount, layout base /communities/[slug].
+      11 tasks detallados con subtasks, rejection criteria heredados de stories anteriores,
+      dev notes completas con patrones arquitectónicos, tokens de diseño y referencias a ficheros fuente.
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/stories/2-3-community-access-control-listing.md"
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "VS (Ned): validar story 2.3 antes de pasar a Homer para /ds. Alternativamente: /ds (Homer) directamente si la story se considera lista."
+
+  - id: "ss-20260328-012"
+    timestamp: "2026-03-28T15:00:00"
+    completed: "2026-03-28T15:05:00"
+    agent: Ned
+    trigger: "SS"
+    workflow: "sprint-status"
+    mode: YOLO
+    result: SUCCESS
+    summary: |
+      Sprint Status completo ejecutado en modo YOLO.
+      Epics: 1 done, 1 in-progress, 5 backlog.
+      Stories: 3 done, 1 review (2.1), 13 backlog.
+      Riesgos detectados:
+        1. INCONSISTENCIA CRITICA: sprint-status.yaml marca 2-2 como backlog pero story file dice done y CR#4 completado.
+        2. Story 2.1 en review — falta /cr final (post-CR#2-fixes, commit 53231eb, 67/67 tests).
+        3. Epic-1 retrospectiva pendiente (status: optional).
+      Siguiente recomendado: /cr (Homer) sobre story 2.1 feat/2-1-create-community.
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "/cr (Homer) — story 2.1 Create Community, revisión final post-CR#2-fixes."
+
   - id: "ds-20260328-011"
     timestamp: "2026-03-28T14:00:00"
     completed: "2026-03-28T14:30:00"
