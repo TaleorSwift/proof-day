@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { registerDecision } from '@/lib/api/projects'
 import type { ProjectDecision } from '@/lib/types/projects'
@@ -48,6 +48,9 @@ export function DecisionDialog({ projectId, isOpen, onClose, onSuccess }: Decisi
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Registrar tu decisión</DialogTitle>
+          <DialogDescription>
+            Esta acción es irreversible. Elige qué pasa con tu proyecto a partir de ahora.
+          </DialogDescription>
         </DialogHeader>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', marginTop: 'var(--space-2)' }}>

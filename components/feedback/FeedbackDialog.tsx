@@ -4,6 +4,7 @@ import { useState } from 'react'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -129,6 +130,9 @@ export function FeedbackDialog({
           >
             Dar feedback
           </DialogTitle>
+          <DialogDescription>
+            Responde las preguntas para ayudar al builder a mejorar su propuesta.
+          </DialogDescription>
         </DialogHeader>
 
         <div

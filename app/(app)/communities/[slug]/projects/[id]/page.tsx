@@ -66,11 +66,11 @@ export default async function ProjectPage({ params }: Props) {
         {/* Banner inactivo */}
         {project.status === 'inactive' && <InactiveBanner />}
 
-        {/* Layout principal: contenido (60%) + sidebar (40%) */}
+        {/* Layout principal: contenido + sidebar (owner) */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: isOwner ? '1fr 380px' : '1fr',
+            gridTemplateColumns: isOwner ? 'minmax(0, 1fr) clamp(280px, 30%, 380px)' : '1fr',
             gap: 'var(--space-8)',
             alignItems: 'start',
           }}
