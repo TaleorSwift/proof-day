@@ -20,9 +20,15 @@
 # production
 /build
 
+# IDE
+.idea/
+.vscode/
+
 # misc
 .DS_Store
 *.pem
+storybook.log
+storybook-static/
 
 # debug
 npm-debug.log*

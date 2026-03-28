@@ -1,97 +1,334 @@
 workflows:
-  - id: "ds-20260327-001"
+  - id: "ds-20260328-061-062"
+    timestamp: "2026-03-28T19:00:00"
     agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
+    trigger: DS
+    workflow: dev-story
     mode: GENERATE
-    started: "2026-03-27"
-    status: STARTED
-    story: "1.1 — Project Setup & Base Infrastructure"
-    artifacts: []
-    errors: []
-    notes: "Iniciando implementacion Story 1.1. GENERATE mode — proyecto Next.js no inicializado."
+    story: "epic-6 (6-1-user-profile-view-edit + 6-2-feedback-counter-top-reviewer-widget)"
+    result: STARTED
+    summary: "Epic 6 — Stories 6.1 y 6.2. GENERATE mode. Implementando tabla profiles, validaciones, tipos, API routes, componentes ProfileForm, páginas /profile y /profile/[id], TopReviewerWidget, PersonalFeedbackCounter, gamification API routes, tests unitarios."
 
-  - id: "cs-20260327-001"
-    agent: Ned
-    trigger: "/cs"
-    workflow: "create-story"
-    mode: GENERATE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    artifacts:
-      - "_bmad-output/implementation-artifacts/stories/1-1-project-setup-base-infrastructure.md"
+  - id: "sprint-20260328-021"
+    timestamp: "2026-03-28T01:30:00"
+    completed: "2026-03-28T01:30:00"
+    agent: Ned (coord) + Homer (dev) + Edna (qa)
+    trigger: sprint
+    workflow: sprint-epic5
+    result: SUCCESS
+    summary: "Epic 5 completo — PRs #17, #18, #19 mergeados a develop. 3 stories implementadas, revisadas y validadas."
+    prs_merged:
+      - "PR#17 feat/5-1-proof-score-calculation-algorithm"
+      - "PR#18 feat/5-2-proof-score-display-waiting-state"
+      - "PR#19 feat/5-3-builder-decision-registration"
+    tests: "164 passed (14 test files)"
     errors: []
-    notes: "Story 1.1 creada — Project Setup & Base Infrastructure. 14 tasks, 20 ACs. Status: ready-for-dev. Epic-1 actualizado a in-progress."
 
-  - id: "sp-20260327-001"
-    agent: Ned
-    trigger: "/sp"
-    workflow: "sprint-planning"
-    mode: GENERATE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    artifacts:
-      - "_bmad-output/planning-artifacts/epic-1-infraestructura-auth.md"
-      - "_bmad-output/planning-artifacts/epic-2-comunidades.md"
-      - "_bmad-output/planning-artifacts/epic-3-proyectos.md"
-      - "_bmad-output/planning-artifacts/epic-4-feedback.md"
-      - "_bmad-output/planning-artifacts/epic-5-proof-score-decision.md"
-      - "_bmad-output/planning-artifacts/epic-6-perfiles-gamificacion.md"
-      - "_bmad-output/planning-artifacts/epic-7-landing-page.md"
-      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
-    errors: []
-    notes: "Sprint Planning completado. 7 épicas, 17 stories derivadas del PRD (31 FRs). Epic files creados desde cero. sprint-status.yaml generado. Todos los items en backlog — listos para CS."
-
-  - id: "cu-20260327-001"
-    agent: Marge
-    trigger: "/cu"
-    workflow: "create-ux-design"
+  - id: "ds-20260328-053b"
+    timestamp: "2026-03-28T18:45:00"
+    completed: "2026-03-28T18:55:00"
+    agent: Homer
+    trigger: DS-fix
+    workflow: qa-fix
     mode: REFINE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
+    story: "5-3-builder-decision-registration"
+    branch: "feat/5-3-builder-decision-registration"
+    result: SUCCESS
+    summary: "QA fixes story 5.3: BUG-001 feedback bloqueado tras decisión, BUG-002 decision persistida en page reload. Fix 1: añadido 'decision' al select en POST /api/feedback/route.ts + guardia if (project.decision !== null) → 409 FEEDBACK_LOCKED, antes de la verificación de status. Fix 2: añadido 'decision' al select en page.tsx + pasado initialDecision={project.decision as ProjectDecision | null} a ProofScoreSidebar. 164/164 tests pasan. TS errors pre-existentes no relacionados."
     artifacts:
-      - "_bmad-output/planning-artifacts/ux-design-specification.md"
-      - "docs/project/design-tokens.md"
+      - "app/api/feedback/route.ts (MODIFIED — decision en select + guard FEEDBACK_LOCKED)"
+      - "app/(app)/communities/[slug]/projects/[id]/page.tsx (MODIFIED — decision en select + initialDecision prop)"
+    tests:
+      total: 164
+      passed: 164
+      failed: 0
+    bugs_fixed:
+      - "BUG-5-3-001: AC8 — feedback API ahora bloquea tras decisión con 409 FEEDBACK_LOCKED"
+      - "BUG-5-3-002: AC5/AC9 — página persiste decision en refresh via initialDecision prop"
     errors: []
-    notes: "UX Design completo. 14 pasos ejecutados (3 skipped: step-04 emotional, step-05 inspiration, step-09 design-directions — pre-existing design rules REFINE mode). Sistema visual extraído del prototipo Lovable. Design tokens completos. 7 custom components definidos. Journey flows con Mermaid. Responsive desktop-first. Accessibility best-effort WCAG AA."
 
-  - id: "ca-20260327-001"
-    agent: Frink
-    trigger: "/ca"
-    workflow: "create-architecture"
+  - id: "qa-20260328-053"
+    timestamp: "2026-03-28T18:00:00"
+    completed: "2026-03-28T18:30:00"
+    agent: Edna
+    trigger: QA
+    workflow: qa-validate
+    mode: REFINE
+    story: "5-3-builder-decision-registration"
+    branch: "feat/5-3-builder-decision-registration"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/19"
+    result: FAIL
+    summary: "QA Story 5.3 — Builder Decision Registration. FAIL. 164/164 tests pasan. 2 bugs críticos: (1) AC8 — POST /api/feedback no verifica project.decision, el feedback sigue siendo posible tras registrar decisión. (2) AC5/persistencia — page.tsx no incluye 'decision' en el select de Supabase ni pasa initialDecision al ProofScoreSidebar, al refrescar la página el estado de decisión se pierde (botón vuelve a aparecer, badge desaparece). ACs pasados: AC1 botón solo si score disponible, AC2 3 cards seleccionables sin dropdown, AC3 2 pasos con disabled, AC4 409 guard, AC6 badge visible para todos, AC7 ProjectCard badge compact, AC9 botón desaparece en sesión. Rejection criteria: OK."
+    tests:
+      total: 164
+      passed: 164
+      failed: 0
+      files: 14
+      decision_tests: 9
+    acceptance_criteria:
+      ac1_button_only_with_score: PASS
+      ac2_3_cards_no_dropdown: PASS
+      ac3_2step_disabled_until_selection: PASS
+      ac4_409_irreversible: PASS
+      ac5_badge_appears_button_gone_post_confirm: PARTIAL  # solo en memoria, no persiste en refresh
+      ac6_badge_visible_all_members: PASS
+      ac7_projectcard_decision_badge: PASS
+      ac8_feedback_blocked_after_decision: FAIL  # API no verifica decision
+      ac9_button_disappears_after_register: PARTIAL  # solo en memoria, no persiste en refresh
+    rejection_criteria:
+      no_dropdown_select: PASS
+      no_decision_change_409: PASS
+      no_button_without_score: PASS
+    bugs:
+      - id: "BUG-5-3-001"
+        severity: critical
+        ac: "AC8"
+        description: "POST /api/feedback/route.ts no verifica project.decision. Cuando el builder ha registrado una decisión, la API sigue aceptando nuevos feedbacks sin retornar error. El select de Supabase en la línea 107 solo incluye 'id, status, builder_id, community_id', sin 'decision'. Falta guardia: if (project.decision !== null) return 409/422 FEEDBACK_LOCKED."
+        file: "app/api/feedback/route.ts"
+        line: 107
+        fix: "Añadir 'decision' al select de Supabase y añadir guard: if (project.decision !== null) return NextResponse.json({ error: 'Feedback cerrado — el builder ya tomó una decisión', code: 'FEEDBACK_LOCKED' }, { status: 409 })"
+      - id: "BUG-5-3-002"
+        severity: critical
+        ac: "AC5, AC9"
+        description: "page.tsx de proyecto no incluye 'decision' en el .select() de Supabase (línea 28) y no pasa initialDecision al ProofScoreSidebar (línea 286-290). Al refrescar la página, ProofScoreSidebar inicia con decision=null aunque en DB exista una decisión, mostrando el botón 'Registrar decision' de nuevo y ocultando el DecisionBadge."
+        file: "app/(app)/communities/[slug]/projects/[id]/page.tsx"
+        lines: [28, 286]
+        fix: "En el select añadir 'decision', y en ProofScoreSidebar pasar initialDecision={project.decision as ProjectDecision | null}"
+    artifacts:
+      - "app/api/projects/[id]/decision/route.ts"
+      - "components/projects/DecisionBadge.tsx"
+      - "components/projects/DecisionDialog.tsx"
+      - "components/proof-score/ProofScoreSidebar.tsx"
+      - "components/projects/ProjectCard.tsx"
+      - "tests/unit/projects/decisionRegistration.test.ts"
+    errors:
+      - "BUG-5-3-001: feedback API no bloquea tras decisión (AC8)"
+      - "BUG-5-3-002: página no persiste estado de decisión en refresh (AC5, AC9)"
+
+  - id: "ds-20260328-053"
+    timestamp: "2026-03-28T12:00:00"
+    completed: "2026-03-28T13:00:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
     mode: GENERATE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
+    story: "5-3-builder-decision-registration"
+    branch: "feat/5-3-builder-decision-registration"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/19"
+    result: SUCCESS
+    summary: "Story 5.3 — Builder Decision Registration. GENERATE mode. POST /api/projects/[id]/decision con Zod validation, auth getUser(), 409 guard irreversibilidad, 404/403. registerDecision() helper en lib/api/projects.ts. DecisionBadge (full + compact) con design tokens. DecisionDialog con 3 Cards seleccionables, loading state, advertencia irreversible. ProofScoreSidebar actualizado: boton solo visible cuando score disponible, DecisionBadge post-registro. ProjectCard: prop decision, compact badge. 9 tests unitarios, 164 tests totales."
     artifacts:
-      - "_bmad-output/planning-artifacts/architecture.md"
+      - "app/api/projects/[id]/decision/route.ts (CREATED)"
+      - "lib/api/projects.ts (MODIFIED — registerDecision)"
+      - "components/projects/DecisionBadge.tsx (CREATED)"
+      - "components/projects/DecisionDialog.tsx (CREATED)"
+      - "components/proof-score/ProofScoreSidebar.tsx (MODIFIED)"
+      - "components/projects/ProjectCard.tsx (MODIFIED)"
+      - "tests/unit/projects/decisionRegistration.test.ts (CREATED — 9 tests)"
+    tests:
+      total: 164
+      new: 9
+      status: all passing
     errors: []
-    notes: "Arquitectura completa generada. 8 pasos ejecutados. Stack: Next.js 15 + Supabase + Vercel + Resend. Patrones enforceables via ESLint + husky + Vitest. Proof Score ADR documentado. 31/31 FRs cubiertos."
 
-  - id: "vp-20260327-001"
-    agent: Lisa
-    trigger: "/vp"
-    workflow: "validate-prd"
+  - id: "ds-20260328-052b"
+    timestamp: "2026-03-28T15:00:00"
+    completed: "2026-03-28T15:20:00"
+    agent: Homer
+    trigger: DS-fix
+    workflow: cr-fix
+    mode: REFINE
+    story: "5-2-proof-score-display-waiting-state"
+    branch: "feat/5-2-proof-score-display-waiting-state"
+    result: SUCCESS
+    summary: "CR fixes Story 5.2 — F1: implementar getProofScore + crear lib/types/proof-score.ts. F2: reemplazar colores hex hardcodeados por CSS variables en ProofScoreBadge. F3: eliminar scope creep de Story 5.3 (DecisionBadge, DecisionDialog, decision state) de ProofScoreSidebar. 153 tests pasan."
+    artifacts:
+      - "lib/types/proof-score.ts (creado)"
+      - "lib/api/proof-score.ts (implementado)"
+      - "components/proof-score/ProofScoreBadge.tsx (CSS variables)"
+      - "components/proof-score/ProofScoreSidebar.tsx (scope creep eliminado)"
+    errors: []
+
+  - id: "qa-20260328-052"
+    timestamp: "2026-03-28T17:00:00"
+    completed: "2026-03-28T17:20:00"
+    agent: Edna
+    trigger: QA
+    workflow: qa-validate
     mode: VERIFY
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
+    story: "5-2-proof-score-display-waiting-state"
+    branch: "feat/5-2-proof-score-display-waiting-state"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/18"
+    result: PASS
+    summary: "QA Story 5.2 — Proof Score Display & Waiting State. PASS. 155 tests pasan (13 ficheros), incluyendo 6 tests de proofScoreDisplay.test.ts. ACs verificados: ProofScoreWaiting con remaining dinamico y singular/plural correcto, progress bar (feedbacks/3)*100, copy motivador 'Tu señal estará lista pronto', sin metricas numericas parciales. ProofScoreBadge: CSS variables exclusivamente (sin hex), role=status, aria-live=polite, variantes full/compact. ProofScoreSidebar (HEAD): null si !isBuilder, skeleton loading, estados loading/waiting/score, sin imports DecisionBadge ni DecisionDialog. Storybook: 4 stories (Promising, NeedsIteration, Weak, Compact). Rejection criteria OK: score solo para Builder, sin scores parciales, espera state con <3 feedbacks. Nota: working tree tiene cambios no-commiteados de Story 5.3 (scope DS en curso), no afectan a Story 5.2."
+    tests:
+      total: 155
+      passed: 155
+      failed: 0
+      files: 13
+      proof_score_display_tests: 6
+    acceptance_criteria:
+      ac1_waiting_visible_lt3: PASS
+      ac2_remaining_dynamic_singular_plural: PASS
+      ac3_progress_bar: PASS
+      ac4_copy_motivador: PASS
+      ac5_no_partial_metrics: PASS
+      ac6_badge_full_semantic_colors: PASS
+      ac7_score_only_builder: PASS
+      ac8_skeleton_loading: PASS
+    rejection_criteria:
+      no_proof_score_reviewers: PASS
+      no_partial_scores: PASS
+      no_skip_waiting_state: PASS
+      no_decision_badge_dialog_imports: PASS
     artifacts:
-      - "_bmad-output/planning-artifacts/prd-validation-report.md"
+      - "components/proof-score/ProofScoreWaiting.tsx"
+      - "components/proof-score/ProofScoreBadge.tsx"
+      - "components/proof-score/ProofScoreSidebar.tsx"
+      - "lib/api/proof-score.ts"
+      - "lib/types/proof-score.ts"
+      - "stories/proof-score/ProofScoreBadge.stories.tsx"
+      - "tests/unit/proof-score/proofScoreDisplay.test.ts"
     errors: []
-    notes: "Validación completada. 12 checks ejecutados. Overall: PASS. Holistic Quality: 4/5. 0 critical issues, 1 contextual warning (NFR leakage aceptado). PRD listo para arquitectura."
 
-  - id: "cp-20260327-001"
-    agent: Lisa
-    trigger: "/cp"
-    workflow: "create-prd"
-    mode: GENERATE
-    started: "2026-03-27"
-    status: SUCCESS
+  - id: "qa-20260328-051"
+    timestamp: "2026-03-28T15:10:00"
+    completed: "2026-03-28T15:20:00"
+    agent: Edna
+    trigger: QA
+    workflow: qa-validate
+    mode: VERIFY
+    story: "5-1-proof-score-calculation-algorithm"
+    branch: "feat/5-1-proof-score-calculation-algorithm"
+    pr: "17"
+    result: PASS
+    summary: "QA Story 5.1 — Proof Score Calculation Algorithm. PASS. 158 tests pasan (13 ficheros), incluyendo 11 tests de calculateProofScore.test.ts. Funcion pura verificada: solo importa tipo ProofScoreResult, sin Supabase, sin side effects. Thresholds correctos (>=2.5 Promising, >=1.75 Needs iteration, <1.75 Weak). Algoritmo average=sum/n*3 correcto. API Route GET usa getUser() (no getSession()), builder_id check correcto, calculado on-demand sin INSERT/UPDATE. Rejection criteria OK: no almacenado en DB, no expuesto a Reviewers (403 guard), no getSession()."
+    tests:
+      total: 158
+      passed: 158
+      failed: 0
+      files: 13
+      proof_score_tests: 11
+    acceptance_criteria:
+      ac1_null_lt3: PASS
+      ac2_algorithm_thresholds: PASS
+      ac3_pure_function: PASS
+      ac4_api_route_auth: PASS
+      ac5_min_6_tests: PASS
+    rejection_criteria:
+      no_db_storage: PASS
+      no_reviewer_access: PASS
+      no_get_session: PASS
     artifacts:
-      - "_bmad-output/planning-artifacts/prd.md"
+      - "lib/types/proof-score.ts"
+      - "lib/utils/proof-score.ts"
+      - "app/api/proof-score/[projectId]/route.ts"
+      - "lib/api/proof-score.ts"
+      - "tests/unit/proof-score/calculateProofScore.test.ts"
     errors: []
-    notes: "PRD generado desde cero. Artefactos de entrada: Briefing, EARS, HUs, Gherkin."
+
+  - id: "ds-20260328-053"
+    timestamp: "2026-03-28T12:00:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    story: "5-3-builder-decision-registration"
+    result: STARTED
+    summary: "Story 5.3 — Builder Decision Registration. Modo YOLO. Creando API route POST /api/projects/[id]/decision, DecisionBadge, DecisionDialog (Cards seleccionables), integración en ProofScoreSidebar y ProjectCard, tests unitarios."
+  - id: "ds-20260328-052"
+    timestamp: "2026-03-28T11:00:00"
+    completed: "2026-03-28T11:30:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    story: "5-2-proof-score-display-waiting-state"
+    result: SUCCESS
+    pr: "18"
+    branch: "feat/5-2-proof-score-display-waiting-state"
+    summary: "Story 5.2 — Proof Score Display & Waiting State. ProofScoreWaiting (skeleton/progress+singular-plural), ProofScoreBadge (full/compact, a11y role+aria-live), ProofScoreSidebar (client, retorna null si !isBuilder). Integrado en project page. Storybook 4 stories. 6 tests unitarios. 155 tests totales pasan."
+    artifacts:
+      - "components/proof-score/ProofScoreWaiting.tsx"
+      - "components/proof-score/ProofScoreBadge.tsx"
+      - "components/proof-score/ProofScoreSidebar.tsx"
+      - "stories/proof-score/ProofScoreBadge.stories.tsx"
+      - "tests/unit/proof-score/proofScoreDisplay.test.ts"
+      - "app/(app)/communities/[slug]/projects/[id]/page.tsx (integración)"
+    tests: "155 passed (13 test files)"
+    errors: []
+
+  - id: "ds-20260328-051"
+    timestamp: "2026-03-28T10:00:00"
+    completed: "2026-03-28T10:30:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    story: "5-1-proof-score-calculation-algorithm"
+    branch: "feat/5-1-proof-score-calculation-algorithm"
+    pr: "17"
+    result: SUCCESS
+    summary: "Story 5.1 — Proof Score Calculation Algorithm. Función pura calculateProofScore, API Route GET /api/proof-score/[projectId] (solo builder, getUser()), tipos ProofScoreLabel/ProofScoreResult, wrapper getProofScore(). 11 tests nuevos (149 total, todos pasan). Calculado on-demand, nunca almacenado en DB."
+    artifacts_created:
+      - "lib/types/proof-score.ts"
+      - "lib/utils/proof-score.ts"
+      - "app/api/proof-score/[projectId]/route.ts"
+      - "tests/unit/proof-score/calculateProofScore.test.ts"
+    artifacts_modified:
+      - "lib/api/proof-score.ts"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+    tests: "149 passed (12 test files)"
+    errors: []
+
+  - id: "sprint-20260328-021"
+    timestamp: "2026-03-28T00:10:00"
+    agent: Ned (coord) + Homer (dev) + Edna (qa)
+    trigger: sprint
+    workflow: sprint-epic5
+    mode: background-parallel
+    result: STARTED
+    summary: "Sprint Epic 5 — 3 stories en background: 5.1 (algoritmo), 5.2 (display), 5.3 (decisión)."
+
+  - id: "cr-20260328-053"
+    timestamp: "2026-03-28T14:00:00"
+    completed: "2026-03-28T14:15:00"
+    agent: Homer
+    trigger: CR
+    workflow: code-review
+    mode: VERIFY
+    story: "5-3-builder-decision-registration"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/19"
+    branch: "feat/5-3-builder-decision-registration"
+    result: APPROVED
+    summary: "CR Story 5.3 — Builder Decision Registration. APPROVED sin findings. API route: Zod z.enum(['iterate','scale','abandon']), getUser() (sin getSession()), 409 DECISION_ALREADY_REGISTERED correcto, 404/403 guards, sin Server Actions. lib/api/projects.ts: registerDecision() via fetch, sin imports Supabase directos. DecisionBadge: solo CSS variables, sin hex hardcodeados, full + compact. DecisionDialog: 3 cards seleccionables (no dropdown), type=button, disabled hasta selección, advertencia irreversibilidad, 2 pasos lógicos (selección+confirmación). ProofScoreSidebar: botón solo visible si score disponible, DecisionBadge post-registro. ProjectCard: prop decision? opcional. TypeScript limpio sin any. PR contra develop. 9 tests pasan (iterate/scale/abandon válidos + schema inválido + 409 lógica)."
+    findings:
+      critical: 0
+      minor: 0
+    tests: "9 passed (decisionRegistration.test.ts)"
+    errors: []
+
+  - id: "cr-20260329-042"
+    timestamp: "2026-03-29T07:36:00"
+    completed: "2026-03-29T07:41:00"
+    agent: Homer
+    trigger: CR
+    workflow: code-review
+    mode: VERIFY
+    story: "4-2-feedback-submission-association"
+    pr: "16"
+    branch: "feat/4-2-feedback-submission-association"
+    result: APPROVED
+    summary: "CR Story 4.2 — 10 findings (3 críticos, 7 menores). Fixes aplicados: F1-reviewer_id eliminado del fallback GET, F2-double getUser() eliminado en page.tsx, F3-aria-live funciona con use client en FeedbackCounter, F4-getInitials guard para nombre vacío, F5-typo Aún, F6-error color+role. 138 tests pasan. Push a feat/4-2-feedback-submission-association."
+    findings:
+      critical: 3
+      minor: 7
+    fixes_applied:
+      - "F1: reviewer_id eliminado del select fallback en GET /api/feedback"
+      - "F2: segunda llamada getUser() eliminada en project page"
+      - "F3: FeedbackCounter añade use client para aria-live funcional"
+      - "F4: getInitials() guard para string vacío/espacios"
+      - "F5: typo Aun → Aún en empty state"
+      - "F6: ProjectStateActions error usa color-weak-text + role=alert"
+    tests: "138 passed (11 test files)"
+    errors: []

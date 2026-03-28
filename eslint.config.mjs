@@ -18,6 +18,11 @@ const eslintConfig = [
       "storybook-static/**",
       "_bmad/**",
       "_bmad-output/**",
+      // next-env.d.ts es generado por Next.js — usa triple-slash reference necesario
+      "next-env.d.ts",
+      // app/auth/confirm/route.ts es el template oficial de Supabase Next.js.
+      // Importa solo un *type* de @supabase/supabase-js — no crea clientes directamente.
+      "app/auth/confirm/route.ts",
     ],
   },
   ...compat.extends("next/core-web-vitals", "next/typescript"),
@@ -30,7 +35,8 @@ const eslintConfig = [
       "@typescript-eslint/no-require-imports": "warn",
     },
   },
-  // Reglas de arquitectura — solo aplicar a codigo de la app (no a lib/supabase/ ni config)
+  // Reglas de arquitectura — aplicar a codigo de la app, middleware raiz y tests
+  // Excluir lib/supabase/ (es el unico sitio donde se permite importar @supabase/ssr directamente)
   {
     files: [
       "app/**/*.{ts,tsx}",
@@ -38,8 +44,28 @@ const eslintConfig = [
       "lib/api/**/*.{ts,tsx}",
       "lib/validations/**/*.{ts,tsx}",
       "lib/utils/**/*.{ts,tsx}",
+      "middleware.ts",
+      "tests/**/*.{ts,tsx}",
     ],
     rules: {
+      // Bloquear importaciones directas de Supabase fuera de lib/supabase/
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@supabase/supabase-js",
+              message:
+                "No importar @supabase/supabase-js directamente. Usa lib/supabase/client.ts o lib/supabase/server.ts.",
+            },
+            {
+              name: "@supabase/ssr",
+              message:
+                "No importar @supabase/ssr directamente. Usa lib/supabase/client.ts, lib/supabase/server.ts o lib/supabase/middleware.ts.",
+            },
+          ],
+        },
+      ],
       // Bloquear creacion de clientes Supabase directamente fuera de lib/supabase/
       // Nota: imports de tipos (@supabase/supabase-js types) SI estan permitidos
       "no-restricted-syntax": [
