@@ -1,4 +1,13 @@
 workflows:
+  - id: "ds-20260328-033b"
+    timestamp: "2026-03-28T23:00:00"
+    agent: Homer
+    trigger: DS-fix
+    workflow: cr-fix
+    mode: REFINE
+    result: SUCCESS
+    summary: "CR fixes applied for story 3.3 — F1 integración componentes, F2 token color, F3 type button, F4 select explícito"
+
   - id: "ds-20260328-034"
     timestamp: "2026-03-28T23:50:00"
     completed: "2026-03-28T23:58:00"
