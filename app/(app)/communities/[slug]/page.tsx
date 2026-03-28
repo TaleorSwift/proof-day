@@ -17,7 +17,7 @@ export default async function CommunityPage({ params }: Props) {
   const supabase = await createClient()
 
   const { data: authData, error: authError } = await supabase.auth.getUser()
-  if (authError || !authData.user) redirect('/login')
+  if (authError || !authData.user) redirect('/auth/login')
   const user = authData.user
 
   // RLS garantiza que solo miembros pueden leer.
@@ -110,7 +110,15 @@ export default async function CommunityPage({ params }: Props) {
                 Proyectos
               </h2>
               <Link href={`/communities/${slug}/projects/new`}>
-                <Button variant="default">Nuevo proyecto</Button>
+                <Button
+                  variant="default"
+                  style={{
+                    backgroundColor: 'var(--color-primary)',
+                    color: '#fff',
+                  }}
+                >
+                  Nuevo proyecto
+                </Button>
               </Link>
             </div>
 

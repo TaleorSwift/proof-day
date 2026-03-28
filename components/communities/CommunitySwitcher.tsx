@@ -48,8 +48,8 @@ export function CommunitySwitcher({ communities, activeCommunitySlug }: Props) {
           fontSize: 'var(--text-sm)',
           fontWeight: 'var(--font-medium)',
           color: 'var(--color-text-primary)',
-          background: 'none',
-          border: '1px solid var(--color-border)',
+          backgroundColor: 'var(--color-surface)',
+          border: '1px solid var(--color-text-muted)',
           borderRadius: 'var(--radius-sm)',
           padding: 'var(--space-1) var(--space-3)',
           cursor: 'pointer',
@@ -59,7 +59,14 @@ export function CommunitySwitcher({ communities, activeCommunitySlug }: Props) {
         <span aria-hidden="true" style={{ fontSize: 'var(--text-xs)' }}>▾</span>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start">
+      <DropdownMenuContent
+        align="start"
+        style={{
+          backgroundColor: 'var(--color-surface)',
+          border: '1px solid var(--color-border)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
         {communities.map((community) => {
           const isActive = community.slug === activeCommunitySlug
           return (

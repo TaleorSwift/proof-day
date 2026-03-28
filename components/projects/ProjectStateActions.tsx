@@ -8,7 +8,7 @@ interface ProjectStateActionsProps {
   projectId: string
   currentStatus: ProjectStatus
   isBuilder: boolean
-  onStatusChange: (newStatus: ProjectStatus) => void
+  onStatusChange?: (newStatus: ProjectStatus) => void
 }
 
 export function ProjectStateActions({
@@ -32,7 +32,7 @@ export function ProjectStateActions({
       await publishProject(projectId)
       setStatus('live')
       setShowConfirm(false)
-      onStatusChange('live')
+      onStatusChange?.('live')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al publicar')
     } finally {
@@ -46,7 +46,7 @@ export function ProjectStateActions({
     try {
       await deactivateProject(projectId)
       setStatus('inactive')
-      onStatusChange('inactive')
+      onStatusChange?.('inactive')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al desactivar')
     } finally {

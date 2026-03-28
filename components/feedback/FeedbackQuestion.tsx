@@ -118,30 +118,21 @@ export function FeedbackQuestion({
           <ToggleGroupItem
             value="yes"
             aria-label="Sí"
-            style={{
-              fontSize: 'var(--text-sm)',
-              color: 'var(--color-text-primary)',
-            }}
+            style={{ fontSize: 'var(--text-sm)' }}
           >
             Sí
           </ToggleGroupItem>
           <ToggleGroupItem
             value="somewhat"
             aria-label="Más o menos"
-            style={{
-              fontSize: 'var(--text-sm)',
-              color: 'var(--color-text-primary)',
-            }}
+            style={{ fontSize: 'var(--text-sm)' }}
           >
             Más o menos
           </ToggleGroupItem>
           <ToggleGroupItem
             value="no"
             aria-label="No"
-            style={{
-              fontSize: 'var(--text-sm)',
-              color: 'var(--color-text-primary)',
-            }}
+            style={{ fontSize: 'var(--text-sm)' }}
           >
             No
           </ToggleGroupItem>

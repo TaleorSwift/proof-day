@@ -12,7 +12,7 @@ export default async function UserProfilePage({ params }: Props) {
   const { id } = await params
   const supabase = await createClient()
   const { data: authData, error: authError } = await supabase.auth.getUser()
-  if (authError || !authData.user) redirect('/login')
+  if (authError || !authData.user) redirect('/auth/login')
 
   const currentUser = authData.user
 

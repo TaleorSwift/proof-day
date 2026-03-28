@@ -14,7 +14,6 @@ export const createProjectSchema = z.object({
     .min(1, 'La hipótesis es obligatoria')
     .max(500, 'La hipótesis no puede superar 500 caracteres'),
   imageUrls: z.array(z.string().url('URL de imagen inválida'))
-    .min(1, 'Debes añadir al menos una imagen')
     .max(5, 'No puedes añadir más de 5 imágenes'),
   communityId: z.string().uuid(),
 })
