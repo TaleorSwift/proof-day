@@ -49,15 +49,25 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     { error: 'Solo puedes editar proyectos en borrador', code: 'PROJECT_NOT_DRAFT' }, { status: 422 }
   )
 
-  const updateData: Record<string, unknown> = { ...result.data, updated_at: new Date().toISOString() }
-  if (result.data.imageUrls !== undefined) {
-    updateData.image_urls = result.data.imageUrls
-    delete updateData.imageUrls
-  }
+  // Construir objeto de update con snake_case para Supabase
+  const updateFields: {
+    title?: string
+    problem?: string
+    solution?: string
+    hypothesis?: string
+    image_urls?: string[]
+    updated_at: string
+  } = { updated_at: new Date().toISOString() }
+
+  if (result.data.title !== undefined) updateFields.title = result.data.title
+  if (result.data.problem !== undefined) updateFields.problem = result.data.problem
+  if (result.data.solution !== undefined) updateFields.solution = result.data.solution
+  if (result.data.hypothesis !== undefined) updateFields.hypothesis = result.data.hypothesis
+  if (result.data.imageUrls !== undefined) updateFields.image_urls = result.data.imageUrls
 
   const { data: project, error } = await supabase
     .from('projects')
-    .update(updateData)
+    .update(updateFields)
     .eq('id', id)
     .select()
     .single()

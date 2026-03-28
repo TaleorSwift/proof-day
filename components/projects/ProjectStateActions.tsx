@@ -60,6 +60,7 @@ export function ProjectStateActions({
         <>
           {!showConfirm ? (
             <button
+              type="button"
               onClick={() => setShowConfirm(true)}
               disabled={isLoading}
               style={{
@@ -103,6 +104,7 @@ export function ProjectStateActions({
               </p>
               <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
                 <button
+                  type="button"
                   onClick={handlePublish}
                   disabled={isLoading}
                   style={{
@@ -123,6 +125,7 @@ export function ProjectStateActions({
                   {isLoading ? 'Publicando...' : 'Publicar ahora'}
                 </button>
                 <button
+                  type="button"
                   onClick={() => {
                     setShowConfirm(false)
                     setError(null)
@@ -153,6 +156,7 @@ export function ProjectStateActions({
 
       {status === 'live' && (
         <button
+          type="button"
           onClick={handleDeactivate}
           disabled={isLoading}
           style={{
@@ -161,8 +165,8 @@ export function ProjectStateActions({
             justifyContent: 'center',
             padding: 'var(--space-2) var(--space-4)',
             backgroundColor: 'transparent',
-            color: 'var(--color-weak-text)',
-            border: '1px solid var(--color-weak-text)',
+            color: 'var(--color-text-secondary)',
+            border: '1px solid var(--color-text-secondary)',
             borderRadius: 'var(--radius-md)',
             fontSize: 'var(--text-sm)',
             fontWeight: 'var(--font-medium)',
@@ -178,7 +182,7 @@ export function ProjectStateActions({
         <p
           style={{
             fontSize: 'var(--text-sm)',
-            color: 'var(--color-weak-text)',
+            color: 'var(--color-text-secondary)',
             margin: 0,
           }}
         >
