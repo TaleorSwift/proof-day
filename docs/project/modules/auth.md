@@ -22,6 +22,8 @@ Gestiona la autenticación de usuarios mediante magic links (sin contraseña). E
 - La sesión se refresca en cada request via `updateSession()` de `lib/supabase/middleware.ts` — el token se mantiene activo sin logout inesperado. (story 1.3)
 - El magic link del email apunta a `/auth/confirm?token=...&type=email&redirect_to=...` — página intermedia que requiere que el usuario pulse un botón antes de verificar el OTP. Esto impide que los escáneres de email (Google Workspace, Outlook) consuman el token automáticamente. (QD-auth-confirm)
 - Si los parámetros `token` o `type` están ausentes en `/auth/confirm`, se redirige a `/login?error=link-invalid`. (QD-auth-confirm)
+- El parámetro `redirect_to` solo se acepta si es una ruta interna (empieza por `/` pero no por `//`). URLs absolutas o protocol-relative se descartan silenciosamente y se usa `/communities` como fallback — prevención de open redirect. (CR-PR34)
+- El parámetro `type` se valida contra el union de `EmailOtpType` antes del cast. Valores desconocidos retornan `valid:false` y redirigen a `/login?error=link-invalid`. (CR-PR34)
 - El template de Magic Link en Supabase Dashboard debe configurarse manualmente para apuntar a `/auth/confirm` (ver PR #34 para instrucciones). (QD-auth-confirm)
 
 ## Ficheros clave
@@ -35,4 +37,4 @@ Gestiona la autenticación de usuarios mediante magic links (sin contraseña). E
 
 ## Última actualización
 
-QD-auth-confirm — 2026-03-28
+CR-PR34 (fixes H1/H2/M1/M2) — 2026-03-28
