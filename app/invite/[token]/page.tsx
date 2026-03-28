@@ -102,7 +102,7 @@ export default async function InvitePage({ params }: Props) {
 
   // Si no está autenticado → redirect a login con next param (AC 5)
   if (!user) {
-    redirect(`/login?next=/invite/${token}`)
+    redirect(`/auth/login?next=/invite/${token}`)
   }
 
   // CR4-F1 fix: implementar lógica directamente con createClient() en lugar de

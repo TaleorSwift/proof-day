@@ -6,6 +6,13 @@
 
 import { MOCK_USER, MOCK_DB } from './data'
 
+// Genera un UUID v4 válido para pasar validación Zod
+function mockUuid(): string {
+  const hex = () => Math.floor(Math.random() * 16).toString(16)
+  const s = (n: number) => Array.from({ length: n }, hex).join('')
+  return `${s(8)}-${s(4)}-4${s(3)}-${['8','9','a','b'][Math.floor(Math.random()*4)]}${s(3)}-${s(12)}`
+}
+
 type Row = Record<string, any>
 
 // ── Query Builder ──────────────────────────────────────────
@@ -89,6 +96,16 @@ class MockQueryBuilder {
     return this._resolve()
   }
 
+  maybeSingle() {
+    this._isSingle = true
+    return this._resolve().then((r: any) => {
+      // maybeSingle: no error si no hay filas (a diferencia de single)
+      if (r.error?.code === 'PGRST116') return { data: null, error: null }
+      return r
+    })
+  }
+
+
   // Enables await without calling .single()
   then(resolve: (v: any) => any, reject?: (e: any) => any) {
     return this._resolve().then(resolve, reject)
@@ -99,6 +116,21 @@ class MockQueryBuilder {
   private _applyFilters(rows: Row[]): Row[] {
     return rows.filter(row =>
       this._filters.every(f => {
+        // Soporte para filtros con JOIN: 'tabla_relacionada.campo'
+        // Ej: 'community_members.user_id' → busca en MOCK_DB.community_members
+        if (f.field.includes('.')) {
+          const [relTable, relField] = f.field.split('.')
+          const relRows: Row[] = MOCK_DB[relTable] ?? []
+          // FK: buscar cualquier campo '_id' en la tabla relacionada que apunte a row.id
+          return relRows.some(rel => {
+            const fkMatch = Object.entries(rel).some(([k, v]) => k.endsWith('_id') && v === row['id'])
+            const fieldMatch = f.op === 'eq' ? rel[relField] === f.value
+                             : f.op === 'neq' ? rel[relField] !== f.value
+                             : f.op === 'in' ? (f.value as any[]).includes(rel[relField])
+                             : true
+            return fkMatch && fieldMatch
+          })
+        }
         switch (f.op) {
           case 'eq':  return row[f.field] === f.value
           case 'neq': return row[f.field] !== f.value
@@ -115,7 +147,7 @@ class MockQueryBuilder {
     if (this._insertData !== undefined) {
       const rows = Array.isArray(this._insertData) ? this._insertData : [this._insertData]
       const newRows = rows.map(r => ({
-        id: r.id ?? `mock-${this._table}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        id: r.id ?? mockUuid(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         ...r,
@@ -201,12 +233,24 @@ const mockAuth = {
   signInWithOtp: async () => ({ data: {}, error: null }),
 }
 
+// ── RPC Mock ───────────────────────────────────────────────
+// rpc() en el cliente devuelve un objeto thenable con .maybeSingle()
+function mockRpc(_fn: string, _params?: Record<string, any>) {
+  const result = { data: null, error: null }
+  return {
+    maybeSingle: () => Promise.resolve(result),
+    single: () => Promise.resolve(result),
+    then: (resolve: (v: any) => any) => Promise.resolve(result).then(resolve),
+  }
+}
+
 // ── Mock Client Factory ────────────────────────────────────
 function createMockClient() {
   return {
     auth: mockAuth,
     storage: mockStorage,
     from: (table: string) => new MockQueryBuilder(table),
+    rpc: mockRpc,
   }
 }
 

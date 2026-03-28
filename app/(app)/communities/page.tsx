@@ -12,7 +12,7 @@ export default async function CommunitiesPage({ searchParams }: Props) {
   const supabase = await createClient()
 
   const { data: authData, error: authError } = await supabase.auth.getUser()
-  if (authError || !authData.user) redirect('/login')
+  if (authError || !authData.user) redirect('/auth/login')
 
   const user = authData.user
 

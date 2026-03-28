@@ -59,9 +59,24 @@ export function ProjectCard({
     )
   }
 
-  const imageSrc = project.imageUrls[0] ?? '/placeholder-project.png'
+  const imageSrc = project.imageUrls[0] ?? null
   const isDraft = project.status === 'draft'
   const isInactive = project.status === 'inactive'
+
+  // Gradient placeholder: color determinista basado en el título
+  const GRADIENTS = [
+    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+    'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)',
+    'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
+  ]
+  const gradientIndex = project.title.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % GRADIENTS.length
+  const placeholderGradient = GRADIENTS[gradientIndex]
+  const initials = project.title.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
 
   return (
     <Link
@@ -88,13 +103,38 @@ export function ProjectCard({
             borderRadius: 'var(--radius-md) var(--radius-md) 0 0',
           }}
         >
-          <Image
-            src={imageSrc}
-            alt={project.title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 50vw, 33vw"
-          />
+          {imageSrc ? (
+            <Image
+              src={imageSrc}
+              alt={project.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 50vw, 33vw"
+            />
+          ) : (
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: placeholderGradient,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '2rem',
+                  fontWeight: 700,
+                  color: 'rgba(255,255,255,0.85)',
+                  letterSpacing: '0.05em',
+                  userSelect: 'none',
+                }}
+              >
+                {initials}
+              </span>
+            </div>
+          )}
           {/* Overlay sutil para inactivos */}
           {isInactive && (
             <div
