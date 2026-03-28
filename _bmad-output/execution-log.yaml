@@ -1,4 +1,29 @@
 workflows:
+  - id: "ds-20260328-4-1"
+    timestamp: "2026-03-28T23:00:00"
+    completed: "2026-03-28T23:45:00"
+    agent: Homer
+    trigger: "DS story 4.1 feedback form 4 guided questions"
+    workflow: "dev-story"
+    mode: GENERATE
+    result: SUCCESS
+    story: "4.1 — Feedback Form (4 Guided Questions)"
+    branch: "feat/4-1-feedback-form-4-guided-questions"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/14"
+    artifacts:
+      - lib/types/feedback.ts
+      - lib/validations/feedback.ts
+      - supabase/migrations/008_create_feedbacks.sql
+      - app/api/feedback/route.ts
+      - lib/api/feedback.ts
+      - components/feedback/FeedbackQuestion.tsx
+      - components/feedback/FeedbackDialog.tsx
+      - components/feedback/FeedbackButton.tsx
+      - app/(app)/communities/[slug]/projects/[id]/page.tsx
+      - tests/unit/feedback/submitFeedback.test.ts
+    tests: "118 passed (10 nuevos de feedback)"
+    errors: []
+
   - id: "cr-20260328-7-1"
     timestamp: "2026-03-28T22:00:00"
     agent: Homer
