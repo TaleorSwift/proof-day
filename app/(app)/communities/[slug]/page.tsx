@@ -68,6 +68,15 @@ export default async function CommunityPage({ params }: Props) {
     createdAt: r.created_at,
   }))
 
+  // AC-8: Obtener proyectos draft del builder autenticado en esta comunidad
+  const { data: draftProjects } = await supabase
+    .from('projects')
+    .select('id, title, status')
+    .eq('community_id', community.id)
+    .eq('builder_id', user.id)
+    .eq('status', 'draft')
+    .order('created_at', { ascending: false })
+
   return (
     <main
       style={{
