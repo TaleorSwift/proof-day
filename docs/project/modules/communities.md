@@ -17,10 +17,12 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 - Toda mutación va por API Route, nunca por Server Actions. (story 2.1)
 
 ## Ficheros clave
-- `app/api/communities/route.ts` — GET (con memberCount + camelCase mapping) y POST
+- `app/api/communities/route.ts` — thin controller (~50 líneas): GET + POST
+- `lib/repositories/communities.repository.ts` — queries Supabase (DIP)
+- `lib/services/communities.service.ts` — validateMembership, generateUniqueSlug
+- `lib/api/middleware/require-auth.ts` — auth compartida
 - `app/(app)/communities/page.tsx` — listado, redirect automático, banner error
-- `app/(app)/communities/[slug]/page.tsx` — layout base, access check via RLS
 - `components/communities/CommunityList.tsx`, `CommunityCard.tsx`, `CommunityHeader.tsx`, `CommunitySwitcher.tsx`
 
 ## Última actualización
-Story 2.3 — 2026-03-28
+Story 2.3 — 2026-03-28 | Arch Fase 3 — 2026-03-28

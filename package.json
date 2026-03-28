@@ -72,5 +72,8 @@
     "extends": [
       "plugin:storybook/recommended"
     ]
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-darwin-arm64": "^4.60.0"
   }
 }
