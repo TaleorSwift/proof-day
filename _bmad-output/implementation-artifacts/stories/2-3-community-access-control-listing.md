@@ -376,10 +376,17 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
-ds-20260328-014
+ds-20260328-014, ds-20260328-016 (CR5 fixes)
 
 ### Completion Notes List
 
+- CR5-F1: JSDoc corregido en lib/types/communities.ts — ahora documenta correctamente que el tipo usa snake_case internamente y que la API Route mapea a camelCase en la respuesta JSON.
+- CR5-F2: Comentario en page.tsx línea 60 corregido — eliminado "Mapear snake_case → camelCase" (engañoso) y sustituido por comentario preciso que indica que los campos permanecen en snake_case.
+- CR5-F3: color '#FFFFFF' hardcodeado reemplazado por 'var(--color-surface)' en CommunityCard.tsx y CommunityHeader.tsx. --color-surface mapea a #FFFFFF en el design system y es el token correcto para texto sobre fondo accent.
+- CR5-F4: Promise.all implementado en [slug]/page.tsx — memberCount e isAdmin se obtienen en paralelo (queries independientes).
+- CR5-F5: Doble fetch eliminado — creado lib/queries/communities.ts con getUserCommunities() memoizada con React.cache. Layout.tsx y page.tsx usan la misma función; el segundo llamante en el mismo request no genera fetch adicional.
+- CR5-F6: CommunitySwitcherClient regex corregido — array RESERVED_SLUGS=['new'] excluye explícitamente rutas reservadas. /communities/new no captura "new" como slug activo.
+- CR5-F7: getUser() error destructuring aplicado en [slug]/page.tsx, page.tsx y layout.tsx — ahora se comprueba authError además de !user (patrón: const { data: authData, error: authError } = await supabase.auth.getUser(); if (authError || !authData.user) redirect('/login')).
 - T1: Branch feat/2-3-community-access-control-listing creada desde develop.
 - T2: Migration 006_rls_communities_member_access.sql — DROP + CREATE POLICY con EXISTS en lugar de IN (más eficiente).
 - T3: Community type extendido con member_count (snake_case, consistente con el resto de campos del tipo).
@@ -395,6 +402,7 @@ ds-20260328-014
 
 ### File List
 
+- `lib/queries/communities.ts` — CREATED (getUserCommunities con React.cache — CR5-F5)
 - `supabase/migrations/006_rls_communities_member_access.sql` — CREATED
 - `lib/types/communities.ts` — MODIFIED (member_count field)
 - `app/api/communities/route.ts` — MODIFIED (memberCount query + camelCase mapping)

@@ -1,4 +1,44 @@
 workflows:
+  - id: "ds-20260328-016"
+    timestamp: "2026-03-28T19:00:00"
+    agent: Homer
+    trigger: "/ds"
+    workflow: "dev-story"
+    mode: REFINE
+    result: STARTED
+    story: "2.3 — Community Access Control & Listing (CR5 fixes)"
+    branch: "feat/2-3-community-access-control-listing"
+    summary: "Resolviendo CR5-F1 a CR5-F7: JSDoc, comentario engañoso, color hardcodeado #FFFFFF, Promise.all, doble fetch, regex CommunitySwitcher, getUser() error destructuring."
+
+  - id: "cr-20260328-015"
+    timestamp: "2026-03-28T18:00:00"
+    completed: "2026-03-28T18:30:00"
+    agent: Homer
+    trigger: "/cr"
+    workflow: "code-review"
+    mode: VERIFY
+    result: SUCCESS
+    duration_estimate: "30 minutes"
+    story: "2.3 — Community Access Control & Listing"
+    branch: "feat/2-3-community-access-control-listing"
+    pr: "PR#7"
+    verdict: "CHANGES_REQUESTED"
+    summary: |
+      Code review adversarial completo. 84/84 tests pasan. TypeScript 0 errores. ESLint 0 warnings.
+      8 ACs validados: todos implementados.
+      7 findings: 0 HIGH, 3 MEDIUM, 4 LOW.
+      MEDIUM:
+        CR5-F1: JSDoc incorrecto en Community type (dice "no hay mapeo camelCase" pero la API SÍ mapea)
+        CR5-F2: Comentario engañoso "snake_case → camelCase" en CommunitiesPage cuando se mantiene snake_case
+        CR5-F3: #FFFFFF hardcodeado en fallback avatar (CommunityCard.tsx:66, CommunityHeader.tsx:51) — viola Rejection Criterion
+      LOW:
+        CR5-F4: Queries secuenciales sin Promise.all en [slug]/page.tsx (memberCount + isAdmin son independientes)
+        CR5-F5: Doble fetch de comunidades en layout.tsx + page.tsx (sin deduplicación automática)
+        CR5-F6: CommunitySwitcherClient regex puede capturar "new" como slug activo
+        CR5-F7: getUser() sin manejo de error en Server Components (solo chequea !user)
+    errors: []
+    next_recommended: "DS (Homer): resolver CR5-F1, CR5-F2, CR5-F3 (MEDIUM) en feat/2-3-community-access-control-listing"
+
   - id: "ds-20260328-014"
     timestamp: "2026-03-28T17:00:00"
     completed: "2026-03-28T17:45:00"

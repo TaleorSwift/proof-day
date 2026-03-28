@@ -10,8 +10,9 @@ export default async function CommunityPage({ params }: Props) {
   const { slug } = await params
   const supabase = await createClient()
 
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const { data: authData, error: authError } = await supabase.auth.getUser()
+  if (authError || !authData.user) redirect('/login')
+  const user = authData.user
 
   // RLS garantiza que solo miembros pueden leer.
   // Si el usuario no es miembro (o la comunidad no existe), data será null — sin exposición de datos.
@@ -26,19 +27,19 @@ export default async function CommunityPage({ params }: Props) {
     redirect('/communities?error=no-access')
   }
 
-  // Obtener conteo de miembros
-  const { count: memberCount } = await supabase
-    .from('community_members')
-    .select('*', { count: 'exact', head: true })
-    .eq('community_id', community.id)
-
-  // Verificar si el usuario es admin (para mostrar botón de configuración)
-  const { data: membership } = await supabase
-    .from('community_members')
-    .select('role')
-    .eq('community_id', community.id)
-    .eq('user_id', user.id)
-    .single()
+  // Obtener conteo de miembros y rol del usuario en paralelo (queries independientes)
+  const [{ count: memberCount }, { data: membership }] = await Promise.all([
+    supabase
+      .from('community_members')
+      .select('*', { count: 'exact', head: true })
+      .eq('community_id', community.id),
+    supabase
+      .from('community_members')
+      .select('role')
+      .eq('community_id', community.id)
+      .eq('user_id', user.id)
+      .single(),
+  ])
 
   const isAdmin = membership?.role === 'admin'
 

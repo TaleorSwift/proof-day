@@ -63,7 +63,7 @@ export function CommunityCard({ community }: Props) {
                 justifyContent: 'center',
                 fontSize: 'var(--text-lg)',
                 fontWeight: 'var(--font-semibold)',
-                color: '#FFFFFF',
+                color: 'var(--color-surface)',
               }}
             >
               {initial}

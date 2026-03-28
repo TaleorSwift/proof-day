@@ -47,7 +47,7 @@ export function CommunityHeader({ community, isAdmin }: Props) {
             justifyContent: 'center',
             fontSize: 'var(--text-2xl)',
             fontWeight: 'var(--font-semibold)',
-            color: '#FFFFFF',
+            color: 'var(--color-surface)',
             flexShrink: 0,
           }}
         >

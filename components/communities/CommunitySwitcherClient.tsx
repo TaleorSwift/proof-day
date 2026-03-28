@@ -12,9 +12,11 @@ export function CommunitySwitcherClient({ communities }: Props) {
   const pathname = usePathname()
 
   // Extraer el slug activo de la ruta /communities/[slug]
-  // Matches /communities/[slug] (ignora /communities/new, /communities misma)
+  // Excluye explícitamente rutas reservadas como /communities/new
+  const RESERVED_SLUGS = ['new']
   const match = pathname.match(/^\/communities\/([^/]+)(?:\/|$)/)
-  const activeCommunitySlug = match ? match[1] : undefined
+  const slug = match ? match[1] : undefined
+  const activeCommunitySlug = slug && !RESERVED_SLUGS.includes(slug) ? slug : undefined
 
   return (
     <CommunitySwitcher
