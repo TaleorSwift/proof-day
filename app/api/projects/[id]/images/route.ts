@@ -163,6 +163,15 @@ export async function DELETE(
     )
   }
 
+  // Verificar que el path pertenece al proyecto
+  const currentImageUrls: string[] = project.image_urls ?? []
+  if (!currentImageUrls.includes(path)) {
+    return NextResponse.json(
+      { error: 'La imagen no pertenece a este proyecto', code: 'IMAGE_NOT_FOUND' },
+      { status: 400 }
+    )
+  }
+
   // Remove from Storage
   const { error: storageError } = await supabase.storage.from(PROJECT_IMAGES_BUCKET).remove([path])
   if (storageError) console.error('Storage remove error:', storageError)
