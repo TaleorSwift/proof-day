@@ -1,4 +1,46 @@
 workflows:
+  - id: "ds-20260328-061-062"
+    timestamp: "2026-03-28T19:00:00"
+    completed: "2026-03-28T20:00:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    story: "epic-6 (6-1-user-profile-view-edit + 6-2-feedback-counter-top-reviewer-widget)"
+    result: SUCCESS
+    summary: "Epic 6 completo — Stories 6.1 y 6.2 implementadas. PR#20 (6.1 perfiles) y PR#21 (6.2 gamificación) creados contra develop. Story 6.1: migración profiles, trigger auto-creación, RLS, API route GET/PATCH con guard comunidad compartida, ProfileForm edición inline, OwnProfileView, pages /profile y /profile/[id]. Story 6.2: calculateTopReviewer + getWeekStart (funciones puras), API routes top-reviewer y feedback-count, TopReviewerWidget (hypothesis-bg, empty state, skeleton, link /profile/[id]), PersonalFeedbackCounter, sidebar en comunidad page. 17 tests nuevos (173 totales en 6.1, 172 en 6.2 — ramas separadas)."
+    artifacts_6_1:
+      - "supabase/migrations/009_create_profiles.sql (CREATED)"
+      - "lib/validations/profiles.ts (CREATED)"
+      - "lib/types/profiles.ts (CREATED)"
+      - "app/api/profiles/[id]/route.ts (CREATED)"
+      - "lib/api/profiles.ts (MODIFIED — implementación completa)"
+      - "components/profiles/ProfileForm.tsx (CREATED)"
+      - "components/profiles/OwnProfileView.tsx (CREATED)"
+      - "app/(app)/profile/page.tsx (CREATED)"
+      - "app/(app)/profile/[id]/page.tsx (CREATED)"
+      - "tests/unit/profiles/profileValidation.test.ts (CREATED — 9 tests)"
+      - "docs/project/modules/profiles.md (CREATED)"
+    artifacts_6_2:
+      - "lib/types/gamification.ts (CREATED)"
+      - "lib/utils/gamification.ts (CREATED — calculateTopReviewer + getWeekStart)"
+      - "app/api/gamification/top-reviewer/route.ts (CREATED)"
+      - "app/api/gamification/feedback-count/route.ts (CREATED)"
+      - "lib/api/gamification.ts (MODIFIED — implementación completa)"
+      - "components/gamification/TopReviewerWidget.tsx (CREATED)"
+      - "components/gamification/PersonalFeedbackCounter.tsx (CREATED)"
+      - "app/(app)/communities/[slug]/page.tsx (MODIFIED — sidebar gamificación)"
+      - "tests/unit/gamification/topReviewer.test.ts (CREATED — 8 tests)"
+      - "docs/project/modules/gamification.md (CREATED)"
+    prs:
+      - "PR#20 feat/6-1-user-profile-view-edit (story 6.1 — 173 tests pasan)"
+      - "PR#21 feat/6-2-feedback-counter-top-reviewer-widget (story 6.2 — 172 tests pasan)"
+    tests:
+      story_6_1: "173 passed (15 test files)"
+      story_6_2: "172 passed (15 test files)"
+      new_tests: 17
+    errors: []
+
   - id: "sprint-20260328-021"
     timestamp: "2026-03-28T01:30:00"
     completed: "2026-03-28T01:30:00"
