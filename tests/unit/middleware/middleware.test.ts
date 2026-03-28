@@ -117,6 +117,19 @@ describe("isPublicPath", () => {
   it("retorna false para /invite-extra (prefijo estricto) — story 2.2", () => {
     expect(isPublicPath("/invite-extra")).toBe(false);
   });
+
+  // /auth/confirm — página intermedia anti-scanner magic link
+  it("retorna true para /auth/confirm (ruta exacta) — anti-scanner magic link", () => {
+    expect(isPublicPath("/auth/confirm")).toBe(true);
+  });
+
+  it("retorna true para /auth/confirm/ (trailing slash) — anti-scanner magic link", () => {
+    expect(isPublicPath("/auth/confirm/")).toBe(true);
+  });
+
+  it("no confunde /auth/confirmation con /auth/confirm — prefijo estricto", () => {
+    expect(isPublicPath("/auth/confirmation")).toBe(false);
+  });
 });
 
 // ---------------------------------------------------------------------------

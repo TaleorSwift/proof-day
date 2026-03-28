@@ -1,4 +1,13 @@
 workflows:
+  - id: "20260328-120000-bart-QD"
+    timestamp: "2026-03-28T12:00:00"
+    agent: "Bart"
+    trigger: "QD"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Implementar página intermedia para magic link auth (anti-scanner Google Workspace). Middleware update + app/auth/confirm/page.tsx + components/auth/ConfirmButton.tsx + tests."
+
   - id: "ds-20260328-fase5-a11y"
     timestamp: "2026-03-28T23:00:00"
     completed: "2026-03-28T23:30:00"

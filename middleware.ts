@@ -5,7 +5,7 @@ import { updateSession } from "@/lib/supabase/middleware";
 const PUBLIC_EXACT_PATHS = ["/", "/login"];
 
 // Rutas publicas con subrutas permitidas (prefijo)
-const PUBLIC_PREFIX_PATHS = ["/auth/callback", "/invite"];
+const PUBLIC_PREFIX_PATHS = ["/auth/callback", "/auth/confirm", "/invite"];
 
 export function isPublicPath(pathname: string): boolean {
   if (PUBLIC_EXACT_PATHS.includes(pathname)) return true;
