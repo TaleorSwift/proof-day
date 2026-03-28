@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { createCommunitySchema } from '@/lib/validations/communities'
-import { toSlug } from '@/app/api/communities/route'
+import { toSlug } from '@/lib/utils/slug'
 
 describe('createCommunitySchema', () => {
   it('rechaza nombre vacío', () => {
