@@ -61,7 +61,7 @@ export default async function CommunityPage({ params }: Props) {
   const canCreate = true // Cualquier miembro puede crear proyectos
 
   // Mapear rows de Supabase a ProjectListItem (camelCase)
-  const projects: ProjectListItem[] = (projectRows ?? []).map((r) => ({
+  const projects: ProjectListItem[] = (projectRows ?? []).map((r: Record<string, unknown>) => ({
     id: r.id,
     title: r.title,
     imageUrls: r.image_urls,

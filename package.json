@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:mock": "dotenv -e .env.mock -- next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -54,6 +55,7 @@
     "@types/react-dom": "^19",
     "@vitest/coverage-v8": "^2.1.9",
     "autoprefixer": "^10.4.20",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
     "husky": "^9.1.7",

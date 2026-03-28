@@ -67,7 +67,7 @@ export async function GET(request: Request) {
       )
 
     // Normalizar: añadir profiles: null para compatibilidad con el cliente
-    const normalized = (feedbacksBasic ?? []).map((f) => ({
+    const normalized = (feedbacksBasic ?? []).map((f: Record<string, unknown>) => ({
       ...f,
       profiles: null,
     }))

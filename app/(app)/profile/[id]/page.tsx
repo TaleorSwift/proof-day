@@ -27,7 +27,7 @@ export default async function UserProfilePage({ params }: Props) {
     .select('community_id')
     .eq('user_id', id)
 
-  const targetCommunityIds = targetMemberships?.map((m) => m.community_id) ?? []
+  const targetCommunityIds = targetMemberships?.map((m: Record<string, unknown>) => m.community_id) ?? []
 
   if (targetCommunityIds.length > 0) {
     const { data: sharedMemberships } = await supabase

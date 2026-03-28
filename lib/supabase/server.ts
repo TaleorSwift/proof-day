@@ -1,12 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { mockServerClient } from "@/lib/mock/supabase";
 
-/**
- * Especially important if using Fluid compute: Don't put this client in a
- * global variable. Always create a new client within each function when using
- * it.
- */
 export async function createClient() {
+  if (process.env.MOCK_MODE === "true") {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return mockServerClient() as any as ReturnType<typeof createServerClient>;
+  }
+
   const cookieStore = await cookies();
 
   return createServerClient(

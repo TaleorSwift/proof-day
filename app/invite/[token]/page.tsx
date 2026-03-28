@@ -111,9 +111,10 @@ export default async function InvitePage({ params }: Props) {
 
   // Validar token via RPC SECURITY DEFINER (evita enumeración de tokens)
   // InvitationTokenResult importado de lib/types/invitations.ts (CR7-F3)
-  const { data: invitation, error: rpcError } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: invitation, error: rpcError } = await (supabase as any)
     .rpc('validate_invitation_token', { p_token: token })
-    .maybeSingle<InvitationTokenResult>()
+    .maybeSingle() as { data: InvitationTokenResult | null; error: unknown }
 
   if (rpcError || !invitation) {
     return <InviteErrorState message="Este link ya no es válido" />

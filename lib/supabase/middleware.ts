@@ -1,16 +1,19 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { MOCK_USER } from "@/lib/mock/data";
 
-/**
- * Refresca la sesion de Supabase en cada request y retorna el usuario autenticado.
- * Usa getClaims() (verifica JWT localmente — seguro y eficiente).
- * NUNCA usar getSession() — no verifica el token con el Auth server.
- *
- * El redirect a /login se gestiona en middleware.ts (raiz), no aqui.
- */
 export async function updateSession(
   request: NextRequest,
 ): Promise<{ response: NextResponse; user: { sub: string } | null }> {
+  // En modo mock: skip auth — devolver usuario fake
+  if (process.env.MOCK_MODE === "true") {
+    return {
+      response: NextResponse.next({ request }),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      user: { sub: MOCK_USER.id } as any,
+    };
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });

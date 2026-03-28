@@ -43,7 +43,7 @@ export async function GET() {
 
   // Obtener conteo de miembros para cada comunidad (story 2.3, AC-7)
   // Query separada para evitar problemas de formato con el join de conteo
-  const communityIds = (communities ?? []).map((c) => c.id)
+  const communityIds = (communities ?? []).map((c: Record<string, unknown>) => c.id)
 
   let memberCounts: Record<string, number> = {}
 
@@ -54,15 +54,16 @@ export async function GET() {
       .in('community_id', communityIds)
 
     if (memberData) {
-      memberCounts = memberData.reduce<Record<string, number>>((acc, row) => {
-        acc[row.community_id] = (acc[row.community_id] ?? 0) + 1
+      memberCounts = (memberData as Record<string, unknown>[]).reduce((acc: Record<string, number>, row) => {
+        const id = row.community_id as string
+        acc[id] = (acc[id] ?? 0) + 1
         return acc
       }, {})
     }
   }
 
   // Mapear snake_case → camelCase y añadir memberCount (AC-7)
-  const result = (communities ?? []).map((c) => ({
+  const result = (communities ?? []).map((c: Record<string, unknown>) => ({
     id: c.id,
     name: c.name,
     slug: c.slug,
@@ -71,7 +72,7 @@ export async function GET() {
     createdBy: c.created_by,
     createdAt: c.created_at,
     updatedAt: c.updated_at,
-    memberCount: memberCounts[c.id] ?? 0,
+    memberCount: memberCounts[c.id as string] ?? 0,
   }))
 
   return NextResponse.json({ data: result, count: result.length })
