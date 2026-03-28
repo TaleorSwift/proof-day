@@ -204,10 +204,31 @@ El trigger `on_auth_user_created` crea un perfil vacío (solo `id`) en cuanto un
 
 ### Agent Model Used
 
-_pendiente_
+claude-sonnet-4-6
 
 ### Debug Log References
 
+N/A — 173/173 tests pasan. Sin errores.
+
 ### Completion Notes List
 
+- Migración `009_create_profiles.sql` con trigger auto-creación y RLS policies
+- API Route `app/api/profiles/[id]/route.ts`: GET (verificación comunidad compartida) + PATCH (solo propio)
+- Server Component page.tsx para /profile (carga directa con Supabase server client)
+- Server Component page.tsx para /profile/[id] (403 → redirect a /communities si no comparten comunidad)
+- Client Component OwnProfileView: edición inline sin página separada (AC3)
+- Client Component ProfileForm: react-hook-form + zodResolver, tags editables
+- 9 tests unitarios de validación Zod (173 total, todos pasan)
+
 ### File List
+
+- `supabase/migrations/009_create_profiles.sql` (CREATED)
+- `lib/validations/profiles.ts` (CREATED)
+- `lib/types/profiles.ts` (CREATED)
+- `app/api/profiles/[id]/route.ts` (CREATED)
+- `lib/api/profiles.ts` (MODIFIED — implementación completa)
+- `components/profiles/ProfileForm.tsx` (CREATED)
+- `components/profiles/OwnProfileView.tsx` (CREATED)
+- `app/(app)/profile/page.tsx` (CREATED)
+- `app/(app)/profile/[id]/page.tsx` (CREATED)
+- `tests/unit/profiles/profileValidation.test.ts` (CREATED — 9 tests)
