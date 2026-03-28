@@ -2,6 +2,85 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { submitFeedbackSchema } from '@/lib/validations/feedback'
 
+export async function GET(request: Request) {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user)
+    return NextResponse.json(
+      { error: 'No autenticado', code: 'AUTH_REQUIRED' },
+      { status: 401 }
+    )
+
+  const { searchParams } = new URL(request.url)
+  const projectId = searchParams.get('projectId')
+
+  if (!projectId)
+    return NextResponse.json(
+      { error: 'projectId requerido', code: 'VALIDATION_ERROR' },
+      { status: 400 }
+    )
+
+  // Verificar que el usuario es el builder del proyecto
+  const { data: project } = await supabase
+    .from('projects')
+    .select('id, builder_id')
+    .eq('id', projectId)
+    .single()
+
+  if (!project || project.builder_id !== user.id)
+    return NextResponse.json(
+      {
+        error: 'Solo el builder puede ver los feedbacks',
+        code: 'FEEDBACK_FORBIDDEN',
+      },
+      { status: 403 }
+    )
+
+  // Leer feedbacks con datos del reviewer (LEFT JOIN a profiles)
+  // La tabla profiles puede no existir aún (Story 6.1) — si el join falla, devolvemos feedbacks sin perfiles
+  const { data: feedbacks, error } = await supabase
+    .from('feedbacks')
+    .select(
+      `
+      id, text_responses, created_at,
+      profiles:reviewer_id (id, name, avatar_url)
+    `
+    )
+    .eq('project_id', projectId)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    // Si el error es por tabla profiles inexistente, intentar sin el join
+    const { data: feedbacksBasic, error: errorBasic } = await supabase
+      .from('feedbacks')
+      .select('id, text_responses, created_at')
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false })
+
+    if (errorBasic)
+      return NextResponse.json(
+        { error: 'Error al obtener feedbacks', code: 'FEEDBACKS_FETCH_ERROR' },
+        { status: 500 }
+      )
+
+    // Normalizar: añadir profiles: null para compatibilidad con el cliente
+    const normalized = (feedbacksBasic ?? []).map((f) => ({
+      ...f,
+      profiles: null,
+    }))
+
+    return NextResponse.json({
+      data: normalized,
+      count: normalized.length,
+    })
+  }
+
+  return NextResponse.json({ data: feedbacks ?? [], count: feedbacks?.length ?? 0 })
+}
+
 export async function POST(request: Request) {
   const supabase = await createClient()
   const {

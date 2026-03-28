@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { FeedbackDialog } from './FeedbackDialog'
@@ -7,14 +8,18 @@ import { FeedbackDialog } from './FeedbackDialog'
 interface FeedbackButtonProps {
   projectId: string
   communityId: string
+  onSuccess?: () => void
 }
 
-export function FeedbackButton({ projectId, communityId }: FeedbackButtonProps) {
+export function FeedbackButton({ projectId, communityId, onSuccess }: FeedbackButtonProps) {
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [feedbackCount, setFeedbackCount] = useState(0)
 
   const handleSuccess = () => {
     setFeedbackCount((prev) => prev + 1)
+    router.refresh()
+    onSuccess?.()
   }
 
   return (
