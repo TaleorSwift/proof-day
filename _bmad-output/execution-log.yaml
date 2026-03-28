@@ -1,4 +1,85 @@
 workflows:
+  - id: "ds-20260328-053b"
+    timestamp: "2026-03-28T18:45:00"
+    completed: "2026-03-28T18:55:00"
+    agent: Homer
+    trigger: DS-fix
+    workflow: qa-fix
+    mode: REFINE
+    story: "5-3-builder-decision-registration"
+    branch: "feat/5-3-builder-decision-registration"
+    result: SUCCESS
+    summary: "QA fixes story 5.3: BUG-001 feedback bloqueado tras decisión, BUG-002 decision persistida en page reload. Fix 1: añadido 'decision' al select en POST /api/feedback/route.ts + guardia if (project.decision !== null) → 409 FEEDBACK_LOCKED, antes de la verificación de status. Fix 2: añadido 'decision' al select en page.tsx + pasado initialDecision={project.decision as ProjectDecision | null} a ProofScoreSidebar. 164/164 tests pasan. TS errors pre-existentes no relacionados."
+    artifacts:
+      - "app/api/feedback/route.ts (MODIFIED — decision en select + guard FEEDBACK_LOCKED)"
+      - "app/(app)/communities/[slug]/projects/[id]/page.tsx (MODIFIED — decision en select + initialDecision prop)"
+    tests:
+      total: 164
+      passed: 164
+      failed: 0
+    bugs_fixed:
+      - "BUG-5-3-001: AC8 — feedback API ahora bloquea tras decisión con 409 FEEDBACK_LOCKED"
+      - "BUG-5-3-002: AC5/AC9 — página persiste decision en refresh via initialDecision prop"
+    errors: []
+
+  - id: "qa-20260328-053"
+    timestamp: "2026-03-28T18:00:00"
+    completed: "2026-03-28T18:30:00"
+    agent: Edna
+    trigger: QA
+    workflow: qa-validate
+    mode: REFINE
+    story: "5-3-builder-decision-registration"
+    branch: "feat/5-3-builder-decision-registration"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/19"
+    result: FAIL
+    summary: "QA Story 5.3 — Builder Decision Registration. FAIL. 164/164 tests pasan. 2 bugs críticos: (1) AC8 — POST /api/feedback no verifica project.decision, el feedback sigue siendo posible tras registrar decisión. (2) AC5/persistencia — page.tsx no incluye 'decision' en el select de Supabase ni pasa initialDecision al ProofScoreSidebar, al refrescar la página el estado de decisión se pierde (botón vuelve a aparecer, badge desaparece). ACs pasados: AC1 botón solo si score disponible, AC2 3 cards seleccionables sin dropdown, AC3 2 pasos con disabled, AC4 409 guard, AC6 badge visible para todos, AC7 ProjectCard badge compact, AC9 botón desaparece en sesión. Rejection criteria: OK."
+    tests:
+      total: 164
+      passed: 164
+      failed: 0
+      files: 14
+      decision_tests: 9
+    acceptance_criteria:
+      ac1_button_only_with_score: PASS
+      ac2_3_cards_no_dropdown: PASS
+      ac3_2step_disabled_until_selection: PASS
+      ac4_409_irreversible: PASS
+      ac5_badge_appears_button_gone_post_confirm: PARTIAL  # solo en memoria, no persiste en refresh
+      ac6_badge_visible_all_members: PASS
+      ac7_projectcard_decision_badge: PASS
+      ac8_feedback_blocked_after_decision: FAIL  # API no verifica decision
+      ac9_button_disappears_after_register: PARTIAL  # solo en memoria, no persiste en refresh
+    rejection_criteria:
+      no_dropdown_select: PASS
+      no_decision_change_409: PASS
+      no_button_without_score: PASS
+    bugs:
+      - id: "BUG-5-3-001"
+        severity: critical
+        ac: "AC8"
+        description: "POST /api/feedback/route.ts no verifica project.decision. Cuando el builder ha registrado una decisión, la API sigue aceptando nuevos feedbacks sin retornar error. El select de Supabase en la línea 107 solo incluye 'id, status, builder_id, community_id', sin 'decision'. Falta guardia: if (project.decision !== null) return 409/422 FEEDBACK_LOCKED."
+        file: "app/api/feedback/route.ts"
+        line: 107
+        fix: "Añadir 'decision' al select de Supabase y añadir guard: if (project.decision !== null) return NextResponse.json({ error: 'Feedback cerrado — el builder ya tomó una decisión', code: 'FEEDBACK_LOCKED' }, { status: 409 })"
+      - id: "BUG-5-3-002"
+        severity: critical
+        ac: "AC5, AC9"
+        description: "page.tsx de proyecto no incluye 'decision' en el .select() de Supabase (línea 28) y no pasa initialDecision al ProofScoreSidebar (línea 286-290). Al refrescar la página, ProofScoreSidebar inicia con decision=null aunque en DB exista una decisión, mostrando el botón 'Registrar decision' de nuevo y ocultando el DecisionBadge."
+        file: "app/(app)/communities/[slug]/projects/[id]/page.tsx"
+        lines: [28, 286]
+        fix: "En el select añadir 'decision', y en ProofScoreSidebar pasar initialDecision={project.decision as ProjectDecision | null}"
+    artifacts:
+      - "app/api/projects/[id]/decision/route.ts"
+      - "components/projects/DecisionBadge.tsx"
+      - "components/projects/DecisionDialog.tsx"
+      - "components/proof-score/ProofScoreSidebar.tsx"
+      - "components/projects/ProjectCard.tsx"
+      - "tests/unit/projects/decisionRegistration.test.ts"
+    errors:
+      - "BUG-5-3-001: feedback API no bloquea tras decisión (AC8)"
+      - "BUG-5-3-002: página no persiste estado de decisión en refresh (AC5, AC9)"
+
   - id: "ds-20260328-053"
     timestamp: "2026-03-28T12:00:00"
     completed: "2026-03-28T13:00:00"
@@ -183,6 +264,24 @@ workflows:
     mode: background-parallel
     result: STARTED
     summary: "Sprint Epic 5 — 3 stories en background: 5.1 (algoritmo), 5.2 (display), 5.3 (decisión)."
+
+  - id: "cr-20260328-053"
+    timestamp: "2026-03-28T14:00:00"
+    completed: "2026-03-28T14:15:00"
+    agent: Homer
+    trigger: CR
+    workflow: code-review
+    mode: VERIFY
+    story: "5-3-builder-decision-registration"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/19"
+    branch: "feat/5-3-builder-decision-registration"
+    result: APPROVED
+    summary: "CR Story 5.3 — Builder Decision Registration. APPROVED sin findings. API route: Zod z.enum(['iterate','scale','abandon']), getUser() (sin getSession()), 409 DECISION_ALREADY_REGISTERED correcto, 404/403 guards, sin Server Actions. lib/api/projects.ts: registerDecision() via fetch, sin imports Supabase directos. DecisionBadge: solo CSS variables, sin hex hardcodeados, full + compact. DecisionDialog: 3 cards seleccionables (no dropdown), type=button, disabled hasta selección, advertencia irreversibilidad, 2 pasos lógicos (selección+confirmación). ProofScoreSidebar: botón solo visible si score disponible, DecisionBadge post-registro. ProjectCard: prop decision? opcional. TypeScript limpio sin any. PR contra develop. 9 tests pasan (iterate/scale/abandon válidos + schema inválido + 409 lógica)."
+    findings:
+      critical: 0
+      minor: 0
+    tests: "9 passed (decisionRegistration.test.ts)"
+    errors: []
 
   - id: "cr-20260329-042"
     timestamp: "2026-03-29T07:36:00"

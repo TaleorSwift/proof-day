@@ -106,7 +106,7 @@ export async function POST(request: Request) {
   // Verificar que el proyecto existe y está live
   const { data: project } = await supabase
     .from('projects')
-    .select('id, status, builder_id, community_id')
+    .select('id, status, builder_id, community_id, decision')
     .eq('id', projectId)
     .single()
 
@@ -115,6 +115,13 @@ export async function POST(request: Request) {
       { error: 'Proyecto no encontrado', code: 'PROJECT_NOT_FOUND' },
       { status: 404 }
     )
+
+  if (project.decision !== null) {
+    return NextResponse.json(
+      { error: 'Feedback cerrado — el builder ya tomó una decisión', code: 'FEEDBACK_LOCKED' },
+      { status: 409 }
+    )
+  }
 
   if (project.status !== 'live')
     return NextResponse.json(
