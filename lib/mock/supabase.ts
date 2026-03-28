@@ -109,6 +109,21 @@ class MockQueryBuilder {
   private _applyFilters(rows: Row[]): Row[] {
     return rows.filter(row =>
       this._filters.every(f => {
+        // Soporte para filtros con JOIN: 'tabla_relacionada.campo'
+        // Ej: 'community_members.user_id' → busca en MOCK_DB.community_members
+        if (f.field.includes('.')) {
+          const [relTable, relField] = f.field.split('.')
+          const relRows: Row[] = MOCK_DB[relTable] ?? []
+          // FK: buscar cualquier campo '_id' en la tabla relacionada que apunte a row.id
+          return relRows.some(rel => {
+            const fkMatch = Object.entries(rel).some(([k, v]) => k.endsWith('_id') && v === row['id'])
+            const fieldMatch = f.op === 'eq' ? rel[relField] === f.value
+                             : f.op === 'neq' ? rel[relField] !== f.value
+                             : f.op === 'in' ? (f.value as any[]).includes(rel[relField])
+                             : true
+            return fkMatch && fieldMatch
+          })
+        }
         switch (f.op) {
           case 'eq':  return row[f.field] === f.value
           case 'neq': return row[f.field] !== f.value
