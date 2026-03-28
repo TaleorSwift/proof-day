@@ -1,6 +1,10 @@
-import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import { redirect, notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { CommunityHeader } from '@/components/communities/CommunityHeader'
+import { ProjectGrid } from '@/components/projects/ProjectGrid'
+import { Button } from '@/components/ui/button'
+import type { ProjectListItem } from '@/lib/api/projects'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -15,20 +19,19 @@ export default async function CommunityPage({ params }: Props) {
   const user = authData.user
 
   // RLS garantiza que solo miembros pueden leer.
-  // Si el usuario no es miembro (o la comunidad no existe), data será null — sin exposición de datos.
+  // Si el usuario no es miembro (o la comunidad no existe), data será null.
   const { data: community } = await supabase
     .from('communities')
     .select('id, name, slug, description, image_url, created_by, created_at, updated_at')
     .eq('slug', slug)
     .single()
 
-  // AC-2: Si no hay acceso (no miembro o no existe) → redirect a /communities con mensaje
   if (!community) {
-    redirect('/communities?error=no-access')
+    notFound()
   }
 
-  // Obtener conteo de miembros y rol del usuario en paralelo (queries independientes)
-  const [{ count: memberCount }, { data: membership }] = await Promise.all([
+  // Obtener conteo de miembros, rol del usuario y proyectos en paralelo
+  const [{ count: memberCount }, { data: membership }, { data: projectRows }] = await Promise.all([
     supabase
       .from('community_members')
       .select('*', { count: 'exact', head: true })
@@ -39,9 +42,31 @@ export default async function CommunityPage({ params }: Props) {
       .eq('community_id', community.id)
       .eq('user_id', user.id)
       .single(),
+    // Server Component lee directamente — RLS filtra: live+inactive para todos, draft solo al builder
+    supabase
+      .from('projects')
+      .select('id, title, image_urls, status, builder_id, created_at')
+      .eq('community_id', community.id)
+      .order('created_at', { ascending: false }),
   ])
 
+  // Si no hay membresía → redirect
+  if (!membership) {
+    redirect('/communities?error=no-access')
+  }
+
   const isAdmin = membership?.role === 'admin'
+  const canCreate = true // Cualquier miembro puede crear proyectos
+
+  // Mapear rows de Supabase a ProjectListItem (camelCase)
+  const projects: ProjectListItem[] = (projectRows ?? []).map((r) => ({
+    id: r.id,
+    title: r.title,
+    imageUrls: r.image_urls,
+    status: r.status as 'draft' | 'live' | 'inactive',
+    builderId: r.builder_id,
+    createdAt: r.created_at,
+  }))
 
   return (
     <main
@@ -60,16 +85,28 @@ export default async function CommunityPage({ params }: Props) {
           isAdmin={isAdmin}
         />
 
-        {/* Placeholder para proyectos — se añade en story 3.4 */}
-        <div style={{ marginTop: 'var(--space-8)' }}>
-          <p
-            style={{
-              fontSize: 'var(--text-sm)',
-              color: 'var(--color-text-muted)',
-            }}
-          >
-            Los proyectos de esta comunidad aparecerán aquí.
-          </p>
+        {/* Sección proyectos — Story 3.4 */}
+        <div style={{ marginTop: 'var(--space-8)', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <h2
+              style={{
+                fontSize: 'var(--text-xl)',
+                fontWeight: 'var(--font-semibold)',
+                color: 'var(--color-text-primary)',
+              }}
+            >
+              Proyectos
+            </h2>
+            <Link href={`/communities/${slug}/projects/new`}>
+              <Button variant="default">Nuevo proyecto</Button>
+            </Link>
+          </div>
+
+          <ProjectGrid
+            projects={projects}
+            communitySlug={slug}
+            canCreate={canCreate}
+          />
         </div>
       </div>
     </main>

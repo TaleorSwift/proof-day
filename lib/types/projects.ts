@@ -51,3 +51,60 @@ export function projectFromRow(row: ProjectRow): Project {
     updatedAt: row.updated_at,
   }
 }
+
+// ── Story 3.2: Image Gallery ─────────────────────────────────────────────────
+
+/** Storage bucket name — NEVER hardcode this value elsewhere */
+export const PROJECT_IMAGES_BUCKET = 'project-images'
+
+/** Allowed MIME types for project images */
+export const PROJECT_IMAGE_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const
+
+/** Maximum file size per image in bytes (5MB) */
+export const PROJECT_IMAGE_MAX_SIZE = 5 * 1024 * 1024
+
+/** Maximum number of images per project */
+export const PROJECT_IMAGES_MAX_COUNT = 5
+
+export interface ProjectImage {
+  id: string       // filename in Storage
+  url: string      // public URL
+  path: string     // relative path in Storage: {userId}/{projectId}/{filename}
+  order: number
+}
+
+export interface ImageValidationResult {
+  valid: boolean
+  error?: string
+}
+
+export function validateImageFile(file: File): ImageValidationResult {
+  if (!PROJECT_IMAGE_ALLOWED_TYPES.includes(file.type as typeof PROJECT_IMAGE_ALLOWED_TYPES[number])) {
+    return { valid: false, error: 'Formato no válido. Usa JPG, PNG o WebP' }
+  }
+  if (file.size > PROJECT_IMAGE_MAX_SIZE) {
+    return { valid: false, error: 'La imagen no puede superar 5MB' }
+  }
+  return { valid: true }
+}
+
+export function validateImageCount(currentCount: number): ImageValidationResult {
+  if (currentCount >= PROJECT_IMAGES_MAX_COUNT) {
+    return { valid: false, error: `Límite de ${PROJECT_IMAGES_MAX_COUNT} imágenes alcanzado` }
+  }
+  return { valid: true }
+}
+
+export function reorderImageUrls(urls: string[], fromIndex: number, toIndex: number): string[] {
+  if (
+    fromIndex < 0 || fromIndex >= urls.length ||
+    toIndex < 0 || toIndex >= urls.length ||
+    fromIndex === toIndex
+  ) {
+    return urls
+  }
+  const result = [...urls]
+  const [moved] = result.splice(fromIndex, 1)
+  result.splice(toIndex, 0, moved)
+  return result
+}
