@@ -27,7 +27,7 @@ export async function POST(request: Request) {
   // Verificar que el proyecto existe y está live
   const { data: project } = await supabase
     .from('projects')
-    .select('id, status, builder_id')
+    .select('id, status, builder_id, community_id')
     .eq('id', projectId)
     .single()
 
@@ -51,6 +51,16 @@ export async function POST(request: Request) {
       {
         error: 'No puedes dar feedback en tu propio proyecto',
         code: 'FEEDBACK_SELF_NOT_ALLOWED',
+      },
+      { status: 422 }
+    )
+
+  // Verificar que communityId del body coincide con la comunidad real del proyecto
+  if (project.community_id !== communityId)
+    return NextResponse.json(
+      {
+        error: 'La comunidad indicada no corresponde al proyecto',
+        code: 'COMMUNITY_MISMATCH',
       },
       { status: 422 }
     )
