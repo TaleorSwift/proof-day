@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { buildConfirmParams } from '@/lib/auth/confirm'
-import { type EmailOtpType } from '@supabase/supabase-js'
 
 // ---------------------------------------------------------------------------
 // Tipos
@@ -40,7 +39,7 @@ export function ConfirmButton({
 
       const { error: otpError } = await supabase.auth.verifyOtp({
         token_hash: params.token_hash,
-        type: params.type as EmailOtpType,
+        type: params.type as 'signup' | 'invite' | 'magiclink' | 'recovery' | 'email_change' | 'email',
       })
 
       if (otpError) {
