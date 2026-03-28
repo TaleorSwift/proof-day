@@ -17,6 +17,28 @@ workflows:
     mode: REFINE
     result: SUCCESS
     summary: "CR fixes story 3.1: F1 ProjectForm.tsx creado, F2 tipado PUT route, F3 botón Nuevo proyecto, F4 ficheros 3.3 eliminados"
+
+  - id: "ds-20260328-032"
+    timestamp: "2026-03-28T23:30:00"
+    completed: "2026-03-29T02:12:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    result: SUCCESS
+    story: "3-2-image-gallery-upload"
+    summary: "Story 3.2 — Image Gallery Upload. Migration 008 Storage bucket project-images con RLS policies, constantes/tipos ProjectImage + helpers validateImageFile/validateImageCount/reorderImageUrls, API Routes POST/DELETE para images y PATCH reorder, typed client wrappers en lib/api/projects.ts, componentes ImageUpload e ImageGallery con design tokens, ProjectForm integrado (reemplaza campo URL por galeria), 20 tests unitarios. 122 tests totales pasan."
+    artifacts_created:
+      - "supabase/migrations/008_storage_project_images.sql"
+      - "lib/types/projects.ts (PROJECT_IMAGES_BUCKET, ProjectImage, validateImageFile, validateImageCount, reorderImageUrls)"
+      - "lib/api/projects.ts (uploadProjectImage, deleteProjectImage, reorderProjectImages)"
+      - "app/api/projects/[id]/images/route.ts (POST + DELETE)"
+      - "app/api/projects/[id]/images/reorder/route.ts (PATCH)"
+      - "components/projects/ImageUpload.tsx"
+      - "components/projects/ImageGallery.tsx"
+      - "components/projects/ProjectForm.tsx (ImageGallery integrado)"
+      - "tests/unit/projects/imageValidation.test.ts (20 tests)"
+    errors: []
   - id: "cr-20260328-auto-2-3"
     timestamp: "2026-03-28T20:00:00"
     completed: "2026-03-28T20:30:00"
