@@ -9,6 +9,14 @@ workflows:
     story: "7.1 — Landing Page pública SEO-optimizada"
     branch: "feat/7-1-landing-page-public-seo"
 
+  - id: "ds-20260328-031b"
+    timestamp: "2026-03-28T23:10:00"
+    agent: Homer
+    trigger: DS-fix
+    workflow: cr-fix
+    mode: REFINE
+    result: SUCCESS
+    summary: "CR fixes story 3.1: F1 ProjectForm.tsx creado, F2 tipado PUT route, F3 botón Nuevo proyecto, F4 ficheros 3.3 eliminados"
   - id: "cr-20260328-auto-2-3"
     timestamp: "2026-03-28T20:00:00"
     completed: "2026-03-28T20:30:00"
