@@ -1,4 +1,14 @@
 workflows:
+  - id: "ds-20260328-061-062"
+    timestamp: "2026-03-28T19:00:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    story: "epic-6 (6-1-user-profile-view-edit + 6-2-feedback-counter-top-reviewer-widget)"
+    result: STARTED
+    summary: "Epic 6 — Stories 6.1 y 6.2. GENERATE mode. Implementando tabla profiles, validaciones, tipos, API routes, componentes ProfileForm, páginas /profile y /profile/[id], TopReviewerWidget, PersonalFeedbackCounter, gamification API routes, tests unitarios."
+
   - id: "sprint-20260328-021"
     timestamp: "2026-03-28T01:30:00"
     completed: "2026-03-28T01:30:00"
