@@ -17,19 +17,24 @@ Gestiona la autenticación de usuarios mediante magic links (sin contraseña). E
 - No existe campo de contraseña en ningún flujo. (story 1.2)
 - `getSession()` está prohibido en toda la app (ESLint); se usa `getClaims()` en middleware y `getUser()` en Server Components. (story 1.1)
 - Las importaciones directas de `@supabase/supabase-js` y `@supabase/ssr` fuera de `lib/supabase/` están bloqueadas por ESLint — usar `lib/supabase/client.ts` o `lib/supabase/server.ts`. (story 1.3)
-- Rutas públicas exactas (sin subrutas): `/` y `/login`. Rutas públicas con subrutas: `/auth/callback`. El resto requieren sesión activa. (story 1.3)
+- Rutas públicas exactas (sin subrutas): `/` y `/login`. Rutas públicas con subrutas: `/auth/callback`, `/auth/confirm`, `/invite`. El resto requieren sesión activa. (story 1.3, QD-auth-confirm)
 - El middleware redirige a `/login` automáticamente cualquier request sin sesión a ruta protegida. (story 1.3)
 - La sesión se refresca en cada request via `updateSession()` de `lib/supabase/middleware.ts` — el token se mantiene activo sin logout inesperado. (story 1.3)
+- El magic link del email apunta a `/auth/confirm?token=...&type=email&redirect_to=...` — página intermedia que requiere que el usuario pulse un botón antes de verificar el OTP. Esto impide que los escáneres de email (Google Workspace, Outlook) consuman el token automáticamente. (QD-auth-confirm)
+- Si los parámetros `token` o `type` están ausentes en `/auth/confirm`, se redirige a `/login?error=link-invalid`. (QD-auth-confirm)
+- El parámetro `redirect_to` solo se acepta si es una ruta interna (empieza por `/` pero no por `//`). URLs absolutas o protocol-relative se descartan silenciosamente y se usa `/communities` como fallback — prevención de open redirect. (CR-PR34)
+- El parámetro `type` se valida contra el union de `EmailOtpType` antes del cast. Valores desconocidos retornan `valid:false` y redirigen a `/login?error=link-invalid`. (CR-PR34)
+- El template de Magic Link en Supabase Dashboard debe configurarse manualmente para apuntar a `/auth/confirm` (ver PR #34 para instrucciones). (QD-auth-confirm)
 
 ## Ficheros clave
 
 - `middleware.ts` — auth gate completo: PUBLIC_PATHS, isPublicPath, redirect a /login
 - `lib/supabase/middleware.ts` — updateSession(): refresca sesión y retorna { response, user }
 - `app/(auth)/login/page.tsx` — Server Component de la pantalla /login
-- `app/(auth)/login/actions.ts` — Server Action: sendMagicLink
-- `components/auth/LoginForm.tsx` — Client Component del formulario
-- `app/auth/callback/route.ts` — Route Handler del magic link
+- `components/auth/LoginForm.tsx` + `components/auth/ConfirmButton.tsx` — formularios de auth
+- `app/auth/confirm/page.tsx` — página intermedia anti-scanner magic link
+- `lib/auth/confirm.ts` — funciones puras: validateConfirmSearchParams, buildConfirmParams
 
 ## Última actualización
 
-Story 1.3 — 2026-03-27
+CR-PR34 (fixes H1/H2/M1/M2) — 2026-03-28
