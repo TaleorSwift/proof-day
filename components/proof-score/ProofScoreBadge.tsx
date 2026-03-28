@@ -10,20 +10,20 @@ interface ScoreConfig {
 const SCORE_CONFIG: Record<ProofScoreLabel, ScoreConfig> = {
   'Promising': {
     icon: '✓',
-    bg: '#E8F5EE',
-    color: '#2D7A4F',
+    bg: 'var(--color-promising-bg)',
+    color: 'var(--color-promising-text)',
     description: 'El equipo ve potencial real',
   },
   'Needs iteration': {
     icon: '⟳',
-    bg: '#FEF3E2',
-    color: '#A05C00',
+    bg: 'var(--color-needs-bg)',
+    color: 'var(--color-needs-text)',
     description: 'La solución genera dudas — refina antes de escalar',
   },
   'Weak': {
     icon: '✗',
-    bg: '#FEE2E2',
-    color: '#B91C1C',
+    bg: 'var(--color-weak-bg)',
+    color: 'var(--color-weak-text)',
     description: 'Señal débil — reconsidera el enfoque',
   },
 }

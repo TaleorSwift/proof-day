@@ -2,32 +2,23 @@
 
 import { useState, useEffect } from 'react'
 import type { ProofScoreResult } from '@/lib/types/proof-score'
-import type { ProjectDecision } from '@/lib/types/projects'
 import { getProofScore } from '@/lib/api/proof-score'
 import { ProofScoreWaiting } from './ProofScoreWaiting'
 import { ProofScoreBadge } from './ProofScoreBadge'
-import { DecisionBadge } from '@/components/projects/DecisionBadge'
-import { DecisionDialog } from '@/components/projects/DecisionDialog'
-import { Button } from '@/components/ui/button'
 
 interface ProofScoreSidebarProps {
   projectId: string
   isBuilder: boolean
   feedbackCount: number
-  /** Decision already registered — null means none yet */
-  initialDecision?: ProjectDecision | null
 }
 
 export function ProofScoreSidebar({
   projectId,
   isBuilder,
   feedbackCount,
-  initialDecision = null,
 }: ProofScoreSidebarProps) {
   const [score, setScore] = useState<ProofScoreResult | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [decision, setDecision] = useState<ProjectDecision | null>(initialDecision)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   useEffect(() => {
     if (!isBuilder) return
@@ -75,32 +66,6 @@ export function ProofScoreSidebar({
       }}
     >
       <ProofScoreBadge label={score.label} variant="full" />
-
-      {/* Decision section — only visible if score is available */}
-      {decision !== null ? (
-        <DecisionBadge decision={decision} />
-      ) : (
-        <>
-          <Button
-            type="button"
-            variant="outline"
-            style={{ width: '100%' }}
-            onClick={() => setIsDialogOpen(true)}
-          >
-            Registrar decision
-          </Button>
-
-          <DecisionDialog
-            projectId={projectId}
-            isOpen={isDialogOpen}
-            onClose={() => setIsDialogOpen(false)}
-            onSuccess={(d) => {
-              setDecision(d)
-              setIsDialogOpen(false)
-            }}
-          />
-        </>
-      )}
     </div>
   )
 }
