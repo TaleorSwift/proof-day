@@ -44,8 +44,8 @@
 
     /* === TEXTO === */
     --color-text-primary:   #1C1917;  /* casi negro calido */
-    --color-text-secondary: #6B7280;  /* gris medio */
-    --color-text-muted:     #9CA3AF;  /* gris claro */
+    --color-text-secondary: #4B5563;  /* gris medio — contrast 7.2:1 on #FAF9F6 */
+    --color-text-muted:     #6B7280;  /* gris suave — contrast 4.6:1 on #FAF9F6 (WCAG AA) */
 
     /* === PROOF SCORE (semantico) === */
     --color-promising-text: #15803D;

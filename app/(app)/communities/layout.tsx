@@ -24,6 +24,28 @@ export default async function CommunitiesLayout({ children }: Props) {
 
   return (
     <>
+      {/* Skip navigation — WCAG 2.4.1 */}
+      <a
+        href="#main-content"
+        style={{
+          position: 'absolute',
+          left: '-9999px',
+          top: 'var(--space-2)',
+          zIndex: 100,
+          padding: 'var(--space-2) var(--space-4)',
+          backgroundColor: 'var(--color-primary)',
+          color: '#fff',
+          borderRadius: 'var(--radius-md)',
+          fontSize: 'var(--text-sm)',
+          fontWeight: 'var(--font-medium)',
+          textDecoration: 'none',
+        }}
+        onFocus={(e) => { e.currentTarget.style.left = 'var(--space-4)' }}
+        onBlur={(e) => { e.currentTarget.style.left = '-9999px' }}
+      >
+        Saltar al contenido principal
+      </a>
+
       {/* Navbar con selector de comunidad */}
       <nav
         style={{
@@ -74,7 +96,7 @@ export default async function CommunitiesLayout({ children }: Props) {
         <LogoutButton />
       </nav>
 
-      {children}
+      <div id="main-content">{children}</div>
     </>
   )
 }

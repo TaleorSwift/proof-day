@@ -16,13 +16,18 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 - Los admins pueden actualizar roles y eliminar miembros (políticas RLS UPDATE y DELETE en `community_members`). La UI se implementa en stories futuras. (story 2.1, CR2-F1)
 - Toda mutación va por API Route, nunca por Server Actions. (story 2.1)
 
+## Reglas de comportamiento (a11y — Fase 5)
+- El layout incluye un skip navigation link visible on focus que salta a `#main-content` (WCAG 2.4.1). (Fase 5)
+- Cualquier error en rutas `/communities/*` muestra `error.tsx` con botón "Reintentar". (Fase 5)
+- Durante carga, se muestra `loading.tsx` con spinner accesible (`role="status"`, `aria-busy`). (Fase 5)
+
 ## Ficheros clave
 - `app/api/communities/route.ts` — thin controller (~50 líneas): GET + POST
 - `lib/repositories/communities.repository.ts` — queries Supabase (DIP)
 - `lib/services/communities.service.ts` — validateMembership, generateUniqueSlug
-- `lib/api/middleware/require-auth.ts` — auth compartida
-- `app/(app)/communities/page.tsx` — listado, redirect automático, banner error
-- `components/communities/CommunityList.tsx`, `CommunityCard.tsx`, `CommunityHeader.tsx`, `CommunitySwitcher.tsx`
+- `app/(app)/communities/layout.tsx` — navbar + skip nav + main-content wrapper
+- `app/(app)/communities/error.tsx` — error boundary para todas las rutas de comunidades
+- `app/(app)/communities/loading.tsx` — loading state accesible
 
 ## Última actualización
-Story 2.3 — 2026-03-28 | Arch Fase 3 — 2026-03-28
+Story 2.3 — 2026-03-28 | Arch Fase 3 — 2026-03-28 | A11y Fase 5 — 2026-03-28

@@ -1,4 +1,54 @@
 workflows:
+  - id: "ds-20260328-fase5-a11y"
+    timestamp: "2026-03-28T23:00:00"
+    completed: "2026-03-28T23:30:00"
+    agent: Homer
+    trigger: DS-inline
+    workflow: dev-story
+    mode: GENERATE
+    story: "fase5-frontend-a11y"
+    branch: "develop"
+    result: SUCCESS
+    summary: "Fase 5 A11y completada. error.tsx + loading.tsx en communities/ y profile/. Skip navigation link en layout (WCAG 2.4.1). Grid responsive con clamp(280px,30%,380px). DialogDescription en FeedbackDialog y DecisionDialog (WCAG 4.1.2). Contraste texto muted #6B7280 (4.6:1 AA). Tests: 18/18, 197/197."
+    artifacts:
+      created:
+        - app/(app)/communities/error.tsx
+        - app/(app)/communities/loading.tsx
+        - app/(app)/profile/error.tsx
+        - app/(app)/profile/loading.tsx
+      modified:
+        - app/(app)/communities/layout.tsx
+        - app/(app)/communities/[slug]/projects/[id]/page.tsx
+        - components/feedback/FeedbackDialog.tsx
+        - components/projects/DecisionDialog.tsx
+        - app/globals.css
+
+  - id: "ds-20260328-fase4-tests"
+    timestamp: "2026-03-28T22:00:00"
+    completed: "2026-03-28T22:30:00"
+    agent: Homer
+    trigger: DS-inline
+    workflow: dev-story
+    mode: GENERATE
+    story: "fase4-tests"
+    branch: "develop"
+    result: SUCCESS
+    summary: "Fase 4 Tests completada. 3 test files corregidos para importar código real en lugar de réplicas inline (proofScoreDisplay, projectList, decisionRegistration). Extraídas funciones a lib/utils/proof-score.ts, lib/utils/projects.ts, decisionSchema a lib/validations/projects.ts. Coverage thresholds configurados (80%). Integration tests para FeedbackService.validateEligibility (12 tests) y ProjectsService (5 tests). Total: 18 test files, 197 tests."
+    artifacts:
+      created:
+        - lib/utils/projects.ts
+        - tests/unit/feedback/feedbackEligibility.test.ts
+        - tests/unit/projects/projectsService.test.ts
+      modified:
+        - lib/utils/proof-score.ts
+        - lib/validations/projects.ts
+        - app/api/projects/[id]/decision/route.ts
+        - components/proof-score/ProofScoreWaiting.tsx
+        - tests/unit/proof-score/proofScoreDisplay.test.ts
+        - tests/unit/projects/projectList.test.ts
+        - tests/unit/projects/decisionRegistration.test.ts
+        - vitest.config.ts
+
   - id: "ds-20260328-arch-fase3"
     timestamp: "2026-03-28T20:00:00"
     completed: "2026-03-28T21:30:00"
