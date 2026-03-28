@@ -1,68 +1,41 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
 import { createCommunitySchema } from '@/lib/validations/communities'
-import { toSlug } from '@/lib/utils/slug'
+import { requireAuth } from '@/lib/api/middleware/require-auth'
+import { createCommunitiesRepository } from '@/lib/repositories/communities.repository'
+import { createCommunitiesService } from '@/lib/services/communities.service'
 
 export async function GET() {
-  const supabase = await createClient()
+  const auth = await requireAuth()
+  if (auth.error) return auth.error
 
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json(
-      { error: 'No autenticado', code: 'AUTH_REQUIRED' },
-      { status: 401 }
-    )
-  }
+  const { user, supabase } = auth
+  const communitiesRepo = createCommunitiesRepository(supabase)
 
-  // RLS filtra automáticamente las comunidades del usuario.
-  // Filtro explícito como segunda línea de defensa (CR2-F2):
-  // obtenemos solo comunidades donde el usuario tiene membresía activa.
-  // story 2.3: incluimos conteo de miembros por comunidad (AC-7)
-  const { data: communities, error } = await supabase
-    .from('communities')
-    .select(`
-      id,
-      name,
-      slug,
-      description,
-      image_url,
-      created_by,
-      created_at,
-      updated_at,
-      community_members!inner(user_id)
-    `)
-    .eq('community_members.user_id', user.id)
-    .order('created_at', { ascending: false })
+  const { data: communities, error } = await communitiesRepo.findByUserId(user.id)
 
-  if (error) {
+  if (error)
     return NextResponse.json(
       { error: 'Error al obtener comunidades', code: 'COMMUNITIES_FETCH_ERROR' },
       { status: 500 }
     )
-  }
 
-  // Obtener conteo de miembros para cada comunidad (story 2.3, AC-7)
-  // Query separada para evitar problemas de formato con el join de conteo
-  const communityIds = (communities ?? []).map((c: Record<string, unknown>) => c.id)
+  const communityIds = (communities ?? []).map((c: Record<string, unknown>) => c.id as string)
 
   let memberCounts: Record<string, number> = {}
-
   if (communityIds.length > 0) {
-    const { data: memberData } = await supabase
-      .from('community_members')
-      .select('community_id')
-      .in('community_id', communityIds)
-
+    const { data: memberData } = await communitiesRepo.getMemberCounts(communityIds)
     if (memberData) {
-      memberCounts = (memberData as Record<string, unknown>[]).reduce((acc: Record<string, number>, row) => {
-        const id = row.community_id as string
-        acc[id] = (acc[id] ?? 0) + 1
-        return acc
-      }, {})
+      memberCounts = (memberData as Record<string, unknown>[]).reduce(
+        (acc: Record<string, number>, row) => {
+          const id = row.community_id as string
+          acc[id] = (acc[id] ?? 0) + 1
+          return acc
+        },
+        {}
+      )
     }
   }
 
-  // Mapear snake_case → camelCase y añadir memberCount (AC-7)
   const result = (communities ?? []).map((c: Record<string, unknown>) => ({
     id: c.id,
     name: c.name,
@@ -79,18 +52,11 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const supabase = await createClient()
+  const auth = await requireAuth()
+  if (auth.error) return auth.error
 
-  // Auth check
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json(
-      { error: 'No autenticado', code: 'AUTH_REQUIRED' },
-      { status: 401 }
-    )
-  }
+  const { user, supabase } = auth
 
-  // Validación Zod
   let body: unknown
   try {
     body = await request.json()
@@ -101,82 +67,48 @@ export async function POST(request: Request) {
     )
   }
 
-  const result = createCommunitySchema.safeParse(body)
-  if (!result.success) {
+  const parsed = createCommunitySchema.safeParse(body)
+  if (!parsed.success)
     return NextResponse.json(
-      { error: result.error.issues[0].message, code: 'VALIDATION_ERROR' },
+      { error: parsed.error.issues[0].message, code: 'VALIDATION_ERROR' },
       { status: 400 }
     )
-  }
 
-  const { name, description, imageUrl } = result.data
-  const slug = toSlug(name)
+  const { name, description, imageUrl } = parsed.data
 
-  // Validar que el slug no esté vacío (p.ej. nombre con solo caracteres especiales)
-  if (!slug) {
-    return NextResponse.json(
-      { error: 'El nombre no produce un identificador válido. Usa letras o números.', code: 'INVALID_SLUG' },
-      { status: 400 }
-    )
-  }
+  const communitiesService = createCommunitiesService(supabase)
+  const slugResult = await communitiesService.generateUniqueSlug(name)
+  if (!slugResult.ok)
+    return NextResponse.json({ error: slugResult.error, code: slugResult.code }, { status: slugResult.status })
 
-  // Verificar unicidad del slug/nombre
-  const { data: existing } = await supabase
-    .from('communities')
-    .select('id')
-    .eq('slug', slug)
-    .maybeSingle()
-
-  if (existing) {
-    return NextResponse.json(
-      { error: 'Ya existe una comunidad con ese nombre', code: 'COMMUNITY_NAME_TAKEN' },
-      { status: 409 }
-    )
-  }
-
-  // Crear comunidad
-  const { data: community, error: insertError } = await supabase
-    .from('communities')
-    .insert({
-      name,
-      slug,
-      description,
-      image_url: imageUrl || null,
-      created_by: user.id,
-    })
-    .select()
-    .single()
+  const communitiesRepo = createCommunitiesRepository(supabase)
+  const { data: community, error: insertError } = await communitiesRepo.create({
+    name,
+    slug: slugResult.slug,
+    description: description ?? null,
+    imageUrl: imageUrl ?? null,
+    createdBy: user.id,
+  })
 
   if (insertError || !community) {
-    // Race condition: si dos requests concurrentes pasan el check de unicidad,
-    // el segundo falla con error UNIQUE de PostgreSQL (code 23505) → retornar 409
-    if (insertError?.code === '23505') {
+    // Race condition: slug duplicado por requests concurrentes
+    if ((insertError as { code?: string })?.code === '23505')
       return NextResponse.json(
         { error: 'Ya existe una comunidad con ese nombre', code: 'COMMUNITY_NAME_TAKEN' },
         { status: 409 }
       )
-    }
     return NextResponse.json(
       { error: 'Error al crear la comunidad', code: 'COMMUNITY_CREATE_ERROR' },
       { status: 500 }
     )
   }
 
-  // Insertar creador como admin en community_members
-  const { error: memberError } = await supabase
-    .from('community_members')
-    .insert({
-      community_id: community.id,
-      user_id: user.id,
-      role: 'admin',
-    })
-
-  if (memberError) {
+  const { error: memberError } = await communitiesRepo.addMember(community.id, user.id, 'admin')
+  if (memberError)
     return NextResponse.json(
       { error: 'Error al registrar membresía', code: 'MEMBER_INSERT_ERROR' },
       { status: 500 }
     )
-  }
 
   return NextResponse.json({ data: community }, { status: 201 })
 }
