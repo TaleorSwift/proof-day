@@ -1,4 +1,12 @@
 workflows:
+  - id: "merge-20260328-epic3"
+    timestamp: "2026-03-28T23:59:00"
+    agent: Homer
+    trigger: manual-merge
+    workflow: merge-epic3
+    result: SUCCESS
+    summary: "Mergeados PRs #10, #12, #9, #11 a develop. Epic 3 completo en develop."
+
   - id: "ds-20260328-033b"
     timestamp: "2026-03-28T23:00:00"
     agent: Homer
