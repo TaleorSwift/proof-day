@@ -69,10 +69,10 @@ development_status:
   epic-4-retrospective: optional
 
   # ── EPIC 5: Proof Score & Decisión ───────────────────────────────
-  epic-5: in-progress
+  epic-5: done
   5-1-proof-score-calculation-algorithm: done  # QA PASS 2026-03-28 — Edna qa-20260328-051
   5-2-proof-score-display-waiting-state: done  # QA PASS 2026-03-28 — Edna qa-20260328-052
-  5-3-builder-decision-registration: review
+  5-3-builder-decision-registration: done  # merged 2026-03-28 — PR#19
   epic-5-retrospective: optional
 
   # ── EPIC 6: Perfiles & Gamificación ──────────────────────────────

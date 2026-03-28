@@ -1,4 +1,19 @@
 workflows:
+  - id: "sprint-20260328-021"
+    timestamp: "2026-03-28T01:30:00"
+    completed: "2026-03-28T01:30:00"
+    agent: Ned (coord) + Homer (dev) + Edna (qa)
+    trigger: sprint
+    workflow: sprint-epic5
+    result: SUCCESS
+    summary: "Epic 5 completo — PRs #17, #18, #19 mergeados a develop. 3 stories implementadas, revisadas y validadas."
+    prs_merged:
+      - "PR#17 feat/5-1-proof-score-calculation-algorithm"
+      - "PR#18 feat/5-2-proof-score-display-waiting-state"
+      - "PR#19 feat/5-3-builder-decision-registration"
+    tests: "164 passed (14 test files)"
+    errors: []
+
   - id: "ds-20260328-053b"
     timestamp: "2026-03-28T18:45:00"
     completed: "2026-03-28T18:55:00"
