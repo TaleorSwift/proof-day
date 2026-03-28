@@ -1,4 +1,49 @@
 workflows:
+  - id: "20260328-160000-homer-DS-cr-fixes"
+    timestamp: "2026-03-28T16:30:00"
+    agent: "Homer"
+    trigger: "DS"
+    workflow: "dev-story"
+    mode: "REFINE"
+    result: "SUCCESS"
+    duration_estimate: "30 minutos"
+    summary: "Corregidos H1 (open redirect — isInternalPath rechaza // y URLs absolutas), H2 (isLoading en finally), M1 (9 tests ConfirmButton con jsdom + @vitejs/plugin-react), M2 (guard isValidOtpType antes de cast). 224 tests pasando."
+    artifacts_created:
+      - "tests/unit/auth/confirmButtonComponent.test.tsx"
+    artifacts_modified:
+      - "lib/auth/confirm.ts"
+      - "components/auth/ConfirmButton.tsx"
+      - "tests/unit/auth/confirmButton.test.ts"
+      - "vitest.config.ts"
+      - "package.json"
+    errors: []
+    commit: "12d809f"
+    next_recommended: "QA — Edna valida la suite completa antes del merge del PR #34"
+
+  - id: "20260328-135000-homer-CR"
+    timestamp: "2026-03-28T13:50:00"
+    agent: "Homer"
+    trigger: "CR"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    summary: "Code review PR #34 — página intermedia /auth/confirm anti-scanner magic link. Ficheros: middleware.ts, lib/auth/confirm.ts, components/auth/ConfirmButton.tsx, app/auth/confirm/page.tsx"
+
+  - id: "20260328-135000-homer-CR"
+    timestamp: "2026-03-28T14:10:00"
+    agent: "Homer"
+    trigger: "CR"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "CHANGES_REQUESTED"
+    duration_estimate: "20 minutos"
+    summary: "CR PR #34 — CHANGES_REQUESTED. 2 High (open redirect en redirect_to sin validación, isLoading no se resetea en happy path), 3 Medium (tests de ConfirmButton ausentes, cast sin validación de EmailOtpType, pattern de role=alert con elemento condicional), 2 Low (metadata SEO, DEFAULT_OTP_TYPE letra muerta)."
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, DS — corregir H1 (open redirect) y H2 (isLoading) antes de merge. M1 (tests ConfirmButton) recomendado en el mismo pass."
+
   - id: "20260328-120000-bart-QD"
     timestamp: "2026-03-28T12:00:00"
     agent: "Bart"
@@ -7,6 +52,27 @@ workflows:
     mode: "GENERATE"
     result: "STARTED"
     summary: "Implementar página intermedia para magic link auth (anti-scanner Google Workspace). Middleware update + app/auth/confirm/page.tsx + components/auth/ConfirmButton.tsx + tests."
+
+  - id: "20260328-120000-bart-QD"
+    timestamp: "2026-03-28T12:45:00"
+    agent: "Bart"
+    trigger: "QD"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "45 minutos"
+    summary: "Página intermedia /auth/confirm implementada. Middleware actualizado con /auth/confirm como ruta pública. Funciones puras en lib/auth/confirm.ts (validateConfirmSearchParams, buildConfirmParams). ConfirmButton client component con a11y (aria-busy, aria-live, role=alert). Page server component con validación y redirect en caso de params inválidos. 210 tests pasan (13 nuevos). TypeScript limpio. PR #34 contra develop."
+    artifacts_created:
+      - "lib/auth/confirm.ts"
+      - "components/auth/ConfirmButton.tsx"
+      - "app/auth/confirm/page.tsx"
+      - "tests/unit/auth/confirmButton.test.ts"
+    artifacts_modified:
+      - "middleware.ts"
+      - "tests/unit/middleware/middleware.test.ts"
+      - "docs/project/modules/auth.md"
+    errors: []
+    next_recommended: "Configurar template Magic Link en Supabase Dashboard (ver PR #34). Luego /cr (Homer) y /qa (Edna)."
 
   - id: "ds-20260328-fase5-a11y"
     timestamp: "2026-03-28T23:00:00"
