@@ -23,19 +23,12 @@ GitHub Actions — deploy.yml
     │   ├── Semgrep (SAST — análisis estático)
     │   └── Trivy filesystem scan (CVEs)
     │
-    ├── job: docker (needs: quality)
-    │   ├── Build imagen multi-stage (Node 20 Alpine)
-    │   ├── Push a ghcr.io/taleorswift/proof-day
-    │   │   ├── :sha-<commit>
-    │   │   └── :latest
-    │   └── Trivy image scan (CVEs en imagen final)
-    │
-    └── job: deploy (needs: docker)
+    └── job: deploy (needs: quality)
         ├── supabase db push (aplica migraciones)
         └── vercel deploy --prod
 
 Vercel (región: mad1 — Madrid)
-    └── Next.js App Router (Node.js 20)
+    └── Next.js App Router (Node.js 24)
             │
             └── Supabase (PostgreSQL + Auth)
                     └── Resend (magic links via SMTP)
@@ -43,17 +36,14 @@ Vercel (región: mad1 — Madrid)
 
 ---
 
-## Ficheros generados
+## Ficheros de configuración
 
 | Fichero | Propósito |
 |---------|-----------|
-| `Dockerfile` | Imagen multi-stage para build reproducible y Trivy scan |
-| `.dockerignore` | Excluye ficheros innecesarios del contexto Docker |
 | `vercel.json` | Configuración de Vercel: región, build commands, security headers |
 | `.env.example` | Plantilla de variables de entorno (se commitea al repo) |
 | `.github/workflows/ci.yml` | Pipeline de CI en PRs: lint + test + security scans |
-| `.github/workflows/deploy.yml` | Pipeline de deploy en push a main: quality → docker → deploy |
-| `next.config.ts` | `output: "standalone"` para imagen Docker mínima |
+| `.github/workflows/deploy.yml` | Pipeline de deploy en push a main: quality → deploy |
 
 ---
 
@@ -65,12 +55,12 @@ Configurar en **Vercel Dashboard → proyecto → Settings → Environment Varia
 |----------|-------------|---------|
 | `NEXT_PUBLIC_SUPABASE_URL` | URL del proyecto Supabase | Production |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Clave pública de Supabase | Production |
-| `SUPABASE_SERVICE_ROLE_KEY` | Clave service role (solo servidor) | Production |
-| `RESEND_API_KEY` | API key de Resend para emails | Production |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clave service role (solo servidor) — sensitive | Production |
+| `RESEND_API_KEY` | API key de Resend para emails — sensitive | Production |
 | `NEXT_PUBLIC_SITE_URL` | URL pública de la app en Vercel | Production |
-| `NODE_ENV` | `production` | Production |
 
-> ⚠️ `SUPABASE_SERVICE_ROLE_KEY` y `RESEND_API_KEY` son secretos — nunca en variables `NEXT_PUBLIC_*`.
+> ⚠️ `SUPABASE_SERVICE_ROLE_KEY` y `RESEND_API_KEY` marcados como sensitive (write-only en Vercel).
+> `NODE_ENV` no hace falta — Vercel lo pone automáticamente en producción.
 
 ---
 
@@ -78,43 +68,21 @@ Configurar en **Vercel Dashboard → proyecto → Settings → Environment Varia
 
 Configurar en **github.com/TaleorSwift/proof-day/settings/secrets/actions**:
 
-| Secret | Descripción | Dónde obtenerlo |
-|--------|-------------|-----------------|
+| Secret | Descripción | Valor |
+|--------|-------------|-------|
 | `VERCEL_TOKEN` | Token de autenticación de Vercel | vercel.com/account/tokens |
-| `VERCEL_ORG_ID` | ID del equipo/organización en Vercel | Vercel → Settings → General → Team ID |
-| `VERCEL_PROJECT_ID` | ID del proyecto en Vercel | Vercel → proyecto → Settings → General |
+| `VERCEL_ORG_ID` | ID del equipo en Vercel | `team_CYk3AxQL5XNPnKWkkSHtazgu` |
+| `VERCEL_PROJECT_ID` | ID del proyecto en Vercel | `prj_u9KL8QtpWiZKw7KZWi2vm8LjY0Nc` |
 | `SUPABASE_ACCESS_TOKEN` | Token personal de Supabase CLI | supabase.com/dashboard/account/tokens |
-| `SUPABASE_DB_PASSWORD` | Contraseña de la base de datos | Supabase → proyecto → Settings → Database |
-| `GITHUB_TOKEN` | Token automático de GitHub | Inyectado automáticamente por GitHub Actions |
+| `SUPABASE_PROJECT_REF` | Ref del proyecto Supabase | `igjcnthjbfkqizmvrclr` |
+| `GITHUB_TOKEN` | Token automático de GitHub | Inyectado automáticamente |
 
 ---
 
-## Primer despliegue (setup manual)
+## Primer despliegue (setup completado)
 
-Antes del primer deploy automático, ejecutar una vez desde local:
-
-```bash
-# 1. Instalar Vercel CLI
-npm i -g vercel
-
-# 2. Vincular proyecto a Vercel (genera .vercel/project.json)
-vercel link
-
-# 3. Obtener los IDs para los secrets de GitHub
-cat .vercel/project.json
-# → orgId → VERCEL_ORG_ID
-# → projectId → VERCEL_PROJECT_ID
-
-# 4. Instalar Supabase CLI
-npm i -g supabase
-
-# 5. Login en Supabase
-supabase login
-# → genera el SUPABASE_ACCESS_TOKEN
-
-# 6. Aplicar migraciones iniciales
-supabase db push
-```
+El proyecto ya está vinculado a Vercel y todos los secrets configurados.
+El primer deploy se disparará automáticamente en el próximo merge a `main`.
 
 ---
 
@@ -130,9 +98,7 @@ git push origin develop       → dispara ci.yml (lint + test + security)
 # → ci.yml valida la PR automáticamente
 
 # Merge a main
-git checkout main
-git merge develop
-git push origin main          → dispara deploy.yml (quality → docker → deploy)
+git push origin main          → dispara deploy.yml (quality → deploy a Vercel)
 ```
 
 ---
@@ -141,10 +107,9 @@ git push origin main          → dispara deploy.yml (quality → docker → dep
 
 | Servicio | Plan | Coste |
 |----------|------|-------|
-| Vercel | Hobby (gratis hasta límite) / Pro si se necesita team | $0 / $20 mes |
+| Vercel | Hobby (gratis hasta límite) | $0 |
 | Supabase | Free tier (500MB DB, 2GB bandwidth) | $0 (MVP) |
 | GitHub Actions | 2000 min/mes gratis en repos públicos | $0 |
-| ghcr.io | Gratis para repos públicos, 500MB para privados | $0 (MVP) |
 | Resend | 3000 emails/mes gratis | $0 (MVP) |
 
 **Total estimado MVP:** $0/mes (dentro de free tiers)
@@ -159,15 +124,14 @@ git push origin main          → dispara deploy.yml (quality → docker → dep
 | Gitleaks | Secrets y API keys en código/git history | Cualquier secret detectado |
 | Semgrep | Vulnerabilidades OWASP, patrones inseguros Next.js/TS | Reglas p/nextjs + p/owasp-top-ten |
 | Trivy (fs) | CVEs en sistema de ficheros y dependencias | CRITICAL/HIGH |
-| Trivy (image) | CVEs en imagen Docker final | CRITICAL/HIGH |
 
 ---
 
 ## Troubleshooting
 
 ### Deploy falla en `supabase db push`
-- Verificar que `SUPABASE_ACCESS_TOKEN` y `SUPABASE_DB_PASSWORD` están configurados en GitHub Secrets
-- Verificar que hay migraciones pendientes: `supabase migration list`
+- Verificar que `SUPABASE_ACCESS_TOKEN` y `SUPABASE_PROJECT_REF` están en GitHub Secrets
+- Verificar migraciones pendientes: `supabase migration list`
 
 ### Deploy falla en Vercel
 - Verificar `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` en GitHub Secrets
@@ -179,27 +143,15 @@ git push origin main          → dispara deploy.yml (quality → docker → dep
 - Si es un falso positivo: añadir excepción en `.trivyignore`
 
 ### Gitleaks detecta un secret
-- El secret está en el código o en el historial de git
 - Revocar el secret inmediatamente en el proveedor correspondiente
 - Limpiar el historial: `git filter-repo` o BFG Repo Cleaner
-- Generar nuevas credenciales y configurarlas en los lugares correctos
-
-### Build Docker falla
-- Verificar que `output: "standalone"` está en `next.config.ts`
-- Verificar que las variables de entorno de build están disponibles
-- Revisar logs: `docker build . --progress=plain`
+- Generar nuevas credenciales y configurarlas en los secrets de GitHub
 
 ---
 
 ## Comandos útiles
 
 ```bash
-# Build local
-docker build -t proof-day:local .
-
-# Run local con variables de entorno
-docker run --env-file .env -p 3000:3000 proof-day:local
-
 # Scan de seguridad local
 trivy fs . --severity CRITICAL,HIGH
 gitleaks detect --source . --verbose
@@ -207,4 +159,8 @@ semgrep scan --config p/nextjs --config p/owasp-top-ten
 
 # Ver logs de deploy en Vercel
 vercel logs --prod
+
+# Gestionar variables de entorno
+vercel env ls production
+vercel env add <VARIABLE> production
 ```
