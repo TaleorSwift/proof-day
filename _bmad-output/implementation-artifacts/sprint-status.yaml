@@ -51,7 +51,7 @@ development_status:
   epic-2: in-progress
   2-1-create-community: done
   2-2-invitation-links-generate-join: done
-  2-3-community-access-control-listing: ready-for-dev
+  2-3-community-access-control-listing: done
   epic-2-retrospective: optional
 
   # ── EPIC 3: Proyectos ────────────────────────────────────────────

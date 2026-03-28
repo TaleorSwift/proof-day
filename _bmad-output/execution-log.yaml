@@ -1,4 +1,40 @@
 workflows:
+  - id: "cr-20260328-auto-2-3"
+    timestamp: "2026-03-28T20:00:00"
+    completed: "2026-03-28T20:30:00"
+    agent: Homer
+    trigger: "bucle-automatico"
+    workflow: "code-review"
+    mode: VERIFY
+    result: SUCCESS
+    story: "2.3 — Community Access Control & Listing"
+    branch: "feat/2-3-community-access-control-listing"
+    pr: "PR#7"
+    rounds: 2
+    summary: |
+      Bucle automático CR story 2.3 completado en 2 rondas.
+      Ronda 1 (CHANGES_REQUESTED): 7 findings — CR6-F1 MEDIUM (alias engañoso searchError),
+      CR6-F2 MEDIUM (campos vacíos hardcodeados en [slug]/page.tsx), CR6-F3 LOW (nota RLS),
+      CR6-F4 LOW (hover JS→CSS con :focus-within para accesibilidad), CR6-F5 LOW (type=button),
+      CR6-F6 LOW (doble margin en CommunityHeader), CR6-F7 LOW (toSlug movido a lib/utils/slug.ts).
+      Ronda 2 (APPROVED): 0 nuevos findings. Todos los CR6 verificados resueltos.
+      Merge: squash PR#7 → develop. Branch eliminada.
+      TypeScript: 0 errores. ESLint: 0 warnings. Tests: 84/84.
+    findings_resolved: 7
+    merge: "squash — PR#7 → develop — branch deleted"
+    artifacts_modified:
+      - "app/(app)/communities/page.tsx"
+      - "app/(app)/communities/[slug]/page.tsx"
+      - "app/api/communities/route.ts"
+      - "app/globals.css"
+      - "components/communities/CommunityCard.tsx"
+      - "components/communities/CommunityHeader.tsx"
+      - "components/communities/CommunitySwitcher.tsx"
+      - "tests/unit/communities/createCommunity.test.ts"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+    artifacts_created:
+      - "lib/utils/slug.ts"
+
   - id: "dc-20260328-001"
     timestamp: "2026-03-28T00:00:00"
     agent: Wiggum
