@@ -21,9 +21,12 @@ jobs:
       - run: npm run type-check
       - run: npm run test
       - run: npm audit --audit-level=high
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Gitleaks
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_8.22.1_linux_x64.tar.gz | tar -xz
+          sudo mv gitleaks /usr/local/bin/
+      - name: Gitleaks
+        run: gitleaks detect --source . --verbose
       - name: Semgrep
         uses: semgrep/semgrep-action@v1
         with:
