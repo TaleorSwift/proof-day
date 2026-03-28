@@ -97,10 +97,19 @@ export async function POST(
   // Store relative path (not absolute URL) in image_urls array
   const currentUrls: string[] = project.image_urls ?? []
   const newImageUrls = [...currentUrls, path]
-  await supabase
+  const { error: dbError } = await supabase
     .from('projects')
     .update({ image_urls: newImageUrls })
     .eq('id', projectId)
+
+  if (dbError) {
+    // Rollback: intentar eliminar el archivo subido
+    await supabase.storage.from(PROJECT_IMAGES_BUCKET).remove([path])
+    return NextResponse.json(
+      { error: 'Error al guardar la imagen', code: 'DB_UPDATE_ERROR' },
+      { status: 500 }
+    )
+  }
 
   return NextResponse.json({ data: { url: publicUrl, path } }, { status: 201 })
 }
@@ -155,14 +164,19 @@ export async function DELETE(
   }
 
   // Remove from Storage
-  await supabase.storage.from(PROJECT_IMAGES_BUCKET).remove([path])
+  const { error: storageError } = await supabase.storage.from(PROJECT_IMAGES_BUCKET).remove([path])
+  if (storageError) console.error('Storage remove error:', storageError)
 
   // Update the paths array
   const newImageUrls = (project.image_urls ?? []).filter((p: string) => p !== path)
-  await supabase
+  const { error: dbError } = await supabase
     .from('projects')
     .update({ image_urls: newImageUrls })
     .eq('id', projectId)
+  if (dbError) return NextResponse.json(
+    { error: 'Error al eliminar la imagen', code: 'DB_UPDATE_ERROR' },
+    { status: 500 }
+  )
 
   return NextResponse.json({ success: true })
 }

@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import type { ProjectRow } from '@/lib/types/projects'
+import { PROJECT_IMAGES_BUCKET } from '@/lib/types/projects'
 import { ImageGallery } from './ImageGallery'
 
 interface ProjectFormProps {
@@ -62,7 +63,7 @@ export function ProjectForm({
     path,
     url: path.startsWith('http')
       ? path
-      : `${supabaseUrl}/storage/v1/object/public/project-images/${path}`,
+      : `${supabaseUrl}/storage/v1/object/public/${PROJECT_IMAGES_BUCKET}/${path}`,
   }))
 
   const onSubmit = async (data: FormValues) => {
