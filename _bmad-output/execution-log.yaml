@@ -1,6 +1,7 @@
 workflows:
   - id: "cr-20260329-042"
     timestamp: "2026-03-29T07:36:00"
+    completed: "2026-03-29T07:41:00"
     agent: Homer
     trigger: CR
     workflow: code-review
@@ -8,7 +9,20 @@ workflows:
     story: "4-2-feedback-submission-association"
     pr: "16"
     branch: "feat/4-2-feedback-submission-association"
-    result: STARTED
+    result: APPROVED
+    summary: "CR Story 4.2 — 10 findings (3 críticos, 7 menores). Fixes aplicados: F1-reviewer_id eliminado del fallback GET, F2-double getUser() eliminado en page.tsx, F3-aria-live funciona con use client en FeedbackCounter, F4-getInitials guard para nombre vacío, F5-typo Aún, F6-error color+role. 138 tests pasan. Push a feat/4-2-feedback-submission-association."
+    findings:
+      critical: 3
+      minor: 7
+    fixes_applied:
+      - "F1: reviewer_id eliminado del select fallback en GET /api/feedback"
+      - "F2: segunda llamada getUser() eliminada en project page"
+      - "F3: FeedbackCounter añade use client para aria-live funcional"
+      - "F4: getInitials() guard para string vacío/espacios"
+      - "F5: typo Aun → Aún en empty state"
+      - "F6: ProjectStateActions error usa color-weak-text + role=alert"
+    tests: "138 passed (11 test files)"
+    errors: []
 
   - id: "ds-20260328-042"
     timestamp: "2026-03-28T23:59:30"
