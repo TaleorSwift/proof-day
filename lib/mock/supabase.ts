@@ -89,6 +89,16 @@ class MockQueryBuilder {
     return this._resolve()
   }
 
+  maybeSingle() {
+    this._isSingle = true
+    return this._resolve().then((r: any) => {
+      // maybeSingle: no error si no hay filas (a diferencia de single)
+      if (r.error?.code === 'PGRST116') return { data: null, error: null }
+      return r
+    })
+  }
+
+
   // Enables await without calling .single()
   then(resolve: (v: any) => any, reject?: (e: any) => any) {
     return this._resolve().then(resolve, reject)
@@ -201,12 +211,24 @@ const mockAuth = {
   signInWithOtp: async () => ({ data: {}, error: null }),
 }
 
+// ── RPC Mock ───────────────────────────────────────────────
+// rpc() en el cliente devuelve un objeto thenable con .maybeSingle()
+function mockRpc(_fn: string, _params?: Record<string, any>) {
+  const result = { data: null, error: null }
+  return {
+    maybeSingle: () => Promise.resolve(result),
+    single: () => Promise.resolve(result),
+    then: (resolve: (v: any) => any) => Promise.resolve(result).then(resolve),
+  }
+}
+
 // ── Mock Client Factory ────────────────────────────────────
 function createMockClient() {
   return {
     auth: mockAuth,
     storage: mockStorage,
     from: (table: string) => new MockQueryBuilder(table),
+    rpc: mockRpc,
   }
 }
 
