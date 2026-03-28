@@ -1,4 +1,16 @@
 workflows:
+  - id: "ds-20260328-arch-fase3"
+    timestamp: "2026-03-28T20:00:00"
+    agent: Homer
+    trigger: DS-inline
+    workflow: dev-story
+    mode: GENERATE
+    story: "arch-fase3-service-layer"
+    branch: "feat/arch-fase3-service-layer"
+    result: STARTED
+    summary: "Refactor arquitectónico Fase 3 — 6 pasos: auth middleware compartido, repository layer (5 repos), service layer (3 services), refactor 3 route handlers, extraer utils, eliminar scaffold legacy."
+
+
   - id: "ds-20260328-061-062"
     timestamp: "2026-03-28T19:00:00"
     agent: Homer

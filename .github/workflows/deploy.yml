@@ -65,7 +65,7 @@ jobs:
         run: npm install --global vercel@latest
       - name: Deploy to Vercel
         run: |
-          unset GITHUB_ACTIONS
+          unset GITHUB_ACTIONS GITHUB_TOKEN GITHUB_REPOSITORY GITHUB_REF GITHUB_SHA CI GITHUB_RUN_ID GITHUB_ACTOR
           vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
           vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
