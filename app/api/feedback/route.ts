@@ -93,7 +93,12 @@ export async function POST(request: Request) {
       { status: 401 }
     )
 
-  const body = await request.json()
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Body inválido', code: 'INVALID_BODY' }, { status: 400 })
+  }
   const result = submitFeedbackSchema.safeParse(body)
   if (!result.success)
     return NextResponse.json(

@@ -47,7 +47,12 @@ export async function POST(request: Request) {
     { error: 'No autenticado', code: 'AUTH_REQUIRED' }, { status: 401 }
   )
 
-  const body = await request.json()
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Body inválido', code: 'INVALID_BODY' }, { status: 400 })
+  }
   const result = createProjectSchema.safeParse(body)
   if (!result.success) return NextResponse.json(
     { error: result.error.issues[0].message, code: 'VALIDATION_ERROR' }, { status: 400 }

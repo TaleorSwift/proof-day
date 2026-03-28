@@ -26,7 +26,12 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   )
 
   const { id } = await params
-  const body = await request.json()
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Body inválido', code: 'INVALID_BODY' }, { status: 400 })
+  }
   const result = updateProjectSchema.safeParse(body)
   if (!result.success) return NextResponse.json(
     { error: result.error.issues[0].message, code: 'VALIDATION_ERROR' }, { status: 400 }
