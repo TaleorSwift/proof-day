@@ -1,4 +1,21 @@
 workflows:
+  - id: "ds-20260328-052b"
+    timestamp: "2026-03-28T15:00:00"
+    completed: "2026-03-28T15:20:00"
+    agent: Homer
+    trigger: DS-fix
+    workflow: cr-fix
+    mode: REFINE
+    story: "5-2-proof-score-display-waiting-state"
+    branch: "feat/5-2-proof-score-display-waiting-state"
+    result: SUCCESS
+    summary: "CR fixes Story 5.2 — F1: implementar getProofScore + crear lib/types/proof-score.ts. F2: reemplazar colores hex hardcodeados por CSS variables en ProofScoreBadge. F3: eliminar scope creep de Story 5.3 (DecisionBadge, DecisionDialog, decision state) de ProofScoreSidebar. 153 tests pasan."
+    artifacts:
+      - "lib/types/proof-score.ts (creado)"
+      - "lib/api/proof-score.ts (implementado)"
+      - "components/proof-score/ProofScoreBadge.tsx (CSS variables)"
+      - "components/proof-score/ProofScoreSidebar.tsx (scope creep eliminado)"
+    errors: []
   - id: "ds-20260328-052"
     timestamp: "2026-03-28T11:00:00"
     completed: "2026-03-28T11:30:00"
