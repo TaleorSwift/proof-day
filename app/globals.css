@@ -157,3 +157,16 @@
     color: var(--color-text-primary);
   }
 }
+
+@layer components {
+  /* Card de comunidad — estado hover e interactivo vía CSS (no JS inline)
+     para cubrir tanto mouse como teclado (:focus-within) — NFR-A1/A2 */
+  .community-card {
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .community-card:hover,
+  .community-card:focus-within {
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-text-muted);
+  }
+}

@@ -1,738 +1,334 @@
 workflows:
-  - id: "dc-20260328-001"
-    timestamp: "2026-03-28T00:00:00"
-    agent: Wiggum
-    trigger: "/dc"
-    workflow: "deploy-configure"
+  - id: "ds-20260328-061-062"
+    timestamp: "2026-03-28T19:00:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
     mode: GENERATE
-    result: SUCCESS
-    platform: Vercel
-    ci_cd: GitHub Actions
-    summary: "CI/CD configurado para Vercel + Supabase + GitHub Actions. Pipeline de seguridad con Gitleaks, Semgrep, Trivy y npm audit. Imagen Docker en ghcr.io. Deploy bloqueado si quality gate falla."
-    artifacts_created:
-      - "Dockerfile"
-      - ".dockerignore"
-      - ".github/workflows/ci.yml"
-      - ".github/workflows/deploy.yml"
-      - "vercel.json"
-      - "docs/project/deployment-setup.md"
-    artifacts_modified:
-      - ".env.example"
-      - "next.config.ts"
-    manual_steps_pending:
-      - "Configurar 5 secrets en GitHub Actions"
-      - "Ejecutar vercel link desde local para primer deploy"
-
-  - id: "cs-20260327-006"
-    timestamp: "2026-03-27T01:10:00"
-    agent: Ned
-    trigger: "/cs"
-    workflow: "create-story"
-    mode: GENERATE
-  - id: "ds-20260328-011"
-    timestamp: "2026-03-28T14:00:00"
-    completed: "2026-03-28T14:30:00"
-    agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
-    mode: REFINE
-    result: SUCCESS
-    duration_estimate: "30 minutes"
-    story: "2.1 — Create Community (CR2 fixes + rebase)"
-    branch: "feat/2-1-create-community"
-    commit: "53231eb"
-    summary: |
-      CR2 fixes for story 2.1. Rebase on origin/develop to remove 2 duplicate
-      story 2.2 commits (already merged via PR #5). All 4 findings resolved:
-      CR2-F1 (HIGH): migration 004 adds UPDATE/DELETE RLS policies for
-        community_members admins — can update roles and remove members.
-      CR2-F2 (HIGH): GET /api/communities adds explicit user_id filter via
-        community_members!inner join as second line of defense beyond RLS.
-      CR2-L1 (LOW): added toSlug test for purely numeric name (12345 → 12345).
-      CR2-L2 (LOW): ApiError class exposes error code; CommunityForm uses
-        setError('name') for COMMUNITY_NAME_TAKEN — error shown inline under field.
-      CR2-L3 (LOW): communities.md on this branch contains only story 2.1 behavior.
-      Tests: 67/67 passing. TypeScript clean. ESLint clean.
-    artifacts_modified:
-      - "supabase/migrations/004_rls_community_members_admin_policies.sql"
-      - "app/api/communities/route.ts"
-      - "lib/api/communities.ts"
-      - "components/communities/CommunityForm.tsx"
-      - "tests/unit/communities/createCommunity.test.ts"
-      - "docs/project/modules/communities.md"
-    errors: []
-    next_recommended: "CR (Homer): revisión final de story 2.1 para aprobación del PR."
-
-  - id: "ds-20260327-019"
-    timestamp: "2026-03-27T20:00:00"
-    completed: "2026-03-27T20:20:00"
-    agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
-    mode: REFINE
-    result: SUCCESS
-    story: "2.2 — Invitation Links: Generate & Join (CR#3 fixes — CR3-F1 + CR3-F2)"
-    branch: "feat/2-2-invitation-links"
-    commit: "9aff209 fix(communities): resolve CR3-F1 and CR3-F2 for story 2.2 invitation links"
-    tests: "41/41 pasando."
-    artifacts_modified:
-      - "supabase/migrations/001_create_invitation_links.sql"
-      - "_bmad-output/implementation-artifacts/stories/2-2-invitation-links-generate-join.md"
-    summary: |
-      CR3-F1 (HIGH/SECURITY): Añadida policy RLS use_invitation para UPDATE en invitation_links.
-        USING (auth.uid() IS NOT NULL AND used_at IS NULL) — solo tokens no usados.
-        WITH CHECK (auth.uid() IS NOT NULL) — cualquier usuario autenticado puede invalidar.
-        Resultado: AC-2 (single-use) funciona en producción para usuarios no-admin.
-      CR3-F2 (HIGH): Añadido GRANT EXECUTE ON FUNCTION validate_invitation_token(text) TO authenticated.
-        Sin este GRANT, el rol authenticated recibía permission denied — todo el flujo de join roto.
-        Resultado: RPC funciona en producción para rol authenticated.
-    errors: []
-    next_recommended: "Pendientes F3-F7 CR#3 y F1-F5 CR#4 (fuera scope). Recomendado /cr para verificar estado."
-
-  - id: "ds-20260327-016"
-    timestamp: "2026-03-27T17:00:00"
-    agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
-    mode: REFINE
+    story: "epic-6 (6-1-user-profile-view-edit + 6-2-feedback-counter-top-reviewer-widget)"
     result: STARTED
-    summary: "Story 2.2 CR #1 fixes — resolver 3 HIGH (T12/T13 checkboxes, token invalidation error handling, RLS policy seguridad), 5 MEDIUM (prop dead, Zod en API, mutaciones Server Component, tipos no importados, mensaje error), 3 LOW (color hardcodeado, tests /invite, communities.md)"
+    summary: "Epic 6 — Stories 6.1 y 6.2. GENERATE mode. Implementando tabla profiles, validaciones, tipos, API routes, componentes ProfileForm, páginas /profile y /profile/[id], TopReviewerWidget, PersonalFeedbackCounter, gamification API routes, tests unitarios."
 
-  - id: "cr-20260327-015"
-    timestamp: "2026-03-27T16:00:00"
-    completed: "2026-03-27T16:40:00"
-    agent: Homer
-    trigger: "/cr"
-    workflow: "code-review"
-    mode: VERIFY
+  - id: "sprint-20260328-021"
+    timestamp: "2026-03-28T01:30:00"
+    completed: "2026-03-28T01:30:00"
+    agent: Ned (coord) + Homer (dev) + Edna (qa)
+    trigger: sprint
+    workflow: sprint-epic5
     result: SUCCESS
-    duration_estimate: "40 minutes"
-    story: "2.2 — Invitation Links: Generate & Join"
-    pr: "https://github.com/TaleorSwift/proof-day/pull/5"
-    veredicto: "CHANGES_REQUESTED"
-    findings: "3 HIGH, 5 MEDIUM, 3 LOW = 11 total"
-    summary: |
-      CR adversarial de story 2.2. Veredicto: CHANGES_REQUESTED.
-      H1: T12/T13 marcadas [x] con subtasks en [ ] — story file tracking inconsistente.
-      H2: Token invalidation sin verificar error en UPDATE — violación silenciosa de AC-2 (single-use).
-      H3 (SECURITY): RLS policy authenticated_read_by_token expone TODA la tabla invitation_links
-        a cualquier usuario autenticado — enumeración de tokens activos de todas las comunidades.
-      M1: communitySlug prop dead en InvitationSection.
-      M2: generateInvitationSchema Zod no usada en API Route — validación ausente.
-      M3: Mutaciones en Server Component viola Rejection Criterion (todas las mutaciones por API Route).
-      M4: lib/types/invitations.ts tipos no importados en ningún fichero — code dead.
-      M5: AC-7 mensaje "Este link ya ha sido usado" vs spec "Este link ya no es válido".
-      L1: Color #FFFFFF hardcodeado en InvitationSection.
-      L2: Tests /invite sin regresión /auth/callback.
-      L3: communities.md incompleto vs T13 spec.
-      Bloqueantes para APPROVED: H1 (trivial), H2 (manejo error UPDATE), H3 (RLS crítica).
-    artifacts_modified:
-      - "_bmad-output/execution-log.yaml"
+    summary: "Epic 5 completo — PRs #17, #18, #19 mergeados a develop. 3 stories implementadas, revisadas y validadas."
+    prs_merged:
+      - "PR#17 feat/5-1-proof-score-calculation-algorithm"
+      - "PR#18 feat/5-2-proof-score-display-waiting-state"
+      - "PR#19 feat/5-3-builder-decision-registration"
+    tests: "164 passed (14 test files)"
     errors: []
-    next_recommended: "Homer, DS — resolver H1 (checkboxes story), H2 (capturar error UPDATE token), H3 (RLS policy restricción). Recomendado también M2 (usar Zod en API Route) y M4 (importar tipos). Luego nuevo /cr."
 
-  - id: "ds-20260327-014"
-    timestamp: "2026-03-27T10:00:00"
+  - id: "ds-20260328-053b"
+    timestamp: "2026-03-28T18:45:00"
+    completed: "2026-03-28T18:55:00"
     agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
+    trigger: DS-fix
+    workflow: qa-fix
     mode: REFINE
-    result: STARTED
-    summary: "Story 2.1 CR fixes — resolver 8 findings (4 MEDIUM, 4 LOW): F1 race condition 23505→409, F2 CTA interactivo, F3 tipo Community snake_case, F4 next/image remotePatterns, F5 trigger updated_at, F6 slug vacío, F7 test description >500, F8 try/catch json"
-
-  - id: "ds-20260327-014"
-    timestamp: "2026-03-27T10:30:00"
-    agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
-    mode: REFINE
+    story: "5-3-builder-decision-registration"
+    branch: "feat/5-3-builder-decision-registration"
     result: SUCCESS
-    duration_estimate: "30 minutes"
-    story: "2.1 — Create Community (CR fixes)"
-    commit: "8b08a37 fix(communities): resolve 8 CR findings for story 2.1"
-    branch: "feat/2-1-create-community"
-    pr: "https://github.com/TaleorSwift/proof-day/pull/4"
-    tests: "50/50 pasando (14 en tests/unit/communities/ — 1 nuevo F7). TypeScript: sin errores."
-    summary: |
-      Story 2.1 CR fixes — 8/8 findings resueltos.
-      MEDIUM: F1 race condition 23505→409, F2 CTA Button disabled (AC5 correcto),
-      F3 tipo Community alineado con snake_case Supabase, F4 images.remotePatterns en next.config.ts.
-      LOW: F5 trigger set_updated_at en migración SQL, F6 validación slug no vacío,
-      F7 test description >500 chars añadido, F8 try/catch en error path lib/api/communities.ts.
-      PR#4 actualizado. Story status: review.
-    artifacts_modified:
-      - "app/api/communities/route.ts"
-      - "components/communities/EmptyCommunitiesState.tsx"
-      - "lib/api/communities.ts"
-      - "lib/types/communities.ts"
-      - "next.config.ts"
-      - "supabase/migrations/002_create_communities.sql"
-      - "tests/unit/communities/createCommunity.test.ts"
-      - "docs/project/modules/communities.md"
-      - "_bmad-output/implementation-artifacts/stories/2-1-create-community.md"
-      - "_bmad-output/execution-log.yaml"
+    summary: "QA fixes story 5.3: BUG-001 feedback bloqueado tras decisión, BUG-002 decision persistida en page reload. Fix 1: añadido 'decision' al select en POST /api/feedback/route.ts + guardia if (project.decision !== null) → 409 FEEDBACK_LOCKED, antes de la verificación de status. Fix 2: añadido 'decision' al select en page.tsx + pasado initialDecision={project.decision as ProjectDecision | null} a ProofScoreSidebar. 164/164 tests pasan. TS errors pre-existentes no relacionados."
+    artifacts:
+      - "app/api/feedback/route.ts (MODIFIED — decision en select + guard FEEDBACK_LOCKED)"
+      - "app/(app)/communities/[slug]/projects/[id]/page.tsx (MODIFIED — decision en select + initialDecision prop)"
+    tests:
+      total: 164
+      passed: 164
+      failed: 0
+    bugs_fixed:
+      - "BUG-5-3-001: AC8 — feedback API ahora bloquea tras decisión con 409 FEEDBACK_LOCKED"
+      - "BUG-5-3-002: AC5/AC9 — página persiste decision en refresh via initialDecision prop"
     errors: []
-    next_recommended: "Homer, CR — nuevo code review adversarial de story 2.1 (PR#4). Verificar que los 8 findings están correctamente resueltos."
 
-  - id: "cr-20260327-013"
-    timestamp: "2026-03-27T23:30:00"
-    completed: "2026-03-27T23:59:00"
-    agent: Homer
-    trigger: "/cr"
-    workflow: "code-review"
-    mode: VERIFY
-    result: SUCCESS
-    duration_estimate: "29 minutes"
-    story: "1.3 — Auth Middleware & Route Protection (CR #4)"
-    veredicto: "APPROVED"
-    summary: |
-      CR #4 adversarial de story 1.3. Veredicto: APPROVED.
-      F1 y F2 MEDIUM del CR #3 resueltos (auth.md y sprint-status correctos en develop, commit 1c637d9).
-      F3 y F4 LOW del CR #3 sin resolver (try/catch en updateSession, tipo restrictivo) — no bloqueantes.
-      3 nuevos findings LOW (F5 middleware sin test unitario, F6 inconsistencia status corregida en este CR, F7 /invite no documentado).
-      36/36 tests pasando. TypeScript sin errores. ESLint sin errores. 10 ACs implementados.
-    artifacts_modified:
-      - "_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md"
-      - "_bmad-output/execution-log.yaml"
-    errors: []
-    next_recommended: "Siguiente: QA (Edna) o Ned ER (Epic 1 retrospective). Story 1.3 DONE."
-
-  - id: "cr-20260327-011"
-    agent: Homer
-    trigger: "/cr"
-    workflow: "code-review"
-    mode: VERIFY
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    duration_estimate: "15 minutes"
-    story: "2.1 — Create Community"
-    veredicto: "CHANGES_REQUESTED"
-    summary: |
-      CR de story 2.1. Tests: 37/37 pasando. TypeScript: sin errores. ESLint: sin errores.
-      ACs core implementados correctamente. 8 findings: 4 MEDIUM, 4 LOW.
-      MEDIUM críticos: F1 race condition slug→500 (debería 409), F2 segundo CTA no interactivo (AC5),
-      F3 tipo Community camelCase vs snake_case Supabase (mismatch en runtime),
-      F4 next/image sin remotePatterns (falla en producción con URLs externas).
-      CHANGES_REQUESTED por los 4 MEDIUM.
-    artifacts_modified:
-      - "_bmad-output/implementation-artifacts/stories/2-1-create-community.md"
-      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
-      - "_bmad-output/execution-log.yaml"
-    errors: []
-    next_recommended: "Homer, DS — resolver F1-F4 (4 MEDIUM): race condition 23505, CTA interactivo, tipo Community snake_case, next.config.ts remotePatterns. Luego nuevo /cr."
-
-  - id: "ds-20260327-010"
-    timestamp: "2026-03-27T13:45:00"
-    agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
-    mode: GENERATE
-    result: SUCCESS
-    duration_estimate: "45 minutes"
-    story: "2.1 — Create Community"
-    commit: "55b853e feat(communities): create community form, API route and listing"
-    branch: "feat/2-1-create-community"
-    pr: "https://github.com/TaleorSwift/proof-day/pull/4"
-    tests: "37/37 pasando (13 nuevos en tests/unit/communities/). TypeScript: sin errores. ESLint: sin errores."
-    summary: "Story 2.1 implementada en GENERATE mode. 12 tasks completadas. Migraciones SQL, schema Zod, tipos TypeScript, API Route GET+POST /api/communities con slug generation + unicidad, typed fetch wrapper, CommunityForm (react-hook-form + zodResolver, errores inline), páginas /communities y /communities/new, EmptyCommunitiesState con 2 CTAs, 13 tests unitarios (≥6 requeridos). PR#4 creado contra develop."
-    artifacts_created:
-      - "supabase/migrations/002_create_communities.sql"
-      - "supabase/migrations/003_rls_policies.sql"
-      - "lib/validations/communities.ts"
-      - "lib/types/communities.ts"
-      - "app/api/communities/route.ts"
-      - "components/communities/CommunityForm.tsx"
-      - "components/communities/EmptyCommunitiesState.tsx"
-      - "app/(app)/communities/page.tsx"
-      - "app/(app)/communities/new/page.tsx"
-      - "tests/unit/communities/createCommunity.test.ts"
-      - "docs/project/modules/communities.md"
-    artifacts_modified:
-      - "lib/api/communities.ts"
-      - "_bmad-output/implementation-artifacts/stories/2-1-create-community.md"
-      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
-      - "_bmad-output/execution-log.yaml"
-    errors:
-      - step: "T9 — CommunitiesPage"
-        action: "Acceso Supabase en Server Component"
-        error: "Story indicaba lib/supabase/client.ts pero en Server Component de Next.js 15 hay que usar lib/supabase/server.ts (async createClient)"
-        recovery: "Usado server.ts correctamente — RLS funciona igual. Sin impacto funcional."
-        severity: "low"
-      - step: "T2 — Migración RLS"
-        action: "Numeración de migración"
-        error: "Story indicaba 006_rls_policies.sql pero directorio estaba vacío — 003 es el siguiente disponible"
-        recovery: "Creado como 003_rls_policies.sql. Sin impacto funcional."
-        severity: "low"
-    next_recommended: "Homer, CR — code review adversarial de story 2.1 (PR#4). Luego: Ned, CS — story 2.2 (Invitation Links)"
-
-  - id: "cs-20260327-008"
-    agent: Ned
-    trigger: "/cs"
-    workflow: "create-story"
-    mode: GENERATE
-    started: "2026-03-27"
-    status: STARTED
-    summary: "Creando Story 2.2 — Invitation Links: Generate & Join"
-
-  - id: "qa-20260327-001"
-    timestamp: "2026-03-27T12:00:00"
+  - id: "qa-20260328-053"
+    timestamp: "2026-03-28T18:00:00"
+    completed: "2026-03-28T18:30:00"
     agent: Edna
-    trigger: "QA"
-    workflow: "qa-automate"
-    mode: VERIFY
-    result: STARTED
-    summary: "Validación QA de stories 1.1, 1.2 y 1.3 (Epic 1 completo). Ejecutar tests unitarios (Vitest) y E2E (Playwright), verificar cobertura contra ACs, emitir veredicto PASS/FAIL."
+    trigger: QA
+    workflow: qa-validate
+    mode: REFINE
+    story: "5-3-builder-decision-registration"
+    branch: "feat/5-3-builder-decision-registration"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/19"
+    result: FAIL
+    summary: "QA Story 5.3 — Builder Decision Registration. FAIL. 164/164 tests pasan. 2 bugs críticos: (1) AC8 — POST /api/feedback no verifica project.decision, el feedback sigue siendo posible tras registrar decisión. (2) AC5/persistencia — page.tsx no incluye 'decision' en el select de Supabase ni pasa initialDecision al ProofScoreSidebar, al refrescar la página el estado de decisión se pierde (botón vuelve a aparecer, badge desaparece). ACs pasados: AC1 botón solo si score disponible, AC2 3 cards seleccionables sin dropdown, AC3 2 pasos con disabled, AC4 409 guard, AC6 badge visible para todos, AC7 ProjectCard badge compact, AC9 botón desaparece en sesión. Rejection criteria: OK."
+    tests:
+      total: 164
+      passed: 164
+      failed: 0
+      files: 14
+      decision_tests: 9
+    acceptance_criteria:
+      ac1_button_only_with_score: PASS
+      ac2_3_cards_no_dropdown: PASS
+      ac3_2step_disabled_until_selection: PASS
+      ac4_409_irreversible: PASS
+      ac5_badge_appears_button_gone_post_confirm: PARTIAL  # solo en memoria, no persiste en refresh
+      ac6_badge_visible_all_members: PASS
+      ac7_projectcard_decision_badge: PASS
+      ac8_feedback_blocked_after_decision: FAIL  # API no verifica decision
+      ac9_button_disappears_after_register: PARTIAL  # solo en memoria, no persiste en refresh
+    rejection_criteria:
+      no_dropdown_select: PASS
+      no_decision_change_409: PASS
+      no_button_without_score: PASS
+    bugs:
+      - id: "BUG-5-3-001"
+        severity: critical
+        ac: "AC8"
+        description: "POST /api/feedback/route.ts no verifica project.decision. Cuando el builder ha registrado una decisión, la API sigue aceptando nuevos feedbacks sin retornar error. El select de Supabase en la línea 107 solo incluye 'id, status, builder_id, community_id', sin 'decision'. Falta guardia: if (project.decision !== null) return 409/422 FEEDBACK_LOCKED."
+        file: "app/api/feedback/route.ts"
+        line: 107
+        fix: "Añadir 'decision' al select de Supabase y añadir guard: if (project.decision !== null) return NextResponse.json({ error: 'Feedback cerrado — el builder ya tomó una decisión', code: 'FEEDBACK_LOCKED' }, { status: 409 })"
+      - id: "BUG-5-3-002"
+        severity: critical
+        ac: "AC5, AC9"
+        description: "page.tsx de proyecto no incluye 'decision' en el .select() de Supabase (línea 28) y no pasa initialDecision al ProofScoreSidebar (línea 286-290). Al refrescar la página, ProofScoreSidebar inicia con decision=null aunque en DB exista una decisión, mostrando el botón 'Registrar decision' de nuevo y ocultando el DecisionBadge."
+        file: "app/(app)/communities/[slug]/projects/[id]/page.tsx"
+        lines: [28, 286]
+        fix: "En el select añadir 'decision', y en ProofScoreSidebar pasar initialDecision={project.decision as ProjectDecision | null}"
+    artifacts:
+      - "app/api/projects/[id]/decision/route.ts"
+      - "components/projects/DecisionBadge.tsx"
+      - "components/projects/DecisionDialog.tsx"
+      - "components/proof-score/ProofScoreSidebar.tsx"
+      - "components/projects/ProjectCard.tsx"
+      - "tests/unit/projects/decisionRegistration.test.ts"
+    errors:
+      - "BUG-5-3-001: feedback API no bloquea tras decisión (AC8)"
+      - "BUG-5-3-002: página no persiste estado de decisión en refresh (AC5, AC9)"
 
-  - id: "qa-20260327-001"
-    timestamp: "2026-03-27T12:20:00"
+  - id: "ds-20260328-053"
+    timestamp: "2026-03-28T12:00:00"
+    completed: "2026-03-28T13:00:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    story: "5-3-builder-decision-registration"
+    branch: "feat/5-3-builder-decision-registration"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/19"
+    result: SUCCESS
+    summary: "Story 5.3 — Builder Decision Registration. GENERATE mode. POST /api/projects/[id]/decision con Zod validation, auth getUser(), 409 guard irreversibilidad, 404/403. registerDecision() helper en lib/api/projects.ts. DecisionBadge (full + compact) con design tokens. DecisionDialog con 3 Cards seleccionables, loading state, advertencia irreversible. ProofScoreSidebar actualizado: boton solo visible cuando score disponible, DecisionBadge post-registro. ProjectCard: prop decision, compact badge. 9 tests unitarios, 164 tests totales."
+    artifacts:
+      - "app/api/projects/[id]/decision/route.ts (CREATED)"
+      - "lib/api/projects.ts (MODIFIED — registerDecision)"
+      - "components/projects/DecisionBadge.tsx (CREATED)"
+      - "components/projects/DecisionDialog.tsx (CREATED)"
+      - "components/proof-score/ProofScoreSidebar.tsx (MODIFIED)"
+      - "components/projects/ProjectCard.tsx (MODIFIED)"
+      - "tests/unit/projects/decisionRegistration.test.ts (CREATED — 9 tests)"
+    tests:
+      total: 164
+      new: 9
+      status: all passing
+    errors: []
+
+  - id: "ds-20260328-052b"
+    timestamp: "2026-03-28T15:00:00"
+    completed: "2026-03-28T15:20:00"
+    agent: Homer
+    trigger: DS-fix
+    workflow: cr-fix
+    mode: REFINE
+    story: "5-2-proof-score-display-waiting-state"
+    branch: "feat/5-2-proof-score-display-waiting-state"
+    result: SUCCESS
+    summary: "CR fixes Story 5.2 — F1: implementar getProofScore + crear lib/types/proof-score.ts. F2: reemplazar colores hex hardcodeados por CSS variables en ProofScoreBadge. F3: eliminar scope creep de Story 5.3 (DecisionBadge, DecisionDialog, decision state) de ProofScoreSidebar. 153 tests pasan."
+    artifacts:
+      - "lib/types/proof-score.ts (creado)"
+      - "lib/api/proof-score.ts (implementado)"
+      - "components/proof-score/ProofScoreBadge.tsx (CSS variables)"
+      - "components/proof-score/ProofScoreSidebar.tsx (scope creep eliminado)"
+    errors: []
+
+  - id: "qa-20260328-052"
+    timestamp: "2026-03-28T17:00:00"
+    completed: "2026-03-28T17:20:00"
     agent: Edna
-    trigger: "QA"
-    workflow: "qa-automate"
+    trigger: QA
+    workflow: qa-validate
     mode: VERIFY
-    result: SUCCESS
-    duration_estimate: "20 minutes"
-    summary: "QA PASS — Epic 1 validado. 24/24 tests unitarios pasando (Vitest). 8/9 tests E2E pasando (Playwright). 1 fallo E2E de entorno esperado (sin Supabase real). 5 bugs documentados: 0 bloqueantes, 2 MEDIUM, 2 LOW, 1 INFO. Cobertura ACs ~85%. Código core correcto y funcional."
-    artifacts_created:
-      - "_bmad-output/implementation-artifacts/tests/test-summary.md"
-    artifacts_modified:
-      - "_bmad-output/execution-log.yaml"
-    errors:
-      - step: "tests/e2e/auth/login.spec.ts"
-        action: "muestra success state al enviar email válido"
-        error: "Locator 'Revisa tu email — te hemos enviado un link de acceso' no visible (timeout 10s)"
-        context: "Fallo de entorno — sin Supabase configurado, server action retorna error. Bug conocido y documentado en CR story 1.2."
-        recovery: "Configurar Supabase local o marcar test como test.skip en CI"
-        severity: "cosmetic"
-    next_recommended: "Ned, ER — Epic Retrospective del Epic 1 (stories 1.1, 1.2, 1.3 completas). Resolver BUG-QA-002 (open redirect) antes de deploy a producción."
-
-  - id: "cr-20260327-009"
-    agent: Homer
-    trigger: "/cr"
-    workflow: "code-review"
-    mode: VERIFY
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    duration_estimate: "15 minutes"
-    story: "1.3 — Auth Middleware & Route Protection"
-    veredicto: "CHANGES_REQUESTED"
-    summary: |
-      CR #3 de story 1.3. Todos los CR #1 y CR #2 findings resueltos correctamente en código.
-      Tests: 24/24 pasando. TypeScript limpio. ESLint limpio. ACs 1-10 implementados.
-      Nuevos findings: 2 MEDIUM de tracking (auth.md en develop es versión 1.2, sprint-status
-      muestra backlog en lugar de review), 2 LOW de robustez (try/catch en updateSession,
-      tipo de retorno restrictivo). CHANGES_REQUESTED por los 2 MEDIUM de tracking.
-    artifacts_modified:
-      - "_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md"
-      - "_bmad-output/execution-log.yaml"
-    errors: []
-    next_recommended: "Homer, DS — resolver F1 (restaurar auth.md en develop con contenido story 1.3) y F2 (actualizar sprint-status 1-3 a review). F3 y F4 opcionales."
-
-  - id: "ds-20260327-008"
-    timestamp: "2026-03-27T10:00:00"
-    agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
-    mode: REFINE
-    result: STARTED
-    summary: "Story 1.3 CR #2 fixes — resolver 8 findings (1 HIGH, 3 MEDIUM, 4 LOW): proxy.ts conflictivo, tests que verifican mock en lugar de implementacion real, scope ESLint incompleto, PR sin confirmar, tests duplicados, subrutas /login/, completion notes desactualizadas"
-
-  - id: "ds-20260327-008"
-    timestamp: "2026-03-27T10:30:00"
-    agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
-    mode: REFINE
-    result: SUCCESS
-    duration_estimate: "30 minutes"
-    summary: "Story 1.3 CR #2 — 8 findings resueltos. F1: proxy.ts y proxy.ts raiz eliminados. F2: Suite 2 reescrita con vi.importActual — testea implementacion real. F3: ESLint scope ampliado a middleware.ts raiz y tests/**. F4: PR creado contra develop (PR#1). F5: tests duplicados eliminados. F6: resuelto al eliminar proxy.ts. F7: isPublicPath refactorizada PUBLIC_EXACT/PREFIX_PATHS. F8: Completion Note T9 actualizada. 18 tests passing. ESLint limpio. TypeScript limpio."
-    artifacts_created: []
-    artifacts_modified:
-      - "middleware.ts"
-      - "eslint.config.mjs"
-      - "tests/unit/middleware/middleware.test.ts"
-      - "docs/project/modules/auth.md"
-      - "_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md"
-      - "_bmad-output/execution-log.yaml"
-    artifacts_deleted:
-      - "lib/supabase/proxy.ts"
-      - "proxy.ts"
-    errors: []
-    next_recommended: "Javi — revisar y aprobar PR#1 en GitHub para mergear story 1.3 a develop. Luego: Ned, CS — crear story 2.1 (Create Community)"
-
-  - id: "cr-20260327-007"
-    agent: Homer
-    trigger: "CR"
-    workflow: "code-review"
-    mode: VERIFY
-    started: "2026-03-27"
-    status: STARTED
-    summary: "Segundo code review adversarial de story 1.3 — verificando que los CR fixes de ds-20260327-006 están correctamente implementados"
-
-  - id: "cr-20260327-007"
-    agent: Homer
-    trigger: "CR"
-    workflow: "code-review"
-    mode: VERIFY
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    duration_estimate: "12 minutes"
-    summary: "Segundo CR de story 1.3 (post-fixes). Veredicto: CHANGES_REQUESTED. 8 issues nuevos encontrados (1 HIGH, 3 MEDIUM, 4 LOW). Los 6 fixes del CR anterior están correctamente aplicados. Issue crítico nuevo: proxy.ts contiene updateSession() con contrato roto sin protección ESLint."
-    artifacts_created: []
-    artifacts_modified:
-      - "_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md"
-      - "_bmad-output/execution-log.yaml"
-    errors: []
-    next_recommended: "Homer, DS — resolver findings: F1 (eliminar/proteger proxy.ts), F2 (mejorar tests updateSession), F3 (ampliar scope ESLint), F4 (confirmar/crear PR en GitHub)"
-
-  - id: "ds-20260327-006"
-    agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
-    mode: REFINE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    story: "1.3 — Auth Middleware & Route Protection (CR fixes)"
-    commit: "0069376 fix(auth): resolve CR changes-requested for story 1.3"
-    branch: "feat/1-3-auth-middleware-route-protection"
-    tests: "17 passing (15 middleware unit: 9 isPublicPath + 6 updateSession; 2 smoke). ESLint: sin errores. TS: sin errores."
-    artifacts_modified:
-      - "tests/unit/middleware/middleware.test.ts"
-      - "middleware.ts"
-      - "eslint.config.mjs"
-      - "_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md"
-      - "_bmad-output/execution-log.yaml"
-    artifacts_deleted:
-      - "app/test-tmp/bad-import.ts"
-    errors: []
-    notes: |
-      CR fixes resueltos: 5 de 6 issues cerrados.
-      F1 (HIGH): 6 tests updateSession anadidos — contrato { response, user } verificado.
-      F3 (MEDIUM): AC 5 actualizado: getClaims() en lugar de getUser().
-      F4 (MEDIUM): app/test-tmp/ eliminado.
-      F5 (LOW): ESLint no-restricted-imports para @supabase/supabase-js anadida.
-      F6 (LOW): images/ anadido al matcher.
-      F2 (HIGH): git push + PR pendientes — sin remote configurado. El usuario debe configurar origin.
-
-  - id: "cr-20260327-005"
-    agent: Homer
-    trigger: "CR"
-    workflow: "code-review"
-    mode: VERIFY
-    started: "2026-03-27"
-    status: STARTED
-    summary: "Code review adversarial de story 1.3 — Auth Middleware & Route Protection"
-
-  - id: "cr-20260327-005"
-    agent: Homer
-    trigger: "CR"
-    workflow: "code-review"
-    mode: VERIFY
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    duration_estimate: "10 minutes"
-    summary: "Code review adversarial de story 1.3. Veredicto: CHANGES_REQUESTED. 6 issues encontrados (2 HIGH, 2 MEDIUM, 2 LOW). Implementación core correcta, tests de updateSession ausentes y T9 git push no completado."
-    artifacts_created: []
-    artifacts_modified:
-      - "_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md"
-      - "_bmad-output/execution-log.yaml"
-    errors: []
-    next_recommended: "Homer, DS — resolver issues HIGH: añadir tests de updateSession (AC 8) y completar push+PR (T9)"
-
-  - id: "ds-20260327-004"
-    agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
-    mode: REFINE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    story: "1.3 — Auth Middleware & Route Protection"
-    commit: "3e1e9df feat(auth): implement middleware route protection"
-    branch: "feat/1-3-auth-middleware-route-protection"
-    tests: "11 unit tests passing (Vitest: 9 middleware + 2 smoke) — 0 regressions. 4 E2E tests created (Playwright, require server)."
-    artifacts_modified:
-      - "middleware.ts"
-      - "lib/supabase/middleware.ts"
-      - "docs/project/modules/auth.md"
-      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
-      - "_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md"
-    artifacts_created:
-      - "tests/unit/middleware/middleware.test.ts"
-      - "tests/e2e/auth/route-protection.spec.ts"
-    errors:
-      - "lib/supabase/proxy.ts redirigía a /auth/login en lugar de /login — corregido via refactoring: redirect ahora en middleware.ts (raiz)"
-      - "ESLint: beforeEach importado pero no usado en test — removido antes del commit"
-    notes: |
-      Story 1.3 completada. 9 tasks, 10 ACs — todos cubiertos.
-      updateSession refactorizada para retornar { response, user } — middleware.ts gestiona redirect.
-      proxy.ts (template original) sin modificar — se mantiene para referencia interna.
-      getClaims() verificado como API correcto para @supabase/ssr@0.9.0 (verifica JWT localmente).
-      ESLint: sin errores. TypeScript: sin errores.
-      No hay remote git configurado — push y PR pendientes cuando se conecte origin.
-      Epic 1 completo: Stories 1.1 (done), 1.2 (review), 1.3 (review). Siguiente: CR de stories 1.2 y 1.3.
-
-  - id: "cs-20260327-003"
-    agent: Ned
-    trigger: "/cs"
-    workflow: "create-story"
-    mode: GENERATE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
+    story: "5-2-proof-score-display-waiting-state"
+    branch: "feat/5-2-proof-score-display-waiting-state"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/18"
+    result: PASS
+    summary: "QA Story 5.2 — Proof Score Display & Waiting State. PASS. 155 tests pasan (13 ficheros), incluyendo 6 tests de proofScoreDisplay.test.ts. ACs verificados: ProofScoreWaiting con remaining dinamico y singular/plural correcto, progress bar (feedbacks/3)*100, copy motivador 'Tu señal estará lista pronto', sin metricas numericas parciales. ProofScoreBadge: CSS variables exclusivamente (sin hex), role=status, aria-live=polite, variantes full/compact. ProofScoreSidebar (HEAD): null si !isBuilder, skeleton loading, estados loading/waiting/score, sin imports DecisionBadge ni DecisionDialog. Storybook: 4 stories (Promising, NeedsIteration, Weak, Compact). Rejection criteria OK: score solo para Builder, sin scores parciales, espera state con <3 feedbacks. Nota: working tree tiene cambios no-commiteados de Story 5.3 (scope DS en curso), no afectan a Story 5.2."
+    tests:
+      total: 155
+      passed: 155
+      failed: 0
+      files: 13
+      proof_score_display_tests: 6
+    acceptance_criteria:
+      ac1_waiting_visible_lt3: PASS
+      ac2_remaining_dynamic_singular_plural: PASS
+      ac3_progress_bar: PASS
+      ac4_copy_motivador: PASS
+      ac5_no_partial_metrics: PASS
+      ac6_badge_full_semantic_colors: PASS
+      ac7_score_only_builder: PASS
+      ac8_skeleton_loading: PASS
+    rejection_criteria:
+      no_proof_score_reviewers: PASS
+      no_partial_scores: PASS
+      no_skip_waiting_state: PASS
+      no_decision_badge_dialog_imports: PASS
     artifacts:
-      - "_bmad-output/implementation-artifacts/stories/1-3-auth-middleware-route-protection.md"
-    errors: []
-    notes: "Story 1.3 creada — Auth Middleware & Route Protection. 9 tasks, 10 ACs. Última story del Epic 1. Learnings 1.1+1.2 incorporados. Status: ready-for-dev."
-
-  - id: "ds-20260327-003"
-    agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
-    mode: GENERATE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    story: "1.2 — Magic Link Authentication"
-    commit: "92dfe0c feat(auth): add magic link login page and callback"
-    branch: "feat/1-2-magic-link-authentication"
-    tests: "8 unit tests passing (Vitest) — 0 regressions. 4 E2E tests created (Playwright, require server)."
-    artifacts_created:
-      - "lib/validations/auth.ts"
-      - "app/(auth)/layout.tsx"
-      - "app/(auth)/login/page.tsx"
-      - "app/(auth)/login/actions.ts"
-      - "components/auth/LoginForm.tsx"
-      - "app/auth/callback/route.ts"
-      - "tests/unit/auth/login-schema.test.ts"
-      - "tests/e2e/auth/login.spec.ts"
-      - "stories/auth/LoginForm.stories.tsx"
-      - "docs/project/modules/auth.md"
-    artifacts_modified:
-      - ".env.example"
-      - "README.md"
-      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
-      - "_bmad-output/implementation-artifacts/stories/1-2-magic-link-authentication.md"
-    errors: []
-    notes: |
-      Story 1.2 completada. 10 tasks, 13 ACs — todos cubiertos.
-      Zod, react-hook-form y @hookform/resolvers ya estaban instalados.
-      ESLint: sin errores. TypeScript: sin errores.
-      No hay remote git configurado — push y PR pendientes cuando se conecte origin.
-      Siguiente: Story 1.3 (Auth Middleware & Route Protection) — /cs para crear, luego /ds.
-
-  - id: "cs-20260327-002"
-    agent: Ned
-    trigger: "/cs"
-    workflow: "create-story"
-    mode: GENERATE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    artifacts:
-      - "_bmad-output/implementation-artifacts/stories/1-2-magic-link-authentication.md"
-    errors: []
-    notes: "Story 1.2 creada — Magic Link Authentication. 10 tasks, 13 ACs, 5 rejection criteria. Learnings de Story 1.1 incorporados. Status: ready-for-dev."
-
-  - id: "ds-20260327-002"
-    agent: Homer
-    trigger: "DS"
-    workflow: "dev-story"
-    mode: VERIFY
-    started: "2026-03-27"
-    status: STARTED
-    summary: "Verificando story 1.1 — Project Setup & Base Infrastructure. Corrigiendo inconsistencias: subtask T9 sin marcar y sprint-status desincronizado."
-
-  - id: "ds-20260327-002"
-    agent: Homer
-    trigger: "DS"
-    workflow: "dev-story"
-    mode: VERIFY
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    duration_estimate: "5 minutes"
-    summary: "Story 1.1 verificada. 20 ACs validados, 2 unit tests pasan, TypeScript sin errores. Corregidas 2 inconsistencias de tracking: sprint-status (ready-for-dev → done) y T9 subtask checkbox."
-    artifacts_created: []
-    artifacts_modified:
-      - "_bmad-output/execution-log.yaml"
-      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
-      - "_bmad-output/implementation-artifacts/stories/1-1-project-setup-base-infrastructure.md"
-    errors: []
-    next_recommended: "Ned, CS — crear story 1.2 (Magic Link Authentication)"
-
-  - id: "ds-20260327-001"
-    agent: Homer
-    trigger: "/ds"
-    workflow: "dev-story"
-    mode: GENERATE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    story: "1.1 — Project Setup & Base Infrastructure"
-    commits:
-      - "122bbb6 chore(setup): initialize project with Next.js 15 + Supabase"
-      - "905c43d chore(setup): add storybook.log to gitignore"
-      - "92e4d2f docs(story-1.1): mark story complete + add module docs"
-    artifacts:
-      - "app/globals.css"
-      - "tailwind.config.ts"
-      - "eslint.config.mjs"
-      - "middleware.ts"
-      - "lib/supabase/middleware.ts"
-      - "lib/api/communities.ts"
-      - "lib/api/projects.ts"
-      - "lib/api/feedback.ts"
+      - "components/proof-score/ProofScoreWaiting.tsx"
+      - "components/proof-score/ProofScoreBadge.tsx"
+      - "components/proof-score/ProofScoreSidebar.tsx"
       - "lib/api/proof-score.ts"
-      - "lib/api/profiles.ts"
-      - "lib/api/gamification.ts"
-      - "types/index.ts"
-      - "vitest.config.ts"
-      - "playwright.config.ts"
-      - "tests/unit/smoke.test.ts"
-      - "tests/e2e/smoke.spec.ts"
-      - ".storybook/main.ts"
-      - ".storybook/preview.ts"
-      - "stories/shared/Button.stories.tsx"
-      - ".commitlintrc.json"
-      - ".env.example"
-      - "README.md"
-      - "docs/project/modules/infraestructura-base.md"
-    errors:
-      - "Vitest 3.x incompatible con Node 20.11.1 — downgrade a 2.1.9 aplicado"
-      - "Storybook 10 incompatible con Node 20.11.1 — instalado Storybook 8 manualmente"
-      - "@vitejs/plugin-react removido por conflicto vite@5 vs vite@8"
-    notes: |
-      Story 1.1 completada. 14 tasks, 20 ACs — todos pasados.
-      Tests: 2 unit tests pasando (Vitest 2.1.9). Playwright configurado (smoke test requiere servidor).
-      Ramas: main (commit inicial) + develop (rama activa de desarrollo).
-      AC 3/4 ESLint: regla adaptada — lib/supabase/ puede importar @supabase/ssr (es su proposito);
-      la restriccion aplica a app/, components/, lib/api/.
-      No se creo PR — story de setup inicial, commits en main/develop directamente segun AC 19-20.
-      Siguiente paso: Story 1.2 (Magic Link Authentication) — /cs para detallar, luego /ds.
-
-  - id: "cs-20260327-001"
-    agent: Ned
-    trigger: "/cs"
-    workflow: "create-story"
-    mode: GENERATE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    artifacts:
-      - "_bmad-output/implementation-artifacts/stories/1-1-project-setup-base-infrastructure.md"
+      - "lib/types/proof-score.ts"
+      - "stories/proof-score/ProofScoreBadge.stories.tsx"
+      - "tests/unit/proof-score/proofScoreDisplay.test.ts"
     errors: []
-    notes: "Story 1.1 creada — Project Setup & Base Infrastructure. 14 tasks, 20 ACs. Status: ready-for-dev. Epic-1 actualizado a in-progress."
 
-  - id: "sp-20260327-001"
-    agent: Ned
-    trigger: "/sp"
-    workflow: "sprint-planning"
-    mode: GENERATE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    artifacts:
-      - "_bmad-output/planning-artifacts/epic-1-infraestructura-auth.md"
-      - "_bmad-output/planning-artifacts/epic-2-comunidades.md"
-      - "_bmad-output/planning-artifacts/epic-3-proyectos.md"
-      - "_bmad-output/planning-artifacts/epic-4-feedback.md"
-      - "_bmad-output/planning-artifacts/epic-5-proof-score-decision.md"
-      - "_bmad-output/planning-artifacts/epic-6-perfiles-gamificacion.md"
-      - "_bmad-output/planning-artifacts/epic-7-landing-page.md"
-      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
-    errors: []
-    notes: "Sprint Planning completado. 7 épicas, 17 stories derivadas del PRD (31 FRs). Epic files creados desde cero. sprint-status.yaml generado. Todos los items en backlog — listos para CS."
-
-  - id: "cu-20260327-001"
-    agent: Marge
-    trigger: "/cu"
-    workflow: "create-ux-design"
-    mode: REFINE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    artifacts:
-      - "_bmad-output/planning-artifacts/ux-design-specification.md"
-      - "docs/project/design-tokens.md"
-    errors: []
-    notes: "UX Design completo. 14 pasos ejecutados (3 skipped: step-04 emotional, step-05 inspiration, step-09 design-directions — pre-existing design rules REFINE mode). Sistema visual extraído del prototipo Lovable. Design tokens completos. 7 custom components definidos. Journey flows con Mermaid. Responsive desktop-first. Accessibility best-effort WCAG AA."
-
-  - id: "ca-20260327-001"
-    agent: Frink
-    trigger: "/ca"
-    workflow: "create-architecture"
-    mode: GENERATE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    artifacts:
-      - "_bmad-output/planning-artifacts/architecture.md"
-    errors: []
-    notes: "Arquitectura completa generada. 8 pasos ejecutados. Stack: Next.js 15 + Supabase + Vercel + Resend. Patrones enforceables via ESLint + husky + Vitest. Proof Score ADR documentado. 31/31 FRs cubiertos."
-
-  - id: "vp-20260327-001"
-    agent: Lisa
-    trigger: "/vp"
-    workflow: "validate-prd"
+  - id: "qa-20260328-051"
+    timestamp: "2026-03-28T15:10:00"
+    completed: "2026-03-28T15:20:00"
+    agent: Edna
+    trigger: QA
+    workflow: qa-validate
     mode: VERIFY
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
+    story: "5-1-proof-score-calculation-algorithm"
+    branch: "feat/5-1-proof-score-calculation-algorithm"
+    pr: "17"
+    result: PASS
+    summary: "QA Story 5.1 — Proof Score Calculation Algorithm. PASS. 158 tests pasan (13 ficheros), incluyendo 11 tests de calculateProofScore.test.ts. Funcion pura verificada: solo importa tipo ProofScoreResult, sin Supabase, sin side effects. Thresholds correctos (>=2.5 Promising, >=1.75 Needs iteration, <1.75 Weak). Algoritmo average=sum/n*3 correcto. API Route GET usa getUser() (no getSession()), builder_id check correcto, calculado on-demand sin INSERT/UPDATE. Rejection criteria OK: no almacenado en DB, no expuesto a Reviewers (403 guard), no getSession()."
+    tests:
+      total: 158
+      passed: 158
+      failed: 0
+      files: 13
+      proof_score_tests: 11
+    acceptance_criteria:
+      ac1_null_lt3: PASS
+      ac2_algorithm_thresholds: PASS
+      ac3_pure_function: PASS
+      ac4_api_route_auth: PASS
+      ac5_min_6_tests: PASS
+    rejection_criteria:
+      no_db_storage: PASS
+      no_reviewer_access: PASS
+      no_get_session: PASS
     artifacts:
-      - "_bmad-output/planning-artifacts/prd-validation-report.md"
+      - "lib/types/proof-score.ts"
+      - "lib/utils/proof-score.ts"
+      - "app/api/proof-score/[projectId]/route.ts"
+      - "lib/api/proof-score.ts"
+      - "tests/unit/proof-score/calculateProofScore.test.ts"
     errors: []
-    notes: "Validación completada. 12 checks ejecutados. Overall: PASS. Holistic Quality: 4/5. 0 critical issues, 1 contextual warning (NFR leakage aceptado). PRD listo para arquitectura."
 
-  - id: "sp-20260327-001"
-    agent: Ned
-    trigger: "/sp"
-    workflow: "sprint-planning"
-    mode: VERIFY
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
+  - id: "ds-20260328-053"
+    timestamp: "2026-03-28T12:00:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    story: "5-3-builder-decision-registration"
+    result: STARTED
+    summary: "Story 5.3 — Builder Decision Registration. Modo YOLO. Creando API route POST /api/projects/[id]/decision, DecisionBadge, DecisionDialog (Cards seleccionables), integración en ProofScoreSidebar y ProjectCard, tests unitarios."
+  - id: "ds-20260328-052"
+    timestamp: "2026-03-28T11:00:00"
+    completed: "2026-03-28T11:30:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    story: "5-2-proof-score-display-waiting-state"
+    result: SUCCESS
+    pr: "18"
+    branch: "feat/5-2-proof-score-display-waiting-state"
+    summary: "Story 5.2 — Proof Score Display & Waiting State. ProofScoreWaiting (skeleton/progress+singular-plural), ProofScoreBadge (full/compact, a11y role+aria-live), ProofScoreSidebar (client, retorna null si !isBuilder). Integrado en project page. Storybook 4 stories. 6 tests unitarios. 155 tests totales pasan."
     artifacts:
+      - "components/proof-score/ProofScoreWaiting.tsx"
+      - "components/proof-score/ProofScoreBadge.tsx"
+      - "components/proof-score/ProofScoreSidebar.tsx"
+      - "stories/proof-score/ProofScoreBadge.stories.tsx"
+      - "tests/unit/proof-score/proofScoreDisplay.test.ts"
+      - "app/(app)/communities/[slug]/projects/[id]/page.tsx (integración)"
+    tests: "155 passed (13 test files)"
+    errors: []
+
+  - id: "ds-20260328-051"
+    timestamp: "2026-03-28T10:00:00"
+    completed: "2026-03-28T10:30:00"
+    agent: Homer
+    trigger: DS
+    workflow: dev-story
+    mode: GENERATE
+    story: "5-1-proof-score-calculation-algorithm"
+    branch: "feat/5-1-proof-score-calculation-algorithm"
+    pr: "17"
+    result: SUCCESS
+    summary: "Story 5.1 — Proof Score Calculation Algorithm. Función pura calculateProofScore, API Route GET /api/proof-score/[projectId] (solo builder, getUser()), tipos ProofScoreLabel/ProofScoreResult, wrapper getProofScore(). 11 tests nuevos (149 total, todos pasan). Calculado on-demand, nunca almacenado en DB."
+    artifacts_created:
+      - "lib/types/proof-score.ts"
+      - "lib/utils/proof-score.ts"
+      - "app/api/proof-score/[projectId]/route.ts"
+      - "tests/unit/proof-score/calculateProofScore.test.ts"
+    artifacts_modified:
+      - "lib/api/proof-score.ts"
       - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+    tests: "149 passed (12 test files)"
     errors: []
-    notes: "Sprint status verificado y sincronizado. 7 épicas · 18 stories. Epic 1 completada (3/3 stories done). Epic 2 es la siguiente en turno."
 
-  - id: "cs-20260327-001"
-    agent: Ned
-    trigger: "/cs"
-    workflow: "create-story"
-    mode: GENERATE
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    artifacts:
-      - "_bmad-output/implementation-artifacts/stories/2-1-create-community.md"
-    errors: []
-    notes: "Story 2.1 creada con contexto completo. Epic-2 → in-progress. 12 tasks definidas: migración SQL, RLS policies, Zod schema, API Route POST /api/communities, typed client wrapper, CommunityForm, páginas /communities y /communities/new, empty state, 6+ tests unitarios, documentación módulo."
+  - id: "sprint-20260328-021"
+    timestamp: "2026-03-28T00:10:00"
+    agent: Ned (coord) + Homer (dev) + Edna (qa)
+    trigger: sprint
+    workflow: sprint-epic5
+    mode: background-parallel
+    result: STARTED
+    summary: "Sprint Epic 5 — 3 stories en background: 5.1 (algoritmo), 5.2 (display), 5.3 (decisión)."
 
-  - id: "vs-20260327-001"
-    agent: Ned
-    trigger: "/vs"
-    workflow: "validate-story"
-    started: "2026-03-27"
-    completed: "2026-03-27"
-    status: SUCCESS
-    artifacts: []
+  - id: "cr-20260328-053"
+    timestamp: "2026-03-28T14:00:00"
+    completed: "2026-03-28T14:15:00"
+    agent: Homer
+    trigger: CR
+    workflow: code-review
+    mode: VERIFY
+    story: "5-3-builder-decision-registration"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/19"
+    branch: "feat/5-3-builder-decision-registration"
+    result: APPROVED
+    summary: "CR Story 5.3 — Builder Decision Registration. APPROVED sin findings. API route: Zod z.enum(['iterate','scale','abandon']), getUser() (sin getSession()), 409 DECISION_ALREADY_REGISTERED correcto, 404/403 guards, sin Server Actions. lib/api/projects.ts: registerDecision() via fetch, sin imports Supabase directos. DecisionBadge: solo CSS variables, sin hex hardcodeados, full + compact. DecisionDialog: 3 cards seleccionables (no dropdown), type=button, disabled hasta selección, advertencia irreversibilidad, 2 pasos lógicos (selección+confirmación). ProofScoreSidebar: botón solo visible si score disponible, DecisionBadge post-registro. ProjectCard: prop decision? opcional. TypeScript limpio sin any. PR contra develop. 9 tests pasan (iterate/scale/abandon válidos + schema inválido + 409 lógica)."
+    findings:
+      critical: 0
+      minor: 0
+    tests: "9 passed (decisionRegistration.test.ts)"
     errors: []
-    notes: "Story 2-1-create-community validada. 17/17 checks PASS. 1 warning aceptable: AC6 limitado a URL externa (sin upload Storage) — desviación documentada y justificada. ACs trazan a epic-2. Decisiones técnicas consistentes con architecture.md. Veredicto: PASS — lista para DS."
 
-  - id: "cp-20260327-001"
-    agent: Lisa
-    trigger: "/cp"
-    workflow: "create-prd"
-    mode: GENERATE
-    started: "2026-03-27"
-    status: SUCCESS
-    artifacts:
-      - "_bmad-output/planning-artifacts/prd.md"
+  - id: "cr-20260329-042"
+    timestamp: "2026-03-29T07:36:00"
+    completed: "2026-03-29T07:41:00"
+    agent: Homer
+    trigger: CR
+    workflow: code-review
+    mode: VERIFY
+    story: "4-2-feedback-submission-association"
+    pr: "16"
+    branch: "feat/4-2-feedback-submission-association"
+    result: APPROVED
+    summary: "CR Story 4.2 — 10 findings (3 críticos, 7 menores). Fixes aplicados: F1-reviewer_id eliminado del fallback GET, F2-double getUser() eliminado en page.tsx, F3-aria-live funciona con use client en FeedbackCounter, F4-getInitials guard para nombre vacío, F5-typo Aún, F6-error color+role. 138 tests pasan. Push a feat/4-2-feedback-submission-association."
+    findings:
+      critical: 3
+      minor: 7
+    fixes_applied:
+      - "F1: reviewer_id eliminado del select fallback en GET /api/feedback"
+      - "F2: segunda llamada getUser() eliminada en project page"
+      - "F3: FeedbackCounter añade use client para aria-live funcional"
+      - "F4: getInitials() guard para string vacío/espacios"
+      - "F5: typo Aun → Aún en empty state"
+      - "F6: ProjectStateActions error usa color-weak-text + role=alert"
+    tests: "138 passed (11 test files)"
     errors: []
-    notes: "PRD generado desde cero. Artefactos de entrada: Briefing, EARS, HUs, Gherkin."
