@@ -1,12 +1,29 @@
 workflows:
   - id: "ds-20260328-042"
     timestamp: "2026-03-28T23:59:30"
+    completed: "2026-03-29T00:30:00"
     agent: Homer
     trigger: DS
     workflow: dev-story
     mode: GENERATE
     story: "4-2-feedback-submission-association"
-    status: STARTED
+    result: SUCCESS
+    summary: "Story 4.2 — Feedback Submission & Association. GET /api/feedback (builder-only, join defensivo con profiles), getFeedbacks() + FeedbackWithReviewer, FeedbackList (skeleton + empty state + fecha relativa), FeedbackCounter (aria-live), router.refresh() en FeedbackButton, sidebar de feedback en project page con count server-side. 8 tests unitarios de asociacion. 138 tests total, todos pasan. PR #16."
+    artifacts_created:
+      - "components/feedback/FeedbackList.tsx"
+      - "components/feedback/FeedbackCounter.tsx"
+      - "tests/unit/feedback/feedbackValidation.test.ts"
+    artifacts_modified:
+      - "app/api/feedback/route.ts (GET handler añadido)"
+      - "lib/api/feedback.ts (getFeedbacks + FeedbackWithReviewer añadidos)"
+      - "components/feedback/FeedbackButton.tsx (router.refresh + onSuccess prop)"
+      - "app/(app)/communities/[slug]/projects/[id]/page.tsx (sidebar feedback + count)"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    tests: "138 passed (11 test files)"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/16"
+    next_recommended: "Homer, /cr — code review de feat/4-2-feedback-submission-association"
 
   - id: "merge-20260328-epic3"
     timestamp: "2026-03-28T23:59:00"
