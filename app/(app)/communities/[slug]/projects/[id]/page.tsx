@@ -2,7 +2,9 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { DraftBanner } from '@/components/projects/DraftBanner'
-import type { ProjectRow } from '@/lib/types/projects'
+import { StatusBadge } from '@/components/projects/StatusBadge'
+import { InactiveBanner } from '@/components/projects/InactiveBanner'
+import { ProjectStateActions } from '@/components/projects/ProjectStateActions'
 
 interface Props {
   params: Promise<{ slug: string; id: string }>
@@ -15,16 +17,17 @@ export default async function ProjectPage({ params }: Props) {
   const { data: authData, error: authError } = await supabase.auth.getUser()
   if (authError || !authData.user) redirect('/login')
 
+  const { data: { user } } = await supabase.auth.getUser()
+
   const { data: project } = await supabase
     .from('projects')
-    .select('*')
+    .select('id, title, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at')
     .eq('id', id)
     .single()
 
   if (!project) notFound()
 
-  const typedProject = project as ProjectRow
-  const isOwner = typedProject.builder_id === authData.user.id
+  const isOwner = user?.id === project.builder_id
 
   return (
     <main
@@ -37,11 +40,14 @@ export default async function ProjectPage({ params }: Props) {
       <div style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
 
         {/* AC-6: Banner draft — solo visible para el builder */}
-        {typedProject.status === 'draft' && <DraftBanner />}
+        {project.status === 'draft' && <DraftBanner />}
+
+        {/* Banner inactivo */}
+        {project.status === 'inactive' && <InactiveBanner />}
 
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--space-4)' }}>
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
             <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', marginBottom: 'var(--space-1)' }}>
               <Link
                 href={`/communities/${slug}`}
@@ -50,17 +56,20 @@ export default async function ProjectPage({ params }: Props) {
                 Comunidad
               </Link>
             </p>
-            <h1
-              style={{
-                fontSize: 'var(--text-2xl)',
-                fontWeight: 'var(--font-semibold)',
-                color: 'var(--color-text-primary)',
-              }}
-            >
-              {typedProject.title}
-            </h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+              <h1
+                style={{
+                  fontSize: 'var(--text-2xl)',
+                  fontWeight: 'var(--font-semibold)',
+                  color: 'var(--color-text-primary)',
+                }}
+              >
+                {project.title}
+              </h1>
+              <StatusBadge status={project.status as 'draft' | 'live' | 'inactive'} />
+            </div>
           </div>
-          {isOwner && typedProject.status === 'draft' && (
+          {isOwner && project.status === 'draft' && (
             <Link
               href={`/communities/${slug}/projects/${id}/edit`}
               style={{
@@ -82,6 +91,16 @@ export default async function ProjectPage({ params }: Props) {
           )}
         </div>
 
+        {/* Acciones de estado — solo para el builder */}
+        {isOwner && (
+          <ProjectStateActions
+            projectId={project.id}
+            currentStatus={project.status as 'draft' | 'live' | 'inactive'}
+            isBuilder={isOwner}
+            onStatusChange={() => {}}
+          />
+        )}
+
         {/* Problema */}
         <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
           <h2
@@ -94,7 +113,7 @@ export default async function ProjectPage({ params }: Props) {
             Problema
           </h2>
           <p style={{ fontSize: 'var(--text-base)', color: 'var(--color-text-secondary)', lineHeight: 'var(--leading-base)' }}>
-            {typedProject.problem}
+            {project.problem}
           </p>
         </section>
 
@@ -110,7 +129,7 @@ export default async function ProjectPage({ params }: Props) {
             Solución propuesta
           </h2>
           <p style={{ fontSize: 'var(--text-base)', color: 'var(--color-text-secondary)', lineHeight: 'var(--leading-base)' }}>
-            {typedProject.solution}
+            {project.solution}
           </p>
         </section>
 
@@ -136,12 +155,12 @@ export default async function ProjectPage({ params }: Props) {
             Hipótesis
           </h2>
           <p style={{ fontSize: 'var(--text-base)', color: 'var(--color-text-secondary)', lineHeight: 'var(--leading-base)' }}>
-            {typedProject.hypothesis}
+            {project.hypothesis}
           </p>
         </section>
 
-        {/* Imágenes — lista simple (Story 3-2 añadirá ImageGallery completo) */}
-        {typedProject.image_urls.length > 0 && (
+        {/* Imágenes */}
+        {project.image_urls.length > 0 && (
           <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
             <h2
               style={{
@@ -162,7 +181,7 @@ export default async function ProjectPage({ params }: Props) {
                 gap: 'var(--space-2)',
               }}
             >
-              {typedProject.image_urls.map((url, i) => (
+              {project.image_urls.map((url: string, i: number) => (
                 <li key={i}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img

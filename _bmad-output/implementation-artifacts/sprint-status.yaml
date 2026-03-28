@@ -48,7 +48,7 @@ development_status:
   epic-1-retrospective: optional
 
   # ── EPIC 2: Comunidades ──────────────────────────────────────────
-  epic-2: in-progress
+  epic-2: done
   2-1-create-community: done
   2-2-invitation-links-generate-join: done
   2-3-community-access-control-listing: done

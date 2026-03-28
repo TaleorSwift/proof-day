@@ -88,6 +88,34 @@ export async function reorderProjectImages(
   }
 }
 
+// ── Story 3.3: Publish & Manage Project States ────────────────────────────────
+
+export async function publishProject(id: string): Promise<ProjectRow> {
+  const res = await fetch(`/api/projects/${id}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: 'live' }),
+  })
+  if (!res.ok) {
+    const data = await res.json()
+    throw new Error(data.error ?? 'Error al publicar el proyecto')
+  }
+  return (await res.json()).data
+}
+
+export async function deactivateProject(id: string): Promise<ProjectRow> {
+  const res = await fetch(`/api/projects/${id}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: 'inactive' }),
+  })
+  if (!res.ok) {
+    const data = await res.json()
+    throw new Error(data.error ?? 'Error al desactivar el proyecto')
+  }
+  return (await res.json()).data
+}
+
 // ── Story 3.4: Project List ───────────────────────────────────────────────────
 
 export interface ProjectListItem {
