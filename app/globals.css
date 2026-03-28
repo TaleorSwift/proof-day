@@ -150,11 +150,28 @@
   * {
     @apply border-border;
   }
+  textarea {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+  }
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);
     background-color: var(--color-background);
     color: var(--color-text-primary);
+  }
+}
+
+@layer utilities {
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: var(--space-2);
+    z-index: 100;
+  }
+  .skip-link:focus {
+    left: var(--space-4);
   }
 }
 

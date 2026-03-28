@@ -27,11 +27,8 @@ export default async function CommunitiesLayout({ children }: Props) {
       {/* Skip navigation — WCAG 2.4.1 */}
       <a
         href="#main-content"
+        className="skip-link"
         style={{
-          position: 'absolute',
-          left: '-9999px',
-          top: 'var(--space-2)',
-          zIndex: 100,
           padding: 'var(--space-2) var(--space-4)',
           backgroundColor: 'var(--color-primary)',
           color: '#fff',
@@ -40,8 +37,6 @@ export default async function CommunitiesLayout({ children }: Props) {
           fontWeight: 'var(--font-medium)',
           textDecoration: 'none',
         }}
-        onFocus={(e) => { e.currentTarget.style.left = 'var(--space-4)' }}
-        onBlur={(e) => { e.currentTarget.style.left = '-9999px' }}
       >
         Saltar al contenido principal
       </a>
