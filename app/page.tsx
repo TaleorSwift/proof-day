@@ -94,7 +94,7 @@ export default async function HomePage() {
             style={{
               display: 'inline-block',
               backgroundColor: 'var(--color-primary)',
-              color: '#FFFFFF',
+              color: 'var(--color-surface)',
               padding: 'var(--space-4) var(--space-8)',
               borderRadius: 'var(--radius-md)',
               fontSize: 'var(--text-base)',
@@ -315,7 +315,7 @@ export default async function HomePage() {
             style={{
               display: 'inline-block',
               backgroundColor: 'var(--color-accent)',
-              color: '#FFFFFF',
+              color: 'var(--color-surface)',
               padding: 'var(--space-4) var(--space-8)',
               borderRadius: 'var(--radius-md)',
               fontSize: 'var(--text-base)',
@@ -343,7 +343,7 @@ export default async function HomePage() {
             color: 'var(--color-text-muted)',
           }}
         >
-          © 2026 Proof Day ·{' '}
+          © {new Date().getFullYear()} Proof Day ·{' '}
           <a
             href="mailto:hola@proofday.app"
             style={{
