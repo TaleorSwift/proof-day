@@ -155,7 +155,7 @@ export function FeedbackList({ projectId, isBuilder }: FeedbackListProps) {
       {feedbacks.map((feedback) => {
         const reviewerName = feedback.profiles?.name ?? 'Usuario'
         const avatarUrl = feedback.profiles?.avatar_url ?? null
-        const textResponses = (feedback.text_responses ?? {}) as Record<string, string | undefined>
+        const textResponses = (feedback.text_responses as unknown as Record<string, string | undefined>) ?? {}
 
         return (
           <article
