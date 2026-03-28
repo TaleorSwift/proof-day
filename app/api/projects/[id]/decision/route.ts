@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server'
-import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
-
-const decisionSchema = z.object({
-  decision: z.enum(['iterate', 'scale', 'abandon']),
-})
+import { decisionSchema } from '@/lib/validations/projects'
 
 export async function POST(
   request: Request,
@@ -16,7 +12,12 @@ export async function POST(
     return NextResponse.json({ error: 'No autenticado', code: 'AUTH_REQUIRED' }, { status: 401 })
 
   const { id } = await params
-  const body = await request.json()
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Body inválido', code: 'INVALID_BODY' }, { status: 400 })
+  }
   const result = decisionSchema.safeParse(body)
   if (!result.success)
     return NextResponse.json({ error: result.error.issues[0].message, code: 'VALIDATION_ERROR' }, { status: 400 })

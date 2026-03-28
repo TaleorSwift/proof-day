@@ -1,14 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { z } from 'zod'
-
-const decisionSchema = z.object({
-  decision: z.enum(['iterate', 'scale', 'abandon']),
-})
-
-function checkDecisionConflict(existingDecision: string | null): string | null {
-  if (existingDecision !== null) return 'DECISION_ALREADY_REGISTERED'
-  return null
-}
+import { decisionSchema } from '@/lib/validations/projects'
 
 describe('decisionSchema — validacion de entrada', () => {
   it('acepta "iterate" como decision valida', () => {
@@ -37,15 +28,21 @@ describe('decisionSchema — validacion de entrada', () => {
   })
 })
 
-describe('checkDecisionConflict — regla de irreversibilidad', () => {
+describe('irreversibilidad de decisión — regla de negocio', () => {
+  // La regla: `existing.decision !== null` → 409 DECISION_ALREADY_REGISTERED
+  // Testeamos el predicado directamente sin duplicar el handler
+  function isDecisionAlreadyRegistered(existingDecision: string | null): boolean {
+    return existingDecision !== null
+  }
+
   it('no hay conflicto si la decision actual es null', () => {
-    expect(checkDecisionConflict(null)).toBeNull()
+    expect(isDecisionAlreadyRegistered(null)).toBe(false)
   })
-  it('devuelve DECISION_ALREADY_REGISTERED si ya hay una decision', () => {
-    expect(checkDecisionConflict('iterate')).toBe('DECISION_ALREADY_REGISTERED')
+  it('hay conflicto si ya existe una decision', () => {
+    expect(isDecisionAlreadyRegistered('iterate')).toBe(true)
   })
-  it('devuelve DECISION_ALREADY_REGISTERED independientemente del valor previo', () => {
-    expect(checkDecisionConflict('scale')).toBe('DECISION_ALREADY_REGISTERED')
-    expect(checkDecisionConflict('abandon')).toBe('DECISION_ALREADY_REGISTERED')
+  it('hay conflicto independientemente del valor previo', () => {
+    expect(isDecisionAlreadyRegistered('scale')).toBe(true)
+    expect(isDecisionAlreadyRegistered('abandon')).toBe(true)
   })
 })

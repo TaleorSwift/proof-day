@@ -21,3 +21,17 @@ export function calculateProofScore(feedbacks: FeedbackScoresInput[]): ProofScor
 
   return { label, average: Math.round(average * 100) / 100, feedbackCount: feedbacks.length }
 }
+
+export const MIN_FEEDBACKS_FOR_SCORE = MIN_FEEDBACKS
+
+export function getRemainingFeedbacks(feedbackCount: number): number {
+  return Math.max(0, MIN_FEEDBACKS - feedbackCount)
+}
+
+export function getProgressPercentage(feedbackCount: number): number {
+  return (feedbackCount / MIN_FEEDBACKS) * 100
+}
+
+export function getRemainingLabel(remaining: number): string {
+  return `Faltan ${remaining} ${remaining === 1 ? 'feedback' : 'feedbacks'} para tu señal`
+}
