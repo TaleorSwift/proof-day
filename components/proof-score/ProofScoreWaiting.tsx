@@ -1,5 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { Progress } from '@/components/ui/progress'
+import { getRemainingFeedbacks, getProgressPercentage, getRemainingLabel } from '@/lib/utils/proof-score'
 
 interface ProofScoreWaitingProps {
   feedbackCount: number
@@ -11,8 +12,8 @@ export function ProofScoreWaiting({ feedbackCount, isLoading }: ProofScoreWaitin
     return <Skeleton className="h-24 w-full rounded-lg" />
   }
 
-  const remaining = Math.max(0, 3 - feedbackCount)
-  const progress = (feedbackCount / 3) * 100
+  const remaining = getRemainingFeedbacks(feedbackCount)
+  const progress = getProgressPercentage(feedbackCount)
 
   return (
     <div
@@ -33,9 +34,7 @@ export function ProofScoreWaiting({ feedbackCount, isLoading }: ProofScoreWaitin
           margin: 0,
         }}
       >
-        {remaining === 0
-          ? 'Calculando tu Proof Score...'
-          : `Faltan ${remaining} ${remaining === 1 ? 'feedback' : 'feedbacks'} para tu señal`}
+        {remaining === 0 ? 'Calculando tu Proof Score...' : getRemainingLabel(remaining)}
       </p>
 
       <Progress value={progress} />

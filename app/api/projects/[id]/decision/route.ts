@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server'
-import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
-
-const decisionSchema = z.object({
-  decision: z.enum(['iterate', 'scale', 'abandon']),
-})
+import { decisionSchema } from '@/lib/validations/projects'
 
 export async function POST(
   request: Request,

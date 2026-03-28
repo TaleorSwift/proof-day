@@ -23,3 +23,9 @@ export const updateProjectSchema = createProjectSchema.partial().omit({ communit
 
 export type CreateProjectInput = z.infer<typeof createProjectSchema>
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>
+
+export const decisionSchema = z.object({
+  decision: z.enum(['iterate', 'scale', 'abandon']),
+})
+
+export type DecisionInput = z.infer<typeof decisionSchema>

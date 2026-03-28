@@ -1,28 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import type { ProjectListItem } from '@/lib/api/projects'
+import { filterProjectsByVisibility, sortProjectsByCreatedAtDesc } from '@/lib/utils/projects'
 
-// Helpers de filtro que simulan la lógica de visibilidad (equivalente al RLS)
-function filterVisibleProjects(
-  projects: ProjectListItem[],
-  currentUserId: string
-): ProjectListItem[] {
-  return projects.filter((p) => {
-    if (p.status === 'draft') {
-      // Solo el builder ve sus propios drafts
-      return p.builderId === currentUserId
-    }
-    // live e inactive son visibles para todos los miembros
-    return true
-  })
-}
-
-function sortByCreatedAtDesc(projects: ProjectListItem[]): ProjectListItem[] {
-  return [...projects].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  )
-}
-
-// Fixtures
 const BUILDER_ID = 'user-builder-1'
 const OTHER_USER_ID = 'user-other-2'
 
@@ -63,13 +42,12 @@ const projects: ProjectListItem[] = [
 
 describe('projectList — visibilidad', () => {
   it('un usuario NO ve los proyectos draft de otros builders', () => {
-    const visible = filterVisibleProjects(projects, BUILDER_ID)
-    const otherDraft = visible.find((p) => p.id === 'proj-draft-other')
-    expect(otherDraft).toBeUndefined()
+    const visible = filterProjectsByVisibility(projects, BUILDER_ID)
+    expect(visible.find((p) => p.id === 'proj-draft-other')).toBeUndefined()
   })
 
   it('el builder SÍ ve sus propios proyectos draft', () => {
-    const visible = filterVisibleProjects(projects, BUILDER_ID)
+    const visible = filterProjectsByVisibility(projects, BUILDER_ID)
     const ownDraft = visible.find((p) => p.id === 'proj-draft-own')
     expect(ownDraft).toBeDefined()
     expect(ownDraft?.status).toBe('draft')
@@ -77,8 +55,8 @@ describe('projectList — visibilidad', () => {
   })
 
   it('todos los miembros ven proyectos live e inactive', () => {
-    const visibleAsBuilder = filterVisibleProjects(projects, BUILDER_ID)
-    const visibleAsOther = filterVisibleProjects(projects, OTHER_USER_ID)
+    const visibleAsBuilder = filterProjectsByVisibility(projects, BUILDER_ID)
+    const visibleAsOther = filterProjectsByVisibility(projects, OTHER_USER_ID)
 
     expect(visibleAsBuilder.find((p) => p.id === 'proj-live')).toBeDefined()
     expect(visibleAsBuilder.find((p) => p.id === 'proj-inactive')).toBeDefined()
@@ -88,23 +66,21 @@ describe('projectList — visibilidad', () => {
 
   it('un usuario sin proyectos propios no ve ningún draft', () => {
     const thirdUser = 'user-third-3'
-    const visible = filterVisibleProjects(projects, thirdUser)
-    const drafts = visible.filter((p) => p.status === 'draft')
-    expect(drafts).toHaveLength(0)
+    const visible = filterProjectsByVisibility(projects, thirdUser)
+    expect(visible.filter((p) => p.status === 'draft')).toHaveLength(0)
   })
 })
 
 describe('projectList — ordenación', () => {
   it('los proyectos se ordenan por createdAt descendente (más reciente primero)', () => {
-    const sorted = sortByCreatedAtDesc(projects)
-    // El primer elemento debe ser el más reciente
+    const sorted = sortProjectsByCreatedAtDesc(projects)
     expect(sorted[0].createdAt > sorted[1].createdAt).toBe(true)
     expect(sorted[1].createdAt > sorted[2].createdAt).toBe(true)
     expect(sorted[2].createdAt > sorted[3].createdAt).toBe(true)
   })
 
   it('el proyecto más reciente (live) aparece en primera posición', () => {
-    const sorted = sortByCreatedAtDesc(projects)
+    const sorted = sortProjectsByCreatedAtDesc(projects)
     expect(sorted[0].id).toBe('proj-live')
   })
 })
