@@ -2,10 +2,10 @@ import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 // Rutas publicas exactas (sin subrutas)
-const PUBLIC_EXACT_PATHS = ["/"];
+const PUBLIC_EXACT_PATHS = ["/", "/login"];
 
 // Rutas publicas con subrutas permitidas (prefijo)
-const PUBLIC_PREFIX_PATHS = ["/auth", "/invite"];
+const PUBLIC_PREFIX_PATHS = ["/auth/confirm", "/auth/callback", "/invite"];
 
 export function isPublicPath(pathname: string): boolean {
   if (PUBLIC_EXACT_PATHS.includes(pathname)) return true;
