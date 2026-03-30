@@ -14,6 +14,7 @@ const eslintConfig = [
   {
     ignores: [
       ".next/**",
+      ".vercel/**",
       "node_modules/**",
       "storybook-static/**",
       "_bmad/**",
