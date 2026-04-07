@@ -1,13 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { mockServerClient } from "@/lib/mock/supabase";
 
 export async function createClient() {
-  if (process.env.MOCK_MODE === "true") {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return mockServerClient() as any as ReturnType<typeof createServerClient>;
-  }
-
   const cookieStore = await cookies();
 
   return createServerClient(
