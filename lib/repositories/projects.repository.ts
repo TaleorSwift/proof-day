@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import type { ProjectRow } from '@/lib/types/projects'
 
 type SupabaseClient = Awaited<ReturnType<typeof createClient>>
 
@@ -13,11 +14,12 @@ export function createProjectsRepository(supabase: SupabaseClient) {
     },
 
     async findById(projectId: string, fields = 'id, status, builder_id, community_id, decision') {
-      return supabase
+      const result = await supabase
         .from('projects')
         .select(fields)
         .eq('id', projectId)
         .single()
+      return { data: result.data as ProjectRow | null, error: result.error }
     },
 
     async create(data: {
