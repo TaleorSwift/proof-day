@@ -557,3 +557,31 @@ workflows:
       - "F6: ProjectStateActions error usa color-weak-text + role=alert"
     tests: "138 passed (11 test files)"
     errors: []
+
+  - id: "infra-20260409-local-auth"
+    timestamp: "2026-04-09T00:00:00"
+    completed: "2026-04-09T12:00:00"
+    agent: BMad Master (directo)
+    trigger: manual
+    workflow: infra-debug
+    mode: VERIFY
+    result: SUCCESS
+    summary: "Fix GoTrue NULL scan en seed.sql + fix PKCE magic link flow + fix middleware redirect loop. PR #37 mergeado a develop. Trunk simplificado a main (PR #38, develop eliminada)."
+    artifacts_modified:
+      - "supabase/seed.sql"
+      - "app/(auth)/login/actions.ts"
+      - "middleware.ts"
+      - ".mcp.json"
+      - ".gitignore"
+      - ".github/workflows/ci.yml"
+      - "CLAUDE.md"
+      - "docs/project/modules/infraestructura-base.md"
+    errors:
+      - "GoTrue 500: confirmation_token NULL → fix: columnas token seed con ''"
+      - "GoTrue 500: email_change NULL → fix: email_change seed con ''"
+      - "ERR_TOO_MANY_REDIRECTS: middleware redirigía a /auth/login (no público) → fix: /login"
+      - "Magic link → login en vez de auth: PKCE code va a /auth/callback, no /auth/confirm"
+      - "GitHub push protection: sb_secret_* en .mcp.json → fix: placeholder en commit"
+    decisions:
+      - "Trunk simplificado de main+develop a main único — un solo entorno, flujo más simple"
+      - "PR #37: feat/supabase-local-setup → develop | PR #38: develop → main"

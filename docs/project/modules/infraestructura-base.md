@@ -12,7 +12,7 @@ Sin esta infraestructura ningun modulo funcional puede implementarse.
 - Los colores, espaciados, tipografia y radios se definen en `docs/project/design-tokens.md` y se acceden via CSS variables — sin valores hardcodeados (story 1.1)
 - Los componentes de `components/ui/` (shadcn/ui) son intocables — se usan sin modificar, se extienden con wrappers si es necesario (story 1.1)
 - Los commits siguen Conventional Commits — mensajes que no cumplan son rechazados automaticamente por Husky (story 1.1)
-- El desarrollo va en ramas `feat/{story-key}-descripcion` desde `develop` — nunca directo a `main` (story 1.1)
+- El desarrollo va en ramas `feat/{story-key}-descripcion` desde `main` — un único trunk (story 1.1, actualizado 2026-04-09)
 
 ## Reglas de comportamiento (arquitectura — Arch Fase 3)
 - Todos los API routes usan `requireAuth()` de `lib/api/middleware/require-auth.ts` — nunca duplican el pattern auth inline (Arch Fase 3)
