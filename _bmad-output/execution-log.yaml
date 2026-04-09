@@ -28,6 +28,7 @@ workflows:
 
   - id: "bart-QD-20260409-story-8-2-atomic-components"
     timestamp: "2026-04-09T12:00:00"
+    completed: "2026-04-09T13:00:00"
     agent: "Bart"
     trigger: "QD"
     workflow: "quick-dev"
