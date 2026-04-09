@@ -24,9 +24,9 @@ export async function middleware(request: NextRequest) {
 
   const { response, user } = await updateSession(request);
 
-  // Sin sesion → redirect a /auth/login
+  // Sin sesion → redirect a /login
   if (!user) {
-    const loginUrl = new URL("/auth/login", request.url);
+    const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
 

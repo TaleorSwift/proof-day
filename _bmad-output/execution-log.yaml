@@ -1,4 +1,46 @@
 workflows:
+  - id: "infra-20260407-remove-mock"
+    timestamp: "2026-04-07T00:00:00"
+    completed: "2026-04-07T00:00:00"
+    agent: "BMad Master (sesión directa)"
+    trigger: "manual"
+    workflow: "infra-cleanup"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    summary: "Eliminación completa del sistema mock en memoria. Borrados lib/mock/data.ts y lib/mock/supabase.ts. Simplificados lib/supabase/server.ts, client.ts y middleware.ts (sin ramas MOCK_MODE). Actualizado .env.example sin sección mock."
+    artifacts_deleted:
+      - "lib/mock/data.ts"
+      - "lib/mock/supabase.ts"
+    artifacts_modified:
+      - "lib/supabase/server.ts"
+      - "lib/supabase/client.ts"
+      - "lib/supabase/middleware.ts"
+      - ".env.example"
+    errors: []
+    next_recommended: "npm run supabase:start para validar entorno local"
+
+  - id: "infra-20260407-supabase-local"
+    timestamp: "2026-04-07T00:00:00"
+    completed: "2026-04-07T00:00:00"
+    agent: "BMad Master (sesión directa)"
+    trigger: "manual"
+    workflow: "infra-setup"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    summary: "Setup infraestructura local con Supabase CLI + Docker. Creado supabase/config.toml (puertos, auth sin confirmación, storage). Creado supabase/seed.sql (2 usuarios, 2 communities, 3 projects, 1 feedback, 1 invitation_link — datos del mock adaptados al schema real). Añadido supabase como devDependency. Scripts supabase:start/stop/reset/status en package.json. Eliminado script dev:mock. Único punto de entrada: npm run dev con .env.local. Documentado en docs/project/modules/local-development.md."
+    artifacts_created:
+      - "supabase/config.toml"
+      - "supabase/seed.sql"
+      - "docs/project/modules/local-development.md"
+    artifacts_modified:
+      - "package.json"
+      - ".env.example"
+      - ".gitignore"
+    artifacts_deleted:
+      - ".env.mock"
+    errors: []
+    next_recommended: "Verificar con npm run supabase:start y npm run supabase:reset"
+
   - id: "bart-QD-20260328-middleware-login-fix"
     timestamp: "2026-03-28T23:59:00"
     completed: "2026-03-29T00:05:00"
