@@ -1,4 +1,16 @@
 workflows:
+  - id: "bart-QD-20260409-story-8-1-db-migration"
+    timestamp: "2026-04-09T12:00:00"
+    agent: "Bart"
+    trigger: "QD"
+    workflow: "quick-flow (QS+QD)"
+    mode: "GENERATE"
+    story: "8.1 — Migración DB: nuevos campos de proyecto"
+    baseline_commit: "c429c3fe46ea25392e1d38e1ce7003b24d34bc42"
+    result: "STARTED"
+    summary: "Story 8.1 — Migración DB con target_user, demo_url, feedback_topics. Migración SQL + tipos TS + formulario + detalle de proyecto."
+
+
   - id: "infra-20260407-remove-mock"
     timestamp: "2026-04-07T00:00:00"
     completed: "2026-04-07T00:00:00"

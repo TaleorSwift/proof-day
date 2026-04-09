@@ -61,6 +61,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     solution?: string
     hypothesis?: string
     image_urls?: string[]
+    // Story 8.1 — campos opcionales (null para borrar, string/array para actualizar)
+    target_user?: string | null
+    demo_url?: string | null
+    feedback_topics?: string[] | null
     updated_at: string
   } = { updated_at: new Date().toISOString() }
 
@@ -69,6 +73,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   if (result.data.solution !== undefined) updateFields.solution = result.data.solution
   if (result.data.hypothesis !== undefined) updateFields.hypothesis = result.data.hypothesis
   if (result.data.imageUrls !== undefined) updateFields.image_urls = result.data.imageUrls
+  // Story 8.1 — campos opcionales: se pasa null explícitamente para permitir borrar el valor
+  if (result.data.targetUser !== undefined) updateFields.target_user = result.data.targetUser || null
+  if (result.data.demoUrl !== undefined) updateFields.demo_url = result.data.demoUrl || null
+  if (result.data.feedbackTopics !== undefined)
+    updateFields.feedback_topics = result.data.feedbackTopics?.length ? result.data.feedbackTopics : null
 
   const { data: project, error } = await supabase
     .from('projects')

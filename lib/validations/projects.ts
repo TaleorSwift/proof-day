@@ -17,6 +17,12 @@ export const createProjectSchema = z.object({
     .min(1, 'Debes añadir al menos una imagen')
     .max(5, 'No puedes añadir más de 5 imágenes'),
   communityId: z.string().uuid(),
+  // Story 8.1 — campos opcionales de detalle
+  targetUser: z.string().max(300, 'El usuario objetivo no puede superar 300 caracteres').optional(),
+  demoUrl: z.string().url('La URL de demo no es válida').optional().or(z.literal('')),
+  feedbackTopics: z.array(
+    z.string().min(1).max(100, 'Cada tema no puede superar 100 caracteres')
+  ).max(10, 'No puedes añadir más de 10 temas').optional(),
 })
 
 export const updateProjectSchema = createProjectSchema.partial().omit({ communityId: true })

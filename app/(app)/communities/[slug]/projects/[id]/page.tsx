@@ -25,7 +25,7 @@ export default async function ProjectPage({ params }: Props) {
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id, title, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at, decision')
+    .select('id, title, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at, decision, target_user, demo_url, feedback_topics')
     .eq('id', id)
     .single()
 
@@ -198,6 +198,92 @@ export default async function ProjectPage({ params }: Props) {
                 {project.hypothesis}
               </p>
             </section>
+
+            {/* Usuario objetivo — Story 8.1 */}
+            {project.target_user && (
+              <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                <h2
+                  style={{
+                    fontSize: 'var(--text-base)',
+                    fontWeight: 'var(--font-semibold)',
+                    color: 'var(--color-text-primary)',
+                  }}
+                >
+                  Usuario objetivo
+                </h2>
+                <p style={{ fontSize: 'var(--text-base)', color: 'var(--color-text-secondary)', lineHeight: 'var(--leading-base)' }}>
+                  {project.target_user}
+                </p>
+              </section>
+            )}
+
+            {/* URL de demo — Story 8.1 */}
+            {project.demo_url && (
+              <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                <h2
+                  style={{
+                    fontSize: 'var(--text-base)',
+                    fontWeight: 'var(--font-semibold)',
+                    color: 'var(--color-text-primary)',
+                  }}
+                >
+                  Demo
+                </h2>
+                <a
+                  href={project.demo_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: 'var(--text-base)',
+                    color: 'var(--color-accent)',
+                    wordBreak: 'break-all',
+                  }}
+                >
+                  {project.demo_url}
+                </a>
+              </section>
+            )}
+
+            {/* Temas de feedback — Story 8.1 */}
+            {Array.isArray(project.feedback_topics) && project.feedback_topics.length > 0 && (
+              <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                <h2
+                  style={{
+                    fontSize: 'var(--text-base)',
+                    fontWeight: 'var(--font-semibold)',
+                    color: 'var(--color-text-primary)',
+                  }}
+                >
+                  Temas de feedback
+                </h2>
+                <ul
+                  style={{
+                    listStyle: 'none',
+                    padding: 0,
+                    margin: 0,
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: 'var(--space-2)',
+                  }}
+                >
+                  {(project.feedback_topics as string[]).map((topic: string, i: number) => (
+                    <li
+                      key={i}
+                      style={{
+                        padding: 'var(--space-1) var(--space-3)',
+                        backgroundColor: 'var(--color-surface)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 'var(--radius-full)',
+                        fontSize: 'var(--text-sm)',
+                        color: 'var(--color-text-secondary)',
+                      }}
+                    >
+                      {topic}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
             {/* Imagenes */}
             {project.image_urls.length > 0 && (

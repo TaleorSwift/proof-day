@@ -74,6 +74,10 @@ export async function POST(request: Request) {
     solution: projectData.solution,
     hypothesis: projectData.hypothesis,
     imageUrls: projectData.imageUrls ?? [],
+    // Story 8.1 — campos opcionales
+    ...(projectData.targetUser && { targetUser: projectData.targetUser }),
+    ...(projectData.demoUrl && { demoUrl: projectData.demoUrl }),
+    ...(projectData.feedbackTopics?.length && { feedbackTopics: projectData.feedbackTopics }),
   })
 
   if (error || !project)

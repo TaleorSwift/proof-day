@@ -28,6 +28,10 @@ export function createProjectsRepository(supabase: SupabaseClient) {
       solution: string
       hypothesis: string
       imageUrls: string[]
+      // Story 8.1 — campos opcionales
+      targetUser?: string
+      demoUrl?: string
+      feedbackTopics?: string[]
     }) {
       return supabase
         .from('projects')
@@ -40,6 +44,10 @@ export function createProjectsRepository(supabase: SupabaseClient) {
           hypothesis: data.hypothesis,
           image_urls: data.imageUrls,
           status: 'draft',
+          // Story 8.1 — campos opcionales (undefined no se envía a Supabase)
+          ...(data.targetUser !== undefined && { target_user: data.targetUser }),
+          ...(data.demoUrl !== undefined && { demo_url: data.demoUrl }),
+          ...(data.feedbackTopics !== undefined && { feedback_topics: data.feedbackTopics }),
         })
         .select()
         .single()
