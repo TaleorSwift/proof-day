@@ -14,11 +14,15 @@ const SIZE_STYLES: Record<AvatarSize, CSSProperties> = {
   lg: { width: 48, height: 48, fontSize: 'var(--text-base)' },
 }
 
+// Paleta de colores para avatares — seleccionados para contraste y variedad visual.
+// Los valores hex se usan directamente en inline styles (no se pueden usar var() aquí).
+// #F97316 = primary, #15803D = promising-text, #B45309 = needs-text (mismos valores que tokens).
+// Los 4 restantes extienden la paleta más allá de los tokens semánticos existentes.
 const AVATAR_PALETTE: string[] = [
   '#F97316', // naranja — color-primary
   '#15803D', // verde — color-promising-text
   '#B45309', // ámbar — color-needs-text
-  '#2563EB', // azul
+  '#2563EB', // azul — color-insight-text
   '#7C3AED', // violeta
   '#DB2777', // rosa
   '#0891B2', // cyan

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { ContentTag } from '@/components/ui/ContentTag'
+import { ContentTag } from '@/components/shared/ContentTag'
 
 const meta: Meta<typeof ContentTag> = {
   title: 'shared/ContentTag',

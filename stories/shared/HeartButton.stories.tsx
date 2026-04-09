@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { HeartButton } from '@/components/ui/HeartButton'
+import { HeartButton } from '@/components/shared/HeartButton'
 
 const meta: Meta<typeof HeartButton> = {
   title: 'shared/HeartButton',

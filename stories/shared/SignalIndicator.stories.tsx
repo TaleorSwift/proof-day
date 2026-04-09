@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { SignalIndicator } from '@/components/ui/SignalIndicator'
+import { SignalIndicator } from '@/components/shared/SignalIndicator'
 
 const meta: Meta<typeof SignalIndicator> = {
   title: 'shared/SignalIndicator',
