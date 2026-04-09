@@ -20,15 +20,30 @@ Sin esta infraestructura ningun modulo funcional puede implementarse.
 - La lógica de negocio va en services en `lib/services/` — los route handlers son thin controllers (~50 líneas) (Arch Fase 3)
 - Utilidades de UI (`getRelativeTime`, `getInitials`) van en `lib/utils/` — nunca inline en componentes (Arch Fase 3)
 
+## Entornos de desarrollo
+
+Único comando: `npm run dev`. El entorno lo determina `.env.local`:
+
+| Entorno | `NEXT_PUBLIC_SUPABASE_URL` |
+|---------|---------------------------|
+| Supabase local (Docker) | `http://127.0.0.1:54321` |
+| Supabase remoto | `https://xxx.supabase.co` |
+
+No existe mock mode ni scripts `dev:*` adicionales. Ver `docs/project/modules/local-development.md` para setup completo.
+
 ## Ficheros clave
 - `lib/supabase/client.ts` — client para Client Components
 - `lib/supabase/server.ts` — client para Server Components y API Routes
+- `lib/supabase/middleware.ts` — session refresh para middleware de Next.js
 - `lib/api/middleware/require-auth.ts` — auth middleware compartido para API routes
 - `lib/repositories/` — capa de acceso a datos (5 repositorios)
 - `lib/services/` — capa de lógica de negocio (3 servicios)
 - `lib/utils/date.ts`, `lib/utils/string.ts` — utilidades compartidas
-- `middleware.ts` — auth gate (placeholder hasta story 1.3)
+- `middleware.ts` — auth gate Next.js
 - `app/globals.css` — design tokens CSS custom properties
+- `supabase/config.toml` — configuración Supabase CLI para entorno local
+- `supabase/seed.sql` — datos de muestra para entorno local
+- `supabase/migrations/` — 10 migraciones SQL (schema completo)
 
 ## Ultima actualizacion
-Story 1.1 — 2026-03-27 | Arch Fase 3 — 2026-03-28
+Story 1.1 — 2026-03-27 | Arch Fase 3 — 2026-03-28 | Infra local + eliminación mock — 2026-04-07

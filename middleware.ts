@@ -5,7 +5,7 @@ import { updateSession } from "@/lib/supabase/middleware";
 const PUBLIC_EXACT_PATHS = ["/", "/login"];
 
 // Rutas publicas con subrutas permitidas (prefijo)
-const PUBLIC_PREFIX_PATHS = ["/auth/confirm", "/auth/callback", "/invite"];
+const PUBLIC_PREFIX_PATHS = ["/auth/confirm", "/auth/callback", "/auth/error", "/invite"];
 
 export function isPublicPath(pathname: string): boolean {
   if (PUBLIC_EXACT_PATHS.includes(pathname)) return true;
@@ -24,9 +24,9 @@ export async function middleware(request: NextRequest) {
 
   const { response, user } = await updateSession(request);
 
-  // Sin sesion → redirect a /auth/login
+  // Sin sesion → redirect a /login
   if (!user) {
-    const loginUrl = new URL("/auth/login", request.url);
+    const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
 
