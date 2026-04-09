@@ -127,12 +127,12 @@ Si `story_tracking.enabled: true` en config.yaml:
 ## Git
 
 - Política de Git: `_bmad/bmm/data/git-policy.md` — leer SIEMPRE antes de operar con Git
-- Dos ramas troncales: `main` (producción) y `develop` (desarrollo)
-- Todo desarrollo en ramas `feat/{story-key}-descripcion` desde `develop`
-- PR SIEMPRE contra `develop`, NUNCA contra `main`
+- Una sola rama troncal: `main` (producción)
+- Todo desarrollo en ramas `feat/{story-key}-descripcion` desde `main`
+- PR SIEMPRE contra `main`
 - Conventional Commits para mensajes de commit
 - Mergear solo con aprobación explícita del usuario
-- Release: `/release` (PR develop→main + tag semver + deploy automático)
+- Release: `/release` (tag semver en `main` + deploy automático)
 
 ## Ciclo de implementación
 
