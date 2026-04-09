@@ -325,7 +325,7 @@ export function ProjectForm({
           >
             {feedbackTopics.map((topic, i) => (
               <li
-                key={i}
+                key={topic}
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',

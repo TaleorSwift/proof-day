@@ -74,7 +74,9 @@ export async function POST(request: Request) {
     solution: projectData.solution,
     hypothesis: projectData.hypothesis,
     imageUrls: projectData.imageUrls ?? [],
-    // Story 8.1 — campos opcionales
+    // En create: se omiten campos vacíos (Supabase usará NULL por defecto)
+    // En update (route [id]): se envía null explícito para borrar el valor almacenado
+    // Esta asimetría es intencional — ver app/api/projects/[id]/route.ts
     ...(projectData.targetUser && { targetUser: projectData.targetUser }),
     ...(projectData.demoUrl && { demoUrl: projectData.demoUrl }),
     ...(projectData.feedbackTopics?.length && { feedbackTopics: projectData.feedbackTopics }),

@@ -266,9 +266,9 @@ export default async function ProjectPage({ params }: Props) {
                     gap: 'var(--space-2)',
                   }}
                 >
-                  {(project.feedback_topics as string[]).map((topic: string, i: number) => (
+                  {project.feedback_topics.map((topic, i) => (
                     <li
-                      key={i}
+                      key={topic}
                       style={{
                         padding: 'var(--space-1) var(--space-3)',
                         backgroundColor: 'var(--color-surface)',

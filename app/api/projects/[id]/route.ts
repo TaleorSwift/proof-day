@@ -74,8 +74,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   if (result.data.hypothesis !== undefined) updateFields.hypothesis = result.data.hypothesis
   if (result.data.imageUrls !== undefined) updateFields.image_urls = result.data.imageUrls
   // Story 8.1 — campos opcionales: se pasa null explícitamente para permitir borrar el valor
-  if (result.data.targetUser !== undefined) updateFields.target_user = result.data.targetUser || null
-  if (result.data.demoUrl !== undefined) updateFields.demo_url = result.data.demoUrl || null
+  if (result.data.targetUser !== undefined) updateFields.target_user = result.data.targetUser !== '' ? result.data.targetUser : null
+  if (result.data.demoUrl !== undefined) updateFields.demo_url = result.data.demoUrl !== '' ? result.data.demoUrl : null
   if (result.data.feedbackTopics !== undefined)
     updateFields.feedback_topics = result.data.feedbackTopics?.length ? result.data.feedbackTopics : null
 
