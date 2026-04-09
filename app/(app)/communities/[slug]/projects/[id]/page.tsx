@@ -266,7 +266,7 @@ export default async function ProjectPage({ params }: Props) {
                     gap: 'var(--space-2)',
                   }}
                 >
-                  {project.feedback_topics.map((topic, i) => (
+                  {project.feedback_topics.map(topic => (
                     <li
                       key={topic}
                       style={{
