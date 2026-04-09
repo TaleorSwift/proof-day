@@ -54,14 +54,14 @@ export const getUserCommunities = cache(async (userId: string): Promise<Communit
   )
 
   return communities.map((c: Record<string, unknown>) => ({
-    id: c.id,
-    name: c.name,
-    slug: c.slug,
-    description: c.description,
-    image_url: c.image_url,
-    created_by: c.created_by,
-    created_at: c.created_at,
-    updated_at: c.updated_at,
+    id: c.id as string,
+    name: c.name as string,
+    slug: c.slug as string,
+    description: c.description as string,
+    image_url: c.image_url as string | null,
+    created_by: c.created_by as string,
+    created_at: c.created_at as string,
+    updated_at: c.updated_at as string,
     member_count: memberCounts[c.id as string] ?? 0,
   }))
 })

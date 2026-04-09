@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import type { ProjectRow } from '@/lib/types/projects'
 
 type SupabaseClient = Awaited<ReturnType<typeof createClient>>
 
@@ -13,11 +14,12 @@ export function createProjectsRepository(supabase: SupabaseClient) {
     },
 
     async findById(projectId: string, fields = 'id, status, builder_id, community_id, decision') {
-      return supabase
+      const result = await supabase
         .from('projects')
         .select(fields)
         .eq('id', projectId)
         .single()
+      return { data: result.data as ProjectRow | null, error: result.error }
     },
 
     async create(data: {
@@ -28,6 +30,10 @@ export function createProjectsRepository(supabase: SupabaseClient) {
       solution: string
       hypothesis: string
       imageUrls: string[]
+      // Story 8.1 — campos opcionales
+      targetUser?: string
+      demoUrl?: string
+      feedbackTopics?: string[]
     }) {
       return supabase
         .from('projects')
@@ -40,6 +46,10 @@ export function createProjectsRepository(supabase: SupabaseClient) {
           hypothesis: data.hypothesis,
           image_urls: data.imageUrls,
           status: 'draft',
+          // Story 8.1 — campos opcionales (undefined no se envía a Supabase)
+          ...(data.targetUser !== undefined && { target_user: data.targetUser }),
+          ...(data.demoUrl !== undefined && { demo_url: data.demoUrl }),
+          ...(data.feedbackTopics !== undefined && { feedback_topics: data.feedbackTopics }),
         })
         .select()
         .single()

@@ -62,12 +62,12 @@ export default async function CommunityPage({ params }: Props) {
 
   // Mapear rows de Supabase a ProjectListItem (camelCase)
   const projects: ProjectListItem[] = (projectRows ?? []).map((r: Record<string, unknown>) => ({
-    id: r.id,
-    title: r.title,
-    imageUrls: r.image_urls,
+    id: r.id as string,
+    title: r.title as string,
+    imageUrls: r.image_urls as string[],
     status: r.status as 'draft' | 'live' | 'inactive',
-    builderId: r.builder_id,
-    createdAt: r.created_at,
+    builderId: r.builder_id as string,
+    createdAt: r.created_at as string,
   }))
 
   return (

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -21,8 +22,9 @@ interface ProjectFormProps {
   defaultValues?: ProjectRow
 }
 
-// For the form we omit imageUrls — images are managed via the ImageGallery component (Story 3.2)
-const projectFormSchema = createProjectSchema.omit({ imageUrls: true })
+// Para el formulario omitimos imageUrls (gestión via ImageGallery, Story 3.2)
+// y feedbackTopics (gestión via estado local con lista dinámica de chips)
+const projectFormSchema = createProjectSchema.omit({ imageUrls: true, feedbackTopics: true })
 type FormValues = z.infer<typeof projectFormSchema>
 
 export function ProjectForm({
@@ -33,6 +35,12 @@ export function ProjectForm({
 }: ProjectFormProps) {
   const router = useRouter()
   const isEdit = !!projectId
+
+  // Estado local para temas de feedback (gestionado fuera de RHF por ser lista dinámica)
+  const [feedbackTopics, setFeedbackTopics] = useState<string[]>(
+    defaultValues?.feedback_topics ?? []
+  )
+  const [topicInput, setTopicInput] = useState('')
 
   const {
     register,
@@ -47,6 +55,8 @@ export function ProjectForm({
           solution: defaultValues.solution,
           hypothesis: defaultValues.hypothesis,
           communityId,
+          targetUser: defaultValues.target_user ?? '',
+          demoUrl: defaultValues.demo_url ?? '',
         }
       : {
           title: '',
@@ -54,6 +64,8 @@ export function ProjectForm({
           solution: '',
           hypothesis: '',
           communityId,
+          targetUser: '',
+          demoUrl: '',
         },
   })
 
@@ -66,18 +78,44 @@ export function ProjectForm({
       : `${supabaseUrl}/storage/v1/object/public/${PROJECT_IMAGES_BUCKET}/${path}`,
   }))
 
+  const addTopic = () => {
+    const trimmed = topicInput.trim()
+    if (!trimmed || feedbackTopics.includes(trimmed) || feedbackTopics.length >= 10) return
+    setFeedbackTopics((prev) => [...prev, trimmed])
+    setTopicInput('')
+  }
+
+  const removeTopic = (index: number) => {
+    setFeedbackTopics((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const handleTopicKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      addTopic()
+    }
+  }
+
   const onSubmit = async (data: FormValues) => {
     try {
+      // Normalizar campos opcionales: string vacío → undefined para no enviar valores vacíos
+      const normalizedData = {
+        ...data,
+        targetUser: data.targetUser?.trim() || undefined,
+        demoUrl: data.demoUrl?.trim() || undefined,
+        feedbackTopics: feedbackTopics.length > 0 ? feedbackTopics : undefined,
+      }
+
       if (isEdit && projectId) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { communityId: _cid, ...updateData } = data
+        const { communityId: _cid, ...updateData } = normalizedData
         await updateProject(projectId, updateData)
         router.refresh()
       } else {
-        // Create project with empty imageUrls — images are uploaded after creation (Story 3.2 Dev Notes)
-        const fullData: CreateProjectInput = { ...data, imageUrls: [] }
+        // Crear proyecto con imageUrls vacío — las imágenes se suben tras la creación (Story 3.2)
+        const fullData: CreateProjectInput = { ...normalizedData, imageUrls: [] }
         const project = await createProject(fullData)
-        // Redirect to edit page so the builder can upload images immediately
+        // Redirigir a edición para que el builder pueda subir imágenes de inmediato
         router.push(`/communities/${communitySlug}/projects/${project.id}/edit`)
       }
     } catch (err) {
@@ -178,6 +216,150 @@ export function ProjectForm({
           <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-destructive, #dc2626)' }} role="alert">
             {errors.hypothesis.message}
           </p>
+        )}
+      </div>
+
+      {/* Separador — sección de campos opcionales */}
+      <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 'var(--space-4)' }}>
+        <p
+          style={{
+            fontSize: 'var(--text-sm)',
+            fontWeight: 'var(--font-semibold)',
+            color: 'var(--color-text-primary)',
+            margin: '0 0 var(--space-1)',
+          }}
+        >
+          Información adicional
+        </p>
+        <p
+          style={{
+            fontSize: 'var(--text-xs)',
+            color: 'var(--color-text-muted)',
+            margin: 0,
+          }}
+        >
+          Campos opcionales que ayudan a los Reviewers a darte feedback más específico
+        </p>
+      </div>
+
+      {/* Usuario objetivo — Story 8.1 */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+        <Label htmlFor="targetUser">Usuario objetivo</Label>
+        <Input
+          id="targetUser"
+          placeholder="Ej: freelancers de diseño, equipos de startups early-stage..."
+          aria-invalid={!!errors.targetUser}
+          {...register('targetUser')}
+        />
+        {errors.targetUser && (
+          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-destructive, #dc2626)' }} role="alert">
+            {errors.targetUser.message}
+          </p>
+        )}
+      </div>
+
+      {/* URL de demo — Story 8.1 */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+        <Label htmlFor="demoUrl">URL de demo</Label>
+        <Input
+          id="demoUrl"
+          type="url"
+          placeholder="https://..."
+          aria-invalid={!!errors.demoUrl}
+          {...register('demoUrl')}
+        />
+        {errors.demoUrl && (
+          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-destructive, #dc2626)' }} role="alert">
+            {errors.demoUrl.message}
+          </p>
+        )}
+      </div>
+
+      {/* Temas de feedback — Story 8.1 */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+        <Label htmlFor="topicInput">Temas de feedback</Label>
+        <p
+          style={{
+            fontSize: 'var(--text-xs)',
+            color: 'var(--color-text-muted)',
+            margin: 0,
+          }}
+        >
+          Escribe un tema y pulsa Enter o &ldquo;Añadir&rdquo; (máximo 10)
+        </p>
+        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+          <Input
+            id="topicInput"
+            placeholder="Ej: usabilidad, precio, onboarding..."
+            value={topicInput}
+            onChange={(e) => setTopicInput(e.target.value)}
+            onKeyDown={handleTopicKeyDown}
+            style={{ flex: 1 }}
+          />
+          <Button
+            type="button"
+            onClick={addTopic}
+            disabled={!topicInput.trim() || feedbackTopics.length >= 10}
+            style={{
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              color: 'var(--color-text-primary)',
+              flexShrink: 0,
+            }}
+          >
+            Añadir
+          </Button>
+        </div>
+
+        {feedbackTopics.length > 0 && (
+          <ul
+            aria-label="Temas de feedback añadidos"
+            style={{
+              listStyle: 'none',
+              padding: 0,
+              margin: 0,
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 'var(--space-2)',
+            }}
+          >
+            {feedbackTopics.map((topic, i) => (
+              <li
+                key={topic}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-1)',
+                  padding: 'var(--space-1) var(--space-3)',
+                  backgroundColor: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-full)',
+                  fontSize: 'var(--text-sm)',
+                  color: 'var(--color-text-primary)',
+                }}
+              >
+                {topic}
+                <button
+                  type="button"
+                  aria-label={`Eliminar tema: ${topic}`}
+                  onClick={() => removeTopic(i)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--color-text-muted)',
+                    fontSize: 'var(--text-base)',
+                    lineHeight: 1,
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  &times;
+                </button>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 

@@ -15,6 +15,10 @@ export interface Project {
   decidedAt: string | null
   createdAt: string
   updatedAt: string
+  // Story 8.1 — campos opcionales de detalle
+  targetUser: string | null
+  demoUrl: string | null
+  feedbackTopics: string[] | null
 }
 
 /** Forma del row tal como lo devuelve Supabase (snake_case) */
@@ -32,6 +36,10 @@ export interface ProjectRow {
   decided_at: string | null
   created_at: string
   updated_at: string
+  // Story 8.1 — campos opcionales de detalle
+  target_user: string | null
+  demo_url: string | null
+  feedback_topics: string[] | null
 }
 
 export function projectFromRow(row: ProjectRow): Project {
@@ -49,6 +57,10 @@ export function projectFromRow(row: ProjectRow): Project {
     decidedAt: row.decided_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    // Story 8.1 — campos opcionales de detalle
+    targetUser: row.target_user,
+    demoUrl: row.demo_url,
+    feedbackTopics: row.feedback_topics,
   }
 }
 
