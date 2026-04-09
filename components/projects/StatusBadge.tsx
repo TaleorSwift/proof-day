@@ -7,12 +7,12 @@ const STATUS_CONFIG: Record<ProjectStatus, { label: string; bg: string; color: s
     color: 'var(--color-text-secondary)',
   },
   live: {
-    label: 'Publicado',
+    label: 'Live',
     bg: 'var(--color-promising-bg)',
     color: 'var(--color-promising-text)',
   },
   inactive: {
-    label: 'Inactivo',
+    label: 'Cerrado',
     bg: 'var(--color-surface)',
     color: 'var(--color-text-muted)',
   },
