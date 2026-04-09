@@ -59,6 +59,11 @@
     --color-decision-bg:     #F5F5F4;
     --color-decision-border: #D6D3D1;
 
+    /* === CONTRIBUTOR BADGE (azul — changed-thinking) === */
+    --color-insight-text: #2563EB;
+    --color-insight-bg:   #EFF6FF;
+    --color-insight-border: #BFDBFE;
+
     /* === INTERACTIVO === */
     --color-primary:       #F97316;  /* orange-500 — CTA principal */
     --color-primary-hover: #EA6C00;  /* orange-600 */

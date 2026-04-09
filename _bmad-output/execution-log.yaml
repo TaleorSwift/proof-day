@@ -12,7 +12,7 @@ workflows:
     branch: "feat/8-1-project-new-fields"
     commit: "94fa54e"
     pr: "https://github.com/TaleorSwift/proof-day/pull/40"
-    summary: "Story 8.1 completada. Migración SQL (011) con ADD COLUMN IF NOT EXISTS para target_user, demo_url y feedback_topics. Tipos TypeScript (Project, ProjectRow, projectFromRow) actualizados. Schema Zod ampliado con validaciones opcionales. Repository create acepta campos opcionales. API POST y PUT persisten/actualizan los nuevos campos. ProjectForm con sección 'Información adicional' (Input, Input type=url, chips dinámicos). Página de detalle con secciones condicionales para los tres campos."
+    summary: "Story 8.1 completada. Migración SQL (011) con ADD COLUMN IF NOT EXISTS para target_user, demo_url y feedback_topics. Tipos TypeScript (Project, ProjectRow, projectFromRow) actualizados. Schema Zod ampliado con validaciones opcionales. Repository create acepta campos opcionales. API POST y PUT persisten/actualizan los nuevos campos. ProjectForm con sección Información adicional (Input, Input type=url, chips dinámicos). Página de detalle con secciones condicionales para los tres campos."
     artifacts_created:
       - "supabase/migrations/011_add_project_optional_fields.sql"
     artifacts_modified:
@@ -23,16 +23,19 @@ workflows:
       - "app/api/projects/[id]/route.ts"
       - "components/projects/ProjectForm.tsx"
       - "app/(app)/communities/[slug]/projects/[id]/page.tsx"
-    self_review_findings:
-      real_fixed:
-        - "F1: types/index.ts tiene Project sin nuevos campos — sin consumidores activos, no requería cambio"
-        - "F3: feedbackTopics desincronizado entre RHF y estado local — resuelto omitiendo feedbackTopics del schema del formulario"
-      noise:
-        - "F4: searchParams async (aplica solo a page.tsx, no a Route Handlers)"
-        - "F5: observabilidad en route handlers (fuera de scope)"
     errors: []
     next_recommended: "/cr (Homer) para code review del PR #40, luego /qa (Edna)"
 
+  - id: "bart-QD-20260409-story-8-2-atomic-components"
+    timestamp: "2026-04-09T12:00:00"
+    agent: "Bart"
+    trigger: "QD"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    branch: "feat/8-2-atomic-components-storybook"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/39"
+    summary: "Story 8.2 completada. UserAvatar, HeartButton, ProgressBar, SignalIndicator, BackButton, ContentTag, ContributorBadge creados en components/shared/. StatusBadge refactorizado (Live/Cerrado/Borrador). Token --color-insight-* añadido. 8 stories en Storybook."
 
   - id: "infra-20260407-remove-mock"
     timestamp: "2026-04-07T00:00:00"
