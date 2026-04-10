@@ -6,9 +6,9 @@ Gestiona la autenticación de usuarios mediante magic links (sin contraseña). E
 
 ## Reglas de comportamiento
 
-- El formulario de login se encuentra en `/login` y es accesible sin sesión activa. (story 1.2)
+- El formulario de login se encuentra en `/login` y es accesible sin sesión activa. Muestra logo (`/logo.png`, 128px), H1 "Bienvenido a Proof Day", subtítulo motivador y texto legal — sin `Card` flotante. (story 1.2, story 9.2)
 - Al enviar un email válido, Supabase Auth dispara el magic link vía Resend SMTP sin código adicional en la app. (story 1.2)
-- Tras enviar el email, se muestra el success state en el mismo card sin redirect: "Revisa tu email — te hemos enviado un link de acceso". (story 1.2)
+- Tras enviar el email, se muestra el success state (logo + mensaje) sin redirect y sin card: "Revisa tu email — te hemos enviado un link de acceso". (story 1.2, story 9.2)
 - Los errores de validación de email se muestran inline bajo el campo (no toast, no alert). (story 1.2)
 - El magic link procesa en `GET /auth/callback?code=...` y redirige a `/communities` si es válido. (story 1.2)
 - Si el magic link ha expirado o es inválido, redirige a `/login?error=link-invalid` y muestra un CTA "Solicitar un nuevo link". (story 1.2)
@@ -37,4 +37,4 @@ Gestiona la autenticación de usuarios mediante magic links (sin contraseña). E
 
 ## Última actualización
 
-CR-PR34 (fixes H1/H2/M1/M2) — 2026-03-28
+Story 9.2 — Login visual rediseño (logo + layout sin card) — 2026-04-10

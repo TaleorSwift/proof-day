@@ -103,7 +103,7 @@ development_status:
   # ── EPIC 9: Rediseño UI — Alineación prototipo Lovable v3 ────────
   epic-9: in-progress
   9-1-migracion-db-tagline-would-use-count: done  # merged PR#53 — 2026-04-10
-  9-2-login-logo-textos-layout-sin-card: backlog
+  9-2-login-logo-textos-layout-sin-card: done
   9-3-fix-ruta-auth-login: backlog
   9-4-landing-welcome-screen: backlog
   9-5-navbar-logo-nombre-icono-logout: backlog

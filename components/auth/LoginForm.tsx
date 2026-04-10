@@ -1,13 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
 import { sendMagicLink } from '@/app/(auth)/login/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import {
   Form,
   FormControl,
@@ -19,10 +19,22 @@ import {
 
 interface LoginFormProps {
   errorParam?: string
+  /** Para Storybook: fuerza el estado "check email" sin interacción */
+  initialSent?: boolean
 }
 
-export function LoginForm({ errorParam }: LoginFormProps) {
-  const [sent, setSent] = useState(false)
+const CONTAINER_STYLE: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 'var(--space-6)',
+  width: '100%',
+  maxWidth: '380px',
+  textAlign: 'center',
+}
+
+export function LoginForm({ errorParam, initialSent = false }: LoginFormProps) {
+  const [sent, setSent] = useState(initialSent)
   const [serverError, setServerError] = useState<string | null>(
     errorParam === 'link-invalid'
       ? 'El link ha expirado o no es válido.'
@@ -50,44 +62,57 @@ export function LoginForm({ errorParam }: LoginFormProps) {
 
   if (sent) {
     return (
-      <Card className="w-full max-w-[420px] p-8 shadow-md rounded-[var(--radius-lg)]">
-        <CardHeader className="p-0 mb-6">
-          <CardTitle className="text-[var(--text-2xl)] font-[var(--font-semibold)] text-[var(--color-text-primary)]">
-            Proof Day
-          </CardTitle>
-          <CardDescription className="text-[var(--color-text-secondary)]">
-            Valida tu idea. Toma la decisión.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-0">
-          <p className="text-[var(--color-text-primary)] text-[var(--text-base)]">
-            Revisa tu email — te hemos enviado un link de acceso
-          </p>
-        </CardContent>
-      </Card>
+      <div style={CONTAINER_STYLE}>
+        <Image src="/logo.png" alt="Proof Day" width={128} height={128} priority />
+        <h1
+          style={{
+            fontSize: 'var(--text-2xl)',
+            fontWeight: 'var(--font-semibold)',
+            color: 'var(--color-text-primary)',
+          }}
+        >
+          Bienvenido a Proof Day
+        </h1>
+        <p style={{ color: 'var(--color-text-primary)', fontSize: 'var(--text-base)' }}>
+          Revisa tu email — te hemos enviado un link de acceso
+        </p>
+      </div>
     )
   }
 
   return (
-    <Card className="w-full max-w-[420px] p-8 shadow-md rounded-[var(--radius-lg)]">
-      <CardHeader className="p-0 mb-6">
-        <CardTitle className="text-[var(--text-2xl)] font-[var(--font-semibold)] text-[var(--color-text-primary)]">
-          Proof Day
-        </CardTitle>
-        <CardDescription className="text-[var(--color-text-secondary)]">
-          Valida tu idea. Toma la decisión.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="p-0">
+    <div style={CONTAINER_STYLE}>
+      <Image src="/logo.png" alt="Proof Day" width={128} height={128} priority />
+
+      <h1
+        style={{
+          fontSize: 'var(--text-2xl)',
+          fontWeight: 'var(--font-semibold)',
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        Bienvenido a Proof Day
+      </h1>
+
+      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
+        Valida ideas. Aprende más rápido. Construye lo que importa.
+      </p>
+
+      <div style={{ width: '100%' }}>
         {serverError && (
           <div className="mb-4" role="alert">
-            <p className="text-[var(--color-weak-text)] text-[var(--text-sm)]">
+            <p style={{ color: 'var(--color-weak-text)', fontSize: 'var(--text-sm)' }}>
               {serverError}
             </p>
             {errorParam === 'link-invalid' && (
               <button
                 type="button"
-                className="text-[var(--color-primary)] underline text-[var(--text-sm)] mt-1"
+                style={{
+                  color: 'var(--color-primary)',
+                  textDecoration: 'underline',
+                  fontSize: 'var(--text-sm)',
+                  marginTop: 'var(--space-1)',
+                }}
                 onClick={() => {
                   setServerError(null)
                   window.history.replaceState({}, '', '/login')
@@ -98,6 +123,7 @@ export function LoginForm({ errorParam }: LoginFormProps) {
             )}
           </div>
         )}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-4">
             <FormField
@@ -123,12 +149,26 @@ export function LoginForm({ errorParam }: LoginFormProps) {
               type="submit"
               className="w-full"
               disabled={isLoading}
+              style={{
+                backgroundColor: isLoading ? undefined : 'var(--color-primary)',
+                color: isLoading ? undefined : 'var(--color-surface)',
+              }}
             >
               {isLoading ? 'Enviando...' : 'Continuar'}
             </Button>
           </form>
         </Form>
-      </CardContent>
-    </Card>
+      </div>
+
+      <p
+        style={{
+          fontSize: 'var(--text-xs)',
+          color: 'var(--color-text-secondary)',
+          lineHeight: '1.4',
+        }}
+      >
+        Al continuar, aceptas compartir feedback constructivo y ayudar a tu equipo a aprender.
+      </p>
+    </div>
   )
 }
