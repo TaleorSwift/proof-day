@@ -65,6 +65,8 @@ jobs:
       - name: Deploy to Vercel
         run: |
           set -e
+          mkdir -p .vercel
+          printf '{"projectId":"%s","orgId":"%s"}' "$VERCEL_PROJECT_ID" "$VERCEL_ORG_ID" > .vercel/project.json
           npx vercel@latest pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
           npx vercel@latest build --prod --token=${{ secrets.VERCEL_TOKEN }}
           npx vercel@latest deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
