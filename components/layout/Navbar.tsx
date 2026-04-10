@@ -1,5 +1,3 @@
-'use client'
-
 import Link from 'next/link'
 
 interface NavbarProps {
@@ -51,7 +49,7 @@ export function Navbar({ isAuthenticated, onLogout }: NavbarProps) {
             height="16"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="white"
+            stroke="var(--color-background)"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
