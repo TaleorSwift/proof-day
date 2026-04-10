@@ -8,6 +8,26 @@ workflows:
     result: "STARTED"
     summary: "Dos fixes post-verificación Epic 8: migración 013 FK feedbacks→profiles para resolver JOIN PostgREST, y corrección de acentos en page.tsx (Solución, Hipótesis)"
 
+  - id: "20260410-bart-QD-fix-verification-epic8"
+    timestamp: "2026-04-10T20:15:00"
+    agent: "Bart (Quick Flow)"
+    trigger: "QD — Fix verification Epic 8: FK profiles + acentos page.tsx"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "15 minutos"
+    summary: |
+      Migración 013 creada y aplicada: feedbacks_reviewer_profiles_fkey → profiles(id) ON DELETE CASCADE.
+      FK verificado via pg_constraint (4 FKs activos en feedbacks). Acentos corregidos en page.tsx:
+      "Solución propuesta" y "Hipótesis". Dos commits en rama fix/verification-feedbacks-join.
+    artifacts_created:
+      - "supabase/migrations/013_feedbacks_profiles_fk.sql"
+    artifacts_modified:
+      - "app/(app)/communities/[slug]/projects/[id]/page.tsx"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Merge PR fix/verification-feedbacks-join → main tras aprobación"
+
   - id: "cr-20260410-homer-story-8-10-feedbackcta"
     timestamp: "2026-04-10T12:35:00"
     completed: "2026-04-10T12:37:00"
