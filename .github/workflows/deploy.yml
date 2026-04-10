@@ -70,9 +70,9 @@ jobs:
           mkdir -p .vercel
           jq -n --arg pid "$VERCEL_PROJECT_ID" --arg oid "$VERCEL_ORG_ID" \
             '{"projectId":$pid,"orgId":$oid}' > .vercel/project.json
-          npx vercel@50 pull --yes --environment=production
-          npx vercel@50 build --prod
-          npx vercel@50 deploy --prebuilt --prod
+          npx vercel@50 pull --yes --environment=production --token="$VERCEL_TOKEN"
+          npx vercel@50 build --prod --token="$VERCEL_TOKEN"
+          npx vercel@50 deploy --prebuilt --prod --token="$VERCEL_TOKEN"
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
