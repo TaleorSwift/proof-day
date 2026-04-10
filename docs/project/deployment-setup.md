@@ -75,6 +75,7 @@ Configurar en **github.com/TaleorSwift/proof-day/settings/secrets/actions**:
 | `VERCEL_PROJECT_ID` | ID del proyecto en Vercel | `prj_u9KL8QtpWiZKw7KZWi2vm8LjY0Nc` |
 | `SUPABASE_ACCESS_TOKEN` | Token personal de Supabase CLI | supabase.com/dashboard/account/tokens |
 | `SUPABASE_PROJECT_REF` | Ref del proyecto Supabase | `igjcnthjbfkqizmvrclr` |
+| `SUPABASE_DB_PASSWORD` | Database password del proyecto Supabase — requerido por `supabase db push` | Supabase Dashboard → Project Settings → Database → Database password |
 | `GITHUB_TOKEN` | Token automático de GitHub | Inyectado automáticamente |
 
 ---
@@ -130,8 +131,9 @@ git push origin main          → dispara deploy.yml (quality → deploy a Verce
 ## Troubleshooting
 
 ### Deploy falla en `supabase db push`
-- Verificar que `SUPABASE_ACCESS_TOKEN` y `SUPABASE_PROJECT_REF` están en GitHub Secrets
+- Verificar que `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF` y `SUPABASE_DB_PASSWORD` están en GitHub Secrets
 - Verificar migraciones pendientes: `supabase migration list`
+- **Error `42501: permission denied to alter role`**: el CLI intenta crear una role temporal (`cli_login_postgres`) vía la Management API cuando no tiene `SUPABASE_DB_PASSWORD`. Solución: añadir el secret con `gh secret set SUPABASE_DB_PASSWORD --repo TaleorSwift/proof-day` (valor: Supabase Dashboard → Project Settings → Database → Database password)
 
 ### Deploy falla en Vercel
 - Verificar `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` en GitHub Secrets
