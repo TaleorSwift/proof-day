@@ -6,10 +6,10 @@ import { StatusBadge } from '@/components/projects/StatusBadge'
 import { DraftBanner } from '@/components/projects/DraftBanner'
 import { InactiveBanner } from '@/components/projects/InactiveBanner'
 import { ProjectStateActions } from '@/components/projects/ProjectStateActions'
-import { FeedbackButton } from '@/components/feedback/FeedbackButton'
 import { FeedbackList } from '@/components/feedback/FeedbackList'
 import { FeedbackCounter } from '@/components/feedback/FeedbackCounter'
 import { TeamPerspectives } from '@/components/feedback/TeamPerspectives'
+import { FeedbackCTA } from '@/components/feedback/FeedbackCTA'
 import { createFeedbackRepository } from '@/lib/repositories/feedback.repository'
 import type { FeedbackEntryData, FeedbackTextResponses } from '@/lib/types/feedback'
 import { ProofScoreSidebar } from '@/components/proof-score/ProofScoreSidebar'
@@ -44,6 +44,11 @@ export default async function ProjectPage({ params }: Props) {
   if (!project) notFound()
 
   const isOwner = user?.id === project.builder_id
+
+  // Story 8.10 — variante del CTA de feedback
+  // unauthenticated no se alcanza aquí (redirect en línea 34), pero se define
+  // para mantener el tipo completo y cubrir futuros accesos públicos.
+  const feedbackCTAVariant = isOwner ? 'owner' : 'authenticated-member'
 
   // Task 3 — Consulta del perfil del autor via ProfilesRepository (AC-2, AC-9)
   const { data: builderProfile } = await createProfilesRepository(supabase).findByIdForWidget(project.builder_id)
@@ -159,13 +164,7 @@ export default async function ProjectPage({ params }: Props) {
                     Editar
                   </Link>
                 )}
-                {/* AC-1: Boton "Dar feedback" — solo en proyectos live y para no-builders */}
-                {project.status === 'live' && !isOwner && (
-                  <FeedbackButton
-                    projectId={project.id}
-                    communityId={project.community_id}
-                  />
-                )}
+                {/* AC-1: FeedbackButton delegado a FeedbackCTA (Story 8.10) — eliminado aquí */}
               </div>
             </div>
 
@@ -250,6 +249,15 @@ export default async function ProjectPage({ params }: Props) {
 
             {/* Task 7 — Temas de feedback con ContentTag (AC-7) */}
             <ProjectDetailFeedbackTopics feedbackTopics={project.feedback_topics} />
+
+            {/* Story 8.10 — FeedbackCTA contextual: solo en proyectos live */}
+            {project.status === 'live' && (
+              <FeedbackCTA
+                variant={feedbackCTAVariant}
+                projectId={project.id}
+                communityId={project.community_id}
+              />
+            )}
 
             {/* Story 8.9 — Perspectivas del equipo: visible para TODOS los miembros */}
             <TeamPerspectives feedbacks={feedbackEntries} />

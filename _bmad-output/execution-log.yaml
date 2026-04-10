@@ -1,4 +1,58 @@
 workflows:
+  - id: "cr-20260410-homer-story-8-10-feedbackcta"
+    timestamp: "2026-04-10T12:35:00"
+    completed: "2026-04-10T12:37:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 8.10 FeedbackCTA — ultima story Epic 8"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    summary: |
+      Code Review completado. Suite: 333/333. TypeScript limpio.
+      Hallazgos: 1 bloqueante (FeedbackButton duplicado en header de page.tsx), 2 menores.
+      Bloqueante resuelto: eliminado FeedbackButton inline del header — FeedbackCTA asume esa responsabilidad.
+      Menor resuelto: eliminados CSS literals (fontStyle/margin) de la story Owner en Storybook.
+      Observaciones no bloqueantes: variante unauthenticated es dead code en flujo actual (redirect auth),
+      gate status===live no tiene test de integración (E2E en test.skip por contrato TDD Outside-In).
+    artifacts_modified:
+      - "app/(app)/communities/[slug]/projects/[id]/page.tsx"
+      - "stories/feedback/FeedbackCTA.stories.tsx"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "QA — Edna, /qa — Epic 8 completo, validacion final antes de merge a main"
+
+  - id: "20260410-ned-CS-VS-story-8-10"
+    timestamp: "2026-04-10T19:00:00"
+    agent: "Ned (SM)"
+    trigger: "CS+VS — Story 8.10 FeedbackCTA contextual + Storybook"
+    workflow: "create-story + validate-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Creando y validando Story 8.10 — FeedbackCTA componente presentacional con 3 variantes (unauthenticated, authenticated-member, owner) + Storybook"
+
+  - id: "20260410-ned-CS-VS-story-8-10"
+    timestamp: "2026-04-10T19:15:00"
+    agent: "Ned (SM)"
+    trigger: "CS+VS — Story 8.10 FeedbackCTA contextual + Storybook"
+    workflow: "create-story + validate-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "15 minutos"
+    summary: |
+      Story 8.10 creada y validada. READY FOR DEV. 6 tasks / 25 subtasks definidas con TDD Outside-In.
+      Ficheros leidos: page.tsx, FeedbackButton.tsx, FeedbackList.tsx, FeedbackDialog.tsx,
+      lib/types/feedback.ts, design-tokens.md, sprint-status.yaml.
+      Claves: componente presentacional puro (Server Component, sin use client), prop variant
+      discriminante, variante owner devuelve null, logica auth/owner resuelta en page.tsx,
+      FeedbackButton existente compuesto (no duplicado), alerta sobre mock Router en Storybook,
+      textos de UI fijados, data-testids definidos. VS: READY emitido sin gaps.
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/story-8-10-feedbackcta.md"
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, /ds — implementar Story 8.10 en rama feat/8-10-feedbackcta"
+
   - id: "20260410-homer-DS-story-8-9"
     timestamp: "2026-04-10T18:00:00"
     agent: "Homer (Dev)"
