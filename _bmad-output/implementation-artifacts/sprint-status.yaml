@@ -90,7 +90,7 @@ development_status:
   epic-8: in-progress
   8-1-db-migration-nuevos-campos-proyecto: done  # merged 2026-04-10 — PR#40
   8-2-componentes-atomicos-base-storybook: done  # merged 2026-04-10 — PR#39
-  8-3-navbar-reutilizable-storybook: backlog
+  8-3-navbar-reutilizable-storybook: done  # merged 2026-04-10 — PR#41
   8-4-projectcard-rediseno-storybook: backlog
   8-5-projectfeed-rediseno-homepage: backlog
   8-6-topcontributors-leaderboard-storybook: backlog

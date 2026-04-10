@@ -27,7 +27,7 @@ export function ProjectGrid({
 
   return (
     <div
-      className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4"
+      style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}
     >
       {isLoading
         ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (

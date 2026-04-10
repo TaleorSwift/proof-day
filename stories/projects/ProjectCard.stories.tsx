@@ -2,80 +2,86 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { ProjectCard } from '@/components/projects/ProjectCard'
 
 const meta: Meta<typeof ProjectCard> = {
-  title: 'projects/ProjectCard',
+  title: 'Projects/ProjectCard',
   component: ProjectCard,
+  tags: ['autodocs'],
   parameters: {
     layout: 'padded',
-  },
-  tags: ['autodocs'],
-  args: {
-    communitySlug: 'startup-madrid',
   },
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof ProjectCard>
 
-const liveProject = {
-  id: 'proj-1',
-  title: 'Mi app de productividad para equipos remotos',
-  imageUrls: ['https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800'],
-  status: 'live' as const,
-  builderId: 'user-1',
-}
-
-const draftProject = {
-  id: 'proj-2',
-  title: 'Plataforma de aprendizaje colaborativo',
+const baseProject = {
+  id: 'proj-001',
+  title: 'App de productividad para freelancers',
   imageUrls: [],
-  status: 'draft' as const,
-  builderId: 'user-2',
+  builderId: 'user-123',
+  builderName: 'María García',
+  problem: 'Los freelancers pierden tiempo gestionando proyectos en múltiples herramientas sin integración.',
 }
 
-const inactiveProject = {
-  id: 'proj-3',
-  title: 'Marketplace de servicios freelance',
-  imageUrls: ['https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800'],
-  status: 'inactive' as const,
-  builderId: 'user-3',
-}
-
-export const Live: Story = {
+export const LiveConImagen: Story = {
   args: {
-    project: liveProject,
+    project: {
+      ...baseProject,
+      imageUrls: ['https://picsum.photos/seed/proj1/400/300'],
+      status: 'live',
+    },
+    communitySlug: 'startup-madrid',
     feedbackCount: 5,
-    proofScore: null,
+    initialLikeCount: 12,
   },
 }
 
-export const LiveWithScore: Story = {
-  name: 'Live — Proof Score Promising',
+export const LiveSinImagen: Story = {
   args: {
-    project: liveProject,
-    feedbackCount: 8,
-    proofScore: 'Promising',
+    project: {
+      ...baseProject,
+      status: 'live',
+    },
+    communitySlug: 'startup-madrid',
+    feedbackCount: 2,
+    initialLikeCount: 4,
   },
 }
 
-export const Draft: Story = {
+export const Cerrado: Story = {
   args: {
-    project: draftProject,
+    project: {
+      ...baseProject,
+      status: 'inactive',
+    },
+    communitySlug: 'startup-madrid',
+    feedbackCount: 18,
+    initialLikeCount: 31,
+  },
+}
+
+export const Borrador: Story = {
+  args: {
+    project: {
+      ...baseProject,
+      title: 'Mi idea en borrador',
+      status: 'draft',
+    },
+    communitySlug: 'startup-madrid',
     feedbackCount: 0,
-    proofScore: null,
+    initialLikeCount: 0,
   },
 }
 
-export const Inactive: Story = {
+export const SinDescripcion: Story = {
   args: {
-    project: inactiveProject,
-    feedbackCount: 3,
-    proofScore: 'Needs iteration',
-  },
-}
-
-export const Loading: Story = {
-  args: {
-    project: liveProject,
-    isLoading: true,
+    project: {
+      id: 'proj-002',
+      title: 'Proyecto sin descripción ni imagen',
+      imageUrls: [],
+      status: 'live',
+      builderId: 'user-456',
+    },
+    communitySlug: 'tech-community',
+    feedbackCount: 1,
   },
 }
