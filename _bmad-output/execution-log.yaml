@@ -1,4 +1,13 @@
 workflows:
+  - id: "20260410-bart-QD-fix-verification-epic8"
+    timestamp: "2026-04-10T20:00:00"
+    agent: "Bart (Quick Flow)"
+    trigger: "QD — Fix verification Epic 8: FK profiles + acentos page.tsx"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Dos fixes post-verificación Epic 8: migración 013 FK feedbacks→profiles para resolver JOIN PostgREST, y corrección de acentos en page.tsx (Solución, Hipótesis)"
+
   - id: "cr-20260410-homer-story-8-10-feedbackcta"
     timestamp: "2026-04-10T12:35:00"
     completed: "2026-04-10T12:37:00"
