@@ -9,3 +9,9 @@ export interface FeedbackCountStats {
   count: number
   communityId: string
 }
+
+export interface TopContributor {
+  userId: string
+  name: string
+  feedbackCount: number
+}

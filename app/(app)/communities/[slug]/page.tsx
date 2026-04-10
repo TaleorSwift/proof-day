@@ -2,8 +2,7 @@ import { redirect, notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { CommunityHeader } from '@/components/communities/CommunityHeader'
 import { ProjectFeed } from '@/components/projects/ProjectFeed'
-import { PersonalFeedbackCounter } from '@/components/gamification/PersonalFeedbackCounter'
-import { TopReviewerWidget } from '@/components/gamification/TopReviewerWidget'
+import { TopContributors } from '@/components/gamification/TopContributors'
 import type { ProjectListItem } from '@/lib/api/projects'
 
 interface Props {
@@ -101,10 +100,9 @@ export default async function CommunityPage({ params }: Props) {
             <ProjectFeed projects={projects} communitySlug={slug} />
           </div>
 
-          {/* Sidebar derecho: gamificación — Story 6.2 */}
+          {/* Sidebar derecho: gamificación — Story 8.6 */}
           <aside style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-            <PersonalFeedbackCounter communityId={community.id} />
-            <TopReviewerWidget communityId={community.id} />
+            <TopContributors communityId={community.id} />
           </aside>
         </div>
       </div>
