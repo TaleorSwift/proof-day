@@ -19,6 +19,9 @@ export interface Project {
   targetUser: string | null
   demoUrl: string | null
   feedbackTopics: string[] | null
+  // Story 9.1 — tagline y contador would_use
+  tagline: string | null
+  wouldUseCount: number
 }
 
 /** Forma del row tal como lo devuelve Supabase (snake_case) */
@@ -40,6 +43,9 @@ export interface ProjectRow {
   target_user: string | null
   demo_url: string | null
   feedback_topics: string[] | null
+  // Story 9.1 — tagline y contador would_use
+  tagline: string | null
+  would_use_count: number
 }
 
 export function projectFromRow(row: ProjectRow): Project {
@@ -61,6 +67,9 @@ export function projectFromRow(row: ProjectRow): Project {
     targetUser: row.target_user,
     demoUrl: row.demo_url,
     feedbackTopics: row.feedback_topics,
+    // Story 9.1 — tagline y contador would_use
+    tagline: row.tagline,
+    wouldUseCount: row.would_use_count,
   }
 }
 
