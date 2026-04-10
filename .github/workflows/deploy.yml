@@ -64,6 +64,7 @@ jobs:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
       - name: Deploy to Vercel
         run: |
+          set -e
           npx vercel@latest pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
           npx vercel@latest build --prod --token=${{ secrets.VERCEL_TOKEN }}
           npx vercel@latest deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
