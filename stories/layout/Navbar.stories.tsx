@@ -12,6 +12,10 @@ const meta: Meta<typeof Navbar> = {
     isAuthenticated: {
       control: 'boolean',
     },
+    userName: {
+      control: 'text',
+      description: 'Nombre del usuario autenticado (de profiles.name o prefijo del email)',
+    },
     onLogout: {
       action: 'logout',
     },
@@ -24,6 +28,7 @@ type Story = StoryObj<typeof meta>
 export const Authenticated: Story = {
   args: {
     isAuthenticated: true,
+    userName: 'Ana García',
   },
 }
 

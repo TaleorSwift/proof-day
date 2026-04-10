@@ -6,9 +6,10 @@ import { Navbar } from './Navbar'
 
 interface NavbarClientProps {
   isAuthenticated: boolean
+  userName?: string
 }
 
-export function NavbarClient({ isAuthenticated }: NavbarClientProps) {
+export function NavbarClient({ isAuthenticated, userName }: NavbarClientProps) {
   const router = useRouter()
 
   const handleLogout = async () => {
@@ -17,5 +18,5 @@ export function NavbarClient({ isAuthenticated }: NavbarClientProps) {
     router.push('/login')
   }
 
-  return <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
+  return <Navbar isAuthenticated={isAuthenticated} userName={userName} onLogout={handleLogout} />
 }

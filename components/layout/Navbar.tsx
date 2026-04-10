@@ -1,11 +1,13 @@
+import Image from 'next/image'
 import Link from 'next/link'
 
 interface NavbarProps {
   isAuthenticated: boolean
+  userName?: string
   onLogout?: () => void
 }
 
-export function Navbar({ isAuthenticated, onLogout }: NavbarProps) {
+export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
   return (
     <nav
       style={{
@@ -21,7 +23,7 @@ export function Navbar({ isAuthenticated, onLogout }: NavbarProps) {
       }}
       aria-label="Navegación principal"
     >
-      {/* Logo + nombre */}
+      {/* Logo + nombre producto */}
       <Link
         href="/communities"
         style={{
@@ -31,34 +33,14 @@ export function Navbar({ isAuthenticated, onLogout }: NavbarProps) {
           textDecoration: 'none',
         }}
       >
-        <div
-          aria-hidden="true"
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: 'var(--radius-full)',
-            backgroundColor: 'var(--color-accent)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--color-background)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M12 2a7 7 0 0 1 5 11.9V17a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-3.1A7 7 0 0 1 12 2z" />
-            <path d="M9 21h6" />
-          </svg>
-        </div>
+        <Image
+          src="/logo.png"
+          alt=""
+          width={32}
+          height={32}
+          aria-hidden
+          style={{ borderRadius: 'var(--radius-full)', flexShrink: 0 }}
+        />
         <span
           style={{
             fontSize: 'var(--text-base)',
@@ -72,21 +54,49 @@ export function Navbar({ isAuthenticated, onLogout }: NavbarProps) {
 
       {/* Acción de autenticación */}
       {isAuthenticated ? (
-        <button
-          onClick={onLogout}
-          style={{
-            border: '1px solid var(--color-border)',
-            color: 'var(--color-text-secondary)',
-            background: 'transparent',
-            borderRadius: 'var(--radius-md)',
-            padding: 'var(--space-2) var(--space-4)',
-            fontSize: 'var(--text-sm)',
-            fontWeight: 'var(--font-medium)',
-            cursor: 'pointer',
-          }}
-        >
-          Cerrar sesión
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+          {userName && (
+            <span
+              style={{
+                fontSize: 'var(--text-sm)',
+                color: 'var(--color-text-secondary)',
+                fontWeight: 'var(--font-medium)',
+              }}
+            >
+              {userName}
+            </span>
+          )}
+          <button
+            onClick={onLogout}
+            aria-label="Cerrar sesión"
+            title="Cerrar sesión"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--color-text-secondary)',
+              padding: 'var(--space-1)',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
+        </div>
       ) : (
         <a
           href="/login"
