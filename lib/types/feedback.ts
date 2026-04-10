@@ -1,5 +1,15 @@
 export type FeedbackScore = 1 | 2 | 3 // No=1, Somewhat=2, Yes=3
 
+export type ContributorType = 'top-reviewer' | 'insightful' | 'changed-thinking'
+
+export interface FeedbackEntryData {
+  id: string
+  reviewerName: string
+  createdAt: string
+  textResponses: FeedbackTextResponses
+  contributorType?: ContributorType
+}
+
 export interface FeedbackScores {
   p1: FeedbackScore
   p2: FeedbackScore
