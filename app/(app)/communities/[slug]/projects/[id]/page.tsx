@@ -208,7 +208,7 @@ export default async function ProjectPage({ params }: Props) {
                   color: 'var(--color-text-primary)',
                 }}
               >
-                Solucion propuesta
+                Solución propuesta
               </h2>
               <p style={{ fontSize: 'var(--text-base)', color: 'var(--color-text-secondary)', lineHeight: 'var(--leading-base)' }}>
                 {project.solution}
@@ -234,7 +234,7 @@ export default async function ProjectPage({ params }: Props) {
                   color: 'var(--color-text-primary)',
                 }}
               >
-                Hipotesis
+                Hipótesis
               </h2>
               <p style={{ fontSize: 'var(--text-base)', color: 'var(--color-text-secondary)', lineHeight: 'var(--leading-base)' }}>
                 {project.hypothesis}
