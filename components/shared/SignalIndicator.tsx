@@ -1,6 +1,6 @@
 import { type CSSProperties } from 'react'
 
-type SignalLevel = 'promising' | 'needs-work' | 'weak'
+export type SignalLevel = 'promising' | 'needs-work' | 'weak'
 
 interface SignalIndicatorProps {
   level: SignalLevel
@@ -27,6 +27,7 @@ export function SignalIndicator({ level, label }: SignalIndicatorProps) {
 
   return (
     <div
+      data-testid="signal-indicator"
       style={{
         display: 'inline-flex',
         alignItems: 'center',

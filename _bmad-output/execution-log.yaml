@@ -1,4 +1,45 @@
 workflows:
+  - id: "ds-20260410-story-8-8-validationsignalcard"
+    timestamp: "2026-04-10T16:00:00"
+    completed: "2026-04-10T16:30:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 8.8 ValidationSignalCard + Storybook"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    summary: |
+      Story 8.8 implementada. ValidationSignalCard creado como RSC puro con LABEL_TO_LEVEL map,
+      SignalIndicator + ProgressBar + disclaimer. ProofScoreSidebar refactorizado (ProofScoreBadge → ValidationSignalCard).
+      SignalLevel exportado desde SignalIndicator.tsx. 10 tests unitarios nuevos. 303 total sin regresiones.
+      TypeScript limpio. Storybook con 3 exports (Promising, NeedsIteration, Weak). E2E con test.skip.
+    artifacts_created:
+      - "components/proof-score/ValidationSignalCard.tsx"
+      - "tests/unit/proof-score/ValidationSignalCard.test.tsx"
+      - "tests/e2e/proof-score/ValidationSignalCard.spec.ts"
+      - "stories/proof-score/ValidationSignalCard.stories.tsx"
+    artifacts_modified:
+      - "components/proof-score/ProofScoreSidebar.tsx"
+      - "components/shared/SignalIndicator.tsx"
+      - "_bmad-output/implementation-artifacts/story-8-8-validationsignalcard.md"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, /cr — code review Story 8.8 en rama feat/8-8-validationsignalcard"
+
+  - id: "20260410-ned-CS-VS-story-8-8"
+    timestamp: "2026-04-10T15:00:00"
+    agent: "Ned (SM)"
+    trigger: "CS+VS"
+    workflow: "create-story + validate-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "20 minutos"
+    summary: "Story 8.8 creada y validada. READY FOR DEV. 5 tasks definidas con TDD Outside-In. Ficheros de contexto leídos: ProofScoreSidebar.tsx, SignalIndicator.tsx, ProgressBar.tsx, ProofScoreBadge.tsx, proof-score.ts, projects.ts, ProofScoreBadge.stories.tsx, SignalIndicator.stories.tsx, design-tokens.md. Aclaración clave documentada: ProofScoreResult no tiene dimensiones — una sola ProgressBar con average. Refactor ProofScoreSidebar es de una línea. ProofScoreBadge se mantiene."
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/story-8-8-validationsignalcard.md"
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+
   - id: "ds-20260410-story-8-7-project-detail-layout"
     timestamp: "2026-04-10T14:00:00"
     agent: "Homer (Dev)"
