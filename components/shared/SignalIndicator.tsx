@@ -1,6 +1,6 @@
 import { type CSSProperties } from 'react'
 
-type SignalLevel = 'promising' | 'needs-work' | 'weak'
+export type SignalLevel = 'promising' | 'needs-work' | 'weak'
 
 interface SignalIndicatorProps {
   level: SignalLevel

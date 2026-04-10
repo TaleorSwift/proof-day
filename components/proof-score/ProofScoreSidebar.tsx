@@ -5,7 +5,7 @@ import type { ProofScoreResult } from '@/lib/types/proof-score'
 import type { ProjectDecision } from '@/lib/types/projects'
 import { getProofScore } from '@/lib/api/proof-score'
 import { ProofScoreWaiting } from './ProofScoreWaiting'
-import { ProofScoreBadge } from './ProofScoreBadge'
+import { ValidationSignalCard } from './ValidationSignalCard'
 import { DecisionBadge } from '@/components/projects/DecisionBadge'
 import { DecisionDialog } from '@/components/projects/DecisionDialog'
 import { Button } from '@/components/ui/button'
@@ -51,7 +51,7 @@ export function ProofScoreSidebar({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-      <ProofScoreBadge label={score.label} variant="full" />
+      <ValidationSignalCard score={score} />
       {decision !== null ? (
         <DecisionBadge decision={decision} />
       ) : (
