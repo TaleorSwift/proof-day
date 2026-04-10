@@ -216,14 +216,24 @@ Esta story es **solo DB + tipos**. No hay cambios en `lib/api/projects.ts`, `lib
 
 ### Agent Model Used
 
-(pendiente — a completar por Bart)
+claude-sonnet-4-6 (Bart — Quick Flow)
 
 ### Debug Log References
 
+- Seed usa `scores.p2 = 'yes'` en lugar de int 3 — función helper `feedback_would_use()` maneja ambos formatos
+- Migración 015 falló en primer intento por `invalid input syntax for type integer: "yes"` — corregido con helper
+- Post-CR: volatility de helper cambiada de `IMMUTABLE` a `STABLE` (migración 016) por uso de regex `~`
+
 ### Completion Notes List
+
+- `would_use_count` correctamente backfillado: PulseCheck=1, resto=0 según datos de seed
+- Gap intencional: `findByCommunity` no selecciona aún `tagline`/`would_use_count` — diferido a Story 9.6
 
 ### File List
 
 - `supabase/migrations/014_add_tagline_to_projects.sql` (NUEVA)
 - `supabase/migrations/015_add_would_use_counter.sql` (NUEVA)
-- `lib/types/projects.ts` (MODIFICAR — añadir tagline y would_use_count)
+- `supabase/migrations/016_fix_feedback_would_use_stable.sql` (NUEVA — post-CR fix volatility)
+- `lib/types/projects.ts` (MODIFICADO — tagline y would_use_count en Project, ProjectRow, projectFromRow)
+- `tests/unit/projects/projectFromRow.test.ts` (NUEVO — 5 tests)
+- `docs/project/modules/projects.md` (MODIFICADO — schema actualizado + contadores denormalizados)
