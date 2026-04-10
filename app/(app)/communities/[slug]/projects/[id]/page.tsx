@@ -6,7 +6,6 @@ import { StatusBadge } from '@/components/projects/StatusBadge'
 import { DraftBanner } from '@/components/projects/DraftBanner'
 import { InactiveBanner } from '@/components/projects/InactiveBanner'
 import { ProjectStateActions } from '@/components/projects/ProjectStateActions'
-import { FeedbackButton } from '@/components/feedback/FeedbackButton'
 import { FeedbackList } from '@/components/feedback/FeedbackList'
 import { FeedbackCounter } from '@/components/feedback/FeedbackCounter'
 import { TeamPerspectives } from '@/components/feedback/TeamPerspectives'
@@ -165,13 +164,7 @@ export default async function ProjectPage({ params }: Props) {
                     Editar
                   </Link>
                 )}
-                {/* AC-1: Boton "Dar feedback" — solo en proyectos live y para no-builders */}
-                {project.status === 'live' && !isOwner && (
-                  <FeedbackButton
-                    projectId={project.id}
-                    communityId={project.community_id}
-                  />
-                )}
+                {/* AC-1: FeedbackButton delegado a FeedbackCTA (Story 8.10) — eliminado aquí */}
               </div>
             </div>
 

@@ -54,8 +54,6 @@ export const Owner: Story = {
         style={{
           fontSize: 'var(--text-sm)',
           color: 'var(--color-text-muted)',
-          fontStyle: 'italic',
-          margin: 0,
         }}
       >
         (El componente no renderiza nada para variant &quot;owner&quot;)
