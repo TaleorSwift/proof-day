@@ -9,21 +9,8 @@ import '@testing-library/jest-dom'
 
 // next/image no funciona en jsdom — mock que renderiza un <img> estándar
 vi.mock('next/image', () => ({
-  default: ({
-    src,
-    alt,
-    fill: _fill,
-    priority: _priority,
-    sizes: _sizes,
-    style,
-  }: {
-    src: string
-    alt: string
-    fill?: boolean
-    priority?: boolean
-    sizes?: string
-    style?: React.CSSProperties
-  }) => (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  default: ({ src, alt, style }: any) => (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={alt} style={style} />
   ),
