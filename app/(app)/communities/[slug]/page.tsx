@@ -1,9 +1,7 @@
-import Link from 'next/link'
 import { redirect, notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { CommunityHeader } from '@/components/communities/CommunityHeader'
-import { ProjectGrid } from '@/components/projects/ProjectGrid'
-import { Button } from '@/components/ui/button'
+import { ProjectFeed } from '@/components/projects/ProjectFeed'
 import { PersonalFeedbackCounter } from '@/components/gamification/PersonalFeedbackCounter'
 import { TopReviewerWidget } from '@/components/gamification/TopReviewerWidget'
 import type { ProjectListItem } from '@/lib/api/projects'
@@ -58,7 +56,6 @@ export default async function CommunityPage({ params }: Props) {
   }
 
   const isAdmin = membership?.role === 'admin'
-  const canCreate = true // Cualquier miembro puede crear proyectos
 
   // Mapear rows de Supabase a ProjectListItem (camelCase)
   const projects: ProjectListItem[] = (projectRows ?? []).map((r: Record<string, unknown>) => ({
@@ -99,36 +96,9 @@ export default async function CommunityPage({ params }: Props) {
             alignItems: 'start',
           }}
         >
-          {/* Columna principal: proyectos — Story 3.4 */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h2
-                style={{
-                  fontSize: 'var(--text-xl)',
-                  fontWeight: 'var(--font-semibold)',
-                  color: 'var(--color-text-primary)',
-                }}
-              >
-                Proyectos
-              </h2>
-              <Link href={`/communities/${slug}/projects/new`}>
-                <Button
-                  variant="default"
-                  style={{
-                    backgroundColor: 'var(--color-primary)',
-                    color: '#fff',
-                  }}
-                >
-                  Nuevo proyecto
-                </Button>
-              </Link>
-            </div>
-
-            <ProjectGrid
-              projects={projects}
-              communitySlug={slug}
-              canCreate={canCreate}
-            />
+          {/* Columna principal: proyectos — Story 8.5 */}
+          <div>
+            <ProjectFeed projects={projects} communitySlug={slug} />
           </div>
 
           {/* Sidebar derecho: gamificación — Story 6.2 */}
