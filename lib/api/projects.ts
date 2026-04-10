@@ -126,6 +126,12 @@ export interface ProjectListItem {
   status: 'draft' | 'live' | 'inactive'
   builderId: string
   createdAt: string
+  /** Descripción breve del problema que resuelve el proyecto */
+  problem?: string
+  /**
+   * TODO(story-8.4): añadir builderName cuando se implemente el JOIN a profiles.
+   * Requiere una query con .select('..., profiles(full_name)') o una función RPC.
+   */
 }
 
 export async function getProjects(communityId: string): Promise<ProjectListItem[]> {
@@ -138,6 +144,7 @@ export async function getProjects(communityId: string): Promise<ProjectListItem[
     status: ProjectListItem['status']
     builder_id: string
     created_at: string
+    problem: string | null
   }>
   return rows.map((r) => ({
     id: r.id,
@@ -146,6 +153,7 @@ export async function getProjects(communityId: string): Promise<ProjectListItem[
     status: r.status,
     builderId: r.builder_id,
     createdAt: r.created_at,
+    ...(r.problem != null && { problem: r.problem }),
   }))
 }
 

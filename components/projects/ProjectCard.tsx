@@ -199,7 +199,7 @@ export function ProjectCard({
       {/* HeartButton */}
       <div
         style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}
-        onClick={(e) => e.preventDefault()}
+        onClick={(e) => e.stopPropagation()}
       >
         <HeartButton
           count={likeState.count}

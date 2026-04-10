@@ -47,7 +47,7 @@ export default async function CommunityPage({ params }: Props) {
     // Server Component lee directamente — RLS filtra: live+inactive para todos, draft solo al builder
     supabase
       .from('projects')
-      .select('id, title, image_urls, status, builder_id, created_at')
+      .select('id, title, image_urls, status, builder_id, created_at, problem')
       .eq('community_id', community.id)
       .order('created_at', { ascending: false }),
   ])
@@ -68,6 +68,8 @@ export default async function CommunityPage({ params }: Props) {
     status: r.status as 'draft' | 'live' | 'inactive',
     builderId: r.builder_id as string,
     createdAt: r.created_at as string,
+    // problem puede ser null en BD si el proyecto no tiene descripción
+    ...(r.problem != null && { problem: r.problem as string }),
   }))
 
   return (

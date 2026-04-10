@@ -1,26 +1,34 @@
-import { describe, it, expect } from 'vitest'
+// @vitest-environment jsdom
+import { describe, it, expect, vi, beforeAll } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import '@testing-library/jest-dom'
+import React from 'react'
 
 /**
  * Tests unitarios — Story 8.4: ProjectCard rediseño horizontal
  *
- * Estrategia de testing en entorno `environment: node`:
+ * Estrategia de testing:
  *
- * A) Funciones puras relacionadas con ProjectCard — testeables en node:
- *    - formatFeedbackCount: formatea el contador de feedbacks
- *    - buildProjectUrl: genera la URL de navegación
- *    - getProjectInitials: extrae iniciales para el placeholder
- *    - computeLikeState: lógica de toggle de likes (optimistic UI)
+ * A) Funciones puras relacionadas con ProjectCard — testeables en node/jsdom:
+ *    - formatFeedbackCount, buildProjectUrl, getProjectInitials, computeLikeState
  *
- * B) Tests de componente React — requieren environment: jsdom.
- *    Marcados con describe.skip. Para habilitarlos:
- *    1. Añadir a vitest.config.ts: environment: 'jsdom'
- *    2. O crear un vitest.config.components.ts separado con jsdom
- *    3. Instalar @testing-library/react y @testing-library/jest-dom
- *    Ref: https://testing-library.com/docs/react-testing-library/setup
+ * B) Tests de componente React — activados con pragma @vitest-environment jsdom.
+ *    next/link y next/image se mockean para evitar dependencias del runtime de Next.js.
  */
 
-// ── Funciones puras que vamos a testear ──────────────────────────────────────
-// Importamos desde el módulo de utilidades de proyectos donde vivirán
+// ── Mocks de módulos Next.js ──────────────────────────────────────────────────
+
+vi.mock('next/link', () => ({
+  default: ({ href, children, ...props }: { href: string; children: React.ReactNode; [key: string]: unknown }) =>
+    React.createElement('a', { href, ...props }, children),
+}))
+
+vi.mock('next/image', () => ({
+  default: ({ src, alt, ...props }: { src: string; alt: string; [key: string]: unknown }) =>
+    React.createElement('img', { src, alt, ...props }),
+}))
+
+// ── Funciones puras ───────────────────────────────────────────────────────────
 
 import {
   formatFeedbackCount,
@@ -119,83 +127,83 @@ describe('computeLikeState', () => {
   })
 })
 
-// ── E. Tests de componente React (requieren jsdom) ────────────────────────────
+// ── E. Tests de componente React ──────────────────────────────────────────────
 
-describe.skip('ProjectCard — render de componente (requiere environment: jsdom)', () => {
-  /**
-   * Para habilitar estos tests:
-   * 1. En vitest.config.ts cambiar environment: 'node' por environment: 'jsdom'
-   *    o crear un workspace con configuración separada.
-   * 2. Instalar: npm install -D @testing-library/react @testing-library/jest-dom
-   * 3. Añadir a setupFiles: './tests/setup/vitest-dom.ts'
-   *
-   * Ejemplo de setup file:
-   *   import '@testing-library/jest-dom'
-   *
-   * Los tests de abajo quedan documentados como especificación
-   * del comportamiento esperado del componente.
-   */
+import { ProjectCard } from '@/components/projects/ProjectCard'
 
-  it('render con props mínimas (sin imagen, status live, feedbackCount 0)', () => {
-    // const { getByTestId, getByText } = render(
-    //   <ProjectCard
-    //     id="proj-1"
-    //     title="Mi Proyecto"
-    //     description="Descripción corta"
-    //     imageUrls={[]}
-    //     status="live"
-    //     builderName="Ana García"
-    //     feedbackCount={0}
-    //     communitySlug="startup-madrid"
-    //   />
-    // )
-    // expect(getByTestId('project-card-title')).toHaveTextContent('Mi Proyecto')
-    // expect(getByTestId('project-card-placeholder')).toBeInTheDocument()
-    // expect(getByTestId('project-card-feedback-count')).toHaveTextContent('0 feedbacks')
+const PROJECT_MINIMAL = {
+  id: 'proj-1',
+  title: 'Mi Proyecto',
+  imageUrls: [] as string[],
+  status: 'live' as const,
+  builderId: 'user-builder-1',
+}
+
+describe('ProjectCard — render de componente', () => {
+  it('renderiza skeleton en estado loading', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: PROJECT_MINIMAL,
+        communitySlug: 'startup-madrid',
+        isLoading: true,
+      })
+    )
+    const card = screen.getByTestId('project-card')
+    expect(card).toBeInTheDocument()
+    // En loading no aparece el título
+    expect(screen.queryByTestId('project-card-title')).not.toBeInTheDocument()
   })
 
-  it('render con imagen → src correcto en el thumbnail', () => {
-    // const imageUrl = 'https://example.com/image.jpg'
-    // const { getByAltText } = render(
-    //   <ProjectCard
-    //     id="proj-2"
-    //     title="Proyecto con imagen"
-    //     description="Descripción"
-    //     imageUrls={[imageUrl]}
-    //     status="live"
-    //     builderName="Carlos López"
-    //     feedbackCount={3}
-    //     communitySlug="startup-madrid"
-    //   />
-    // )
-    // const img = getByAltText('Proyecto con imagen')
-    // expect(img).toHaveAttribute('src', expect.stringContaining(imageUrl))
+  it('renderiza el título del proyecto', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: PROJECT_MINIMAL,
+        communitySlug: 'startup-madrid',
+      })
+    )
+    expect(screen.getByTestId('project-card-title')).toHaveTextContent('Mi Proyecto')
   })
 
-  it('StatusBadge muestra "Live" para status live', () => {
-    // expect(getByText('Live')).toBeInTheDocument()
+  it('renderiza StatusBadge con el estado correcto', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: PROJECT_MINIMAL,
+        communitySlug: 'startup-madrid',
+      })
+    )
+    const statusEl = screen.getByTestId('project-card-status')
+    expect(statusEl).toBeInTheDocument()
+    expect(statusEl.textContent).toBeTruthy()
   })
 
-  it('StatusBadge muestra "Cerrado" para status inactive', () => {
-    // expect(getByText('Cerrado')).toBeInTheDocument()
+  it('renderiza placeholder de iniciales cuando no hay imagen', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: PROJECT_MINIMAL,
+        communitySlug: 'startup-madrid',
+      })
+    )
+    expect(screen.getByTestId('project-card-placeholder')).toBeInTheDocument()
   })
 
-  it('StatusBadge muestra "Borrador" para status draft', () => {
-    // expect(getByText('Borrador')).toBeInTheDocument()
+  it('no renderiza placeholder cuando hay imagen', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: { ...PROJECT_MINIMAL, imageUrls: ['https://example.com/img.jpg'] },
+        communitySlug: 'startup-madrid',
+      })
+    )
+    expect(screen.queryByTestId('project-card-placeholder')).not.toBeInTheDocument()
   })
 
-  it('feedbackCount=1 → muestra "1 feedback" (singular)', () => {
-    // expect(getByTestId('project-card-feedback-count')).toHaveTextContent('1 feedback')
-  })
-
-  it('link apunta a la URL correcta /communities/{slug}/projects/{id}', () => {
-    // const link = getByRole('link')
-    // expect(link).toHaveAttribute('href', '/communities/startup-madrid/projects/proj-1')
-  })
-
-  it('HeartButton incrementa el contador localmente al hacer click', () => {
-    // Probar interacción: click en HeartButton → count sube de 2 a 3
-    // userEvent.click(heartButton)
-    // expect(getByTestId('project-card-like-count')).toHaveTextContent('3')
+  it('renderiza el contador de feedbacks', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: PROJECT_MINIMAL,
+        communitySlug: 'startup-madrid',
+        feedbackCount: 5,
+      })
+    )
+    expect(screen.getByTestId('project-card-feedback-count')).toHaveTextContent('5 feedbacks')
   })
 })
