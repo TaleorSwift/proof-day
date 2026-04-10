@@ -112,10 +112,10 @@ describe('FeedbackCTA — variante unauthenticated', () => {
     expect(screen.getByTestId('feedback-cta-signin-link')).toBeInTheDocument()
   })
 
-  it('el link de sign-in apunta a /auth/login', () => {
+  it('el link de sign-in apunta a /login', () => {
     render(<FeedbackCTA {...defaultProps} />)
     const link = screen.getByTestId('feedback-cta-signin-link')
-    expect(link).toHaveAttribute('href', '/auth/login')
+    expect(link).toHaveAttribute('href', '/login')
   })
 
   it('NO renderiza el botón de feedback (feedback-button)', () => {
