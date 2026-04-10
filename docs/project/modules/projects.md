@@ -1,6 +1,6 @@
 # Módulo: Proyectos
 
-**Última actualización:** Story 3.4 — Project List View in Community (2026-03-28)
+**Última actualización:** Story 9.1 — Migración DB tagline + would_use_count (2026-04-10)
 
 ---
 
@@ -107,21 +107,31 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 ### Tabla `projects`
 
 ```sql
-id           uuid primary key
-community_id uuid references communities(id) on delete cascade
-builder_id   uuid references auth.users(id) on delete cascade
-title        text not null
-problem      text not null
-solution     text not null
-hypothesis   text not null
-image_urls   text[] not null default '{}'
-status       text not null default 'draft' -- 'draft' | 'live' | 'inactive'
-decision     text null -- 'iterate' | 'scale' | 'abandon'
-decided_at   timestamptz null
-created_at   timestamptz not null default now()
-updated_at   timestamptz not null default now()
+id               uuid primary key
+community_id     uuid references communities(id) on delete cascade
+builder_id       uuid references auth.users(id) on delete cascade
+title            text not null
+problem          text not null
+solution         text not null
+hypothesis       text not null
+image_urls       text[] not null default '{}'
+status           text not null default 'draft' -- 'draft' | 'live' | 'inactive'
+decision         text null -- 'iterate' | 'scale' | 'abandon'
+decided_at       timestamptz null
+created_at       timestamptz not null default now()
+updated_at       timestamptz not null default now()
+-- Story 8.1
+target_user      text null
+demo_url         text null
+feedback_topics  text[] null
+-- Story 9.1
+tagline          text null       -- resumen 1 línea de la propuesta de valor
+would_use_count  integer not null default 0  -- contador denormalizado; actualizado por trigger
 ```
 
 ### RLS
 - `live` e `inactive`: visibles para todos los miembros de la comunidad
 - `draft`: visible solo para el builder (`builder_id = auth.uid()`)
+
+### Contadores denormalizados (Story 9.1)
+- `would_use_count`: número de feedbacks donde el revisor respondió "Sí" a "¿Lo usarías?". Actualizado automáticamente por el trigger `feedbacks_recompute_would_use` en INSERT/UPDATE/DELETE de feedbacks. (story 9.1)
