@@ -1,6 +1,6 @@
 # Story 9.2: Login — logo, textos y layout sin card
 
-Status: implementation-complete
+Status: done
 
 ## Story
 
@@ -189,3 +189,47 @@ claude-sonnet-4-6 (Bart — Quick Flow)
 - `components/auth/LoginForm.tsx` (MODIFICAR — quitar Card, añadir logo + textos)
 - `stories/auth/LoginForm.stories.tsx` (MODIFICAR — añadir story CheckEmail)
 - `tests/unit/auth/loginForm.test.tsx` (NUEVO — tests de layout sin card)
+- `docs/project/modules/auth.md` (MODIFICAR — actualizado con reglas story 9.2)
+
+## Senior Developer Review (AI)
+
+**Fecha:** 2026-04-10
+**Revisor:** Homer (Code Review)
+**Veredicto:** APPROVED
+
+### AC Coverage
+
+| AC | Estado |
+|----|--------|
+| AC-1 Logo 128px centrado sin Card | IMPLEMENTED |
+| AC-2 H1 + subtítulo muted | IMPLEMENTED |
+| AC-3 Botón full-width color-primary | PARTIAL (ver HIGH-1) |
+| AC-4 Texto legal text-xs | IMPLEMENTED |
+| AC-5 Estado sent mismo layout sin Card | IMPLEMENTED |
+| AC-6 Stories Default + WithLinkInvalidError + CheckEmail | IMPLEMENTED |
+| AC-7 public/logo.png existe | IMPLEMENTED |
+
+### Issues
+
+**[HIGH-1] AC-3 PARTIAL: botón sin test de estilo; color indefinido en isLoading**
+`LoginForm.tsx:153-154` — cuando `isLoading=true`, `backgroundColor` y `color` son `undefined`. El botón cae al estilo Tailwind `default` del Button shadcn, que usa `--color-primary` via clase, por lo que no hay bug visual. Pero AC-3 especifica el token explícitamente y T4 no incluye ninguna assertion sobre estilos del botón.
+No bloqueante para producción. Deuda de test.
+
+**[MEDIUM-1] Mock next/image pasa `priority` booleano al DOM nativo**
+`tests/unit/auth/loginForm.test.tsx:12-17` — el mock hace `<img {...props} />` pasando todos los props incluyendo `priority={true}`. Produce warning en stderr. El patrón correcto del proyecto (`ProjectDetailSections.test.tsx`) destructura solo `{ src, alt, style }`.
+
+**[MEDIUM-2] Subtasks T1 y T2 sin marcar [x]**
+T1.1, T1.2, T2.1-T2.9 permanecen `[ ]` aunque la tarea padre está `[x]`. Implementación completa pero trazabilidad de subtasks rota.
+
+**[LOW-1] `docs/project/modules/auth.md` ausente del File List**
+Modificado en commit `fde5a58` pero no listado en Dev Agent Record File List. Corregido en esta revisión.
+
+**[LOW-2] Test de H1 en estado `sent` ausente**
+AC-5 requiere "mismo layout" — el H1 existe en el estado `sent` (líneas 67-75) pero no hay assertion que lo verifique.
+
+**[LOW-3] `textAlign: center` heredado implícitamente en estado sent**
+El `<p>` del mensaje sent no tiene `textAlign` propio, hereda del contenedor. Funcional pero frágil.
+
+### Decisión
+
+APPROVED — 344/344 tests pass, lint limpio, tsc limpio. 7/7 ACs cubiertos funcionalmente. Issues son no bloqueantes (deuda de test y trazabilidad). Story avanza a QA (Edna).

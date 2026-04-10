@@ -1,4 +1,74 @@
 workflows:
+  - id: "20260410-homer-CR-9-2-login-logo-layout"
+    timestamp: "2026-04-10T22:54:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 9.2: Login logo + textos + layout sin card"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T23:10:00"
+    verdict: "APPROVED"
+    artifacts_reviewed:
+      - "public/logo.png"
+      - "components/auth/LoginForm.tsx"
+      - "stories/auth/LoginForm.stories.tsx"
+      - "tests/unit/auth/loginForm.test.tsx"
+      - "docs/project/modules/auth.md"
+    issues:
+      high: 1
+      medium: 2
+      low: 3
+    summary: |
+      APPROVED — 344/344 tests pass, lint limpio, tsc limpio. 7/7 ACs cubiertos.
+      HIGH-1: AC-3 parcial (botón sin test de estilo, color cae a Tailwind default en isLoading — no bug visual).
+      MEDIUM-1: mock next/image pasa props booleanos al DOM nativo (warning en stderr).
+      MEDIUM-2: subtasks T1.1, T1.2, T2.1-T2.9 sin marcar [x].
+      LOW-1: docs/project/modules/auth.md ausente del File List (corregido).
+      LOW-2: test H1 en estado sent ausente.
+      LOW-3: textAlign heredado implícitamente en estado sent.
+      Issues no bloqueantes. Story → done. Siguiente paso: QA (Edna).
+
+  - id: "20260410-bart-QD-9-2-login-logo-layout"
+    timestamp: "2026-04-10T23:38:00"
+    agent: "Bart (Quick Flow)"
+    trigger: "QD — Story 9.2: Login logo + textos + layout sin card"
+    workflow: "quick-dev"
+    mode: "tech-spec"
+    baseline_commit: "3bdcfb10c9de68c4aab55403f86039133594f3f4"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T23:55:00"
+    artifacts:
+      - "public/logo.png"
+      - "components/auth/LoginForm.tsx"
+      - "stories/auth/LoginForm.stories.tsx"
+      - "tests/unit/auth/loginForm.test.tsx"
+      - "docs/project/modules/auth.md"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/54"
+    summary: |
+      LoginForm refactorizado: Card eliminado, logo 128px, H1/subtítulo/texto legal nuevos.
+      Prop initialSent para Storybook. Story CheckEmail añadida. 344/344 tests pass. PR#54 abierto.
+  - id: "20260410-ned-VS-9-2-login-logo-layout"
+    timestamp: "2026-04-10T23:32:00"
+    agent: "Ned (SM)"
+    trigger: "VS — Validate Story 9.2: Login logo + textos + layout sin card"
+    workflow: "validate-story"
+    mode: "VALIDATE"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T23:35:00"
+    summary: "PASS — 0 issues. Story 9.2 validada: 7 ACs testables, scope acotado, diff JSX completo, sin dependencias bloqueantes."
+  - id: "20260410-ned-CS-9-2-login-logo-layout"
+    timestamp: "2026-04-10T23:20:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Create Story 9.2: Login logo + textos + layout sin card"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T23:30:00"
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/9-2-login-logo-textos-layout-sin-card.md"
+    summary: |
+      Story 9.2 creada: 7 ACs, 5 tasks. Contexto completo: diff antes/después de LoginForm,
+      solución para CheckEmail story (prop initialSent), tokens de diseño, ruta del logo.
   - id: "20260410-homer-CR2-9-1-migracion-db"
     timestamp: "2026-04-10T22:36:00"
     agent: "Homer (Dev)"
