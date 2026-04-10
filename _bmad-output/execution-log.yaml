@@ -1,4 +1,39 @@
 workflows:
+  - id: "ds-20260410-story-8-6-topcontributors-leaderboard"
+    timestamp: "2026-04-10T11:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 8.6 TopContributors Leaderboard + Storybook"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    status: "STARTED"
+
+  - id: "qd-20260410-fix-ci-vercel-token"
+    timestamp: "2026-04-10T08:00:00"
+    completed: "2026-04-10T08:35:00"
+    agent: "Bart (Quick Flow)"
+    trigger: "/qd — Fix CI deploy pipeline (supabase db push + vercel --repo error)"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    summary: |
+      Pipeline CI/CD completamente funcional en main.
+      Fixes aplicados:
+      1. PR #42: SUPABASE_DB_PASSWORD añadido al step de migraciones + config.toml major_version 15→17
+      2. PR #45: .vercel/project.json creado via jq en CI (fix --repo error Vercel CLI v50)
+         + lint fix: beforeAll unused import eliminado de projectCard.test.ts
+         + rebase sobre main para resolver conflictos
+      Root cause token error: VERCEL_TOKEN en GitHub Secrets tenía formato inválido (con dashes).
+      Resuelto actualizando el secret con token vcp_ desde Vercel Dashboard.
+      Supabase local: npx supabase stop --no-backup resuelve incompatibilidad PG15→PG17.
+    artifacts:
+      - ".github/workflows/deploy.yml"
+      - "supabase/config.toml"
+      - "docs/project/deployment-setup.md"
+      - "tests/unit/projects/projectCard.test.ts"
+    prs:
+      - "TaleorSwift/proof-day#42"
+      - "TaleorSwift/proof-day#45"
+
   - id: "cr-20260410-story-8-5-projectfeed-homepage"
     timestamp: "2026-04-10T10:00:00"
     completed: "2026-04-10T10:30:00"
@@ -276,6 +311,31 @@ workflows:
         - app/auth/sign-up/page.tsx
         - app/auth/forgot-password/page.tsx
         - app/auth/update-password/page.tsx
+
+  - id: "20260410-120000-ned-CS-VS"
+    timestamp: "2026-04-10T12:00:00"
+    agent: "Ned"
+    trigger: "CS+VS"
+    workflow: "create-story + validate-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Creando y validando Story 8.6 — TopContributors Leaderboard + Storybook. Server Component que reemplaza PersonalFeedbackCounter + TopReviewerWidget en la homepage de comunidad."
+
+  - id: "20260410-120000-ned-CS-VS"
+    timestamp: "2026-04-10T12:45:00"
+    agent: "Ned"
+    trigger: "CS+VS"
+    workflow: "create-story + validate-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "45 minutos"
+    summary: "Story 8.6 creada y validada. 2 gaps críticos corregidos durante VS: (1) lib/actions/ no existe en el proyecto — arquitectura corregida a repositorio + utils puros extendiendo lib/utils/gamification.ts, (2) ContributorBadge no tiene type='active' — corregido a 'changed-thinking'. Story marcada READY con arquitectura TopContributors (Server) + TopContributorsList (presentación pura para Storybook/tests)."
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/story-8-6-topcontributors-leaderboard.md"
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, DS — implementar Story 8.6 desde rama feat/8-6-topcontributors"
 
 
   - id: "ds-20260328-061-062"
