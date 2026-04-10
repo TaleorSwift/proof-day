@@ -132,6 +132,7 @@ export interface ProjectListItem {
    * TODO(story-8.4): añadir builderName cuando se implemente el JOIN a profiles.
    * Requiere una query con .select('..., profiles(full_name)') o una función RPC.
    */
+  builderName?: string
 }
 
 export async function getProjects(communityId: string): Promise<ProjectListItem[]> {
