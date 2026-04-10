@@ -144,6 +144,8 @@ export function ProjectDetailTargetUser({ targetUser }: ProjectDetailTargetUserP
 
 export function ProjectDetailDemo({ demoUrl }: ProjectDetailDemoProps) {
   if (!demoUrl || demoUrl.trim() === '') return null
+  const isSafeUrl = demoUrl.startsWith('https://') || demoUrl.startsWith('http://')
+  if (!isSafeUrl) return null
 
   return (
     <section
