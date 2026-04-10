@@ -2,20 +2,12 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Badge } from '@/components/ui/badge'
+import { useState } from 'react'
+import { UserAvatar } from '@/components/shared/UserAvatar'
+import { HeartButton } from '@/components/shared/HeartButton'
 import { StatusBadge } from '@/components/projects/StatusBadge'
-import { DecisionBadge } from '@/components/projects/DecisionBadge'
-import type { ProjectDecision, ProjectStatus } from '@/lib/types/projects'
-
-type ProofScoreValue = 'Promising' | 'Needs iteration' | 'Weak'
-
-const PROOF_SCORE_CONFIG: Record<ProofScoreValue, { label: string; colorClass: string }> = {
-  'Promising':       { label: 'Promising',       colorClass: 'text-[--color-promising-text] bg-[--color-promising-bg]' },
-  'Needs iteration': { label: 'Needs iteration', colorClass: 'text-[--color-needs-text] bg-[--color-needs-bg]' },
-  'Weak':            { label: 'Weak',            colorClass: 'text-[--color-weak-text] bg-[--color-weak-bg]' },
-}
+import { buildProjectUrl, formatFeedbackCount, getProjectInitials, computeLikeState } from '@/lib/utils/projectCard'
+import type { ProjectStatus } from '@/lib/types/projects'
 
 export interface ProjectCardProps {
   project: {
@@ -24,11 +16,15 @@ export interface ProjectCardProps {
     imageUrls: string[]
     status: ProjectStatus
     builderId: string
+    /** Descripción breve — campo `problem` del proyecto */
+    problem?: string
+    /** Nombre legible del builder para el avatar */
+    builderName?: string
   }
   communitySlug: string
   feedbackCount?: number
-  proofScore?: ProofScoreValue | null
-  decision?: ProjectDecision | null
+  initialLikeCount?: number
+  /** Modo skeleton — mantiene compatibilidad con ProjectGrid */
   isLoading?: boolean
 }
 
@@ -36,71 +32,76 @@ export function ProjectCard({
   project,
   communitySlug,
   feedbackCount = 0,
-  proofScore = null,
-  decision = null,
+  initialLikeCount = 0,
   isLoading = false,
 }: ProjectCardProps) {
-  // Skeleton loading state
+  const [likeState, setLikeState] = useState({
+    isActive: false,
+    count: initialLikeCount,
+  })
+
+  const handleLike = () => setLikeState((prev) => computeLikeState(prev))
+
   if (isLoading) {
     return (
-      <Card
+      <div
+        data-testid="project-card"
         style={{
+          display: 'flex',
+          gap: 'var(--space-3)',
+          padding: 'var(--space-3)',
           backgroundColor: 'var(--color-surface)',
-          boxShadow: 'var(--shadow-sm)',
-          overflow: 'hidden',
+          border: '1px solid var(--color-border)',
+          borderRadius: 'var(--radius-md)',
+          animation: 'pulse 2s infinite',
         }}
       >
-        <Skeleton className="aspect-video w-full rounded-none" />
-        <div style={{ padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-          <Skeleton className="h-5 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
+        <div style={{ width: 120, height: 90, borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-hypothesis-bg)', flexShrink: 0 }} />
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+          <div style={{ height: 16, width: '60%', backgroundColor: 'var(--color-hypothesis-bg)', borderRadius: 4 }} />
+          <div style={{ height: 12, width: '40%', backgroundColor: 'var(--color-hypothesis-bg)', borderRadius: 4 }} />
         </div>
-      </Card>
+      </div>
     )
   }
 
   const imageSrc = project.imageUrls[0] ?? null
-  const isDraft = project.status === 'draft'
-  const isInactive = project.status === 'inactive'
-
-  // Gradient placeholder: color determinista basado en el título
-  const GRADIENTS = [
-    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-    'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
-    'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)',
-    'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)',
-  ]
-  const gradientIndex = project.title.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % GRADIENTS.length
-  const placeholderGradient = GRADIENTS[gradientIndex]
-  const initials = project.title.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
+  const builderLabel = project.builderName ?? project.builderId
+  const initials = getProjectInitials(project.title)
+  const projectUrl = buildProjectUrl(communitySlug, project.id)
 
   return (
-    <Link
-      href={`/communities/${communitySlug}/projects/${project.id}`}
-      style={{ display: 'block', textDecoration: 'none' }}
+    <div
+      data-testid="project-card"
+      style={{
+        display: 'flex',
+        gap: 'var(--space-3)',
+        padding: 'var(--space-3)',
+        backgroundColor: 'var(--color-surface)',
+        border: '1px solid var(--color-border)',
+        borderRadius: 'var(--radius-md)',
+        transition: 'box-shadow 150ms ease',
+        cursor: 'pointer',
+      }}
+      className="hover:shadow-md"
     >
-      <Card
-        style={{
-          backgroundColor: 'var(--color-surface)',
-          boxShadow: 'var(--shadow-sm)',
-          overflow: 'hidden',
-          opacity: isDraft ? 0.8 : 1,
-          transition: 'box-shadow 150ms ease, opacity 150ms ease',
-          cursor: 'pointer',
-        }}
-        className="hover:shadow-md"
+      {/* Thumbnail */}
+      <Link
+        href={projectUrl}
+        style={{ textDecoration: 'none', flexShrink: 0 }}
+        tabIndex={-1}
+        aria-hidden="true"
       >
-        {/* Imagen destacada */}
         <div
+          data-testid="project-card-thumbnail"
           style={{
-            position: 'relative',
-            aspectRatio: '16/9',
+            width: 120,
+            height: 90,
+            borderRadius: 'var(--radius-sm)',
             overflow: 'hidden',
-            borderRadius: 'var(--radius-md) var(--radius-md) 0 0',
+            position: 'relative',
+            backgroundColor: 'var(--color-hypothesis-bg)',
+            flexShrink: 0,
           }}
         >
           {imageSrc ? (
@@ -109,25 +110,25 @@ export function ProjectCard({
               alt={project.title}
               fill
               className="object-cover"
-              sizes="(max-width: 768px) 50vw, 33vw"
+              sizes="120px"
             />
           ) : (
             <div
+              data-testid="project-card-placeholder"
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: placeholderGradient,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                backgroundColor: 'var(--color-hypothesis-bg)',
               }}
             >
               <span
                 style={{
-                  fontSize: '2rem',
-                  fontWeight: 700,
-                  color: 'rgba(255,255,255,0.85)',
-                  letterSpacing: '0.05em',
+                  fontSize: 'var(--text-xl)',
+                  fontWeight: 'var(--font-bold)',
+                  color: 'var(--color-text-muted)',
                   userSelect: 'none',
                 }}
               >
@@ -135,27 +136,24 @@ export function ProjectCard({
               </span>
             </div>
           )}
-          {/* Overlay sutil para inactivos */}
-          {isInactive && (
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                backgroundColor: 'rgba(26, 26, 24, 0.15)',
-              }}
-            />
-          )}
         </div>
+      </Link>
 
-        <CardContent style={{ padding: 'var(--space-4)' }}>
-          {/* Título */}
+      {/* Info central */}
+      <Link
+        href={projectUrl}
+        style={{ flex: 1, minWidth: 0, textDecoration: 'none', display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}
+      >
+        {/* Título + StatusBadge */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
           <p
+            data-testid="project-card-title"
             style={{
-              fontSize: 'var(--text-base)',
+              fontSize: 'var(--text-sm)',
               fontWeight: 'var(--font-semibold)',
               color: 'var(--color-text-primary)',
-              lineHeight: 'var(--leading-base)',
-              marginBottom: 'var(--space-2)',
+              margin: 0,
+              flex: 1,
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
@@ -164,48 +162,51 @@ export function ProjectCard({
           >
             {project.title}
           </p>
+          <span data-testid="project-card-status">
+            <StatusBadge status={project.status} />
+          </span>
+        </div>
 
-          {/* Decision Badge — compact, bajo el titulo */}
-          {decision !== null && decision !== undefined && (
-            <div style={{ marginBottom: 'var(--space-2)' }}>
-              <DecisionBadge decision={decision} compact />
-            </div>
-          )}
-
-          {/* Fila: StatusBadge + contador feedbacks */}
-          <div
+        {/* Descripción */}
+        {project.problem && (
+          <p
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-2)',
-              flexWrap: 'wrap',
+              fontSize: 'var(--text-xs)',
+              color: 'var(--color-text-muted)',
+              margin: 0,
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
             }}
           >
-            <StatusBadge status={project.status} />
-            <span
-              style={{
-                fontSize: 'var(--text-xs)',
-                color: 'var(--color-text-muted)',
-              }}
-            >
-              {feedbackCount} {feedbackCount === 1 ? 'feedback' : 'feedbacks'}
-            </span>
-          </div>
+            {project.problem}
+          </p>
+        )}
 
-          {/* Proof Score Badge (compact) — solo si tiene valor */}
-          {proofScore !== null && proofScore !== undefined && (
-            <div style={{ marginTop: 'var(--space-2)' }}>
-              <Badge
-                className={PROOF_SCORE_CONFIG[proofScore].colorClass}
-                variant="outline"
-                style={{ border: 'none', fontSize: 'var(--text-xs)' }}
-              >
-                {PROOF_SCORE_CONFIG[proofScore].label}
-              </Badge>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </Link>
+        {/* Fila inferior: UserAvatar + feedback count */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginTop: 'auto' }}>
+          <UserAvatar name={builderLabel} size="sm" />
+          <span
+            data-testid="project-card-feedback-count"
+            style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}
+          >
+            {formatFeedbackCount(feedbackCount)}
+          </span>
+        </div>
+      </Link>
+
+      {/* HeartButton */}
+      <div
+        style={{ flexShrink: 0, display: 'flex', alignItems: 'center' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <HeartButton
+          count={likeState.count}
+          isActive={likeState.isActive}
+          onClick={handleLike}
+        />
+      </div>
+    </div>
   )
 }

@@ -8,7 +8,7 @@ export function createProjectsRepository(supabase: SupabaseClient) {
     async findByCommunity(communityId: string) {
       return supabase
         .from('projects')
-        .select('id, title, image_urls, status, builder_id, created_at')
+        .select('id, title, image_urls, status, builder_id, created_at, problem')
         .eq('community_id', communityId)
         .order('created_at', { ascending: false })
     },
