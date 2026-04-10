@@ -88,7 +88,7 @@ export function FeedbackCTA({ variant, projectId, communityId }: FeedbackCTAProp
 
       {variant === 'unauthenticated' && (
         <a
-          href="/auth/login"
+          href="/login"
           data-testid="feedback-cta-signin-link"
           style={signinLinkStyle}
         >

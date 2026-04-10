@@ -11,7 +11,7 @@ export default async function NewProjectPage({ params }: Props) {
   const supabase = await createClient()
 
   const { data: authData, error: authError } = await supabase.auth.getUser()
-  if (authError || !authData.user) redirect('/auth/login')
+  if (authError || !authData.user) redirect('/login')
 
   const { data: community } = await supabase
     .from('communities')

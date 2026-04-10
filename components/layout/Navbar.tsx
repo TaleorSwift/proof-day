@@ -89,7 +89,7 @@ export function Navbar({ isAuthenticated, onLogout }: NavbarProps) {
         </button>
       ) : (
         <a
-          href="/auth/login"
+          href="/login"
           style={{
             border: '1px solid var(--color-accent)',
             color: 'var(--color-accent)',

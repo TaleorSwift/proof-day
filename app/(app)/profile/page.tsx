@@ -6,7 +6,7 @@ import type { ProfileWithStats } from '@/lib/types/profiles'
 export default async function ProfilePage() {
   const supabase = await createClient()
   const { data: authData, error: authError } = await supabase.auth.getUser()
-  if (authError || !authData.user) redirect('/auth/login')
+  if (authError || !authData.user) redirect('/login')
 
   const user = authData.user
 

@@ -46,7 +46,7 @@ export default async function HomePage() {
           Proof Day
         </span>
         <Link
-          href="/auth/login"
+          href="/login"
           style={{
             fontSize: 'var(--text-sm)',
             color: 'var(--color-text-secondary)',

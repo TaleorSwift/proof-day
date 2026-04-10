@@ -13,7 +13,7 @@ export default async function CommunitySettingsPage({ params }: Props) {
 
   // Auth check
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
+  if (!user) redirect('/login')
 
   // Obtener comunidad por slug
   const { data: community } = await supabase
