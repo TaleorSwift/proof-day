@@ -50,7 +50,7 @@ export function ProofScoreSidebar({
   if (score === null) return <ProofScoreWaiting feedbackCount={feedbackCount} />
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+    <div data-testid="proof-score-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
       <ValidationSignalCard score={score} />
       {decision !== null ? (
         <DecisionBadge decision={decision} />

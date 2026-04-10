@@ -27,6 +27,7 @@ export function SignalIndicator({ level, label }: SignalIndicatorProps) {
 
   return (
     <div
+      data-testid="signal-indicator"
       style={{
         display: 'inline-flex',
         alignItems: 'center',

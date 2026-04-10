@@ -1,5 +1,4 @@
-import type { ProofScoreResult } from '@/lib/types/proof-score'
-import type { ProofScoreLabel } from '@/lib/types/proof-score'
+import type { ProofScoreLabel, ProofScoreResult } from '@/lib/types/proof-score'
 import type { SignalLevel } from '@/components/shared/SignalIndicator'
 import { SignalIndicator } from '@/components/shared/SignalIndicator'
 import { ProgressBar } from '@/components/shared/ProgressBar'
