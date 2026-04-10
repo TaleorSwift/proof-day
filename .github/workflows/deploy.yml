@@ -65,10 +65,16 @@ jobs:
       - name: Deploy to Vercel
         run: |
           set -e
-          npx vercel@latest pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-          npx vercel@latest build --prod --token=${{ secrets.VERCEL_TOKEN }}
-          npx vercel@latest deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+          # Crea project.json para que Vercel CLI v50 resuelva el proyecto localmente
+          # y no intente detectarlo via GitHub Actions (lo que inyecta --repo internamente)
+          mkdir -p .vercel
+          jq -n --arg pid "$VERCEL_PROJECT_ID" --arg oid "$VERCEL_ORG_ID" \
+            '{"projectId":$pid,"orgId":$oid}' > .vercel/project.json
+          npx vercel@50 pull --yes --environment=production --token="$VERCEL_TOKEN"
+          npx vercel@50 build --prod --token="$VERCEL_TOKEN"
+          npx vercel@50 deploy --prebuilt --prod --token="$VERCEL_TOKEN"
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_TELEMETRY_DISABLED: 1
