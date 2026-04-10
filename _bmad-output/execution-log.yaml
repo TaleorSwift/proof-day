@@ -1,27 +1,27 @@
 workflows:
-  - id: "cr-20260410-pr42-fix-ci-supabase-db-password"
-    timestamp: "2026-04-10T10:30:00"
+  - id: "cr-20260410-story-8-5-projectfeed-homepage"
+    timestamp: "2026-04-10T10:00:00"
+    completed: "2026-04-10T10:30:00"
     agent: "Homer (Dev)"
-    trigger: "CR"
+    trigger: "CR manual — PR #46"
     workflow: "code-review"
     mode: "VERIFY"
-    result: "STARTED"
-    summary: "Code Review PR #42 — fix(ci): add SUPABASE_DB_PASSWORD to supabase db push step"
-    artifacts_created: []
-    artifacts_modified: []
+    result: "APPROVED_WITH_FIXES"
+    summary: |
+      Code review de Story 8.5 — ProjectFeed + Rediseño Homepage. PR #46.
+      Hallazgos: 1 bloqueante (CR-01: page.tsx ya corregido en commit 2d93f3a de la rama),
+      1 menor accionable (CR-04: descripción it() corregida), 1 defecto adicional detectado
+      (projectCard.test.ts importaba lib/utils/projectCard.ts inexistente — módulo creado
+      con 4 funciones puras). data-testids añadidos a ProjectCard y StatusBadge.
+      Suite final: 22 test files, 257 tests, todos en verde.
+    artifacts_created:
+      - "lib/utils/projectCard.ts"
+    artifacts_modified:
+      - "components/projects/ProjectCard.tsx"
+      - "components/projects/StatusBadge.tsx"
+      - "tests/unit/projects/ProjectFeed.test.tsx"
     errors: []
-
-  - id: "qd-20260410-story-8-4-projectcard-rediseno"
-    timestamp: "2026-04-10T10:00:00"
-    agent: "Bart (Quick Flow)"
-    trigger: "QD"
-    workflow: "quick-dev"
-    mode: "Mode B — Direct Instructions"
-    result: "STARTED"
-    summary: "Story 8.4 — ProjectCard rediseño horizontal + Storybook. TDD Outside-In: E2E → unit → implementación."
-    artifacts_created: []
-    artifacts_modified: []
-    errors: []
+    next_recommended: "/qa con Edna para validar Story 8.5 — rama feat/8-5-projectfeed-homepage"
 
   - id: "sp-20260410-epic8-sprint-planning"
     timestamp: "2026-04-10T00:00:00"
@@ -648,20 +648,3 @@ workflows:
     mode: "Mode A (Tech-Spec inline)"
     story: "Story 8.3 — Navbar reutilizable + Storybook"
     result: "STARTED"
-
-  - id: "qd-20260410-fix-ci-supabase-db-password"
-    timestamp: "2026-04-10T11:30:00"
-    agent: "Bart (Quick Flow)"
-    trigger: "QD"
-    workflow: "quick-dev"
-    mode: "Mode B — Direct Instructions"
-    result: "STARTED"
-    summary: "Fix CI: añadir SUPABASE_DB_PASSWORD al step supabase db push + alinear major_version a 17 + actualizar docs."
-    artifacts_created: []
-    artifacts_modified:
-      - ".github/workflows/deploy.yml"
-      - "supabase/config.toml"
-      - "docs/project/deployment-setup.md"
-    result: "SUCCESS"
-    closing_summary: "3 ficheros modificados. SUPABASE_DB_PASSWORD añadido al env del step de migraciones. major_version alineado a 17. Docs actualizados con el nuevo secret y causa del 42501. PR #42 abierto contra main."
-    pr: "https://github.com/TaleorSwift/proof-day/pull/42"
