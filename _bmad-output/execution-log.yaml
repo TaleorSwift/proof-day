@@ -1,4 +1,134 @@
 workflows:
+  - id: "20260410-homer-CR2-9-1-migracion-db"
+    timestamp: "2026-04-10T22:36:00"
+    agent: "Homer (Dev)"
+    trigger: "CR (2nd pass) — Story 9.1: Migración DB tagline + would_use_count (post fix 123b4ab)"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T22:42:00"
+    verdict: "APPROVED"
+    artifacts_reviewed:
+      - "supabase/migrations/014_add_tagline_to_projects.sql"
+      - "supabase/migrations/015_add_would_use_counter.sql"
+      - "supabase/migrations/016_fix_feedback_would_use_stable.sql"
+      - "lib/types/projects.ts"
+      - "lib/repositories/projects.repository.ts"
+      - "tests/unit/projects/projectFromRow.test.ts"
+      - "docs/project/modules/projects.md"
+    issues:
+      high: 0
+      medium: 0
+      low: 2
+    summary: |
+      APPROVED — Issue HIGH del CR anterior (volatility IMMUTABLE→STABLE) resuelto por migración 016.
+      Issues MEDIUM bloqueantes resueltos (Dev Agent Record completo, docs en File List).
+      Persisten 2 LOW no bloqueantes: RETURN NULL sin comentar en trigger (015 l.36) y ausencia
+      de invariante wouldUseCount >= 0 en tests TS. 6/6 ACs cubiertos. 338/338 tests pass.
+      tsc + lint verdes. Story lista para QA.
+
+  - id: "20260410-homer-CR-9-1-migracion-db"
+    timestamp: "2026-04-10T23:20:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 9.1: Migración DB tagline + would_use_count"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T23:35:00"
+    verdict: "CHANGES_REQUESTED"
+    artifacts_reviewed:
+      - "supabase/migrations/014_add_tagline_to_projects.sql"
+      - "supabase/migrations/015_add_would_use_counter.sql"
+      - "lib/types/projects.ts"
+      - "tests/unit/projects/projectFromRow.test.ts"
+      - "docs/project/modules/projects.md"
+      - "lib/repositories/projects.repository.ts"
+    issues:
+      high: 1
+      medium: 3
+      low: 2
+    summary: |
+      CHANGES_REQUESTED — 1 HIGH (IMMUTABLE vs STABLE en feedback_would_use con regex),
+      2 MEDIUM bloqueantes (docs/project/modules/projects.md ausente en File List; Dev Agent Record
+      incompleto), 1 MEDIUM no bloqueante (repositorio sin tagline/would_use_count en findByCommunity
+      — diferido por diseño a Story 9.6), 2 LOW (RETURN NULL sin comentar; test sin invariante >= 0).
+      Todos los ACs implementados y verificados. Story debe volver a DS para correcciones.
+
+  - id: "20260410-bart-QD-9-1-migracion-db"
+    timestamp: "2026-04-10T22:45:00"
+    agent: "Bart (Quick Flow)"
+    trigger: "QD — Story 9.1: Migración DB tagline + would_use_count"
+    workflow: "quick-dev"
+    mode: "tech-spec"
+    baseline_commit: "5b43775e0d3b32669a6329ed0fff5a1be5650765"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T23:10:00"
+    artifacts:
+      - "supabase/migrations/014_add_tagline_to_projects.sql"
+      - "supabase/migrations/015_add_would_use_counter.sql"
+      - "lib/types/projects.ts"
+      - "tests/unit/projects/projectFromRow.test.ts"
+      - "docs/project/modules/projects.md"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/53"
+    summary: |
+      Migraciones 014 (tagline) y 015 (would_use_count + trigger + backfill) aplicadas.
+      Helper feedback_would_use() maneja formato 'yes' (seed) y legacy int=3.
+      Tipos TS actualizados. 338/338 tests pass. tsc + lint verdes. PR#53 abierto.
+  - id: "20260410-ned-VS-9-1-migracion-db"
+    timestamp: "2026-04-10T22:35:00"
+    agent: "Ned (SM)"
+    trigger: "VS — Validate Story 9.1: Migración DB tagline + would_use_count"
+    workflow: "validate-story"
+    mode: "VALIDATE"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T22:40:00"
+    summary: "PASS — 0 issues. Story 9.1 validada: 6 ACs testables, scope acotado, contexto técnico completo, sin dependencias bloqueantes."
+  - id: "20260410-ned-CS-9-1-migracion-db"
+    timestamp: "2026-04-10T22:15:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Create Story 9.1: Migración DB tagline + would_use_count"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T22:30:00"
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/9-1-migracion-db-tagline-would-use-count.md"
+    summary: |
+      Story 9.1 creada con contexto completo para Bart: 6 ACs, 6 tasks (T1-T6), plantilla SQL del trigger,
+      mapeo scores->p2=3 para would_use, patrones de migraciones existentes, tipos TS a modificar.
+      Status actualizado a ready-for-dev en sprint-status.yaml.
+  - id: "20260410-ned-SP-epic9-sprint-planning"
+    timestamp: "2026-04-10T22:00:00"
+    agent: "Ned (SM)"
+    trigger: "SP — Sprint Planning: Epic 9 Rediseño UI Lovable v3"
+    workflow: "sprint-planning"
+    mode: "REFINE"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T22:10:00"
+    artifacts:
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+    summary: |
+      Epic 8 marcado como done (10/10 stories + PR#40-51 merged, incluyendo fix PR#52).
+      Epic 9 añadido con 10 stories en backlog (9.1-9.10).
+      Total: 9 epics, 57 stories. Epics 1-8 done. Epic 9 in backlog.
+      Orden de implementación: Bart (9.1-9.5, 9.9, 9.10), Homer (9.6, 9.7, 9.8).
+  - id: "20260410-lisa-CE-epic9-lovable-v3"
+    timestamp: "2026-04-10T21:00:00"
+    agent: "Lisa (PM)"
+    trigger: "CE — Crear Epic 9: Rediseño UI Alineación prototipo Lovable v3"
+    workflow: "create-epics-and-stories"
+    mode: "REFINE"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T21:30:00"
+    artifacts:
+      - "_bmad-output/planning-artifacts/epics.md (Epic 9 añadido — stories 9.1-9.10)"
+    summary: |
+      Epic 9 creado con 10 stories derivadas de comparación visual real localhost vs prototipo Lovable v3.
+      Cobertura: 13/13 requisitos (FR-9-1..9-9, DB-9-1..9-2, BUG-9-1..9-2).
+      Agentes asignados: Bart (9.1-9.5, 9.9, 9.10), Homer (9.6, 9.7, 9.8).
+      Orden de implementación: 9.1 DB → 9.2 Login → 9.3 Fix auth → 9.4 Landing → 9.5 Navbar → 9.6 Feed → 9.7 Detail → 9.8 Modal → 9.9 Feed header → 9.10 Communities.
+      Epics 1-8 preservados intactos (modo REFINE).
+
   - id: "20260410-bart-QD-fix-verification-epic8"
     timestamp: "2026-04-10T20:00:00"
     agent: "Bart (Quick Flow)"
@@ -908,3 +1038,27 @@ workflows:
     mode: "Mode A (Tech-Spec inline)"
     story: "Story 8.3 — Navbar reutilizable + Storybook"
     result: "STARTED"
+
+  - id: "20260410-homer-CR-fix-verification-feedbacks-join"
+    timestamp: "2026-04-10T13:10:00"
+    agent: "Homer"
+    trigger: "CR"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    summary: "Code review adversarial del PR #52 fix/verification-feedbacks-join — migración 013 FK profiles + corrección acentos en page.tsx"
+
+  - id: "20260410-homer-CR-fix-verification-feedbacks-join"
+    timestamp: "2026-04-10T13:25:00"
+    agent: "Homer"
+    trigger: "CR"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    duration_estimate: "15 minutos"
+    summary: "Code review PR #52 — APPROVED. Fix mínimo y correcto: migración 013 añade FK feedbacks→profiles necesaria para PostgREST JOIN. Acentos corregidos en page.tsx. 3 hallazgos LOW/MEDIUM documentados, ninguno bloqueante."
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Mergear PR #52 en main con aprobación del usuario"

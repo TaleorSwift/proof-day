@@ -1,6 +1,6 @@
 # Story 9.1: Migración DB — tagline y would_use_count
 
-Status: implementation-complete
+Status: review-complete
 
 ## Story
 
@@ -237,3 +237,25 @@ claude-sonnet-4-6 (Bart — Quick Flow)
 - `lib/types/projects.ts` (MODIFICADO — tagline y would_use_count en Project, ProjectRow, projectFromRow)
 - `tests/unit/projects/projectFromRow.test.ts` (NUEVO — 5 tests)
 - `docs/project/modules/projects.md` (MODIFICADO — schema actualizado + contadores denormalizados)
+
+## Senior Developer Review (AI)
+
+**Revisor:** Homer (Dev Agent) — 2026-04-10
+**CR Pass:** 2nd (post fix 123b4ab)
+**Veredicto:** APPROVED
+
+### Issues resueltos del CR anterior
+
+- [x] HIGH: `feedback_would_use()` IMMUTABLE con regex → RESUELTO por migración 016 (STABLE)
+- [x] MEDIUM: Dev Agent Record incompleto → RESUELTO
+- [x] MEDIUM: `docs/project/modules/projects.md` ausente de File List → RESUELTO
+- [~] MEDIUM: `findByCommunity` sin tagline/would_use_count → DIFERIDO por diseño a Story 9.6 (documentado)
+
+### Issues LOW pendientes (no bloqueantes)
+
+- [ ] LOW: `RETURN NULL` en trigger (015 l.36) sin comentario explicativo
+- [ ] LOW: Sin test que documente invariante `wouldUseCount >= 0`
+
+### Resultado
+
+6/6 ACs cubiertos. 338/338 tests pass. tsc + lint verdes. Story aprobada.

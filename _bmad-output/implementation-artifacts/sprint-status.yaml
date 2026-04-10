@@ -87,15 +87,29 @@ development_status:
   epic-7-retrospective: optional
 
   # ── EPIC 8: Rediseño UI — Alineación con prototipo ───────────────
-  epic-8: in-progress
+  epic-8: done
   8-1-db-migration-nuevos-campos-proyecto: done  # merged 2026-04-10 — PR#40
   8-2-componentes-atomicos-base-storybook: done  # merged 2026-04-10 — PR#39
   8-3-navbar-reutilizable-storybook: done  # merged 2026-04-10 — PR#41
-  8-4-projectcard-rediseno-storybook: backlog
-  8-5-projectfeed-rediseno-homepage: backlog
-  8-6-topcontributors-leaderboard-storybook: backlog
-  8-7-project-detail-layout-contenido: backlog
-  8-8-validationsignalcard-storybook: backlog
-  8-9-teamperspectives-feedbacks-publicos: backlog
-  8-10-feedbackcta-card-contextual-storybook: backlog
+  8-4-projectcard-rediseno-storybook: done  # merged 2026-04-10 — PR#43
+  8-5-projectfeed-rediseno-homepage: done  # merged 2026-04-10 — PR#46
+  8-6-topcontributors-leaderboard-storybook: done  # merged 2026-04-10 — PR#47
+  8-7-project-detail-layout-contenido: done  # merged 2026-04-10 — PR#48
+  8-8-validationsignalcard-storybook: done  # merged 2026-04-10 — PR#49
+  8-9-teamperspectives-feedbacks-publicos: done  # merged 2026-04-10 — PR#50
+  8-10-feedbackcta-card-contextual-storybook: done  # merged 2026-04-10 — PR#51
   epic-8-retrospective: optional
+
+  # ── EPIC 9: Rediseño UI — Alineación prototipo Lovable v3 ────────
+  epic-9: in-progress
+  9-1-migracion-db-tagline-would-use-count: done  # merged PR#53 — 2026-04-10
+  9-2-login-logo-textos-layout-sin-card: backlog
+  9-3-fix-ruta-auth-login: backlog
+  9-4-landing-welcome-screen: backlog
+  9-5-navbar-logo-nombre-icono-logout: backlog
+  9-6-feed-secciones-live-cerrados-projectcard-bugs-autor: backlog
+  9-7-project-detail-tagline-sidebar-universal-feedback-inline: backlog
+  9-8-modal-lanzar-idea-tagline-chips-imagenes: backlog
+  9-9-feed-header-ideas-en-validacion-boton-lanzar: backlog
+  9-10-communities-redirect-condicional: backlog
+  epic-9-retrospective: optional
