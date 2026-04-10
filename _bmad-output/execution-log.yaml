@@ -1,4 +1,47 @@
 workflows:
+  - id: "20260410-homer-DS-story-8-9"
+    timestamp: "2026-04-10T18:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 8.9 TeamPerspectives feedbacks públicos + Storybook"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "IN_PROGRESS"
+    artifacts_created:
+      - "tests/e2e/feedback/TeamPerspectives.spec.ts"
+      - "tests/unit/feedback/FeedbackEntry.test.tsx"
+      - "tests/unit/feedback/TeamPerspectives.test.tsx"
+      - "components/feedback/FeedbackEntry.tsx"
+      - "components/feedback/TeamPerspectives.tsx"
+      - "supabase/migrations/012_rls_feedbacks_member_read.sql"
+      - "stories/feedback/FeedbackEntry.stories.tsx"
+      - "stories/feedback/TeamPerspectives.stories.tsx"
+    artifacts_modified:
+      - "lib/types/feedback.ts"
+      - "app/(app)/communities/[slug]/projects/[id]/page.tsx"
+
+  - id: "20260410-ned-CS-VS-story-8-9"
+    timestamp: "2026-04-10T17:00:00"
+    completed: "2026-04-10T17:30:00"
+    agent: "Ned (SM)"
+    trigger: "CS+VS — Story 8.9 TeamPerspectives + Storybook"
+    workflow: "create-story + validate-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    summary: |
+      Story 8.9 creada y validada. READY FOR DEV. 9 tasks definidas con TDD Outside-In.
+      Ficheros leidos: page.tsx, feedback.repository.ts, FeedbackList.tsx, lib/api/feedback.ts,
+      lib/types/feedback.ts, 008_create_feedbacks.sql, 006_rls_communities_member_access.sql,
+      UserAvatar.tsx, ContributorBadge.tsx, design-tokens.md, ValidationSignalCard.stories.tsx,
+      ValidationSignalCard.test.tsx. Claves: nueva policy RLS (012) con EXISTS pattern,
+      FeedbackEntryData type definido, mapeo en page.tsx especificado con codigo exacto,
+      FeedbackList preservada intacta (solo builder), TeamPerspectives visible para todos.
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/story-8-9-teamperspectives.md"
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, /ds — implementar Story 8.9 en rama feat/8-9-teamperspectives"
+
   - id: "ds-20260410-story-8-8-validationsignalcard"
     timestamp: "2026-04-10T16:00:00"
     completed: "2026-04-10T16:30:00"

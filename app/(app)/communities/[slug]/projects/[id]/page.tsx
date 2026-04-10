@@ -9,6 +9,9 @@ import { ProjectStateActions } from '@/components/projects/ProjectStateActions'
 import { FeedbackButton } from '@/components/feedback/FeedbackButton'
 import { FeedbackList } from '@/components/feedback/FeedbackList'
 import { FeedbackCounter } from '@/components/feedback/FeedbackCounter'
+import { TeamPerspectives } from '@/components/feedback/TeamPerspectives'
+import { createFeedbackRepository } from '@/lib/repositories/feedback.repository'
+import type { FeedbackEntryData, FeedbackTextResponses } from '@/lib/types/feedback'
 import { ProofScoreSidebar } from '@/components/proof-score/ProofScoreSidebar'
 import {
   ProjectDetailAuthor,
@@ -48,15 +51,21 @@ export default async function ProjectPage({ params }: Props) {
   const authorName = builderProfile?.name
     ?? (isOwner ? (user.email?.split('@')[0] ?? 'Autor') : 'Autor')
 
-  // Count de feedbacks para el Server Component (solo relevante para el builder)
-  let feedbackCount = 0
-  if (isOwner) {
-    const { count } = await supabase
-      .from('feedbacks')
-      .select('*', { count: 'exact', head: true })
-      .eq('project_id', id)
-    feedbackCount = count ?? 0
-  }
+  // Query incondicional de feedbacks — visible para todos los miembros (Story 8.9).
+  // La RLS policy "member_read_community_feedbacks" (migration 012) garantiza el acceso.
+  const feedbackRepo = createFeedbackRepository(supabase)
+  const { data: feedbacksRaw } = await feedbackRepo.findByProject(id)
+  const feedbacks = feedbacksRaw ?? []
+  const feedbackCount = feedbacks.length
+
+  // Mapeo a FeedbackEntryData para TeamPerspectives (presentacional, sin join raw)
+  const feedbackEntries: FeedbackEntryData[] = feedbacks.map((f) => ({
+    id: f.id,
+    reviewerName: (f.profiles as { name?: string } | null)?.name ?? 'Usuario',
+    createdAt: f.created_at,
+    textResponses: f.text_responses as unknown as FeedbackTextResponses,
+    // contributorType no se asigna en esta story — queda undefined (uso futuro)
+  }))
 
   return (
     <main
@@ -241,6 +250,9 @@ export default async function ProjectPage({ params }: Props) {
 
             {/* Task 7 — Temas de feedback con ContentTag (AC-7) */}
             <ProjectDetailFeedbackTopics feedbackTopics={project.feedback_topics} />
+
+            {/* Story 8.9 — Perspectivas del equipo: visible para TODOS los miembros */}
+            <TeamPerspectives feedbacks={feedbackEntries} />
           </div>
 
           {/* Sidebar de feedback — solo para el builder (AC-8) */}
