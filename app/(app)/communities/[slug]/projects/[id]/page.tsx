@@ -1,14 +1,23 @@
-import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { DraftBanner } from '@/components/projects/DraftBanner'
+import { createProfilesRepository } from '@/lib/repositories/profiles.repository'
+import { BackButton } from '@/components/shared/BackButton'
 import { StatusBadge } from '@/components/projects/StatusBadge'
+import { DraftBanner } from '@/components/projects/DraftBanner'
 import { InactiveBanner } from '@/components/projects/InactiveBanner'
 import { ProjectStateActions } from '@/components/projects/ProjectStateActions'
 import { FeedbackButton } from '@/components/feedback/FeedbackButton'
 import { FeedbackList } from '@/components/feedback/FeedbackList'
 import { FeedbackCounter } from '@/components/feedback/FeedbackCounter'
 import { ProofScoreSidebar } from '@/components/proof-score/ProofScoreSidebar'
+import {
+  ProjectDetailAuthor,
+  ProjectDetailFeaturedImage,
+  ProjectDetailTargetUser,
+  ProjectDetailDemo,
+  ProjectDetailFeedbackTopics,
+} from '@/components/projects/ProjectDetailSections'
+import Link from 'next/link'
 
 interface Props {
   params: Promise<{ slug: string; id: string }>
@@ -32,6 +41,12 @@ export default async function ProjectPage({ params }: Props) {
   if (!project) notFound()
 
   const isOwner = user?.id === project.builder_id
+
+  // Task 3 — Consulta del perfil del autor via ProfilesRepository (AC-2, AC-9)
+  const { data: builderProfile } = await createProfilesRepository(supabase).findByIdForWidget(project.builder_id)
+  // Fallback: si el builder es el usuario autenticado, usar prefijo del email. Para terceros, usar 'Autor'.
+  const authorName = builderProfile?.name
+    ?? (isOwner ? (user.email?.split('@')[0] ?? 'Autor') : 'Autor')
 
   // Count de feedbacks para el Server Component (solo relevante para el builder)
   let feedbackCount = 0
@@ -60,6 +75,14 @@ export default async function ProjectPage({ params }: Props) {
           gap: 'var(--space-6)',
         }}
       >
+        {/* Task 4 — BackButton (AC-1) */}
+        <div data-testid="project-detail-back-button">
+          <BackButton
+            href={`/communities/${slug}`}
+            label="Volver al feed"
+          />
+        </div>
+
         {/* AC-6: Banner draft — solo visible para el builder */}
         {project.status === 'draft' && <DraftBanner />}
 
@@ -77,9 +100,10 @@ export default async function ProjectPage({ params }: Props) {
         >
           {/* Columna principal */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
-            {/* Header */}
+            {/* Task 4 — Header refactored (AC-2) */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--space-4)' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                {/* Breadcrumb comunidad */}
                 <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', marginBottom: 'var(--space-1)' }}>
                   <Link
                     href={`/communities/${slug}`}
@@ -88,8 +112,10 @@ export default async function ProjectPage({ params }: Props) {
                     Comunidad
                   </Link>
                 </p>
+                {/* Título + StatusBadge */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
                   <h1
+                    data-testid="project-detail-title"
                     style={{
                       fontSize: 'var(--text-2xl)',
                       fontWeight: 'var(--font-semibold)',
@@ -100,6 +126,8 @@ export default async function ProjectPage({ params }: Props) {
                   </h1>
                   <StatusBadge status={project.status as 'draft' | 'live' | 'inactive'} />
                 </div>
+                {/* UserAvatar del autor (AC-2, AC-9) */}
+                <ProjectDetailAuthor authorName={authorName} />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', flexShrink: 0 }}>
                 {isOwner && project.status === 'draft' && (
@@ -141,7 +169,13 @@ export default async function ProjectPage({ params }: Props) {
               />
             )}
 
-            {/* Problema */}
+            {/* Task 5 — Imagen destacada con next/image (AC-3, AC-10) */}
+            <ProjectDetailFeaturedImage
+              imageUrls={project.image_urls}
+              projectTitle={project.title}
+            />
+
+            {/* Problema (AC-4) */}
             <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
               <h2
                 style={{
@@ -157,7 +191,7 @@ export default async function ProjectPage({ params }: Props) {
               </p>
             </section>
 
-            {/* Solucion */}
+            {/* Solucion (AC-4) */}
             <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
               <h2
                 style={{
@@ -173,7 +207,7 @@ export default async function ProjectPage({ params }: Props) {
               </p>
             </section>
 
-            {/* Hipotesis — patron "en juego" del design system */}
+            {/* Hipotesis — patron "en juego" del design system (AC-4) */}
             <section
               style={{
                 backgroundColor: 'var(--color-hypothesis-bg)',
@@ -199,136 +233,17 @@ export default async function ProjectPage({ params }: Props) {
               </p>
             </section>
 
-            {/* Usuario objetivo — Story 8.1 */}
-            {project.target_user && (
-              <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                <h2
-                  style={{
-                    fontSize: 'var(--text-base)',
-                    fontWeight: 'var(--font-semibold)',
-                    color: 'var(--color-text-primary)',
-                  }}
-                >
-                  Usuario objetivo
-                </h2>
-                <p style={{ fontSize: 'var(--text-base)', color: 'var(--color-text-secondary)', lineHeight: 'var(--leading-base)' }}>
-                  {project.target_user}
-                </p>
-              </section>
-            )}
+            {/* Task — Usuario objetivo (AC-5) */}
+            <ProjectDetailTargetUser targetUser={project.target_user} />
 
-            {/* URL de demo — Story 8.1 */}
-            {project.demo_url && (
-              <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                <h2
-                  style={{
-                    fontSize: 'var(--text-base)',
-                    fontWeight: 'var(--font-semibold)',
-                    color: 'var(--color-text-primary)',
-                  }}
-                >
-                  Demo
-                </h2>
-                <a
-                  href={project.demo_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    fontSize: 'var(--text-base)',
-                    color: 'var(--color-accent)',
-                    wordBreak: 'break-all',
-                  }}
-                >
-                  {project.demo_url}
-                </a>
-              </section>
-            )}
+            {/* Task 6 — Demo URL con texto "Ver demo" (AC-6) */}
+            <ProjectDetailDemo demoUrl={project.demo_url} />
 
-            {/* Temas de feedback — Story 8.1 */}
-            {Array.isArray(project.feedback_topics) && project.feedback_topics.length > 0 && (
-              <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                <h2
-                  style={{
-                    fontSize: 'var(--text-base)',
-                    fontWeight: 'var(--font-semibold)',
-                    color: 'var(--color-text-primary)',
-                  }}
-                >
-                  Temas de feedback
-                </h2>
-                <ul
-                  style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    margin: 0,
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: 'var(--space-2)',
-                  }}
-                >
-                  {project.feedback_topics.map(topic => (
-                    <li
-                      key={topic}
-                      style={{
-                        padding: 'var(--space-1) var(--space-3)',
-                        backgroundColor: 'var(--color-surface)',
-                        border: '1px solid var(--color-border)',
-                        borderRadius: 'var(--radius-full)',
-                        fontSize: 'var(--text-sm)',
-                        color: 'var(--color-text-secondary)',
-                      }}
-                    >
-                      {topic}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
-            {/* Imagenes */}
-            {project.image_urls.length > 0 && (
-              <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-                <h2
-                  style={{
-                    fontSize: 'var(--text-base)',
-                    fontWeight: 'var(--font-semibold)',
-                    color: 'var(--color-text-primary)',
-                  }}
-                >
-                  Imagenes
-                </h2>
-                <ul
-                  style={{
-                    listStyle: 'none',
-                    padding: 0,
-                    margin: 0,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 'var(--space-2)',
-                  }}
-                >
-                  {project.image_urls.map((url: string, i: number) => (
-                    <li key={i}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={url}
-                        alt={`Imagen ${i + 1} del proyecto`}
-                        style={{
-                          width: '100%',
-                          maxHeight: '400px',
-                          objectFit: 'cover',
-                          borderRadius: 'var(--radius-md)',
-                          border: '1px solid var(--color-border)',
-                        }}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
+            {/* Task 7 — Temas de feedback con ContentTag (AC-7) */}
+            <ProjectDetailFeedbackTopics feedbackTopics={project.feedback_topics} />
           </div>
 
-          {/* Sidebar de feedback — solo para el builder */}
+          {/* Sidebar de feedback — solo para el builder (AC-8) */}
           {isOwner && (
             <aside
               style={{

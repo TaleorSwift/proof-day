@@ -1,4 +1,37 @@
 workflows:
+  - id: "ds-20260410-story-8-7-project-detail-layout"
+    timestamp: "2026-04-10T14:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 8.7 Project Detail Layout y contenido"
+    workflow: "dev-story"
+    mode: "REFINE"
+    status: "STARTED"
+
+  - id: "20260410-120000-ned-CS-VS-story-8-7"
+    timestamp: "2026-04-10T12:00:00"
+    agent: "Ned (SM)"
+    trigger: "CS+VS"
+    workflow: "create-story + validate-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Creando y validando Story 8.7 — Project Detail: Layout y contenido. Rediseño de page.tsx con BackButton, UserAvatar del autor, imagen destacada y secciones de contenido con campos opcionales Story 8.1."
+
+  - id: "20260410-120000-ned-CS-VS-story-8-7"
+    timestamp: "2026-04-10T12:30:00"
+    agent: "Ned (SM)"
+    trigger: "CS+VS"
+    workflow: "create-story + validate-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "30 minutos"
+    summary: "Story 8.7 creada y validada. READY FOR DEV. 8 tasks definidas con TDD Outside-In. Ficheros de contexto leidos: page.tsx, projects.repository.ts, projects.ts, profiles.repository.ts, profiles.ts, BackButton, ContentTag, StatusBadge, UserAvatar. Gaps detectados y documentados: no migrar query principal al repositorio, fallback de authorName para builders de terceros, sustituir img por next/image, ContentTag para feedback_topics, texto 'Ver demo' en lugar de URL cruda."
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/story-8-7-project-detail-layout.md"
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, /ds — implementar Story 8.7 desde rama feat/8-7-project-detail-layout"
+
   - id: "ds-20260410-story-8-6-topcontributors-leaderboard"
     timestamp: "2026-04-10T11:00:00"
     agent: "Homer (Dev)"
