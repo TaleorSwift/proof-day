@@ -1,4 +1,79 @@
 workflows:
+  - id: "20260411-homer-DS-9-7-project-detail"
+    timestamp: "2026-04-11T03:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 9.7: Project detail tagline + sidebar universal + feedback inline"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+
+  - id: "20260411-ned-CS-9-7-project-detail"
+    timestamp: "2026-04-11T02:00:00"
+    agent: "Ned (Scrum Master)"
+    trigger: "CS — Story 9.7: Project detail tagline + sidebar universal + feedback inline"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    closed_at: "2026-04-11T02:30:00"
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/9-7-project-detail-tagline-sidebar-universal-feedback-inline.md"
+    summary: |
+      Story 9.7 creada con contexto exhaustivo para Homer (Full Flow).
+      Hallazgos clave: (1) `tagline` falta en SELECT de page.tsx; (2) `scores` falta en findByProject del repo;
+      (3) ValidationSignalCard necesita refactor de props (score → understandPercent/wouldUsePercent/feedbackCount);
+      (4) ProofScoreSidebar usa VSC con props actuales — hay que actualizarlo en cascada;
+      (5) FeedbackFormInline es componente nuevo — reutiliza submitFeedback con p3=2 (neutral, no preguntado);
+      (6) FeedbackCTA en columna principal debe eliminarse para reviewers en live (sidebar lo reemplaza);
+      (7) Sidebar visible para todos excepto draft — nueva regla: isOwner || status live|inactive.
+
+  - id: "20260411-homer-CR-9-6-feed-secciones"
+    timestamp: "2026-04-11T01:45:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 9.6: Feed secciones Live/Cerrados + ProjectCard + bugs autor"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    closed_at: "2026-04-11T02:00:00"
+    verdict: "APPROVED"
+    tests: "365/365 passed"
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/9-6-feed-secciones-live-cerrados-projectcard-bugs-autor.md (MODIFICADO — sección Senior Developer Review añadida)"
+    issues:
+      - id: "CR9-6-M1"
+        severity: "MEDIUM"
+        bloqueante: false
+        descripcion: "getProjects() y findByCommunity() no incluyen tagline/wouldUseCount — inconsistencia type vs implementación sin impacto runtime actual"
+      - id: "CR9-6-L1"
+        severity: "LOW"
+        bloqueante: false
+        descripcion: "Cast as unknown as FeedbackWithProfile[] en TopContributors — deuda técnica documentada, resuelta al regenerar tipos Supabase"
+    notes: >
+      Todos los ACs 1-7 verificados con evidencia directa en código.
+      getProjectInitials/UserAvatar eliminados de ProjectCard. N+1 eliminado de TopContributors.
+      Gradient placeholder sin iniciales. wouldUseCount condicional > 0. Guard builderIds.length > 0.
+      Storybook: ConImagenYTagline y SinTaglineConProblem presentes.
+      365/365 tests, lint y tsc limpios. Un issue MEDIUM no bloqueante (CR9-6-M1).
+      Story aprobada para merge.
+
+  - id: "20260411-homer-CR-9-3-fix-ruta-auth-login"
+    timestamp: "2026-04-11T03:00:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 9.3: Fix ruta /auth/login"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    closed_at: "2026-04-11T03:20:00"
+    verdict: "APPROVED"
+    tests: "365/365 passed"
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/9-3-fix-ruta-auth-login.md (MODIFICADO — sección Senior Developer Review segunda pasada + File List actualizado)"
+    notes: >
+      Segunda pasada post-fix. CR9-3-H1 (HIGH) resuelto en commit fa63715.
+      AC-1/AC-2/AC-3/AC-4 todos PASS. 365/365 tests, lint y tsc limpios.
+      Dos issues LOW no bloqueantes: comentario stale en test.skip e2e (CR9-3-R1)
+      y file FeedbackCTA.test.tsx ausente del File List (CR9-3-R2, corregido ahora).
+      Story permanece en sprint-status done.
+
   - id: "20260411-homer-DS-9-6-feed-secciones"
     timestamp: "2026-04-11T02:00:00"
     agent: "Homer (Dev)"

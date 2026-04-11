@@ -10,9 +10,11 @@ import { FeedbackList } from '@/components/feedback/FeedbackList'
 import { FeedbackCounter } from '@/components/feedback/FeedbackCounter'
 import { TeamPerspectives } from '@/components/feedback/TeamPerspectives'
 import { FeedbackCTA } from '@/components/feedback/FeedbackCTA'
+import { FeedbackFormInline } from '@/components/feedback/FeedbackFormInline'
 import { createFeedbackRepository } from '@/lib/repositories/feedback.repository'
-import type { FeedbackEntryData, FeedbackTextResponses } from '@/lib/types/feedback'
+import type { FeedbackEntryData, FeedbackTextResponses, FeedbackScores } from '@/lib/types/feedback'
 import { ProofScoreSidebar } from '@/components/proof-score/ProofScoreSidebar'
+import { ValidationSignalCard } from '@/components/proof-score/ValidationSignalCard'
 import {
   ProjectDetailAuthor,
   ProjectDetailFeaturedImage,
@@ -26,6 +28,43 @@ interface Props {
   params: Promise<{ slug: string; id: string }>
 }
 
+// ---------------------------------------------------------------------------
+// Cálculo de señales de validación desde feedbacks SSR
+// ---------------------------------------------------------------------------
+
+interface ValidationMetrics {
+  understandPercent: number
+  wouldUsePercent: number
+}
+
+function calculateValidationMetrics(
+  feedbacks: Array<{ scores: unknown }>,
+  feedbackCount: number,
+): ValidationMetrics {
+  if (feedbackCount === 0) {
+    return { understandPercent: 0, wouldUsePercent: 0 }
+  }
+
+  const understandCount = feedbacks.filter((f) => {
+    const s = f.scores as { p1?: number } | null
+    return (s?.p1 ?? 0) >= 2
+  }).length
+
+  const wouldUseCount = feedbacks.filter((f) => {
+    const s = f.scores as { p2?: number } | null
+    return s?.p2 === 3
+  }).length
+
+  return {
+    understandPercent: Math.round((understandCount / feedbackCount) * 100),
+    wouldUsePercent: Math.round((wouldUseCount / feedbackCount) * 100),
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Page
+// ---------------------------------------------------------------------------
+
 export default async function ProjectPage({ params }: Props) {
   const { slug, id } = await params
   const supabase = await createClient()
@@ -37,7 +76,7 @@ export default async function ProjectPage({ params }: Props) {
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id, title, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at, decision, target_user, demo_url, feedback_topics')
+    .select('id, title, tagline, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at, decision, target_user, demo_url, feedback_topics')
     .eq('id', id)
     .single()
 
@@ -46,8 +85,6 @@ export default async function ProjectPage({ params }: Props) {
   const isOwner = user?.id === project.builder_id
 
   // Story 8.10 — variante del CTA de feedback
-  // unauthenticated no se alcanza aquí (redirect en línea 34), pero se define
-  // para mantener el tipo completo y cubrir futuros accesos públicos.
   const feedbackCTAVariant = isOwner ? 'owner' : 'authenticated-member'
 
   // Task 3 — Consulta del perfil del autor via ProfilesRepository (AC-2, AC-9)
@@ -63,14 +100,22 @@ export default async function ProjectPage({ params }: Props) {
   const feedbacks = feedbacksRaw ?? []
   const feedbackCount = feedbacks.length
 
-  // Mapeo a FeedbackEntryData para TeamPerspectives (presentacional, sin join raw)
+  // Mapeo a FeedbackEntryData para TeamPerspectives (presentacional, con scores para pills)
   const feedbackEntries: FeedbackEntryData[] = feedbacks.map((f) => ({
     id: f.id,
     reviewerName: (f.profiles as { name?: string } | null)?.name ?? 'Usuario',
     createdAt: f.created_at,
     textResponses: f.text_responses as unknown as FeedbackTextResponses,
-    // contributorType no se asigna en esta story — queda undefined (uso futuro)
+    scores: f.scores != null ? (f.scores as unknown as FeedbackScores) : undefined,
   }))
+
+  // Cálculo de métricas de validación desde feedbacks SSR (para sidebar universal)
+  const { understandPercent, wouldUsePercent } = calculateValidationMetrics(feedbacks, feedbackCount)
+
+  // Regla de visibilidad de la sidebar (story 9.7):
+  // - draft: sidebar NUNCA visible para nadie
+  // - live/inactive: sidebar visible para TODOS (owner y reviewer)
+  const showSidebar = isOwner || project.status === 'live' || project.status === 'inactive'
 
   return (
     <main
@@ -103,11 +148,11 @@ export default async function ProjectPage({ params }: Props) {
         {/* Banner inactivo */}
         {project.status === 'inactive' && <InactiveBanner />}
 
-        {/* Layout principal: contenido + sidebar (owner) */}
+        {/* Layout principal: contenido + sidebar */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: isOwner ? 'minmax(0, 1fr) clamp(280px, 30%, 380px)' : '1fr',
+            gridTemplateColumns: showSidebar ? 'minmax(0, 1fr) clamp(280px, 30%, 380px)' : '1fr',
             gap: 'var(--space-8)',
             alignItems: 'start',
           }}
@@ -140,6 +185,24 @@ export default async function ProjectPage({ params }: Props) {
                   </h1>
                   <StatusBadge status={project.status as 'draft' | 'live' | 'inactive'} />
                 </div>
+                {/* Tagline — story 9.7 AC-1 */}
+                {project.tagline && (
+                  <p
+                    data-testid="project-detail-tagline"
+                    style={{
+                      fontSize: 'var(--text-sm)',
+                      color: 'var(--color-text-muted)',
+                      margin: 0,
+                      lineHeight: 'var(--leading-base)',
+                      overflow: 'hidden',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 1,
+                      WebkitBoxOrient: 'vertical',
+                    }}
+                  >
+                    {project.tagline}
+                  </p>
+                )}
                 {/* UserAvatar del autor (AC-2, AC-9) */}
                 <ProjectDetailAuthor authorName={authorName} />
               </div>
@@ -183,6 +246,21 @@ export default async function ProjectPage({ params }: Props) {
               projectTitle={project.title}
             />
 
+            {/* Caption de imagen — story 9.7 AC-1 */}
+            {project.image_urls && project.image_urls.length > 0 && (
+              <p
+                data-testid="project-detail-image-caption"
+                style={{
+                  fontSize: 'var(--text-xs)',
+                  color: 'var(--color-text-muted)',
+                  margin: 0,
+                  marginTop: 'calc(var(--space-1) * -1)', // visual ajuste tras el gap del flex
+                }}
+              >
+                Usa estas imágenes para dar feedback más preciso.
+              </p>
+            )}
+
             {/* Problema (AC-4) */}
             <section style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
               <h2
@@ -215,7 +293,7 @@ export default async function ProjectPage({ params }: Props) {
               </p>
             </section>
 
-            {/* Hipotesis — patron "en juego" del design system (AC-4) */}
+            {/* Hipotesis — story 9.7 AC-1: heading actualizado a "🔬 Hipótesis a validar" */}
             <section
               style={{
                 backgroundColor: 'var(--color-hypothesis-bg)',
@@ -234,7 +312,7 @@ export default async function ProjectPage({ params }: Props) {
                   color: 'var(--color-text-primary)',
                 }}
               >
-                Hipótesis
+                🔬 Hipótesis a validar
               </h2>
               <p style={{ fontSize: 'var(--text-base)', color: 'var(--color-text-secondary)', lineHeight: 'var(--leading-base)' }}>
                 {project.hypothesis}
@@ -250,8 +328,10 @@ export default async function ProjectPage({ params }: Props) {
             {/* Task 7 — Temas de feedback con ContentTag (AC-7) */}
             <ProjectDetailFeedbackTopics feedbackTopics={project.feedback_topics} />
 
-            {/* Story 8.10 — FeedbackCTA contextual: solo en proyectos live */}
-            {project.status === 'live' && (
+            {/* Story 8.10 — FeedbackCTA contextual: solo en proyectos live para el owner.
+                Para reviewers en live, el formulario está en la sidebar (story 9.7).
+                El owner ve variant="owner" que retorna null — se mantiene por semántica. */}
+            {project.status === 'live' && isOwner && (
               <FeedbackCTA
                 variant={feedbackCTAVariant}
                 projectId={project.id}
@@ -263,8 +343,8 @@ export default async function ProjectPage({ params }: Props) {
             <TeamPerspectives feedbacks={feedbackEntries} />
           </div>
 
-          {/* Sidebar de feedback — solo para el builder (AC-8) */}
-          {isOwner && (
+          {/* Sidebar — visible para owner y en proyectos live/inactive (story 9.7) */}
+          {showSidebar && (
             <aside
               style={{
                 display: 'flex',
@@ -274,41 +354,91 @@ export default async function ProjectPage({ params }: Props) {
                 top: 'var(--space-8)',
               }}
             >
+              {/* Bloque "Feedback recibido" — solo para el owner */}
+              {isOwner && (
+                <div
+                  style={{
+                    padding: 'var(--space-4)',
+                    backgroundColor: 'var(--color-surface)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-lg)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 'var(--space-4)',
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+                    <h2
+                      style={{
+                        fontSize: 'var(--text-base)',
+                        fontWeight: 'var(--font-semibold)',
+                        color: 'var(--color-text-primary)',
+                        margin: 0,
+                      }}
+                    >
+                      Feedback recibido
+                    </h2>
+                    <FeedbackCounter count={feedbackCount} />
+                  </div>
+
+                  <FeedbackList projectId={project.id} isBuilder={isOwner} />
+                </div>
+              )}
+
+              {/* ValidationSignalCard — visible para todos cuando hay sidebar */}
               <div
                 style={{
                   padding: 'var(--space-4)',
                   backgroundColor: 'var(--color-surface)',
                   border: '1px solid var(--color-border)',
                   borderRadius: 'var(--radius-lg)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 'var(--space-4)',
                 }}
               >
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
-                  <h2
-                    style={{
-                      fontSize: 'var(--text-base)',
-                      fontWeight: 'var(--font-semibold)',
-                      color: 'var(--color-text-primary)',
-                      margin: 0,
-                    }}
-                  >
-                    Feedback recibido
-                  </h2>
-                  <FeedbackCounter count={feedbackCount} />
-                </div>
-
-                <FeedbackList projectId={project.id} isBuilder={isOwner} />
+                <ValidationSignalCard
+                  understandPercent={understandPercent}
+                  wouldUsePercent={wouldUsePercent}
+                  feedbackCount={feedbackCount}
+                />
               </div>
 
-              {/* Proof Score — solo para el builder */}
-              <ProofScoreSidebar
-                projectId={project.id}
-                isBuilder={isOwner}
-                feedbackCount={feedbackCount}
-                initialDecision={project.decision as import('@/lib/types/projects').ProjectDecision | null}
-              />
+              {/* Contenido de la sidebar según rol y status */}
+              {isOwner ? (
+                /* Owner: ProofScoreSidebar con DecisionDialog */
+                <ProofScoreSidebar
+                  projectId={project.id}
+                  isBuilder={isOwner}
+                  feedbackCount={feedbackCount}
+                  initialDecision={project.decision as import('@/lib/types/projects').ProjectDecision | null}
+                />
+              ) : project.status === 'live' ? (
+                /* Reviewer en proyecto live: FeedbackFormInline */
+                <div
+                  style={{
+                    padding: 'var(--space-4)',
+                    backgroundColor: 'var(--color-surface)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-lg)',
+                  }}
+                >
+                  <FeedbackFormInline
+                    projectId={project.id}
+                    communityId={project.community_id}
+                  />
+                </div>
+              ) : (
+                /* Reviewer en proyecto inactive: mensaje de cierre */
+                <p
+                  style={{
+                    fontSize: 'var(--text-sm)',
+                    color: 'var(--color-text-muted)',
+                    fontStyle: 'italic',
+                    margin: 0,
+                    padding: 'var(--space-2) 0',
+                  }}
+                >
+                  Esta idea ya no acepta feedback.
+                </p>
+              )}
             </aside>
           )}
         </div>

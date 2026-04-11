@@ -16,32 +16,35 @@ type Story = StoryObj<typeof meta>
 export const Promising: Story = {
   name: 'Promising',
   args: {
-    score: {
-      label: 'Promising',
-      average: 78,
-      feedbackCount: 12,
-    },
+    understandPercent: 78,
+    wouldUsePercent: 65,
+    feedbackCount: 12,
   },
 }
 
 export const NeedsIteration: Story = {
   name: 'Needs Iteration',
   args: {
-    score: {
-      label: 'Needs iteration',
-      average: 45,
-      feedbackCount: 7,
-    },
+    understandPercent: 52,
+    wouldUsePercent: 40,
+    feedbackCount: 7,
   },
 }
 
 export const Weak: Story = {
   name: 'Weak',
   args: {
-    score: {
-      label: 'Weak',
-      average: 22,
-      feedbackCount: 3,
-    },
+    understandPercent: 25,
+    wouldUsePercent: 15,
+    feedbackCount: 3,
+  },
+}
+
+export const SinDatos: Story = {
+  name: 'Sin Datos',
+  args: {
+    understandPercent: 0,
+    wouldUsePercent: 0,
+    feedbackCount: 0,
   },
 }

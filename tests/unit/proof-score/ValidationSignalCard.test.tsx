@@ -1,100 +1,74 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest'
+import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 import { ValidationSignalCard } from '@/components/proof-score/ValidationSignalCard'
-import type { ProofScoreResult } from '@/lib/types/proof-score'
 
 // ---------------------------------------------------------------------------
-// Fixtures
+// Suite: dos barras de progreso separadas
 // ---------------------------------------------------------------------------
 
-const SCORE_PROMISING: ProofScoreResult = {
-  label: 'Promising',
-  average: 78,
-  feedbackCount: 12,
-}
+describe('ValidationSignalCard — barras de progreso', () => {
+  it('renderiza la barra "Comprenden el problema" con el porcentaje correcto', () => {
+    render(<ValidationSignalCard understandPercent={70} wouldUsePercent={45} feedbackCount={5} />)
+    const bar = screen.getByRole('progressbar', { name: 'Comprenden el problema' })
+    expect(bar).toBeInTheDocument()
+    expect(bar).toHaveAttribute('aria-valuenow', '70')
+  })
 
-const SCORE_NEEDS_ITERATION: ProofScoreResult = {
-  label: 'Needs iteration',
-  average: 45,
-  feedbackCount: 7,
-}
+  it('renderiza la barra "Lo usarían" con el porcentaje correcto', () => {
+    render(<ValidationSignalCard understandPercent={70} wouldUsePercent={45} feedbackCount={5} />)
+    const bar = screen.getByRole('progressbar', { name: 'Lo usarían' })
+    expect(bar).toBeInTheDocument()
+    expect(bar).toHaveAttribute('aria-valuenow', '45')
+  })
 
-const SCORE_WEAK: ProofScoreResult = {
-  label: 'Weak',
-  average: 22,
-  feedbackCount: 3,
-}
+  it('muestra "Basado en N feedbacks" con el count interpolado', () => {
+    render(<ValidationSignalCard understandPercent={60} wouldUsePercent={40} feedbackCount={8} />)
+    expect(screen.getByText('Basado en 8 feedbacks')).toBeInTheDocument()
+  })
+
+  it('muestra el disclaimer en itálica', () => {
+    render(<ValidationSignalCard understandPercent={60} wouldUsePercent={40} feedbackCount={3} />)
+    expect(screen.getByText(/esta señal se actualiza con cada nuevo feedback/i)).toBeInTheDocument()
+  })
+})
 
 // ---------------------------------------------------------------------------
-// Suite: SignalIndicator level derivation (AC #2, #3)
+// Suite: SignalIndicator — derivación del label
 // ---------------------------------------------------------------------------
 
-describe('ValidationSignalCard — SignalIndicator', () => {
-  it('renderiza SignalIndicator con label "Promising" cuando score.label es Promising', () => {
-    render(<ValidationSignalCard score={SCORE_PROMISING} />)
+describe('ValidationSignalCard — SignalIndicator derivado', () => {
+  it('muestra "Promising" cuando understandPercent >= 70', () => {
+    render(<ValidationSignalCard understandPercent={70} wouldUsePercent={50} feedbackCount={5} />)
     expect(screen.getByText('Promising')).toBeInTheDocument()
   })
 
-  it('renderiza SignalIndicator con label "Needs iteration" cuando score.label es Needs iteration', () => {
-    render(<ValidationSignalCard score={SCORE_NEEDS_ITERATION} />)
+  it('muestra "Needs iteration" cuando understandPercent >= 40 y < 70', () => {
+    render(<ValidationSignalCard understandPercent={55} wouldUsePercent={30} feedbackCount={4} />)
     expect(screen.getByText('Needs iteration')).toBeInTheDocument()
   })
 
-  it('renderiza SignalIndicator con label "Weak" cuando score.label es Weak', () => {
-    render(<ValidationSignalCard score={SCORE_WEAK} />)
+  it('muestra "Weak" cuando understandPercent < 40', () => {
+    render(<ValidationSignalCard understandPercent={20} wouldUsePercent={10} feedbackCount={2} />)
     expect(screen.getByText('Weak')).toBeInTheDocument()
   })
 })
 
 // ---------------------------------------------------------------------------
-// Suite: ProgressBar (AC #4)
+// Suite: estado sin datos (feedbackCount = 0)
 // ---------------------------------------------------------------------------
 
-describe('ValidationSignalCard — ProgressBar', () => {
-  it('renderiza una ProgressBar con aria-label "Puntuación media"', () => {
-    render(<ValidationSignalCard score={SCORE_PROMISING} />)
-    expect(screen.getByRole('progressbar', { name: 'Puntuación media' })).toBeInTheDocument()
+describe('ValidationSignalCard — estado sin datos', () => {
+  it('muestra "Aún no hay datos de validación" cuando feedbackCount es 0', () => {
+    render(<ValidationSignalCard understandPercent={0} wouldUsePercent={0} feedbackCount={0} />)
+    expect(screen.getByText(/aún no hay datos de validación/i)).toBeInTheDocument()
   })
 
-  it('la ProgressBar tiene aria-valuenow igual al average del score (Promising)', () => {
-    render(<ValidationSignalCard score={SCORE_PROMISING} />)
-    const bar = screen.getByRole('progressbar', { name: 'Puntuación media' })
-    expect(bar).toHaveAttribute('aria-valuenow', String(SCORE_PROMISING.average))
-  })
-
-  it('la ProgressBar tiene aria-valuenow igual al average del score (Needs iteration)', () => {
-    render(<ValidationSignalCard score={SCORE_NEEDS_ITERATION} />)
-    const bar = screen.getByRole('progressbar', { name: 'Puntuación media' })
-    expect(bar).toHaveAttribute('aria-valuenow', String(SCORE_NEEDS_ITERATION.average))
-  })
-
-  it('la ProgressBar tiene aria-valuenow igual al average del score (Weak)', () => {
-    render(<ValidationSignalCard score={SCORE_WEAK} />)
-    const bar = screen.getByRole('progressbar', { name: 'Puntuación media' })
-    expect(bar).toHaveAttribute('aria-valuenow', String(SCORE_WEAK.average))
-  })
-})
-
-// ---------------------------------------------------------------------------
-// Suite: Disclaimer (AC #5)
-// ---------------------------------------------------------------------------
-
-describe('ValidationSignalCard — disclaimer', () => {
-  it('renderiza disclaimer con feedbackCount interpolado para Promising', () => {
-    render(<ValidationSignalCard score={SCORE_PROMISING} />)
-    expect(screen.getByText('Basado en 12 respuestas')).toBeInTheDocument()
-  })
-
-  it('renderiza disclaimer con feedbackCount interpolado para Needs iteration', () => {
-    render(<ValidationSignalCard score={SCORE_NEEDS_ITERATION} />)
-    expect(screen.getByText('Basado en 7 respuestas')).toBeInTheDocument()
-  })
-
-  it('renderiza disclaimer con feedbackCount interpolado para Weak', () => {
-    render(<ValidationSignalCard score={SCORE_WEAK} />)
-    expect(screen.getByText('Basado en 3 respuestas')).toBeInTheDocument()
+  it('no muestra barras de progreso cuando feedbackCount es 0', () => {
+    render(<ValidationSignalCard understandPercent={0} wouldUsePercent={0} feedbackCount={0} />)
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
   })
 })

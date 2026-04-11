@@ -128,3 +128,69 @@ describe('FeedbackEntry — fecha', () => {
     expect(timeEl).toBeInTheDocument()
   })
 })
+
+// ---------------------------------------------------------------------------
+// Suite: FeedbackEntry — pills de scores (AC-5 story 9.7)
+// ---------------------------------------------------------------------------
+
+describe('FeedbackEntry — pills de scores', () => {
+  it('no renderiza pills cuando scores es undefined', () => {
+    render(<FeedbackEntry data={BASE_ENTRY} />)
+    expect(screen.queryByText(/Problema:/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Lo usaría:/)).not.toBeInTheDocument()
+  })
+
+  it('muestra pill "Problema: sí" cuando p1 es 3', () => {
+    const entry: FeedbackEntryData = {
+      ...BASE_ENTRY,
+      scores: { p1: 3, p2: 3, p3: 2 },
+    }
+    render(<FeedbackEntry data={entry} />)
+    expect(screen.getByText('Problema: sí')).toBeInTheDocument()
+  })
+
+  it('muestra pill "Problema: parcialmente" cuando p1 es 2', () => {
+    const entry: FeedbackEntryData = {
+      ...BASE_ENTRY,
+      scores: { p1: 2, p2: 3, p3: 2 },
+    }
+    render(<FeedbackEntry data={entry} />)
+    expect(screen.getByText('Problema: parcialmente')).toBeInTheDocument()
+  })
+
+  it('muestra pill "Problema: no" cuando p1 es 1', () => {
+    const entry: FeedbackEntryData = {
+      ...BASE_ENTRY,
+      scores: { p1: 1, p2: 1, p3: 2 },
+    }
+    render(<FeedbackEntry data={entry} />)
+    expect(screen.getByText('Problema: no')).toBeInTheDocument()
+  })
+
+  it('muestra pill "Lo usaría: sí" cuando p2 es 3', () => {
+    const entry: FeedbackEntryData = {
+      ...BASE_ENTRY,
+      scores: { p1: 3, p2: 3, p3: 2 },
+    }
+    render(<FeedbackEntry data={entry} />)
+    expect(screen.getByText('Lo usaría: sí')).toBeInTheDocument()
+  })
+
+  it('muestra pill "Lo usaría: no" cuando p2 es 1', () => {
+    const entry: FeedbackEntryData = {
+      ...BASE_ENTRY,
+      scores: { p1: 3, p2: 1, p3: 2 },
+    }
+    render(<FeedbackEntry data={entry} />)
+    expect(screen.getByText('Lo usaría: no')).toBeInTheDocument()
+  })
+
+  it('muestra pill "Lo usaría: no" cuando p2 es 2', () => {
+    const entry: FeedbackEntryData = {
+      ...BASE_ENTRY,
+      scores: { p1: 3, p2: 2, p3: 2 },
+    }
+    render(<FeedbackEntry data={entry} />)
+    expect(screen.getByText('Lo usaría: no')).toBeInTheDocument()
+  })
+})

@@ -107,8 +107,8 @@ development_status:
   9-3-fix-ruta-auth-login: done  # merged PR#55 + hotfix fa63715 — 2026-04-10
   9-4-landing-welcome-screen: done  # merged PR#56 — 2026-04-10
   9-5-navbar-logo-nombre-icono-logout: done  # merged PR#57 — 2026-04-10
-  9-6-feed-secciones-live-cerrados-projectcard-bugs-autor: review
-  9-7-project-detail-tagline-sidebar-universal-feedback-inline: backlog
+  9-6-feed-secciones-live-cerrados-projectcard-bugs-autor: done  # merged PR#58 — 2026-04-11
+  9-7-project-detail-tagline-sidebar-universal-feedback-inline: review
   9-8-modal-lanzar-idea-tagline-chips-imagenes: backlog
   9-9-feed-header-ideas-en-validacion-boton-lanzar: backlog
   9-10-communities-redirect-condicional: backlog
