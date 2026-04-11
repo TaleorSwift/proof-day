@@ -385,21 +385,23 @@ export default async function ProjectPage({ params }: Props) {
                 </div>
               )}
 
-              {/* ValidationSignalCard — visible para todos cuando hay sidebar */}
-              <div
-                style={{
-                  padding: 'var(--space-4)',
-                  backgroundColor: 'var(--color-surface)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-lg)',
-                }}
-              >
-                <ValidationSignalCard
-                  understandPercent={understandPercent}
-                  wouldUsePercent={wouldUsePercent}
-                  feedbackCount={feedbackCount}
-                />
-              </div>
+              {/* ValidationSignalCard — visible solo para no-owner (owner la recibe via ProofScoreSidebar) */}
+              {!isOwner && (
+                <div
+                  style={{
+                    padding: 'var(--space-4)',
+                    backgroundColor: 'var(--color-surface)',
+                    border: '1px solid var(--color-border)',
+                    borderRadius: 'var(--radius-lg)',
+                  }}
+                >
+                  <ValidationSignalCard
+                    understandPercent={understandPercent}
+                    wouldUsePercent={wouldUsePercent}
+                    feedbackCount={feedbackCount}
+                  />
+                </div>
+              )}
 
               {/* Contenido de la sidebar según rol y status */}
               {isOwner ? (
