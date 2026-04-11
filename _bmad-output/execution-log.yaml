@@ -5,7 +5,34 @@ workflows:
     trigger: "DS — Story 9.6: Feed secciones Live/Cerrados + ProjectCard + bugs autor"
     workflow: "dev-story"
     mode: "GENERATE"
-    result: "IN_PROGRESS"
+    result: "SUCCESS"
+    closed_at: "2026-04-11T02:45:00"
+    branch: "feat/9-6-feed-secciones-live-cerrados-projectcard"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/58"
+    commit: "1cfd208"
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/9-6-feed-secciones-live-cerrados-projectcard-bugs-autor.md"
+      - "lib/api/projects.ts"
+      - "app/(app)/communities/[slug]/page.tsx"
+      - "components/projects/ProjectCard.tsx"
+      - "components/projects/ProjectFeed.tsx"
+      - "lib/repositories/gamification.repository.ts"
+      - "components/gamification/TopContributors.tsx"
+      - "stories/projects/ProjectCard.stories.tsx"
+      - "tests/unit/projects/projectCard.test.ts"
+      - "tests/unit/projects/ProjectFeed.test.tsx"
+      - "docs/project/modules/projects.md"
+      - "docs/project/modules/gamification.md"
+    tests:
+      total: 365
+      passed: 365
+      failed: 0
+      threshold: 357
+    summary: |
+      Story 9.6 implementada completa. Secciones Live/Cerrados con headings compactos.
+      ProjectCard: tagline??problem, author name plain text, gradient placeholder, wouldUseCount.
+      Batch-fetch profiles para builderName (1 IN query). TopContributors: N+1 eliminado con JOIN
+      via FK feedbacks_reviewer_profiles_fkey. Storybook: 2 nuevas stories. 365 tests verdes.
 
   - id: "20260411-ned-CS-9-6-feed-secciones"
     timestamp: "2026-04-11T01:00:00"
