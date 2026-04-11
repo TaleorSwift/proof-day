@@ -17,6 +17,19 @@ interface ProofScoreSidebarProps {
   initialDecision?: ProjectDecision | null
 }
 
+// Deriva understandPercent y wouldUsePercent desde ProofScoreResult.
+// El endpoint del owner devuelve un average global (media de todas las preguntas).
+// Usamos ese average como proxy para ambas barras en el contexto del owner.
+function derivePercentsFromScore(score: ProofScoreResult): {
+  understandPercent: number
+  wouldUsePercent: number
+} {
+  return {
+    understandPercent: score.average,
+    wouldUsePercent: score.average,
+  }
+}
+
 export function ProofScoreSidebar({
   projectId,
   isBuilder,
@@ -49,9 +62,15 @@ export function ProofScoreSidebar({
   if (isLoading) return <ProofScoreWaiting feedbackCount={feedbackCount} isLoading={true} />
   if (score === null) return <ProofScoreWaiting feedbackCount={feedbackCount} />
 
+  const { understandPercent, wouldUsePercent } = derivePercentsFromScore(score)
+
   return (
     <div data-testid="proof-score-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-      <ValidationSignalCard score={score} />
+      <ValidationSignalCard
+        understandPercent={understandPercent}
+        wouldUsePercent={wouldUsePercent}
+        feedbackCount={score.feedbackCount}
+      />
       {decision !== null ? (
         <DecisionBadge decision={decision} />
       ) : (

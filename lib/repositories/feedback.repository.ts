@@ -8,7 +8,7 @@ export function createFeedbackRepository(supabase: SupabaseClient) {
       return supabase
         .from('feedbacks')
         .select(`
-          id, text_responses, created_at,
+          id, scores, text_responses, created_at,
           profiles:reviewer_id (id, name, avatar_url)
         `)
         .eq('project_id', projectId)

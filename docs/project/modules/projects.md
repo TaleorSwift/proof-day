@@ -1,6 +1,6 @@
 # Módulo: Proyectos
 
-**Última actualización:** Story 9.6 — Feed secciones Live/Cerrados + ProjectCard + bugs autor (2026-04-11)
+**Última actualización:** Story 9.7 — Project detail tagline + sidebar universal + feedback inline (2026-04-11)
 
 ---
 
@@ -112,6 +112,20 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 
 ### Tests
 - `tests/unit/projects/projectList.test.ts` — lógica de visibilidad y ordenación
+
+---
+
+### Detalle de proyecto — reglas de sidebar (Story 9.7)
+
+- La sidebar es visible cuando `isOwner || status === 'live' || status === 'inactive'` (story 9.7)
+- Para proyectos `draft`: la sidebar no se muestra para nadie (story 9.7)
+- Tagline aparece debajo del título como subtítulo (text-sm, muted, 1 línea) cuando existe (story 9.7)
+- Caption "Usa estas imágenes para dar feedback más preciso." aparece bajo la imagen destacada cuando hay imágenes (story 9.7)
+- El heading de hipótesis es `"🔬 Hipótesis a validar"` (story 9.7)
+- Sidebar para reviewer en `live`: ValidationSignalCard + FeedbackFormInline (story 9.7)
+- Sidebar para reviewer en `inactive`: ValidationSignalCard + mensaje "Esta idea ya no acepta feedback." (story 9.7)
+- Sidebar para owner: bloque "Feedback recibido" + ValidationSignalCard + ProofScoreSidebar (story 9.7)
+- FeedbackCTA en columna principal eliminado para reviewers — el formulario está en la sidebar (story 9.7)
 
 ---
 

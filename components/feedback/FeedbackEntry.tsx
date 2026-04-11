@@ -1,7 +1,7 @@
 import { UserAvatar } from '@/components/shared/UserAvatar'
 import { ContributorBadge } from '@/components/shared/ContributorBadge'
 import { getRelativeTime } from '@/lib/utils/date'
-import type { FeedbackEntryData } from '@/lib/types/feedback'
+import type { FeedbackEntryData, FeedbackScore } from '@/lib/types/feedback'
 
 // Mismas etiquetas que FeedbackList — fuente única de verdad.
 // Si en el futuro se extraen a lib/constants/feedback.ts, actualizar ambas referencias.
@@ -12,12 +12,50 @@ const QUESTION_LABELS: Record<string, string> = {
   p4: '¿Qué mejorarías?',
 }
 
+// ---------------------------------------------------------------------------
+// ScorePill — sub-componente interno (no exportado)
+// ---------------------------------------------------------------------------
+
+interface ScorePillProps {
+  label: string
+  score: FeedbackScore
+  labelMap: Record<1 | 2 | 3, string>
+}
+
+const SCORE_COLOR_MAP: Record<FeedbackScore, { bg: string; text: string }> = {
+  1: { bg: 'var(--color-weak-bg)',      text: 'var(--color-weak-text)' },
+  2: { bg: 'var(--color-needs-bg)',     text: 'var(--color-needs-text)' },
+  3: { bg: 'var(--color-promising-bg)', text: 'var(--color-promising-text)' },
+}
+
+function ScorePill({ label, score, labelMap }: ScorePillProps) {
+  const { bg, text } = SCORE_COLOR_MAP[score]
+  return (
+    <span
+      style={{
+        fontSize: 'var(--text-xs)',
+        backgroundColor: bg,
+        color: text,
+        borderRadius: 'var(--radius-full)',
+        padding: '2px var(--space-2)',
+        fontWeight: 'var(--font-medium)',
+      }}
+    >
+      {label}: {labelMap[score]}
+    </span>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// FeedbackEntry
+// ---------------------------------------------------------------------------
+
 interface FeedbackEntryProps {
   data: FeedbackEntryData
 }
 
 export function FeedbackEntry({ data }: FeedbackEntryProps) {
-  const { reviewerName, createdAt, textResponses, contributorType } = data
+  const { reviewerName, createdAt, textResponses, contributorType, scores } = data
   const textResponsesRecord = textResponses as unknown as Record<string, string | undefined>
 
   return (
@@ -70,6 +108,22 @@ export function FeedbackEntry({ data }: FeedbackEntryProps) {
           {getRelativeTime(createdAt)}
         </time>
       </div>
+
+      {/* Pills de scores (story 9.7 — AC-5): solo cuando scores existe */}
+      {scores && (
+        <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+          <ScorePill
+            label="Problema"
+            score={scores.p1}
+            labelMap={{ 1: 'no', 2: 'parcialmente', 3: 'sí' }}
+          />
+          <ScorePill
+            label="Lo usaría"
+            score={scores.p2}
+            labelMap={{ 1: 'no', 2: 'no', 3: 'sí' }}
+          />
+        </div>
+      )}
 
       {/* Cuerpo: respuestas de texto — solo se renderizan las que tienen valor truthy */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>

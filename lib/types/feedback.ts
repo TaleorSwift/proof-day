@@ -8,6 +8,7 @@ export interface FeedbackEntryData {
   createdAt: string
   textResponses: FeedbackTextResponses
   contributorType?: ContributorType
+  scores?: FeedbackScores
 }
 
 export interface FeedbackScores {
