@@ -137,6 +137,7 @@ const PROJECT_MINIMAL = {
   imageUrls: [] as string[],
   status: 'live' as const,
   builderId: 'user-builder-1',
+  wouldUseCount: 0,
 }
 
 describe('ProjectCard — render de componente', () => {
@@ -205,5 +206,103 @@ describe('ProjectCard — render de componente', () => {
       })
     )
     expect(screen.getByTestId('project-card-feedback-count')).toHaveTextContent('5 feedbacks')
+  })
+})
+
+// ── F. Tests Story 9.6 ────────────────────────────────────────────────────────
+
+describe('ProjectCard — tagline, wouldUseCount, author name, gradient placeholder (Story 9.6)', () => {
+  it('muestra tagline cuando existe (prevalece sobre problem)', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: { ...PROJECT_MINIMAL, tagline: 'Mi tagline', problem: 'Mi problem' },
+        communitySlug: 'test',
+      })
+    )
+    expect(screen.getByTestId('project-card-tagline')).toHaveTextContent('Mi tagline')
+  })
+
+  it('muestra problem como fallback cuando tagline es null', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: { ...PROJECT_MINIMAL, tagline: null, problem: 'Mi problem' },
+        communitySlug: 'test',
+      })
+    )
+    expect(screen.getByTestId('project-card-tagline')).toHaveTextContent('Mi problem')
+  })
+
+  it('no muestra tagline/problem cuando ambos son null/undefined', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: { ...PROJECT_MINIMAL, tagline: null },
+        communitySlug: 'test',
+      })
+    )
+    expect(screen.queryByTestId('project-card-tagline')).not.toBeInTheDocument()
+  })
+
+  it('muestra would-use-count cuando > 0', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: { ...PROJECT_MINIMAL, wouldUseCount: 3 },
+        communitySlug: 'test',
+      })
+    )
+    expect(screen.getByTestId('project-card-would-use-count')).toHaveTextContent('3 lo usarían')
+  })
+
+  it('no muestra would-use-count cuando es 0', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: { ...PROJECT_MINIMAL, wouldUseCount: 0 },
+        communitySlug: 'test',
+      })
+    )
+    expect(screen.queryByTestId('project-card-would-use-count')).not.toBeInTheDocument()
+  })
+
+  it('no muestra would-use-count cuando es undefined', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { wouldUseCount: _wuc, ...projectWithoutCount } = PROJECT_MINIMAL
+    render(
+      React.createElement(ProjectCard, {
+        project: projectWithoutCount,
+        communitySlug: 'test',
+      })
+    )
+    expect(screen.queryByTestId('project-card-would-use-count')).not.toBeInTheDocument()
+  })
+
+  it('muestra builderName como texto plano', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: { ...PROJECT_MINIMAL, builderName: 'Ana García' },
+        communitySlug: 'test',
+      })
+    )
+    expect(screen.getByTestId('project-card-author-name')).toHaveTextContent('Ana García')
+  })
+
+  it('usa primeros 8 chars de builderId como fallback cuando no hay builderName', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: { ...PROJECT_MINIMAL, builderId: 'abc12345-extra', builderName: undefined },
+        communitySlug: 'test',
+      })
+    )
+    expect(screen.getByTestId('project-card-author-name')).toHaveTextContent('abc12345')
+  })
+
+  it('placeholder sin imagen no muestra iniciales (gradiente sin texto)', () => {
+    render(
+      React.createElement(ProjectCard, {
+        project: PROJECT_MINIMAL,
+        communitySlug: 'test',
+      })
+    )
+    const placeholder = screen.getByTestId('project-card-placeholder')
+    expect(placeholder).toBeInTheDocument()
+    expect(placeholder.querySelector('span')).toBeNull()
   })
 })

@@ -20,6 +20,8 @@ const baseProject = {
   builderId: 'user-123',
   builderName: 'María García',
   problem: 'Los freelancers pierden tiempo gestionando proyectos en múltiples herramientas sin integración.',
+  tagline: 'Gestiona todos tus clientes desde un solo lugar.',
+  wouldUseCount: 12,
 }
 
 export const LiveConImagen: Story = {
@@ -80,8 +82,42 @@ export const SinDescripcion: Story = {
       imageUrls: [],
       status: 'live',
       builderId: 'user-456',
+      wouldUseCount: 0,
     },
     communitySlug: 'tech-community',
     feedbackCount: 1,
+  },
+}
+
+// Story 9.6: nuevas stories
+
+export const ConImagenYTagline: Story = {
+  args: {
+    project: {
+      ...baseProject,
+      imageUrls: ['https://picsum.photos/seed/proj2/400/300'],
+      status: 'live',
+      tagline: 'Gestiona todos tus clientes desde un solo lugar.',
+      wouldUseCount: 8,
+    },
+    communitySlug: 'startup-madrid',
+    feedbackCount: 3,
+    initialLikeCount: 7,
+  },
+}
+
+export const SinTaglineConProblem: Story = {
+  args: {
+    project: {
+      ...baseProject,
+      imageUrls: [],
+      status: 'live',
+      tagline: null,
+      problem: 'Los freelancers pierden tiempo gestionando proyectos en múltiples herramientas.',
+      wouldUseCount: 5,
+    },
+    communitySlug: 'startup-madrid',
+    feedbackCount: 4,
+    initialLikeCount: 9,
   },
 }

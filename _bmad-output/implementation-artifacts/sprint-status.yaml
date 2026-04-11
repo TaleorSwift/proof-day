@@ -104,10 +104,10 @@ development_status:
   epic-9: in-progress
   9-1-migracion-db-tagline-would-use-count: done  # merged PR#53 — 2026-04-10
   9-2-login-logo-textos-layout-sin-card: done
-  9-3-fix-ruta-auth-login: backlog
-  9-4-landing-welcome-screen: backlog
-  9-5-navbar-logo-nombre-icono-logout: backlog
-  9-6-feed-secciones-live-cerrados-projectcard-bugs-autor: backlog
+  9-3-fix-ruta-auth-login: done  # merged PR#55 + hotfix fa63715 — 2026-04-10
+  9-4-landing-welcome-screen: done  # merged PR#56 — 2026-04-10
+  9-5-navbar-logo-nombre-icono-logout: done  # merged PR#57 — 2026-04-10
+  9-6-feed-secciones-live-cerrados-projectcard-bugs-autor: review
   9-7-project-detail-tagline-sidebar-universal-feedback-inline: backlog
   9-8-modal-lanzar-idea-tagline-chips-imagenes: backlog
   9-9-feed-header-ideas-en-validacion-boton-lanzar: backlog
