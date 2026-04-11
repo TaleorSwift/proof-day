@@ -12,12 +12,15 @@ Muestra en cada página de comunidad dos widgets en la barra lateral derecha: un
 - Los widgets muestran skeleton mientras cargan y nunca pantalla en blanco. (story 6.2)
 - Solo miembros de la comunidad pueden consultar los datos de gamificación (guard 403 en la API). (story 6.2)
 
+- El widget Top Contribuidores muestra el nombre real del reviewer (`profiles.name`) resuelto via JOIN en la query de feedbacks — sin N+1 queries (story 9.6)
+- El fallback del nombre del reviewer es los primeros 8 chars del `userId` (story 9.6)
+- La FK `feedbacks_reviewer_profiles_fkey` (migration 013) permite el JOIN directo entre `feedbacks` y `profiles` (story 9.6)
+
 ## Ficheros clave
-- `components/gamification/TopReviewerWidget.tsx`
-- `components/gamification/PersonalFeedbackCounter.tsx`
+- `components/gamification/TopContributors.tsx`
+- `components/gamification/TopContributorsList.tsx`
+- `lib/repositories/gamification.repository.ts`
 - `lib/utils/gamification.ts`
-- `app/api/gamification/top-reviewer/route.ts`
-- `app/api/gamification/feedback-count/route.ts`
 
 ## Última actualización
-Story 6.2 — 2026-03-28
+Story 9.6 — 2026-04-11

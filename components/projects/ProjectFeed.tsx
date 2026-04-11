@@ -36,24 +36,16 @@ export function ProjectFeed({ projects, communitySlug }: ProjectFeedProps) {
             <h2
               id="live-section-heading"
               style={{
-                fontSize: 'var(--text-xl)',
+                fontSize: 'var(--text-xs)',
                 fontWeight: 'var(--font-semibold)',
-                color: 'var(--color-text-primary)',
+                color: 'var(--color-text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
                 margin: 0,
               }}
             >
-              Ideas en validación
+              🔴 Live — aceptando feedback
             </h2>
-            <p
-              data-testid="live-section-subtitle"
-              style={{
-                fontSize: 'var(--text-sm)',
-                color: 'var(--color-text-secondary)',
-                margin: 'var(--space-1) 0 0 0',
-              }}
-            >
-              Proyectos que buscan feedback activo de la comunidad
-            </p>
           </div>
 
           <div
@@ -84,9 +76,11 @@ export function ProjectFeed({ projects, communitySlug }: ProjectFeedProps) {
             <h2
               id="closed-section-heading"
               style={{
-                fontSize: 'var(--text-xl)',
+                fontSize: 'var(--text-xs)',
                 fontWeight: 'var(--font-semibold)',
-                color: 'var(--color-text-primary)',
+                color: 'var(--color-text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
                 margin: 0,
               }}
             >

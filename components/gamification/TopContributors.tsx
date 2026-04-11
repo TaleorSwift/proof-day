@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import { createGamificationRepository } from '@/lib/repositories/gamification.repository'
-import { createProfilesRepository } from '@/lib/repositories/profiles.repository'
 import { calculateTopContributors } from '@/lib/utils/gamification'
 import { TopContributorsList } from './TopContributorsList'
 import type { TopContributor } from '@/lib/types/gamification'
@@ -9,23 +8,32 @@ interface TopContributorsProps {
   communityId: string
 }
 
+type FeedbackWithProfile = {
+  reviewer_id: string
+  created_at: string
+  profiles: { name: string | null } | null
+}
+
 export async function TopContributors({ communityId }: TopContributorsProps) {
   const supabase = await createClient()
   const gamificationRepo = createGamificationRepository(supabase)
-  const profilesRepo = createProfilesRepository(supabase)
 
   const { data: feedbacks } = await gamificationRepo.getAllFeedbacksByCommunity(communityId)
 
-  const topResults = calculateTopContributors(feedbacks ?? [], 5)
+  const feedbackList = (feedbacks ?? []) as unknown as FeedbackWithProfile[]
 
-  // Resolve nombres de perfil en paralelo — 5 queries máximo (N+1 aceptable documentado)
-  const profileResults = await Promise.all(
-    topResults.map(({ userId }) => profilesRepo.findByIdForWidget(userId))
+  const topResults = calculateTopContributors(feedbackList, 5)
+
+  // Construir mapa reviewer_id → name desde los feedbacks con join (1 query, sin N+1)
+  const nameMap = Object.fromEntries(
+    feedbackList
+      .filter((f) => f.profiles?.name)
+      .map((f) => [f.reviewer_id, f.profiles!.name!])
   )
 
-  const contributors: TopContributor[] = topResults.map((result, index) => ({
+  const contributors: TopContributor[] = topResults.map((result) => ({
     userId: result.userId,
-    name: profileResults[index].data?.name ?? 'Usuario',
+    name: nameMap[result.userId] ?? result.userId.slice(0, 8),
     feedbackCount: result.feedbackCount,
   }))
 

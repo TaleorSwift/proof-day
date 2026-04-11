@@ -1,6 +1,6 @@
 # Módulo: Proyectos
 
-**Última actualización:** Story 9.1 — Migración DB tagline + would_use_count (2026-04-10)
+**Última actualización:** Story 9.6 — Feed secciones Live/Cerrados + ProjectCard + bugs autor (2026-04-11)
 
 ---
 
@@ -58,6 +58,19 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - Empty state si no hay proyectos `live`: "Esta comunidad no tiene proyectos aún" + CTA "Crear el primero"
 - Skeleton loading durante el fetch (6 cards esqueleto)
 - `feedbackCount` y `proofScore` se añadirán en Stories 4 y 5
+
+### Feed del proyecto — secciones (Story 9.6)
+- El feed se divide en dos secciones: `"🔴 Live — aceptando feedback"` y `"Cerrados"` (story 9.6)
+- Los headings usan uppercase, font-semibold, text-xs y color-text-muted (style compacto) (story 9.6)
+- No existe subtítulo bajo el heading Live — se eliminó por incoherente con el estilo compacto (story 9.6)
+
+### ProjectCard — tarjeta horizontal (Story 9.6)
+- La tarjeta muestra: thumbnail 120×90px | centro (título + StatusBadge, tagline, autor, contadores) | HeartButton (story 9.6)
+- Tagline: se muestra `project.tagline` si existe; si no, `project.problem`; si ninguno, se omite. 1 línea truncada. (story 9.6)
+- Autor: se muestra `profiles.name` real del builder como texto plano, sin avatar. Fallback: primeros 8 chars del builderId (story 9.6)
+- `wouldUseCount` se muestra solo si > 0 para evitar "0 lo usarían" en proyectos nuevos (story 9.6)
+- Placeholder sin imagen: gradiente `linear-gradient(135deg, hypothesis-bg, hypothesis-border)` sin texto ni iniciales (story 9.6)
+- Los builder names se resuelven con batch-fetch de profiles (1 query IN) — no hay JOIN directo entre projects y profiles porque `builder_id` referencia `auth.users`, no `profiles` (story 9.6)
 
 ---
 

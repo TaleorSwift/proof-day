@@ -44,7 +44,7 @@ export default async function CommunityPage({ params }: Props) {
     // Server Component lee directamente — RLS filtra: live+inactive para todos, draft solo al builder
     supabase
       .from('projects')
-      .select('id, title, image_urls, status, builder_id, created_at, problem')
+      .select('id, title, image_urls, status, builder_id, created_at, problem, tagline, would_use_count')
       .eq('community_id', community.id)
       .order('created_at', { ascending: false }),
   ])
@@ -56,6 +56,19 @@ export default async function CommunityPage({ params }: Props) {
 
   const isAdmin = membership?.role === 'admin'
 
+  // Batch-fetch de profiles para resolver builderName sin N+1
+  // No hay FK PostgREST entre projects y profiles (builder_id → auth.users, no profiles)
+  const builderIds = [...new Set((projectRows ?? []).map((r) => r.builder_id as string))]
+
+  const { data: builderProfiles } =
+    builderIds.length > 0
+      ? await supabase.from('profiles').select('id, name').in('id', builderIds)
+      : { data: [] }
+
+  const profileMap = Object.fromEntries(
+    (builderProfiles ?? []).map((p: { id: string; name: string | null }) => [p.id, p.name ?? undefined])
+  )
+
   // Mapear rows de Supabase a ProjectListItem (camelCase)
   const projects: ProjectListItem[] = (projectRows ?? []).map((r: Record<string, unknown>) => ({
     id: r.id as string,
@@ -66,6 +79,9 @@ export default async function CommunityPage({ params }: Props) {
     createdAt: r.created_at as string,
     // problem puede ser null en BD si el proyecto no tiene descripción
     ...(r.problem != null && { problem: r.problem as string }),
+    tagline: (r.tagline as string | null) ?? null,
+    wouldUseCount: (r.would_use_count as number) ?? 0,
+    builderName: profileMap[r.builder_id as string],
   }))
 
   return (

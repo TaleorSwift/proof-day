@@ -3,10 +3,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { UserAvatar } from '@/components/shared/UserAvatar'
 import { HeartButton } from '@/components/shared/HeartButton'
 import { StatusBadge } from '@/components/projects/StatusBadge'
-import { buildProjectUrl, formatFeedbackCount, getProjectInitials, computeLikeState } from '@/lib/utils/projectCard'
+import { buildProjectUrl, formatFeedbackCount, computeLikeState } from '@/lib/utils/projectCard'
 import type { ProjectStatus } from '@/lib/types/projects'
 
 export interface ProjectCardProps {
@@ -18,7 +17,11 @@ export interface ProjectCardProps {
     builderId: string
     /** Descripción breve — campo `problem` del proyecto */
     problem?: string
-    /** Nombre legible del builder para el avatar */
+    /** Tagline corto (prioridad sobre problem) */
+    tagline?: string | null
+    /** Número de personas que usarían el proyecto */
+    wouldUseCount?: number
+    /** Nombre legible del builder (de profiles.name) */
     builderName?: string
   }
   communitySlug: string
@@ -66,8 +69,7 @@ export function ProjectCard({
   }
 
   const imageSrc = project.imageUrls[0] ?? null
-  const builderLabel = project.builderName ?? project.builderId
-  const initials = getProjectInitials(project.title)
+  const builderLabel = project.builderName ?? project.builderId.slice(0, 8)
   const projectUrl = buildProjectUrl(communitySlug, project.id)
 
   return (
@@ -118,23 +120,10 @@ export function ProjectCard({
               style={{
                 position: 'absolute',
                 inset: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: 'var(--color-hypothesis-bg)',
+                background:
+                  'linear-gradient(135deg, var(--color-hypothesis-bg) 0%, var(--color-hypothesis-border) 100%)',
               }}
-            >
-              <span
-                style={{
-                  fontSize: 'var(--text-xl)',
-                  fontWeight: 'var(--font-bold)',
-                  color: 'var(--color-text-muted)',
-                  userSelect: 'none',
-                }}
-              >
-                {initials}
-              </span>
-            </div>
+            />
           )}
         </div>
       </Link>
@@ -167,32 +156,50 @@ export function ProjectCard({
           </span>
         </div>
 
-        {/* Descripción */}
-        {project.problem && (
+        {/* Tagline — prioridad sobre problem, 1 línea */}
+        {(project.tagline || project.problem) && (
           <p
+            data-testid="project-card-tagline"
             style={{
               fontSize: 'var(--text-xs)',
               color: 'var(--color-text-muted)',
               margin: 0,
               display: '-webkit-box',
-              WebkitLineClamp: 2,
+              WebkitLineClamp: 1,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
             }}
           >
-            {project.problem}
+            {project.tagline ?? project.problem}
           </p>
         )}
 
-        {/* Fila inferior: UserAvatar + feedback count */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginTop: 'auto' }}>
-          <UserAvatar name={builderLabel} size="sm" />
+        {/* Fila inferior: autor + feedback count + would-use count */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'auto' }}>
+          <span
+            data-testid="project-card-author-name"
+            style={{
+              fontSize: 'var(--text-xs)',
+              color: 'var(--color-text-secondary)',
+              fontWeight: 'var(--font-medium)',
+            }}
+          >
+            {builderLabel}
+          </span>
           <span
             data-testid="project-card-feedback-count"
             style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}
           >
             {formatFeedbackCount(feedbackCount)}
           </span>
+          {(project.wouldUseCount ?? 0) > 0 && (
+            <span
+              data-testid="project-card-would-use-count"
+              style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}
+            >
+              · {project.wouldUseCount} lo usarían
+            </span>
+          )}
         </div>
       </Link>
 

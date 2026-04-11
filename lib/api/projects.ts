@@ -128,10 +128,11 @@ export interface ProjectListItem {
   createdAt: string
   /** Descripción breve del problema que resuelve el proyecto */
   problem?: string
-  /**
-   * TODO(story-8.4): añadir builderName cuando se implemente el JOIN a profiles.
-   * Requiere una query con .select('..., profiles(full_name)') o una función RPC.
-   */
+  /** Tagline corto del proyecto (prioridad sobre problem en el feed) */
+  tagline?: string | null
+  /** Número de personas que usarían el proyecto */
+  wouldUseCount?: number
+  /** Nombre legible del builder (de profiles.name) */
   builderName?: string
 }
 

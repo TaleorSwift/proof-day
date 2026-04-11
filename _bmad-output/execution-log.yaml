@@ -1,4 +1,187 @@
 workflows:
+  - id: "20260411-homer-DS-9-6-feed-secciones"
+    timestamp: "2026-04-11T02:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 9.6: Feed secciones Live/Cerrados + ProjectCard + bugs autor"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "IN_PROGRESS"
+
+  - id: "20260411-ned-CS-9-6-feed-secciones"
+    timestamp: "2026-04-11T01:00:00"
+    agent: "Ned (Scrum Master)"
+    trigger: "CS — Story 9.6: Feed secciones Live/Cerrados + ProjectCard + bugs autor"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    closed_at: "2026-04-11T01:30:00"
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/9-6-feed-secciones-live-cerrados-projectcard-bugs-autor.md"
+    summary: |
+      Story 9.6 creada con contexto exhaustivo para Homer (Full Flow).
+      Análisis completo de: ProjectCard, ProjectFeed, comunityPage, gamification repo,
+      TopContributors, tipos ProjectListItem, migraciones DB, tests existentes.
+      Decisiones documentadas: batch-fetch profiles (no JOIN por FK auth.users),
+      JOIN profiles via feedbacks_reviewer_profiles_fkey para TopContributors fix,
+      gradient placeholder, tagline??problem fallback, plain-text author name.
+      Sprint-status: 9-6 → ready-for-dev.
+
+  - id: "20260411-homer-CR-9-5-navbar-logo-nombre-icono-logout"
+    timestamp: "2026-04-11T00:35:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 9.5: Navbar logo + nombre + icono logout"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    closed_at: "2026-04-11T00:55:00"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/57"
+    branch: "feat/9.5-navbar-logo-nombre-icono-logout"
+    verdict: "APPROVED"
+    tests: "357/357 passed"
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/9-5-navbar-logo-nombre-icono-logout.md (MODIFICADO — sección Senior Developer Review añadida)"
+    notes: >
+      Todos los ACs verificados. Logo /logo.png con alt="" + aria-hidden, userName fluye CommunitiesLayout
+      → NavbarClient → Navbar con fallback email, botón logout SVG + aria-label="Cerrar sesión" sin texto
+      visible, Storybook Authenticated con userName: 'Ana García'. Lint/tsc limpios, 357/357 verdes.
+      Observaciones no bloqueantes: test logo usa querySelector (correcto por aria-hidden),
+      logo.png pesa 1.7 MB (optimizar antes de producción), query profiles sin manejo de error explícito
+      (fallback seguro vía operador ??).
+
+  - id: "20260411-bart-QD-9-5-navbar-logo-nombre-icono-logout"
+    timestamp: "2026-04-11T00:20:00"
+    agent: "Bart (Quick Flow)"
+    trigger: "QD — Story 9.5: Navbar logo + nombre + icono logout"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    closed_at: "2026-04-11T00:50:00"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/57"
+    branch: "feat/9.5-navbar-logo-nombre-icono-logout"
+    tests: "357/357 passed"
+    artifacts:
+      - "components/layout/Navbar.tsx (MODIFICADO)"
+      - "components/layout/NavbarClient.tsx (MODIFICADO)"
+      - "app/(app)/communities/layout.tsx (MODIFICADO)"
+      - "stories/layout/Navbar.stories.tsx (MODIFICADO)"
+      - "tests/unit/layout/navbar.test.tsx (NUEVO — 6 tests)"
+    notes: >
+      Logo /logo.png reemplaza SVG placeholder. userName prop en toda la cadena
+      Navbar → NavbarClient → CommunitiesLayout con query server-side a profiles.
+      Botón logout usa SVG log-out con aria-label. alt="" en Image (decorativa, link tiene texto).
+      Test logo usa document.querySelector por aria-hidden excluir de árbol accesible.
+      Lint/tsc/tests verdes (357/357). Self-review: todos findings noise.
+
+  - id: "20260411-homer-CR-9-4-landing-welcome-screen"
+    timestamp: "2026-04-11T00:10:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 9.4: Landing / welcome screen"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    closed_at: "2026-04-11T00:40:00"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/56"
+    branch: "feat/9.4-landing-welcome-screen"
+    verdict: "APPROVED"
+    tests: "351/351 passed"
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/9-4-landing-welcome-screen.md (MODIFICADO — sección Senior Developer Review añadida)"
+    notes: >
+      Todos los ACs verificados. WelcomeScreen puro (sin auth), app/page.tsx solo auth+redirect+render,
+      7 tests cubriendo todos los ACs T2, Storybook pages/LandingPage>Default existe.
+      Lint/tsc/tests verdes (351/351). Warning `priority` en mock next/image es cosmético y esperado.
+
+  - id: "20260410-bart-QD-9-4-landing-welcome-screen"
+    timestamp: "2026-04-10T23:58:00"
+    agent: "Bart (Quick Flow)"
+    trigger: "QD — Story 9.4: Landing / welcome screen"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    closed_at: "2026-04-11T00:15:00"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/56"
+    branch: "feat/9.4-landing-welcome-screen"
+    baseline_commit: "fa63715a521b55b540372daeb56a3644b8c97118"
+    tests: "351/351 passed"
+    artifacts:
+      - "app/page.tsx (MODIFICADO — reescritura completa, Server Component + WelcomeScreen)"
+      - "components/landing/WelcomeScreen.tsx (NUEVO — componente visual puro)"
+      - "stories/landing/LandingPage.stories.tsx (NUEVO)"
+      - "tests/unit/landing/landingPage.test.tsx (NUEVO — 7 tests)"
+      - "docs/project/modules/landing.md (NUEVO)"
+    notes: >
+      WelcomeScreen extraído como componente puro para permitir testing sin wrapper async
+      de Server Component. app/page.tsx mantiene lógica de auth + redirect y delega render.
+
+  - id: "20260410-homer-CR-9-3-fix-ruta-auth-login"
+    timestamp: "2026-04-10T23:45:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 9.3: Fix ruta /auth/login"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T23:55:00"
+    verdict: "APPROVED (post-fix)"
+    fix_applied: "fa63715 — test FeedbackCTA actualizado a /login — aplicado directamente en main"
+    artifacts_reviewed:
+      - "app/page.tsx"
+      - "components/layout/Navbar.tsx"
+      - "components/layout/NavbarClient.tsx"
+      - "app/invite/[token]/page.tsx"
+      - "components/feedback/FeedbackCTA.tsx"
+      - "components/logout-button.tsx"
+      - "components/auth-button.tsx"
+      - "tests/unit/feedback/FeedbackCTA.test.tsx"
+    issues:
+      - id: "CR9-3-H1"
+        severity: "HIGH"
+        file: "tests/unit/feedback/FeedbackCTA.test.tsx"
+        line: 118
+        description: >
+          Test 'el link de sign-in apunta a /auth/login' usa el valor antiguo.
+          El componente fue actualizado a /login pero el test no.
+          Suite: 343/344 — 1 test roto. Bloquea merge.
+        fix: "Actualizar expect(link).toHaveAttribute('href', '/login')"
+    summary: |
+      Cobertura completa: 0 ocurrencias de /auth/login en app/components/lib.
+      /auth/callback y /auth/confirm intactos.
+      Query param ?next= conservado en invite.
+      Lint limpio, tsc limpio.
+      BLOCKER: 1 test roto en FeedbackCTA.test.tsx (línea 118 — assert con ruta obsoleta).
+
+  - id: "20260410-bart-QD-9-3-fix-ruta-auth-login"
+    timestamp: "2026-04-10T23:30:00"
+    agent: "Bart (Quick Flow)"
+    trigger: "QD — Story 9.3: Fix ruta /auth/login"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    closed_at: "2026-04-10T23:45:00"
+    artifacts:
+      - "app/(app)/communities/layout.tsx"
+      - "app/(app)/communities/page.tsx"
+      - "app/(app)/communities/[slug]/settings/page.tsx"
+      - "app/(app)/communities/[slug]/projects/new/page.tsx"
+      - "app/(app)/communities/[slug]/projects/[id]/edit/page.tsx"
+      - "app/(app)/communities/[slug]/projects/[id]/page.tsx"
+      - "app/(app)/communities/[slug]/page.tsx"
+      - "app/(app)/profile/[id]/page.tsx"
+      - "app/(app)/profile/page.tsx"
+      - "app/invite/[token]/page.tsx"
+      - "app/page.tsx"
+      - "components/layout/Navbar.tsx"
+      - "components/layout/NavbarClient.tsx"
+      - "components/feedback/FeedbackCTA.tsx"
+      - "components/logout-button.tsx"
+      - "components/auth-button.tsx"
+    errors: []
+    pr: "https://github.com/TaleorSwift/proof-day/pull/55"
+    summary: |
+      16 ocurrencias de /auth/login reemplazadas por /login en app/ y components/.
+      Server-side redirect() (10 ficheros) y client-side href/router.push() (6 ficheros).
+      /auth/callback y /auth/confirm no tocados. Query param ?next= conservado en invite.
+      lint limpio, tsc limpio, 344/344 tests verdes. PR#55 abierto contra main.
+
   - id: "20260410-homer-CR-9-2-login-logo-layout"
     timestamp: "2026-04-10T22:54:00"
     agent: "Homer (Dev)"

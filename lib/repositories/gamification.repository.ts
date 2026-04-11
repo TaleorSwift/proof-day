@@ -21,14 +21,15 @@ export function createGamificationRepository(supabase: SupabaseClient) {
     },
 
     /**
-     * Retorna todos los feedbacks de una comunidad (reviewer_id + created_at) sin filtro temporal.
+     * Retorna todos los feedbacks de una comunidad con nombre del reviewer via JOIN.
+     * Usa la FK feedbacks_reviewer_profiles_fkey (migration 013) para evitar N+1.
      * Supabase SDK no soporta GROUP BY nativo, por lo que se agrupan en TypeScript
      * mediante calculateTopContributors. Aceptable para volúmenes de early adopters.
      */
     async getAllFeedbacksByCommunity(communityId: string) {
       return supabase
         .from('feedbacks')
-        .select('reviewer_id, created_at')
+        .select('reviewer_id, created_at, profiles!feedbacks_reviewer_profiles_fkey(name)')
         .eq('community_id', communityId)
     },
   }

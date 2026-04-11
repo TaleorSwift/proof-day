@@ -35,6 +35,7 @@ const liveProject: ProjectListItem = {
   status: 'live',
   builderId: 'user-1',
   createdAt: '2026-01-01T00:00:00Z',
+  wouldUseCount: 0,
 }
 
 const liveProject2: ProjectListItem = {
@@ -44,6 +45,7 @@ const liveProject2: ProjectListItem = {
   status: 'live',
   builderId: 'user-2',
   createdAt: '2026-01-02T00:00:00Z',
+  wouldUseCount: 0,
 }
 
 const inactiveProject: ProjectListItem = {
@@ -53,6 +55,7 @@ const inactiveProject: ProjectListItem = {
   status: 'inactive',
   builderId: 'user-3',
   createdAt: '2026-01-03T00:00:00Z',
+  wouldUseCount: 0,
 }
 
 const draftProject: ProjectListItem = {
@@ -62,6 +65,7 @@ const draftProject: ProjectListItem = {
   status: 'draft',
   builderId: 'user-4',
   createdAt: '2026-01-04T00:00:00Z',
+  wouldUseCount: 0,
 }
 
 const COMMUNITY_SLUG = 'startup-madrid'
@@ -75,9 +79,9 @@ describe('ProjectFeed', () => {
     vi.clearAllMocks()
   })
 
-  it('renderiza heading "Ideas en validación" cuando hay proyectos live', () => {
+  it('renderiza heading "🔴 Live — aceptando feedback" cuando hay proyectos live', () => {
     render(<ProjectFeed projects={[liveProject]} communitySlug={COMMUNITY_SLUG} />)
-    expect(screen.getByRole('heading', { name: 'Ideas en validación' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '🔴 Live — aceptando feedback' })).toBeInTheDocument()
   })
 
   it('renderiza heading "Cerrados" cuando hay proyectos inactive', () => {
@@ -85,12 +89,12 @@ describe('ProjectFeed', () => {
     expect(screen.getByRole('heading', { name: 'Cerrados' })).toBeInTheDocument()
   })
 
-  it('no renderiza sección "En validación" cuando liveProjects es vacío', () => {
+  it('no renderiza sección Live cuando liveProjects es vacío', () => {
     render(<ProjectFeed projects={[inactiveProject]} communitySlug={COMMUNITY_SLUG} />)
-    expect(screen.queryByRole('heading', { name: 'Ideas en validación' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: '🔴 Live — aceptando feedback' })).not.toBeInTheDocument()
   })
 
-  it('no renderiza sección "Cerrados" cuando closedProjects es vacío', () => {
+  it('no renderiza sección Cerrados cuando closedProjects es vacío', () => {
     render(<ProjectFeed projects={[liveProject]} communitySlug={COMMUNITY_SLUG} />)
     expect(screen.queryByRole('heading', { name: 'Cerrados' })).not.toBeInTheDocument()
   })
@@ -119,14 +123,6 @@ describe('ProjectFeed', () => {
     expect(cards[0]).toHaveTextContent('Proyecto Live Uno')
     // Segunda card debe ser la inactive
     expect(cards[1]).toHaveTextContent('Proyecto Cerrado')
-  })
-
-  it('muestra subtítulo bajo el heading "Ideas en validación"', () => {
-    render(<ProjectFeed projects={[liveProject]} communitySlug={COMMUNITY_SLUG} />)
-    // El subtítulo debe estar presente en el DOM
-    const subtitle = screen.getByTestId('live-section-subtitle')
-    expect(subtitle).toBeInTheDocument()
-    expect(subtitle.textContent?.length).toBeGreaterThan(0)
   })
 
   it('renderiza múltiples ProjectCard para múltiples proyectos live', () => {
