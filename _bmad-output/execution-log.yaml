@@ -1,4 +1,56 @@
 workflows:
+  - id: "20260412-bart-QD-9-9-feed-header-ideas-en-validacion"
+    timestamp: "2026-04-12T23:30:00"
+    agent: "Bart (Quick Flow)"
+    trigger: "QD — Story 9.9: feed header Ideas en validación, subtítulo y botón Lanzar idea"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    status: "SUCCESS"
+    baseline_commit: "5078b2b3534f6deb3cdd83ca24009284d6fc05c9"
+    branch: "feat/9.9-feed-header-ideas-en-validacion-boton-lanzar"
+    closed_at: "2026-04-12T23:45:00"
+    artifacts:
+      - "components/communities/CommunityFeedHeader.tsx — nuevo componente use client con h1, subtítulo y botón Lanzar idea"
+      - "app/(app)/communities/[slug]/page.tsx — usa CommunityFeedHeader, CommunityHeader pasa a secundario"
+      - "tests/unit/communities/CommunityFeedHeader.test.tsx — 6 tests nuevos (AC-1, AC-2, AC-4)"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml — 9-9 review"
+    tests:
+      total: 403
+      passed: 403
+      failed: 0
+    checks:
+      lint: "OK"
+      build: "OK"
+      tsc: "implícito en build — OK"
+    summary: "Story 9.9 implementada con TDD Outside-In. CommunityFeedHeader extrae el header como Client Component. Botón placeholder pendiente de conectar a LaunchIdeaModal (Story 9.8). 403/403 tests verdes."
+
+  - id: "20260412-homer-CR-9-9-feed-header"
+    timestamp: "2026-04-12T23:50:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 9.9: feed header Ideas en validación y botón Lanzar idea"
+    workflow: "code-review"
+    mode: "VERIFY"
+    status: "SUCCESS"
+    verdict: "APPROVED"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/61"
+    pr_merged: true
+    closed_at: "2026-04-12T23:55:00"
+    artifacts:
+      - "components/communities/CommunityFeedHeader.tsx — h1 feed-heading, subtítulo feed-subheading, botón btn-launch-idea, metadatos community-name-secondary"
+      - "tests/unit/communities/CommunityFeedHeader.test.tsx — 6 tests (AC-1, AC-2, AC-4) verdes"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml — 9-9 done"
+    checks:
+      ac1_h1: "PASS — data-testid=feed-heading, var(--text-2xl), var(--font-bold)"
+      ac1_subtitle: "PASS — data-testid=feed-subheading, var(--text-sm), var(--color-text-muted)"
+      ac2_button: "PASS — btn-launch-idea, var(--color-accent), alignSelf flex-start"
+      ac4_metadata: "PASS — community-name-secondary en posición discreta, CommunityHeader accesible"
+      tdd: "PASS — 6 tests trazables a ACs"
+      clean_code: "PASS — componente UI puro, sin lógica de negocio"
+      design_tokens: "PASS — sin valores hardcoded excepto color white (token no definido)"
+      suite_green: "PASS — 403/403"
+      commit_clean: "PASS — sin referencias a Claude"
+    summary: "PR #61 APPROVED. Todos los ACs de Story 9.9 verificados. Merge ejecutado tras rebase de rama sobre main."
+
   - id: "20260412-bart-QD-9-10-communities-redirect"
     timestamp: "2026-04-12T11:00:00"
     agent: "Bart (Quick Flow)"

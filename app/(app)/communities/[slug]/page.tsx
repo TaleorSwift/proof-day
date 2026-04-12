@@ -1,6 +1,7 @@
 import { redirect, notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { CommunityHeader } from '@/components/communities/CommunityHeader'
+import { CommunityFeedHeader } from '@/components/communities/CommunityFeedHeader'
 import { ProjectFeed } from '@/components/projects/ProjectFeed'
 import { TopContributors } from '@/components/gamification/TopContributors'
 import type { ProjectListItem } from '@/lib/api/projects'
@@ -93,6 +94,12 @@ export default async function CommunityPage({ params }: Props) {
       }}
     >
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <CommunityFeedHeader
+          communityName={community.name}
+          communitySlug={slug}
+        />
+
+        {/* Metadatos secundarios de comunidad */}
         <CommunityHeader
           community={{
             ...community,
