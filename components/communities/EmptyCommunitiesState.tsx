@@ -9,10 +9,11 @@ export function EmptyCommunitiesState() {
       aria-label="Sin comunidades"
     >
       <p
+        data-testid="communities-empty-state"
         className="text-lg font-medium mb-2"
         style={{ color: 'var(--color-text-primary)' }}
       >
-        Aún no formas parte de ninguna comunidad
+        Aún no perteneces a ninguna comunidad
       </p>
       <p
         className="text-sm mb-8 max-w-sm"
@@ -23,7 +24,9 @@ export function EmptyCommunitiesState() {
 
       <div className="flex flex-col sm:flex-row gap-3">
         <Button asChild>
-          <Link href="/communities/new">Crear comunidad</Link>
+          <Link href="/communities/new" data-testid="btn-create-community">
+            Crear comunidad
+          </Link>
         </Button>
 
         <Button variant="outline" disabled aria-label="Usar link de invitación (próximamente)">
