@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+import { redirect, permanentRedirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { CommunityList } from '@/components/communities/CommunityList'
 import { EmptyCommunitiesState } from '@/components/communities/EmptyCommunitiesState'
@@ -23,9 +23,9 @@ export default async function CommunitiesPage({ searchParams }: Props) {
   // en el mismo request, esta llamada no genera un fetch adicional a Supabase (CR5-F5).
   const communityList = await getUserCommunities(user.id)
 
-  // AC-5: Redirect automático si el usuario pertenece a exactamente 1 comunidad
+  // AC-1: Redirect permanente (308) si el usuario pertenece a exactamente 1 comunidad
   if (communityList.length === 1) {
-    redirect(`/communities/${communityList[0].slug}`)
+    permanentRedirect(`/communities/${communityList[0].slug}`)
   }
 
   return (

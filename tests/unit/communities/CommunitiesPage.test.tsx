@@ -11,13 +11,15 @@ import '@testing-library/jest-dom'
 // Mocks hoisted
 // ---------------------------------------------------------------------------
 
-const { redirectMock, getUserCommunitiesMock } = vi.hoisted(() => ({
+const { redirectMock, permanentRedirectMock, getUserCommunitiesMock } = vi.hoisted(() => ({
   redirectMock: vi.fn(),
+  permanentRedirectMock: vi.fn(),
   getUserCommunitiesMock: vi.fn(),
 }))
 
 vi.mock('next/navigation', () => ({
   redirect: redirectMock,
+  permanentRedirect: permanentRedirectMock,
 }))
 
 vi.mock('@/lib/queries/communities', () => ({
@@ -87,14 +89,14 @@ describe('CommunitiesPage — AC-1: redirect con 1 comunidad', () => {
     vi.clearAllMocks()
   })
 
-  it('llama a redirect con la ruta de la comunidad única', async () => {
+  it('llama a permanentRedirect con la ruta de la comunidad única', async () => {
     await CommunitiesPage({ searchParams: defaultSearchParams })
-    expect(redirectMock).toHaveBeenCalledWith('/communities/mi-comunidad')
+    expect(permanentRedirectMock).toHaveBeenCalledWith('/communities/mi-comunidad')
   })
 
-  it('llama a redirect exactamente una vez', async () => {
+  it('llama a permanentRedirect exactamente una vez', async () => {
     await CommunitiesPage({ searchParams: defaultSearchParams })
-    expect(redirectMock).toHaveBeenCalledTimes(1)
+    expect(permanentRedirectMock).toHaveBeenCalledTimes(1)
   })
 })
 
