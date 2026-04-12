@@ -109,7 +109,7 @@ development_status:
   9-5-navbar-logo-nombre-icono-logout: done  # merged PR#57 — 2026-04-10
   9-6-feed-secciones-live-cerrados-projectcard-bugs-autor: done  # merged PR#58 — 2026-04-11
   9-7-project-detail-tagline-sidebar-universal-feedback-inline: review
-  9-8-modal-lanzar-idea-tagline-chips-imagenes: backlog
-  9-9-feed-header-ideas-en-validacion-boton-lanzar: backlog
-  9-10-communities-redirect-condicional: backlog
+  9-8-modal-lanzar-idea-tagline-chips-imagenes: ready-for-dev
+  9-9-feed-header-ideas-en-validacion-boton-lanzar: ready-for-dev
+  9-10-communities-redirect-condicional: done  # merged PR#60 — 2026-04-12
   epic-9-retrospective: optional
