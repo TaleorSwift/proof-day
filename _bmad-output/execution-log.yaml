@@ -5,9 +5,27 @@ workflows:
     trigger: "QD — Story 9.10: communities redirect condicional"
     workflow: "quick-dev"
     mode: "VERIFY"
-    status: "STARTED"
+    status: "SUCCESS"
     baseline_commit: "19ac3104beeea05e9676e319a6eceb33d229febb"
     branch: "feat/9-10-communities-redirect-condicional"
+    closed_at: "2026-04-12T11:45:00"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/60"
+    artifacts:
+      - "components/communities/EmptyCommunitiesState.tsx (modificado)"
+      - "tests/unit/communities/CommunitiesEmptyState.test.tsx (creado)"
+      - "tests/unit/communities/CommunitiesPage.test.tsx (creado)"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml (actualizado)"
+    tests:
+      total: 397
+      new: 14
+      result: "PASS"
+    build: "verde"
+    lint: "verde"
+    summary: |
+      Story 9.10 implementada. La lógica de redirect (1 comunidad) y lista (2+)
+      ya existía en page.tsx. Se añadieron data-testid requeridos por AC-2 al
+      componente EmptyCommunitiesState, se corrigió el texto del estado vacío,
+      y se crearon 14 tests nuevos (TDD Outside-In) cubriendo AC-1, AC-2 y AC-3.
 
   - id: "20260412-ned-CS-VS-9-8-9-9-9-10-batch"
     timestamp: "2026-04-12T10:00:00"
