@@ -1,4 +1,43 @@
 workflows:
+  - id: "20260412-homer-DS-9-8-modal-lanzar-idea-tagline-chips-imagenes"
+    timestamp: "2026-04-12T10:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 9.8: Modal LaunchIdea con tagline, chips de feedback y galería de imágenes"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    status: "SUCCESS"
+    baseline_commit: "19ac310"
+    branch: "feat/9-8-modal-lanzar-idea-tagline-chips-imagenes"
+    closed_at: "2026-04-12T12:00:00"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/63"
+    artifacts:
+      - "components/projects/LaunchIdeaModal.tsx — Dialog ~540px con scroll interno y validación zod"
+      - "components/projects/LaunchIdeaForm.tsx — formulario interno con FormProvider"
+      - "components/projects/FeedbackTopicChips.tsx — chips toggleables con aria-pressed"
+      - "components/projects/ImageUploader.tsx — uploader inline hasta 3 imágenes"
+      - "actions/projects/launchProject.ts — server action status=live + revalidatePath"
+      - "lib/utils/imageUpload.ts — utilitaria de subida a Supabase Storage"
+      - "lib/validations/projects.ts — launchIdeaSchema añadido"
+      - "components/communities/CommunityFeedHeader.tsx — botón conectado al modal"
+      - "tests/unit/projects/LaunchIdeaModal.test.tsx — 19 tests"
+      - "tests/unit/projects/FeedbackTopicChips.test.tsx — 13 tests"
+      - "tests/unit/projects/ImageUploader.test.tsx — 7 tests"
+      - "tests/unit/communities/CommunityFeedHeader.test.tsx — 3 tests nuevos integración modal"
+      - "stories/projects/LaunchIdeaModal.stories.tsx — 4 stories"
+      - "stories/projects/FeedbackTopicChips.stories.tsx — 4 stories"
+      - "stories/projects/ImageUploader.stories.tsx — 3 stories"
+      - "docs/project/modules/projects.md — documentado Story 9.8"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml — 9-8 review"
+    tests:
+      total: 445
+      passed: 445
+      failed: 0
+    checks:
+      lint: "OK"
+      build: "OK"
+      tsc: "implícito en build — OK"
+    summary: "Story 9.8 implementada con TDD Outside-In. LaunchIdeaModal completo con FeedbackTopicChips, ImageUploader, server action launchProject y utilitaria imageUpload. CommunityFeedHeader conectado. 445/445 tests verdes."
+
   - id: "20260412-bart-QD-9-9-feed-header-ideas-en-validacion"
     timestamp: "2026-04-12T23:30:00"
     agent: "Bart (Quick Flow)"
@@ -78,6 +117,57 @@ workflows:
       ya existía en page.tsx. Se añadieron data-testid requeridos por AC-2 al
       componente EmptyCommunitiesState, se corrigió el texto del estado vacío,
       y se crearon 14 tests nuevos (TDD Outside-In) cubriendo AC-1, AC-2 y AC-3.
+
+  - id: "20260412-homer-CR-9-10-communities-redirect"
+    timestamp: "2026-04-12T12:00:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 9.10: communities redirect condicional"
+    workflow: "code-review"
+    mode: "VERIFY"
+    status: "CHANGES_REQUESTED"
+    verdict: "CHANGES_REQUESTED"
+    branch: "feat/9-10-communities-redirect-condicional"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/60"
+    pr_merged: true
+    closed_at: "2026-04-12T12:30:00"
+    findings:
+      high: 2
+      medium: 3
+      low: 2
+      total: 7
+    issues:
+      - id: F1
+        severity: HIGH
+        description: "app/(app)/communities/page.tsx ausente del File List de la story — fichero principal con la lógica de redirect"
+      - id: F2
+        severity: HIGH
+        description: "Status nunca pasó por 'review' — fue directamente de ready-for-dev a done"
+      - id: F3
+        severity: MEDIUM
+        description: "Tasks T1-T4 y subtasks no marcadas [x] en la story file"
+      - id: F4
+        severity: MEDIUM
+        description: "EmptyCommunitiesState usa var(--color-text-secondary) en lugar de var(--color-text-muted) definido en Dev Notes y design-tokens.md"
+        file: "components/communities/EmptyCommunitiesState.tsx"
+      - id: F5
+        severity: MEDIUM
+        description: "Comentario '/* AC-2: Banner de error... */' erróneo en page.tsx — ese bloque no es AC-2 de esta story"
+        file: "app/(app)/communities/page.tsx"
+      - id: F6
+        severity: LOW
+        description: "Test CommunitiesPage no cubre caso auth guard (usuario no autenticado)"
+        file: "tests/unit/communities/CommunitiesPage.test.tsx"
+      - id: F7
+        severity: LOW
+        description: "AC-2/AC-3 tests no verifican que permanentRedirect NOT be called (solo verifican redirect)"
+        file: "tests/unit/communities/CommunitiesPage.test.tsx"
+    summary: |
+      PR #60 ya mergeado en main. Implementación funcional correcta (permanentRedirect 308,
+      empty state con data-testid, lista para 2+ sin cambios, 14 tests). Issues encontrados:
+      F1+F2+F3 son de trazabilidad/documentación en story file; F4 es token CSS incorrecto
+      (color-text-secondary vs color-text-muted); F5 comentario engañoso en page.tsx;
+      F6+F7 mejoras opcionales de cobertura de tests. Se requiere commit de seguimiento
+      para F4 (impacto visual) y correcciones de documentación F1+F2+F3.
 
   - id: "20260412-ned-CS-VS-9-8-9-9-9-10-batch"
     timestamp: "2026-04-12T10:00:00"

@@ -35,3 +35,39 @@ export const decisionSchema = z.object({
 })
 
 export type DecisionInput = z.infer<typeof decisionSchema>
+
+// ── Story 9.8: LaunchIdeaModal ────────────────────────────────────────────────
+
+export const launchIdeaSchema = z.object({
+  title: z
+    .string()
+    .min(1, 'El nombre del proyecto es obligatorio')
+    .max(120, 'El nombre no puede superar 120 caracteres'),
+  tagline: z
+    .string()
+    .min(1, 'El tagline es obligatorio')
+    .max(200, 'El tagline no puede superar 200 caracteres'),
+  problem: z
+    .string()
+    .min(1, 'El problema es obligatorio')
+    .max(1000, 'El problema no puede superar 1000 caracteres'),
+  solution: z
+    .string()
+    .min(1, 'La solución es obligatoria')
+    .max(1000, 'La solución no puede superar 1000 caracteres'),
+  targetUser: z
+    .string()
+    .max(300, 'El usuario objetivo no puede superar 300 caracteres')
+    .optional(),
+  hypothesis: z
+    .string()
+    .min(1, 'La hipótesis es obligatoria')
+    .max(500, 'La hipótesis no puede superar 500 caracteres'),
+  demoLink: z
+    .string()
+    .url('La URL de demo no es válida')
+    .optional()
+    .or(z.literal('')),
+})
+
+export type LaunchIdeaFormValues = z.infer<typeof launchIdeaSchema>

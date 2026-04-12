@@ -100,18 +100,49 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - `components/projects/ProjectCard.tsx` — tarjeta de proyecto (story 3.4)
 - `components/projects/ProjectGrid.tsx` — grid de proyectos (story 3.4)
 - `components/projects/ProjectsEmptyState.tsx` — estado vacío (story 3.4)
+- `components/projects/LaunchIdeaModal.tsx` — dialog ~540px para lanzar ideas desde el feed (story 9.8). Props: `open`, `onOpenChange`, `communitySlug`, `onSuccess?`
+- `components/projects/LaunchIdeaForm.tsx` — formulario interno del modal, usa FormProvider de react-hook-form (story 9.8)
+- `components/projects/FeedbackTopicChips.tsx` — chips toggleables reutilizables. Props: `value: string[]`, `onChange`. Usa mapeo display (español) → valor interno (story 9.8)
+- `components/projects/ImageUploader.tsx` — uploader inline hasta N imágenes con previews y eliminar. Props: `images`, `onImagesChange`, `maxImages` (story 9.8)
+
+### Server Actions
+- `actions/projects/launchProject.ts` — crea un proyecto con `status = 'live'` directamente. Llama a `revalidatePath`. Input: `LaunchProjectInput`. Output: `{ success: true, projectId }` | `{ success: false, error }` (story 9.8)
+
+### Utilidades
+- `lib/utils/imageUpload.ts` — `uploadImageToStorage(file): Promise<{ url, path }>` — subida directa a Supabase Storage bucket `project-images` desde el cliente. Usada por `ImageUploader` (story 9.8)
 
 ### Páginas
 - `app/(app)/communities/[slug]/page.tsx` — lista de proyectos de la comunidad
-- `app/(app)/communities/[slug]/projects/new/page.tsx` — crear proyecto
+- `app/(app)/communities/[slug]/projects/new/page.tsx` — crear proyecto (fallback; se mantiene intacto)
 - `app/(app)/communities/[slug]/projects/[id]/page.tsx` — ver proyecto
 - `app/(app)/communities/[slug]/projects/[id]/edit/page.tsx` — editar proyecto
 
 ### Storybook
 - `stories/projects/ProjectCard.stories.tsx` — 5 stories: Live, LiveWithScore, Draft, Inactive, Loading
+- `stories/projects/LaunchIdeaModal.stories.tsx` — 4 stories: EstadoVacio, ConDatosRellenos, EstadoCargando, ChipsSeleccionados (story 9.8)
+- `stories/projects/FeedbackTopicChips.stories.tsx` — 4 stories: SinSeleccion, TresSeleccionados, TodosSeleccionados, Interactivo (story 9.8)
+- `stories/projects/ImageUploader.stories.tsx` — 3 stories: SinImagenes, ConDosImagenes, LimiteAlcanzado (story 9.8)
 
 ### Tests
 - `tests/unit/projects/projectList.test.ts` — lógica de visibilidad y ordenación
+- `tests/unit/projects/LaunchIdeaModal.test.tsx` — 19 tests: render, campos, validación, submit (story 9.8)
+- `tests/unit/projects/FeedbackTopicChips.test.tsx` — 13 tests: render, aria-pressed, toggle, mapeo (story 9.8)
+- `tests/unit/projects/ImageUploader.test.tsx` — 7 tests: render, límite, previews, eliminar (story 9.8)
+
+---
+
+### Modal "Lanzar idea" — reglas (Story 9.8)
+
+- El botón "+ Lanzar idea" del `CommunityFeedHeader` abre `LaunchIdeaModal` (estado local en el Client Component)
+- El modal crea proyectos con `status = 'live'` directamente (no pasan por draft)
+- Los campos requeridos son: title, tagline, problem, solution, hypothesis
+- Los campos opcionales son: targetUser, demoLink
+- Las imágenes se suben a Supabase Storage antes del submit; límite de 3 en el modal (vs 5 en la página de edición)
+- Los chips de feedback mapean display en español → valor interno en snake_case (6 chips fijos)
+- La ruta `/communities/[slug]/projects/new` se mantiene como fallback — no se elimina (AC-7)
+- Tras submit exitoso: modal se cierra + `router.refresh()` para revalidar el feed
+- `revalidatePath` se llama en el server action tras inserción exitosa
+- Chips disponibles: `problem_clarity`, `willingness_to_use`, `technical_feasibility`, `missing_features`, `market_fit`, `ux_concerns`
 
 ---
 
