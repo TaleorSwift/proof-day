@@ -5,9 +5,38 @@ workflows:
     trigger: "DS — Story 9.8: Modal LaunchIdea con tagline, chips de feedback y galería de imágenes"
     workflow: "dev-story"
     mode: "GENERATE"
-    status: "STARTED"
+    status: "SUCCESS"
     baseline_commit: "19ac310"
     branch: "feat/9-8-modal-lanzar-idea-tagline-chips-imagenes"
+    closed_at: "2026-04-12T12:00:00"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/63"
+    artifacts:
+      - "components/projects/LaunchIdeaModal.tsx — Dialog ~540px con scroll interno y validación zod"
+      - "components/projects/LaunchIdeaForm.tsx — formulario interno con FormProvider"
+      - "components/projects/FeedbackTopicChips.tsx — chips toggleables con aria-pressed"
+      - "components/projects/ImageUploader.tsx — uploader inline hasta 3 imágenes"
+      - "actions/projects/launchProject.ts — server action status=live + revalidatePath"
+      - "lib/utils/imageUpload.ts — utilitaria de subida a Supabase Storage"
+      - "lib/validations/projects.ts — launchIdeaSchema añadido"
+      - "components/communities/CommunityFeedHeader.tsx — botón conectado al modal"
+      - "tests/unit/projects/LaunchIdeaModal.test.tsx — 19 tests"
+      - "tests/unit/projects/FeedbackTopicChips.test.tsx — 13 tests"
+      - "tests/unit/projects/ImageUploader.test.tsx — 7 tests"
+      - "tests/unit/communities/CommunityFeedHeader.test.tsx — 3 tests nuevos integración modal"
+      - "stories/projects/LaunchIdeaModal.stories.tsx — 4 stories"
+      - "stories/projects/FeedbackTopicChips.stories.tsx — 4 stories"
+      - "stories/projects/ImageUploader.stories.tsx — 3 stories"
+      - "docs/project/modules/projects.md — documentado Story 9.8"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml — 9-8 review"
+    tests:
+      total: 445
+      passed: 445
+      failed: 0
+    checks:
+      lint: "OK"
+      build: "OK"
+      tsc: "implícito en build — OK"
+    summary: "Story 9.8 implementada con TDD Outside-In. LaunchIdeaModal completo con FeedbackTopicChips, ImageUploader, server action launchProject y utilitaria imageUpload. CommunityFeedHeader conectado. 445/445 tests verdes."
 
   - id: "20260412-bart-QD-9-9-feed-header-ideas-en-validacion"
     timestamp: "2026-04-12T23:30:00"
