@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm, FormProvider } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import {
   Dialog,
   DialogContent,
@@ -74,6 +75,7 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
       return
     }
 
+    toast.success('¡Idea lanzada! Ya está recibiendo feedback.')
     onSuccess?.()
     router.refresh()
     handleClose()

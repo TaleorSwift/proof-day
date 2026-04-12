@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { uploadImageToStorage } from '@/lib/utils/imageUpload'
-import { validateImageFile } from '@/lib/types/projects'
+import { validateImageFile, PROJECT_IMAGE_ALLOWED_TYPES } from '@/lib/types/projects'
 
 export interface UploaderImage {
   url: string
@@ -66,7 +66,7 @@ export function ImageUploader({ images, onImagesChange, maxImages = 3 }: Props) 
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept={PROJECT_IMAGE_ALLOWED_TYPES.join(',')}
         style={{ display: 'none' }}
         onChange={handleFileChange}
         aria-label="Seleccionar imagen"

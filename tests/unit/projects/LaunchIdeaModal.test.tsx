@@ -23,8 +23,14 @@ vi.mock('@/lib/utils/imageUpload', () => ({
   uploadImageToStorage: vi.fn(),
 }))
 
+vi.mock('sonner', () => ({
+  toast: { success: vi.fn() },
+  Toaster: () => null,
+}))
+
 import { LaunchIdeaModal } from '@/components/projects/LaunchIdeaModal'
 import { launchProject } from '@/actions/projects/launchProject'
+import { toast } from 'sonner'
 
 const DEFAULT_PROPS = {
   open: true,
@@ -204,6 +210,17 @@ describe('LaunchIdeaModal — AC-4: submit exitoso', () => {
     fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument()
+    })
+  })
+
+  it('dispara toast.success tras submit exitoso (AC-4)', async () => {
+    render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
+    fillRequiredFields()
+    fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
+    await waitFor(() => {
+      expect(vi.mocked(toast.success)).toHaveBeenCalledWith(
+        '¡Idea lanzada! Ya está recibiendo feedback.'
+      )
     })
   })
 })

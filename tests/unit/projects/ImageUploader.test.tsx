@@ -12,6 +12,7 @@ vi.mock('@/lib/utils/imageUpload', () => ({
 }))
 
 import { ImageUploader } from '@/components/projects/ImageUploader'
+import { PROJECT_IMAGE_ALLOWED_TYPES } from '@/lib/types/projects'
 
 describe('ImageUploader — render', () => {
   it('renderiza el contenedor con data-testid="modal-field-images"', () => {
@@ -37,10 +38,10 @@ describe('ImageUploader — AC-6: límite de imágenes', () => {
     expect(btn).toBeDisabled()
   })
 
-  it('el input acepta solo archivos de imagen', () => {
+  it('el input acepta solo los tipos MIME permitidos (JPEG, PNG, WebP)', () => {
     render(<ImageUploader images={[]} onImagesChange={vi.fn()} maxImages={3} />)
     const input = document.querySelector('input[type="file"]') as HTMLInputElement
-    expect(input).toHaveAttribute('accept', 'image/*')
+    expect(input).toHaveAttribute('accept', PROJECT_IMAGE_ALLOWED_TYPES.join(','))
   })
 })
 
