@@ -1,11 +1,32 @@
 // @vitest-environment jsdom
 /**
- * Tests — CommunityFeedHeader (Story 9.9)
+ * Tests — CommunityFeedHeader (Story 9.9 + Story 9.8)
  * Verifica el header "Ideas en validación", subtítulo y botón Lanzar idea.
+ * Story 9.8: botón conecta al LaunchIdeaModal.
  */
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
+
+vi.mock('@/components/projects/LaunchIdeaModal', () => ({
+  LaunchIdeaModal: ({
+    open,
+    communitySlug,
+  }: {
+    open: boolean
+    communitySlug: string
+    onOpenChange: (v: boolean) => void
+  }) =>
+    open ? (
+      <div data-testid="launch-idea-modal" data-slug={communitySlug}>
+        Modal
+      </div>
+    ) : null,
+}))
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ refresh: vi.fn() }),
+}))
 
 import { CommunityFeedHeader } from '@/components/communities/CommunityFeedHeader'
 
@@ -87,5 +108,46 @@ describe('CommunityFeedHeader — AC-4: metadatos de comunidad', () => {
       />
     )
     expect(screen.getByTestId('community-name-secondary')).toHaveTextContent('Startup Madrid')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Story 9.8: integración del modal
+// ---------------------------------------------------------------------------
+
+describe('CommunityFeedHeader — Story 9.8: modal LaunchIdea', () => {
+  it('el modal no está visible por defecto', () => {
+    render(
+      <CommunityFeedHeader
+        communityName="Startup Madrid"
+        communitySlug="startup-madrid"
+      />
+    )
+    expect(screen.queryByTestId('launch-idea-modal')).not.toBeInTheDocument()
+  })
+
+  it('al hacer clic en "+ Lanzar idea", el modal se abre', () => {
+    render(
+      <CommunityFeedHeader
+        communityName="Startup Madrid"
+        communitySlug="startup-madrid"
+      />
+    )
+    fireEvent.click(screen.getByTestId('btn-launch-idea'))
+    expect(screen.getByTestId('launch-idea-modal')).toBeInTheDocument()
+  })
+
+  it('el modal recibe el communitySlug correcto', () => {
+    render(
+      <CommunityFeedHeader
+        communityName="Startup Madrid"
+        communitySlug="startup-madrid"
+      />
+    )
+    fireEvent.click(screen.getByTestId('btn-launch-idea'))
+    expect(screen.getByTestId('launch-idea-modal')).toHaveAttribute(
+      'data-slug',
+      'startup-madrid'
+    )
   })
 })
