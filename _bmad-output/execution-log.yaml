@@ -38,6 +38,52 @@ workflows:
       tsc: "implícito en build — OK"
     summary: "Story 9.8 implementada con TDD Outside-In. LaunchIdeaModal completo con FeedbackTopicChips, ImageUploader, server action launchProject y utilitaria imageUpload. CommunityFeedHeader conectado. 445/445 tests verdes."
 
+  - id: "20260412-homer-CR-9-8-modal"
+    timestamp: "2026-04-12T22:14:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 9.8: Modal LaunchIdea con tagline, chips de feedback y galería de imágenes"
+    workflow: "code-review"
+    mode: "VERIFY"
+    status: "SUCCESS"
+    verdict: "APPROVED"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/63"
+    pr_merged: true
+    merge_commit: "c213b404a45ea289770c0e058dae1f8a7a74fad2"
+    merged_at: "2026-04-12T22:14:40Z"
+    closed_at: "2026-04-12T22:15:00"
+    artifacts:
+      - "PR#63 merged — squash merge en main (SHA c213b404)"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml — 9-8 done"
+    summary: "CR Story 9.8 APPROVED. PR#63 mergeada en main (squash, SHA c213b404). Sprint-status actualizado a done."
+
+  - id: "20260413-homer-CR-fix-9-8-modal-lanzar-idea"
+    timestamp: "2026-04-13T00:06:00"
+    agent: "Homer (Dev)"
+    trigger: "CR fixes — Story 9.8: toast, FeedWithModal, accept MIME"
+    workflow: "dev-story (refine)"
+    mode: "REFINE"
+    status: "SUCCESS"
+    branch: "feat/9-8-modal-lanzar-idea-tagline-chips-imagenes"
+    closed_at: "2026-04-13T00:10:00"
+    commit: "467ba64"
+    artifacts:
+      - "components/projects/LaunchIdeaModal.tsx — toast.success tras submit exitoso (AC-4)"
+      - "app/layout.tsx — <Toaster richColors /> añadido al layout raíz"
+      - "components/projects/ImageUploader.tsx — accept cambiado a PROJECT_IMAGE_ALLOWED_TYPES"
+      - "components/projects/FeedWithModal.tsx — ELIMINADO (componente huérfano)"
+      - "tests/unit/projects/LaunchIdeaModal.test.tsx — mock sonner + test toast AC-4 (total 20 tests)"
+      - "tests/unit/projects/ImageUploader.test.tsx — test accept MIME types actualizado"
+      - "package.json — sonner ^2.0.7 añadido como dependencia"
+    tests:
+      total: 446
+      passed: 446
+      failed: 0
+    checks:
+      lint: "OK"
+      build: "OK"
+    sprint_status: "9-8-modal-lanzar-idea-tagline-chips-imagenes: review"
+    summary: "Fixes del CR aplicados: toast sonner, eliminación FeedWithModal, accept MIME types explícitos. 446/446 tests verdes."
+
   - id: "20260412-bart-QD-9-9-feed-header-ideas-en-validacion"
     timestamp: "2026-04-12T23:30:00"
     agent: "Bart (Quick Flow)"
@@ -1688,3 +1734,69 @@ workflows:
       - "_bmad-output/execution-log.yaml"
     errors: []
     next_recommended: "Mergear PR #52 en main con aprobación del usuario"
+
+  - id: "20260412-fixtures-local-data"
+    timestamp: "2026-04-12T21:00:00"
+    agent: "Homer (Dev)"
+    trigger: "Tarea ad-hoc — fixtures locales"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "45 minutos"
+    summary: >
+      Creación de lib/fixtures/ con 10 ficheros (1102 líneas) cubriendo todos los estados
+      de entidades del proyecto. Datos inspirados en prototipo Lovable. Incluye fix de
+      seguridad: next 15.5.14 → 15.5.15 (CVE GHSA-q4gf-8mx6-v5v3, HIGH DoS Server Components).
+      PR #62 mergeado en main. Todos los CI checks en verde.
+    artifacts_created:
+      - "lib/fixtures/_ids.ts"
+      - "lib/fixtures/_images.ts"
+      - "lib/fixtures/profiles.ts"
+      - "lib/fixtures/communities.ts"
+      - "lib/fixtures/projects.ts"
+      - "lib/fixtures/feedback.ts"
+      - "lib/fixtures/proof-scores.ts"
+      - "lib/fixtures/gamification.ts"
+      - "lib/fixtures/invitations.ts"
+      - "lib/fixtures/index.ts"
+    artifacts_modified:
+      - "package.json"
+      - "package-lock.json"
+    errors: []
+    decisions:
+      - "Ubicación lib/fixtures/ (no tests/fixtures/) para compartir entre tests y Storybook"
+      - "picsum.photos con seeds determinísticos para imágenes placeholder estables"
+      - "seed.sql NO actualizado en este PR — pendiente como tarea posterior"
+      - "next actualizado a 15.5.15 para resolver CVE pre-existente en main"
+
+  - id: "20260412-homer-CR-9-8-modal-lanzar-idea"
+    timestamp: "2026-04-12T13:00:00"
+    agent: "Homer (Code Review)"
+    trigger: "CR — Story 9.8: Modal LaunchIdea con tagline, chips y galería"
+    workflow: "code-review"
+    mode: "VERIFY"
+    status: "STARTED"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/63"
+    branch: "feat/9-8-modal-lanzar-idea-tagline-chips-imagenes"
+
+  - id: "20260412-homer-CR-9-8-modal-lanzar-idea-closing"
+    timestamp: "2026-04-12T13:30:00"
+    agent: "Homer (Code Review)"
+    trigger: "CR — Story 9.8"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "CHANGES_REQUESTED"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/63"
+    branch: "feat/9-8-modal-lanzar-idea-tagline-chips-imagenes"
+    summary: "CR adversarial PR #63. CHANGES_REQUESTED. 2 bloqueantes: (1) toast de confirmación ausente — AC-4 explícito no implementado, librería no instalada; (2) FeedWithModal.tsx código muerto con patrón incorrecto (openModal.toString() en data-attr). 1 MEDIUM: inconsistencia accept=image/* vs validateImageFile que solo admite JPEG/PNG/WebP."
+    blockers:
+      - "BLOQUEANTE-1: LaunchIdeaModal.tsx — toast success ausente (AC-4). Instalar sonner + toast.success('Idea lanzada! Ya está recibiendo feedback.')."
+      - "BLOQUEANTE-2: FeedWithModal.tsx — componente no usado con patrón incorrecto. Eliminar o limpiar."
+    medium:
+      - "MEDIUM-3: ImageUploader.tsx accept='image/*' inconsistente con PROJECT_IMAGE_ALLOWED_TYPES (JPEG/PNG/WebP). Cambiar a accept=PROJECT_IMAGE_ALLOWED_TYPES.join(',')."
+    low:
+      - "LOW: Storybook stories con color hardcoded '#6B6B63' — reemplazar por var(--color-text-secondary)."
+      - "LOW: imageUpload.ts sube a path temp/ sin política de limpieza declarada."
+      - "LOW: launchProject server action sin validación server-side de arrays feedbackTopics/imageUrls."
+    next_recommended: "Homer DS para resolver bloqueantes. Crear rama fix/9-8-cr-fixes desde feat/9-8 y enviar nuevo push a la PR."
+    next_recommended: "Migrar mocks inline de tests/Storybook existentes a @/lib/fixtures"

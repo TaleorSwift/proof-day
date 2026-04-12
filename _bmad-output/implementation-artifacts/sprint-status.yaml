@@ -101,15 +101,15 @@ development_status:
   epic-8-retrospective: optional
 
   # ── EPIC 9: Rediseño UI — Alineación prototipo Lovable v3 ────────
-  epic-9: in-progress
+  epic-9: done
   9-1-migracion-db-tagline-would-use-count: done  # merged PR#53 — 2026-04-10
   9-2-login-logo-textos-layout-sin-card: done
   9-3-fix-ruta-auth-login: done  # merged PR#55 + hotfix fa63715 — 2026-04-10
   9-4-landing-welcome-screen: done  # merged PR#56 — 2026-04-10
   9-5-navbar-logo-nombre-icono-logout: done  # merged PR#57 — 2026-04-10
   9-6-feed-secciones-live-cerrados-projectcard-bugs-autor: done  # merged PR#58 — 2026-04-11
-  9-7-project-detail-tagline-sidebar-universal-feedback-inline: review
-  9-8-modal-lanzar-idea-tagline-chips-imagenes: review
+  9-7-project-detail-tagline-sidebar-universal-feedback-inline: done  # merged PR#59 — 2026-04-11
+  9-8-modal-lanzar-idea-tagline-chips-imagenes: done  # merged PR#63 — 2026-04-12
   9-9-feed-header-ideas-en-validacion-boton-lanzar: done  # merged PR#61 — 2026-04-12
   9-10-communities-redirect-condicional: done  # merged PR#60 — 2026-04-12 — permanentRedirect (308) + tests actualizados
   epic-9-retrospective: optional
