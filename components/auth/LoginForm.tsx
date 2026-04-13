@@ -82,7 +82,7 @@ export function LoginForm({ errorParam, initialSent = false }: LoginFormProps) {
 
   return (
     <div style={CONTAINER_STYLE}>
-      <Image src="/logo.png" alt="Proof Day" width={128} height={128} priority />
+      <Image src="/logo.png" alt="Proof Day" width={192} height={192} priority />
 
       <h1
         style={{

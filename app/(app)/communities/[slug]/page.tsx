@@ -99,15 +99,6 @@ export default async function CommunityPage({ params }: Props) {
           communitySlug={slug}
         />
 
-        {/* Metadatos secundarios de comunidad */}
-        <CommunityHeader
-          community={{
-            ...community,
-            member_count: memberCount ?? 0,
-          }}
-          isAdmin={isAdmin}
-        />
-
         {/* Layout de 2 columnas: proyectos + sidebar gamificación */}
         <div
           style={{
@@ -123,8 +114,16 @@ export default async function CommunityPage({ params }: Props) {
             <ProjectFeed projects={projects} communitySlug={slug} />
           </div>
 
-          {/* Sidebar derecho: gamificación — Story 8.6 */}
+          {/* Sidebar derecho: info comunidad + gamificación */}
           <aside style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            {/* Metadatos de comunidad — nombre, descripción, miembros */}
+            <CommunityHeader
+              community={{
+                ...community,
+                member_count: memberCount ?? 0,
+              }}
+              isAdmin={isAdmin}
+            />
             <TopContributors communityId={community.id} />
           </aside>
         </div>

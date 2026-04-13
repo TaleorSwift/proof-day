@@ -9,9 +9,9 @@ interface ContentTagProps {
 
 const VARIANT_STYLES: Record<TagVariant, CSSProperties> = {
   default: {
-    backgroundColor: 'var(--color-hypothesis-bg)',
+    backgroundColor: 'var(--color-border)',
     color: 'var(--color-text-secondary)',
-    border: '1px solid var(--color-hypothesis-border)',
+    border: 'none',
   },
   outline: {
     backgroundColor: 'transparent',
@@ -28,9 +28,9 @@ export function ContentTag({ label, variant = 'default' }: ContentTagProps) {
         alignItems: 'center',
         ...VARIANT_STYLES[variant],
         borderRadius: 'var(--radius-full)',
-        padding: '2px var(--space-3)',
+        padding: '3px 10px',
         fontSize: 'var(--text-xs)',
-        fontWeight: 600,
+        fontWeight: 400,
         lineHeight: 'var(--leading-xs)',
         whiteSpace: 'nowrap',
       }}

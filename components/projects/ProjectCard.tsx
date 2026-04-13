@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { HeartButton } from '@/components/shared/HeartButton'
 import { StatusBadge } from '@/components/projects/StatusBadge'
+import { UserAvatar } from '@/components/shared/UserAvatar'
 import { buildProjectUrl, formatFeedbackCount, computeLikeState } from '@/lib/utils/projectCard'
 import type { ProjectStatus } from '@/lib/types/projects'
 
@@ -176,6 +177,7 @@ export function ProjectCard({
 
         {/* Fila inferior: autor + feedback count + would-use count */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'auto' }}>
+          <UserAvatar name={builderLabel} size="sm" showName={false} />
           <span
             data-testid="project-card-author-name"
             style={{

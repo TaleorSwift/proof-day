@@ -64,7 +64,7 @@ export function FeedbackEntry({ data }: FeedbackEntryProps) {
         padding: 'var(--space-4)',
         backgroundColor: 'var(--color-surface)',
         border: '1px solid var(--color-border)',
-        borderRadius: 'var(--radius-md)',
+        borderRadius: 'var(--radius-lg)',
         display: 'flex',
         flexDirection: 'column',
         gap: 'var(--space-3)',
