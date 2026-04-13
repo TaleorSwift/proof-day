@@ -48,7 +48,7 @@ export default async function CommunitySettingsPage({ params }: Props) {
         <div style={{ marginBottom: 'var(--space-8)' }}>
           {/* CR4-F3: Enlace de vuelta a la lista de comunidades */}
           <Link
-            href="/communities"
+            href={`/communities/${slug}`}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -59,7 +59,7 @@ export default async function CommunitySettingsPage({ params }: Props) {
               marginBottom: 'var(--space-4)',
             }}
           >
-            ← Mis comunidades
+            ← Volver al feed
           </Link>
           <h1
             style={{

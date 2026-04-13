@@ -13,7 +13,7 @@ function clampPercentage(value: number): number {
 export function ProgressBar({
   label,
   percentage,
-  color = 'var(--color-primary)',
+  color = 'var(--color-progress-fill)',
 }: ProgressBarProps) {
   const clamped = clampPercentage(percentage)
 
@@ -62,7 +62,7 @@ export function ProgressBar({
         aria-label={label}
         style={{
           width: '100%',
-          height: 6,
+          height: 8,
           backgroundColor: 'var(--color-border)',
           borderRadius: 'var(--radius-full)',
           overflow: 'hidden',

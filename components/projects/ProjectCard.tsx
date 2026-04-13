@@ -55,11 +55,11 @@ export function ProjectCard({
           padding: 'var(--space-3)',
           backgroundColor: 'var(--color-surface)',
           border: '1px solid var(--color-border)',
-          borderRadius: 'var(--radius-md)',
+          borderRadius: 'var(--radius-lg)',
           animation: 'pulse 2s infinite',
         }}
       >
-        <div style={{ width: 120, height: 90, borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-hypothesis-bg)', flexShrink: 0 }} />
+        <div style={{ width: 96, height: 64, borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--color-hypothesis-bg)', flexShrink: 0 }} />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
           <div style={{ height: 16, width: '60%', backgroundColor: 'var(--color-hypothesis-bg)', borderRadius: 4 }} />
           <div style={{ height: 12, width: '40%', backgroundColor: 'var(--color-hypothesis-bg)', borderRadius: 4 }} />
@@ -81,7 +81,7 @@ export function ProjectCard({
         padding: 'var(--space-3)',
         backgroundColor: 'var(--color-surface)',
         border: '1px solid var(--color-border)',
-        borderRadius: 'var(--radius-md)',
+        borderRadius: 'var(--radius-lg)',
         transition: 'box-shadow 150ms ease',
         cursor: 'pointer',
       }}
@@ -97,8 +97,8 @@ export function ProjectCard({
         <div
           data-testid="project-card-thumbnail"
           style={{
-            width: 120,
-            height: 90,
+            width: 96,
+            height: 64,
             borderRadius: 'var(--radius-sm)',
             overflow: 'hidden',
             position: 'relative',
@@ -112,7 +112,7 @@ export function ProjectCard({
               alt={project.title}
               fill
               className="object-cover"
-              sizes="120px"
+              sizes="96px"
             />
           ) : (
             <div

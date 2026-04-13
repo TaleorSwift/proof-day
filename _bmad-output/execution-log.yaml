@@ -1,4 +1,13 @@
 workflows:
+  - id: "20260413-bart-QD-10-ui-polish-lovable-v3"
+    timestamp: "2026-04-13T00:00:00"
+    agent: "Bart (Quick Flow)"
+    trigger: "QD — Epic 10: UI polish para alinear con prototipo Lovable v3 (11 stories)"
+    workflow: "quick-dev"
+    mode: "GENERATE"
+    status: "STARTED"
+    branch: "feat/10-ui-polish-lovable-v3"
+
   - id: "20260412-homer-DS-9-8-modal-lanzar-idea-tagline-chips-imagenes"
     timestamp: "2026-04-12T10:00:00"
     agent: "Homer (Dev)"

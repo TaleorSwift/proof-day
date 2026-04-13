@@ -37,8 +37,8 @@ export function SignalIndicator({ level, label }: SignalIndicatorProps) {
       <span
         aria-hidden="true"
         style={{
-          width: 8,
-          height: 8,
+          width: 10,
+          height: 10,
           borderRadius: 'var(--radius-full)',
           backgroundColor: styles.dotColor,
           flexShrink: 0,

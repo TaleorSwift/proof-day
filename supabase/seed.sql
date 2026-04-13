@@ -220,7 +220,7 @@ INSERT INTO projects (
     'Engineering managers with 5+ remote reports',
     'https://example.com/pulse-demo',
     ARRAY['Problem clarity', 'Willingness to use', 'Missing features'],
-    '{}', 'live', NULL, NULL,
+    ARRAY['https://picsum.photos/seed/pulse-check-1/800/600'], 'live', NULL, NULL,
     '2026-03-20T10:00:00Z', '2026-03-20T10:00:00Z'
   ),
   (
@@ -235,7 +235,7 @@ INSERT INTO projects (
     'People Ops teams at companies with 50–200 employees',
     NULL,
     ARRAY['Onboarding speed', 'AI accuracy', 'Integration needs'],
-    '{}', 'live', NULL, NULL,
+    ARRAY['https://picsum.photos/seed/doc-bridge-1/800/600'], 'live', NULL, NULL,
     '2026-03-19T08:00:00Z', '2026-03-19T08:00:00Z'
   ),
   (
@@ -265,7 +265,7 @@ INSERT INTO projects (
     'Scrum masters and agile coaches',
     NULL,
     ARRAY['Summary quality', 'Action tracking', 'Integrations'],
-    '{}', 'inactive', 'abandon', '2026-03-25T10:00:00Z',
+    ARRAY['https://picsum.photos/seed/retro-replay-1/800/600'], 'inactive', 'abandon', '2026-03-25T10:00:00Z',
     '2026-03-15T10:00:00Z', '2026-03-25T10:00:00Z'
   ),
   (
@@ -292,7 +292,7 @@ INSERT INTO projects (
     'Solo founders and small indie teams (1–3 people)',
     'https://example.com/iterate-demo',
     ARRAY['UX flow', 'Performance', 'Pricing'],
-    '{}', 'live', 'iterate', '2026-03-28T14:00:00Z',
+    ARRAY['https://picsum.photos/seed/iterate-labs-1/800/600', 'https://picsum.photos/seed/iterate-labs-2/800/600'], 'live', 'iterate', '2026-03-28T14:00:00Z',
     '2026-03-10T10:00:00Z', '2026-03-28T14:00:00Z'
   ),
   (
@@ -307,7 +307,7 @@ INSERT INTO projects (
     'CTOs and platform leads at Series A startups',
     'https://example.com/scale-demo',
     ARRAY['Scalability', 'Security', 'API design'],
-    '{}', 'live', 'scale', '2026-03-30T10:00:00Z',
+    ARRAY['https://picsum.photos/seed/scale-engine-1/800/600', 'https://picsum.photos/seed/scale-engine-2/800/600', 'https://picsum.photos/seed/scale-engine-3/800/600'], 'live', 'scale', '2026-03-30T10:00:00Z',
     '2026-03-05T09:00:00Z', '2026-03-30T10:00:00Z'
   ),
   (
@@ -322,7 +322,7 @@ INSERT INTO projects (
     'Co-founders at seed-stage startups',
     NULL,
     ARRAY['Feature set', 'Market fit'],
-    '{}', 'inactive', 'iterate', '2026-03-22T09:00:00Z',
+    ARRAY['https://picsum.photos/seed/pivot-tracker-1/800/600'], 'inactive', 'iterate', '2026-03-22T09:00:00Z',
     '2026-02-28T11:00:00Z', '2026-03-22T09:00:00Z'
   ),
   (

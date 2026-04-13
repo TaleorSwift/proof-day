@@ -42,6 +42,16 @@ export function ValidationSignalCard({
         gap: 'var(--space-3)',
       }}
     >
+      <h3
+        style={{
+          fontSize: 'var(--text-sm)',
+          fontWeight: 'var(--font-semibold)',
+          color: 'var(--color-text-primary)',
+          margin: 0,
+        }}
+      >
+        Señal de validación
+      </h3>
       <SignalIndicator level={level} label={label} />
 
       {hasFeedbacks ? (

@@ -147,7 +147,17 @@ export function LaunchIdeaForm({
       </div>
 
       {/* Hypothesis */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+      <div
+        style={{
+          backgroundColor: 'var(--color-hypothesis-modal-bg)',
+          border: '2px solid var(--color-hypothesis-modal-border)',
+          borderRadius: 'var(--radius-lg)',
+          padding: 'var(--space-3)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-2)',
+        }}
+      >
         <Label htmlFor="launch-hypothesis">
           Hipótesis a validar{' '}
           <span aria-hidden="true" style={{ color: 'var(--color-accent)' }}>*</span>

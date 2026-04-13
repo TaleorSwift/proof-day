@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { UserAvatar } from '@/components/shared/UserAvatar'
 
 interface NavbarProps {
   isAuthenticated: boolean
@@ -11,9 +12,10 @@ export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
   return (
     <nav
       style={{
-        backgroundColor: 'var(--color-background)',
-        borderBottom: '1px solid var(--color-border)',
-        padding: 'var(--space-3) var(--space-8)',
+        backgroundColor: 'var(--navbar-bg)',
+        backdropFilter: 'blur(8px)',
+        height: 'var(--navbar-height)',
+        padding: '0 var(--space-8)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -43,9 +45,9 @@ export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
         />
         <span
           style={{
-            fontSize: 'var(--text-base)',
-            fontWeight: 'var(--font-bold)',
-            color: 'var(--color-primary)',
+            fontSize: 'var(--text-lg)',
+            fontWeight: 'var(--font-semibold)',
+            color: 'var(--color-brand)',
           }}
         >
           Proof Day
@@ -56,15 +58,18 @@ export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
       {isAuthenticated ? (
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
           {userName && (
-            <span
-              style={{
-                fontSize: 'var(--text-sm)',
-                color: 'var(--color-text-secondary)',
-                fontWeight: 'var(--font-medium)',
-              }}
-            >
-              {userName}
-            </span>
+            <>
+              <UserAvatar name={userName} size="sm" />
+              <span
+                style={{
+                  fontSize: 'var(--text-sm)',
+                  color: 'var(--color-text-secondary)',
+                  fontWeight: 'var(--font-medium)',
+                }}
+              >
+                {userName}
+              </span>
+            </>
           )}
           <button
             onClick={onLogout}

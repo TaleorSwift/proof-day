@@ -63,12 +63,13 @@ export function CommunityFeedHeader({ communityName, communitySlug }: Props) {
           onClick={() => setIsModalOpen(true)}
           style={{
             background: 'var(--color-accent)',
-            color: 'white',
+            color: 'var(--color-surface)',
             border: 'none',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: '10px',
+            height: '40px',
             padding: 'var(--space-2) var(--space-4)',
             fontSize: 'var(--text-sm)',
-            fontWeight: 'var(--font-semibold)',
+            fontWeight: 'var(--font-medium)',
             cursor: 'pointer',
             flexShrink: 0,
             alignSelf: 'flex-start',

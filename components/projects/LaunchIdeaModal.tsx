@@ -131,6 +131,8 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
                   background: 'var(--color-accent)',
                   color: 'white',
                   border: 'none',
+                  borderRadius: '10px',
+                  height: '40px',
                 }}
               >
                 {isSubmitting ? 'Lanzando...' : '+ Lanzar proyecto'}

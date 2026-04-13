@@ -29,10 +29,10 @@ export function StatusBadge({ status }: StatusBadgeProps) {
       style={{
         backgroundColor: config.bg,
         color: config.color,
-        borderRadius: 'var(--radius-sm)',
-        padding: '2px var(--space-2)',
+        borderRadius: 'var(--radius-full)',
+        padding: '3px var(--space-2)',
         fontSize: 'var(--text-xs)',
-        fontWeight: 600,
+        fontWeight: 500,
       }}
       aria-label={`Estado: ${config.label}`}
     >
