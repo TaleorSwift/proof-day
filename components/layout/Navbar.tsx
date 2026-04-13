@@ -14,6 +14,7 @@ export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
       style={{
         backgroundColor: 'var(--navbar-bg)',
         backdropFilter: 'blur(8px)',
+        borderBottom: '1px solid var(--color-border)',
         height: 'var(--navbar-height)',
         padding: '0 var(--space-8)',
         display: 'flex',
@@ -38,8 +39,8 @@ export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
         <Image
           src="/logo.png"
           alt=""
-          width={32}
-          height={32}
+          width={36}
+          height={36}
           aria-hidden
           style={{ borderRadius: 'var(--radius-full)', flexShrink: 0 }}
         />
@@ -59,7 +60,6 @@ export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
           {userName && (
             <>
-              <UserAvatar name={userName} size="sm" />
               <span
                 style={{
                   fontSize: 'var(--text-sm)',
@@ -69,6 +69,7 @@ export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
               >
                 {userName}
               </span>
+              <UserAvatar name={userName} size="nav" />
             </>
           )}
           <button
