@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { UserAvatar } from '@/components/shared/UserAvatar'
 
 interface NavbarProps {
   isAuthenticated: boolean
@@ -60,6 +59,25 @@ export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
           {userName && (
             <>
+              <div
+                aria-label={`Avatar de ${userName}`}
+                role="img"
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '9999px',
+                  backgroundColor: 'rgba(249,115,22,0.12)',
+                  color: '#F97316',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 'var(--text-xs)',
+                  fontWeight: 600,
+                  flexShrink: 0,
+                }}
+              >
+                {userName.charAt(0).toUpperCase()}
+              </div>
               <span
                 style={{
                   fontSize: 'var(--text-sm)',
@@ -69,7 +87,6 @@ export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
               >
                 {userName}
               </span>
-              <UserAvatar name={userName} size="nav" />
             </>
           )}
           <button
