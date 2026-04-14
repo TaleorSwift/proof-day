@@ -206,7 +206,7 @@ export function ProjectCard({
                 style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)' }}
               >
                 <Users size={12} aria-hidden="true" />
-                {project.wouldUseCount} would use this
+                {project.wouldUseCount} lo usarían
               </span>
             )}
           </div>

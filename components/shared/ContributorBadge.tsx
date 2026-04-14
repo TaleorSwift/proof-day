@@ -17,19 +17,19 @@ interface BadgeConfig {
 const BADGE_CONFIG: Record<ContributorType, BadgeConfig> = {
   'top-reviewer': {
     icon: <Star size={10} aria-hidden="true" />,
-    label: 'Top',
+    label: 'Top Reviewer',
     backgroundColor: 'var(--color-hypothesis-bg)',
     color: 'var(--color-primary)',
   },
   insightful: {
     icon: <Lightbulb size={10} aria-hidden="true" />,
-    label: 'Insightful',
+    label: 'Perspicaz',
     backgroundColor: 'var(--color-promising-bg)',
     color: 'var(--color-promising-text)',
   },
   'changed-thinking': {
     icon: <RefreshCw size={10} aria-hidden="true" />,
-    label: 'Perspicaz',
+    label: 'Cambió mi perspectiva',
     backgroundColor: 'var(--color-insight-bg)',
     color: 'var(--color-insight-text)',
   },

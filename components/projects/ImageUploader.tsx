@@ -143,7 +143,7 @@ export function ImageUploader({ images, onImagesChange, maxImages = 3 }: Props) 
           }}
         >
           <ImagePlus size={20} aria-hidden="true" />
-          <span>{uploading ? '...' : 'Add'}</span>
+          <span>{uploading ? '...' : 'Añadir'}</span>
         </button>
       )}
 
