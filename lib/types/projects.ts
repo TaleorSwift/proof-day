@@ -3,6 +3,7 @@ export type ProjectDecision = 'iterate' | 'scale' | 'abandon'
 
 export interface Project {
   id: string
+  slug: string
   communityId: string
   builderId: string
   title: string
@@ -27,6 +28,7 @@ export interface Project {
 /** Forma del row tal como lo devuelve Supabase (snake_case) */
 export interface ProjectRow {
   id: string
+  slug: string
   community_id: string
   builder_id: string
   title: string
@@ -51,6 +53,7 @@ export interface ProjectRow {
 export function projectFromRow(row: ProjectRow): Project {
   return {
     id: row.id,
+    slug: row.slug,
     communityId: row.community_id,
     builderId: row.builder_id,
     title: row.title,

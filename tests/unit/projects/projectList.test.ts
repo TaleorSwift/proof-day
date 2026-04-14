@@ -8,6 +8,7 @@ const OTHER_USER_ID = 'user-other-2'
 const projects: ProjectListItem[] = [
   {
     id: 'proj-live',
+    slug: 'proyecto-live',
     title: 'Proyecto Live',
     imageUrls: [],
     status: 'live',
@@ -16,6 +17,7 @@ const projects: ProjectListItem[] = [
   },
   {
     id: 'proj-inactive',
+    slug: 'proyecto-inactivo',
     title: 'Proyecto Inactivo',
     imageUrls: [],
     status: 'inactive',
@@ -24,6 +26,7 @@ const projects: ProjectListItem[] = [
   },
   {
     id: 'proj-draft-own',
+    slug: 'mi-borrador',
     title: 'Mi Borrador',
     imageUrls: [],
     status: 'draft',
@@ -32,6 +35,7 @@ const projects: ProjectListItem[] = [
   },
   {
     id: 'proj-draft-other',
+    slug: 'borrador-de-otro',
     title: 'Borrador de otro',
     imageUrls: [],
     status: 'draft',

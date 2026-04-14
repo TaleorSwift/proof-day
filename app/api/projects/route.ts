@@ -3,6 +3,7 @@ import { createProjectSchema } from '@/lib/validations/projects'
 import { requireAuth } from '@/lib/api/middleware/require-auth'
 import { createProjectsRepository } from '@/lib/repositories/projects.repository'
 import { createProjectsService } from '@/lib/services/projects.service'
+import { toSlug } from '@/lib/utils/slug'
 
 export async function GET(request: Request) {
   const auth = await requireAuth()
@@ -69,6 +70,7 @@ export async function POST(request: Request) {
   const { data: project, error } = await projectsRepo.create({
     communityId,
     builderId: user.id,
+    slug: toSlug(result.data.title),
     title: projectData.title,
     problem: projectData.problem,
     solution: projectData.solution,

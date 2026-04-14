@@ -4,11 +4,11 @@ import { ProjectForm } from '@/components/projects/ProjectForm'
 import type { ProjectRow } from '@/lib/types/projects'
 
 interface Props {
-  params: Promise<{ slug: string; id: string }>
+  params: Promise<{ slug: string; projectSlug: string }>
 }
 
 export default async function EditProjectPage({ params }: Props) {
-  const { slug, id } = await params
+  const { slug, projectSlug } = await params
   const supabase = await createClient()
 
   const { data: authData, error: authError } = await supabase.auth.getUser()
@@ -17,7 +17,7 @@ export default async function EditProjectPage({ params }: Props) {
   const { data: project } = await supabase
     .from('projects')
     .select('*')
-    .eq('id', id)
+    .eq('slug', projectSlug)
     .single()
 
   if (!project) notFound()
@@ -25,7 +25,7 @@ export default async function EditProjectPage({ params }: Props) {
   const typedProject = project as ProjectRow
 
   // Solo el builder puede editar su draft
-  if (typedProject.builder_id !== authData.user.id) redirect(`/communities/${slug}/projects/${id}`)
+  if (typedProject.builder_id !== authData.user.id) redirect(`/communities/${slug}/projects/${projectSlug}`)
 
   // Solo se puede editar en estado draft
   if (typedProject.status !== 'draft') notFound()

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { toSlug } from '@/lib/utils/slug'
 
 export interface LaunchProjectInput {
   communitySlug: string
@@ -44,6 +45,7 @@ export async function launchProject(input: LaunchProjectInput): Promise<LaunchPr
   const { data, error } = await supabase
     .from('projects')
     .insert({
+      slug: toSlug(input.title),
       title: input.title,
       tagline: input.tagline,
       problem: input.problem,

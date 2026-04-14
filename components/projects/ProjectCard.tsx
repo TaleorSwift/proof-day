@@ -13,6 +13,7 @@ import type { ProjectStatus } from '@/lib/types/projects'
 export interface ProjectCardProps {
   project: {
     id: string
+    slug: string
     title: string
     imageUrls: string[]
     status: ProjectStatus
@@ -75,7 +76,7 @@ export function ProjectCard({
 
   const imageSrc = project.imageUrls[0] ?? null
   const builderLabel = project.builderName ?? project.builderId.slice(0, 8)
-  const projectUrl = buildProjectUrl(communitySlug, project.id)
+  const projectUrl = buildProjectUrl(communitySlug, project.slug)
   const description = project.tagline ?? project.problem
 
   return (
@@ -225,7 +226,7 @@ export function ProjectCard({
       >
         {isOwner ? (
           <Link
-            href={`/communities/${communitySlug}/projects/${project.id}/edit`}
+            href={`/communities/${communitySlug}/projects/${project.slug}/edit`}
             aria-label="Editar proyecto"
             style={{
               display: 'flex',

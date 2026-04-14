@@ -45,7 +45,7 @@ export default async function CommunityPage({ params }: Props) {
     // Server Component lee directamente — RLS filtra: live+inactive para todos, draft solo al builder
     supabase
       .from('projects')
-      .select('id, title, image_urls, status, builder_id, created_at, problem, tagline, would_use_count')
+      .select('id, slug, title, image_urls, status, builder_id, created_at, problem, tagline, would_use_count')
       .eq('community_id', community.id)
       .order('created_at', { ascending: false }),
   ])
@@ -73,6 +73,7 @@ export default async function CommunityPage({ params }: Props) {
   // Mapear rows de Supabase a ProjectListItem (camelCase)
   const projects: ProjectListItem[] = (projectRows ?? []).map((r: Record<string, unknown>) => ({
     id: r.id as string,
+    slug: r.slug as string,
     title: r.title as string,
     imageUrls: r.image_urls as string[],
     status: r.status as 'draft' | 'live' | 'inactive',
