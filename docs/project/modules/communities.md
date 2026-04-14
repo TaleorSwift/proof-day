@@ -13,6 +13,9 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 - Card de comunidad muestra: nombre, descripción (máx 2 líneas), imagen con fallback a avatar con inicial, número de miembros. (story 2.3 AC-4)
 - Navbar muestra selector de comunidad activa (`CommunitySwitcher`) cuando el usuario pertenece a 2 o más comunidades. Con 1 comunidad, muestra el nombre como texto. (story 2.3 AC-6)
 - `/communities/[slug]` muestra layout base de la comunidad (imagen, nombre, descripción, miembros). Botón "Configuración" visible solo para admins. (story 2.3 AC-8)
+- `/communities` muestra botón "+ Nueva comunidad" junto al título cuando el usuario ya tiene 2 o más comunidades. (bug fix 2026-04-14)
+- `/communities/[slug]` incluye enlace "← Mis comunidades" para volver al listado. (bug fix 2026-04-14)
+- Todas las comunidades de prueba (fixtures) tienen imagen asignada. (bug fix 2026-04-14)
 - Los admins pueden actualizar roles y eliminar miembros (políticas RLS UPDATE y DELETE en `community_members`). La UI se implementa en stories futuras. (story 2.1, CR2-F1)
 - Toda mutación va por API Route, nunca por Server Actions. (story 2.1)
 
@@ -30,4 +33,4 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 - `app/(app)/communities/loading.tsx` — loading state accesible
 
 ## Última actualización
-Story 2.3 — 2026-03-28 | Arch Fase 3 — 2026-03-28 | A11y Fase 5 — 2026-03-28
+Story 2.3 — 2026-03-28 | Bug fixes UI — 2026-04-14
