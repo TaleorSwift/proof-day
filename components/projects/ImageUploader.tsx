@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { ImagePlus } from 'lucide-react'
 import { uploadImageToStorage } from '@/lib/utils/imageUpload'
 import { validateImageFile, PROJECT_IMAGE_ALLOWED_TYPES } from '@/lib/types/projects'
 
@@ -120,33 +121,31 @@ export function ImageUploader({ images, onImagesChange, maxImages = 3 }: Props) 
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={handleAddClick}
-        disabled={isAtLimit || uploading}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--space-2)',
-          padding: 'var(--space-2) var(--space-3)',
-          border: '2px dashed var(--color-border)',
-          borderRadius: 'var(--radius-md)',
-          background: 'var(--color-background)',
-          color: isAtLimit ? 'var(--color-text-muted)' : 'var(--color-text-secondary)',
-          fontSize: 'var(--text-sm)',
-          cursor: isAtLimit ? 'not-allowed' : 'pointer',
-          width: 'fit-content',
-        }}
-      >
-        <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>+</span>
-        <span>
-          {uploading
-            ? 'Subiendo...'
-            : isAtLimit
-            ? `Límite alcanzado (${maxImages})`
-            : `Añadir imagen${images.length > 0 ? ` (${images.length}/${maxImages})` : ''}`}
-        </span>
-      </button>
+      {!isAtLimit && (
+        <button
+          type="button"
+          onClick={handleAddClick}
+          disabled={uploading}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 'var(--space-1)',
+            width: '80px',
+            height: '80px',
+            border: '1.5px dashed var(--color-border)',
+            borderRadius: 'var(--radius-md)',
+            background: 'transparent',
+            color: 'var(--color-text-muted)',
+            fontSize: 'var(--text-xs)',
+            cursor: uploading ? 'wait' : 'pointer',
+          }}
+        >
+          <ImagePlus size={20} aria-hidden="true" />
+          <span>{uploading ? '...' : 'Add'}</span>
+        </button>
+      )}
 
       {error && (
         <p

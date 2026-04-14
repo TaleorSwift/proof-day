@@ -84,7 +84,7 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent
-        className="sm:max-w-[540px]"
+        className="sm:max-w-2xl"
         style={{ maxHeight: '90vh', overflowY: 'auto' }}
       >
         <DialogHeader>
