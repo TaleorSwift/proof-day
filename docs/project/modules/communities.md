@@ -33,4 +33,4 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 - `app/(app)/communities/loading.tsx` — loading state accesible
 
 ## Última actualización
-Story 2.3 — 2026-03-28 | Bug fixes UI — 2026-04-14
+Story 2.3 — 2026-03-28 | Arch Fase 3 — 2026-03-28 | A11y Fase 5 — 2026-03-28 | Bug fixes UI — 2026-04-14

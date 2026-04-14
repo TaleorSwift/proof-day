@@ -169,4 +169,32 @@ describe('CommunitiesPage — AC-3: lista con 2+ comunidades', () => {
     render(jsx as React.ReactElement)
     expect(screen.getAllByTestId('community-item')).toHaveLength(2)
   })
+
+  it('muestra el botón "+ Nueva comunidad" con href correcto', async () => {
+    const jsx = await CommunitiesPage({ searchParams: defaultSearchParams })
+    render(jsx as React.ReactElement)
+    const btn = screen.getByTestId('btn-new-community')
+    expect(btn).toBeInTheDocument()
+    expect(btn).toHaveAttribute('href', '/communities/new')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// AC-4: botón nueva comunidad — no visible con 0 comunidades
+// ---------------------------------------------------------------------------
+
+describe('CommunitiesPage — AC-4: botón nueva comunidad ausente en empty state', () => {
+  beforeEach(() => {
+    getUserCommunitiesMock.mockResolvedValue([])
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('NO muestra el botón "+ Nueva comunidad" cuando no hay comunidades', async () => {
+    const jsx = await CommunitiesPage({ searchParams: defaultSearchParams })
+    render(jsx as React.ReactElement)
+    expect(screen.queryByTestId('btn-new-community')).not.toBeInTheDocument()
+  })
 })

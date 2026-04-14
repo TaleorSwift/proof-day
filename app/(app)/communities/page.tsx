@@ -82,7 +82,7 @@ export default async function CommunitiesPage({ searchParams }: Props) {
                 background: 'var(--color-accent)',
                 color: 'var(--color-surface)',
                 border: 'none',
-                borderRadius: '10px',
+                borderRadius: 'var(--radius-md)',
                 height: '40px',
                 padding: 'var(--space-2) var(--space-4)',
                 fontSize: 'var(--text-sm)',

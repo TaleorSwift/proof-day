@@ -32,6 +32,8 @@ export const IMG_SCALE_ENGINE_3    = projectImage('scale-engine-3')
 export const IMG_PIVOT_TRACKER_1   = projectImage('pivot-tracker-1')
 
 // ── Imágenes de comunidades ───────────────────────────────────────────────────
+// IMPORTANTE: el seed debe coincidir con el slug de la comunidad en fixtures/communities.ts
+// para garantizar una imagen determinística asociada a cada comunidad.
 export const IMG_COMMUNITY_ALPHA       = communityImage('producto-alpha')
 export const IMG_COMMUNITY_STARTUP_LAB = communityImage('startup-lab')
 export const IMG_COMMUNITY_EMPTY       = communityImage('empty-space')
