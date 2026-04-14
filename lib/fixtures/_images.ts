@@ -34,3 +34,4 @@ export const IMG_PIVOT_TRACKER_1   = projectImage('pivot-tracker-1')
 // ── Imágenes de comunidades ───────────────────────────────────────────────────
 export const IMG_COMMUNITY_ALPHA       = communityImage('producto-alpha')
 export const IMG_COMMUNITY_STARTUP_LAB = communityImage('startup-lab')
+export const IMG_COMMUNITY_EMPTY       = communityImage('empty-space')

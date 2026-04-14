@@ -7,7 +7,7 @@ import {
   MEMBER_SARA_LAB_ADMIN, MEMBER_ALEX_LAB, MEMBER_PRIYA_LAB,
   MEMBER_ALEX_EMPTY_ADMIN,
 } from './_ids'
-import { IMG_COMMUNITY_ALPHA, IMG_COMMUNITY_STARTUP_LAB } from './_images'
+import { IMG_COMMUNITY_ALPHA, IMG_COMMUNITY_STARTUP_LAB, IMG_COMMUNITY_EMPTY } from './_images'
 
 // ── Communities ───────────────────────────────────────────────────────────────
 
@@ -41,7 +41,7 @@ export const communityEmpty: Community = {
   name: 'Empty Space',
   slug: 'empty-space',
   description: 'Comunidad recién creada, sin proyectos todavía.',
-  image_url: null,
+  image_url: IMG_COMMUNITY_EMPTY,
   created_by: USER_ALEX,
   created_at: '2026-04-01T00:00:00Z',
   updated_at: '2026-04-01T00:00:00Z',

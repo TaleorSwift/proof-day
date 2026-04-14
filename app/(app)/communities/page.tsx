@@ -1,4 +1,5 @@
 import { redirect, permanentRedirect } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { CommunityList } from '@/components/communities/CommunityList'
 import { EmptyCommunitiesState } from '@/components/communities/EmptyCommunitiesState'
@@ -55,16 +56,47 @@ export default async function CommunitiesPage({ searchParams }: Props) {
           </div>
         )}
 
-        <h1
+        <div
           style={{
-            fontSize: 'var(--text-2xl)',
-            fontWeight: 'var(--font-semibold)',
-            color: 'var(--color-text-primary)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             marginBottom: 'var(--space-6)',
           }}
         >
-          Mis comunidades
-        </h1>
+          <h1
+            style={{
+              fontSize: 'var(--text-2xl)',
+              fontWeight: 'var(--font-semibold)',
+              color: 'var(--color-text-primary)',
+              margin: 0,
+            }}
+          >
+            Mis comunidades
+          </h1>
+          {communityList.length > 0 && (
+            <Link
+              href="/communities/new"
+              data-testid="btn-new-community"
+              style={{
+                background: 'var(--color-accent)',
+                color: 'var(--color-surface)',
+                border: 'none',
+                borderRadius: '10px',
+                height: '40px',
+                padding: 'var(--space-2) var(--space-4)',
+                fontSize: 'var(--text-sm)',
+                fontWeight: 'var(--font-medium)',
+                cursor: 'pointer',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
+              + Nueva comunidad
+            </Link>
+          )}
+        </div>
 
         {communityList.length === 0 ? (
           <EmptyCommunitiesState />

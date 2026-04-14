@@ -4,6 +4,7 @@ import { CommunityHeader } from '@/components/communities/CommunityHeader'
 import { CommunityFeedHeader } from '@/components/communities/CommunityFeedHeader'
 import { ProjectFeed } from '@/components/projects/ProjectFeed'
 import { TopContributors } from '@/components/gamification/TopContributors'
+import { BackButton } from '@/components/shared/BackButton'
 import type { ProjectListItem } from '@/lib/api/projects'
 
 interface Props {
@@ -94,6 +95,10 @@ export default async function CommunityPage({ params }: Props) {
       }}
     >
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'var(--space-8)' }}>
+        <div style={{ marginBottom: 'var(--space-4)' }}>
+          <BackButton href="/communities" label="Mis comunidades" />
+        </div>
+
         {/* Layout de 2 columnas: proyectos + sidebar gamificación */}
         <div
           style={{
