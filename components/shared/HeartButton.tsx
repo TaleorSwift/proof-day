@@ -17,7 +17,7 @@ export function HeartButton({
   disabled = false,
 }: HeartButtonProps) {
   const activeColor = 'var(--color-primary)'
-  const idleColor   = 'var(--color-text-muted)'
+  const idleColor   = 'rgba(0,0,0,0.08)'
   const iconColor = isActive ? activeColor : idleColor
   const iconFill  = isActive ? activeColor : 'transparent'
   const textColor = isActive ? activeColor : idleColor
