@@ -17,21 +17,8 @@ export function HeartButton({
   disabled = false,
 }: HeartButtonProps) {
   const iconColor = isActive ? 'var(--color-primary)' : 'var(--color-text-muted)'
-  const iconFill = isActive ? 'var(--color-primary)' : 'transparent'
+  const iconFill  = isActive ? 'var(--color-primary)' : 'transparent'
   const textColor = isActive ? 'var(--color-primary)' : 'var(--color-text-muted)'
-
-  const buttonStyle: CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 'var(--space-1)',
-    background: 'none',
-    border: 'none',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    padding: 'var(--space-1) var(--space-2)',
-    borderRadius: 'var(--radius-md)',
-    opacity: disabled ? 0.5 : 1,
-    transition: 'opacity 0.15s ease',
-  }
 
   return (
     <button
@@ -40,10 +27,23 @@ export function HeartButton({
       disabled={disabled}
       aria-pressed={isActive}
       aria-label={`Me gusta${count > 0 ? `, ${count}` : ''}`}
-      style={buttonStyle}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '2px',
+        background: 'none',
+        border: 'none',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        padding: 'var(--space-1) var(--space-2)',
+        borderRadius: 'var(--radius-md)',
+        opacity: disabled ? 0.5 : 1,
+        transition: 'opacity 0.15s ease',
+        minWidth: 32,
+      }}
     >
       <Heart
-        size={16}
+        size={18}
         style={{
           color: iconColor,
           fill: iconFill,
@@ -53,7 +53,7 @@ export function HeartButton({
       />
       <span
         style={{
-          fontSize: 'var(--text-sm)',
+          fontSize: 'var(--text-xs)',
           fontWeight: 'var(--font-medium)' as CSSProperties['fontWeight'],
           color: textColor,
           transition: 'color 0.15s ease',
