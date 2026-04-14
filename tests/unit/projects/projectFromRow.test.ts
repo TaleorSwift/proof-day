@@ -9,6 +9,7 @@ import type { ProjectRow } from '@/lib/types/projects'
 
 const BASE_ROW: ProjectRow = {
   id: 'proj-1',
+  slug: 'test-project',
   community_id: 'comm-1',
   builder_id: 'user-1',
   title: 'Test Project',

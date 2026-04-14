@@ -30,6 +30,7 @@ import type { ProjectListItem } from '@/lib/api/projects'
 
 const liveProject: ProjectListItem = {
   id: 'proj-live-1',
+  slug: 'proyecto-live-uno',
   title: 'Proyecto Live Uno',
   imageUrls: [],
   status: 'live',
@@ -40,6 +41,7 @@ const liveProject: ProjectListItem = {
 
 const liveProject2: ProjectListItem = {
   id: 'proj-live-2',
+  slug: 'proyecto-live-dos',
   title: 'Proyecto Live Dos',
   imageUrls: [],
   status: 'live',
@@ -50,6 +52,7 @@ const liveProject2: ProjectListItem = {
 
 const inactiveProject: ProjectListItem = {
   id: 'proj-inactive-1',
+  slug: 'proyecto-cerrado',
   title: 'Proyecto Cerrado',
   imageUrls: [],
   status: 'inactive',
@@ -60,6 +63,7 @@ const inactiveProject: ProjectListItem = {
 
 const draftProject: ProjectListItem = {
   id: 'proj-draft-1',
+  slug: 'proyecto-borrador',
   title: 'Proyecto Borrador',
   imageUrls: [],
   status: 'draft',

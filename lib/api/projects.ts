@@ -121,6 +121,7 @@ export async function deactivateProject(id: string): Promise<ProjectRow> {
 
 export interface ProjectListItem {
   id: string
+  slug: string
   title: string
   imageUrls: string[]
   status: 'draft' | 'live' | 'inactive'
@@ -141,6 +142,7 @@ export async function getProjects(communityId: string): Promise<ProjectListItem[
   if (!res.ok) throw new Error((await res.json()).error)
   const rows = (await res.json()).data as Array<{
     id: string
+    slug: string
     title: string
     image_urls: string[]
     status: ProjectListItem['status']
@@ -150,6 +152,7 @@ export async function getProjects(communityId: string): Promise<ProjectListItem[
   }>
   return rows.map((r) => ({
     id: r.id,
+    slug: r.slug,
     title: r.title,
     imageUrls: r.image_urls,
     status: r.status,

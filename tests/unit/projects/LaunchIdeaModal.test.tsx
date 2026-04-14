@@ -164,6 +164,7 @@ describe('LaunchIdeaModal — AC-4: submit exitoso', () => {
     vi.mocked(launchProject).mockResolvedValue({
       success: true,
       projectId: 'new-project-uuid',
+      projectSlug: 'new-project',
     })
   })
 

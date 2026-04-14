@@ -8,7 +8,7 @@ export function createProjectsRepository(supabase: SupabaseClient) {
     async findByCommunity(communityId: string) {
       return supabase
         .from('projects')
-        .select('id, title, image_urls, status, builder_id, created_at, problem')
+        .select('id, slug, title, image_urls, status, builder_id, created_at, problem')
         .eq('community_id', communityId)
         .order('created_at', { ascending: false })
     },
@@ -25,6 +25,7 @@ export function createProjectsRepository(supabase: SupabaseClient) {
     async create(data: {
       communityId: string
       builderId: string
+      slug: string
       title: string
       problem: string
       solution: string
@@ -40,6 +41,7 @@ export function createProjectsRepository(supabase: SupabaseClient) {
         .insert({
           community_id: data.communityId,
           builder_id: data.builderId,
+          slug: data.slug,
           title: data.title,
           problem: data.problem,
           solution: data.solution,

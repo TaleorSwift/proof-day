@@ -138,6 +138,16 @@ export function FeedbackFormInline({ projectId, communityId }: FeedbackFormInlin
         gap: 'var(--space-4)',
       }}
     >
+      {/* Encabezado del bloque */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+        <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 'var(--font-semibold)', color: 'var(--color-text-primary)', margin: 0 }}>
+          Ayuda a mejorar esta idea
+        </h3>
+        <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', margin: 0 }}>
+          Tu feedback ayuda al equipo a aprender y tomar mejores decisiones.
+        </p>
+      </div>
+
       {/* Pregunta p1: ¿Entiendes el problema? */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
         <span
@@ -204,9 +214,9 @@ export function FeedbackFormInline({ projectId, communityId }: FeedbackFormInlin
             padding: 'var(--space-2) var(--space-3)',
             fontSize: 'var(--text-sm)',
             color: 'var(--color-text-primary)',
-            backgroundColor: 'var(--color-surface)',
+            backgroundColor: 'var(--color-background)',
             border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: 'var(--radius-lg)',
             resize: 'vertical',
             fontFamily: 'inherit',
             lineHeight: 'var(--leading-base)',
@@ -241,7 +251,8 @@ export function FeedbackFormInline({ projectId, communityId }: FeedbackFormInlin
         style={{
           width: '100%',
           padding: 'var(--space-3) var(--space-4)',
-          borderRadius: 'var(--radius-md)',
+          borderRadius: '10px',
+          height: '40px',
           fontSize: 'var(--text-sm)',
           fontWeight: 'var(--font-semibold)',
           border: 'none',

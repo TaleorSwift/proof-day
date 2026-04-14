@@ -20,7 +20,7 @@ export function WelcomeScreen() {
           alignItems: 'center',
           gap: 'var(--space-6)',
           width: '100%',
-          maxWidth: '380px',
+          maxWidth: '384px',
           textAlign: 'center',
           padding: '0 var(--space-4)',
         }}
@@ -28,8 +28,8 @@ export function WelcomeScreen() {
         <Image
           src="/logo.png"
           alt="Proof Day"
-          width={128}
-          height={128}
+          width={192}
+          height={192}
           priority
         />
         <h1
@@ -53,11 +53,14 @@ export function WelcomeScreen() {
           href="/login"
           style={{
             width: '100%',
-            display: 'block',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '44px',
             backgroundColor: 'var(--color-primary)',
             color: 'var(--color-surface)',
             padding: 'var(--space-3) var(--space-4)',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: '10px',
             textDecoration: 'none',
             fontWeight: 'var(--font-semibold)',
             fontSize: 'var(--text-base)',

@@ -20,6 +20,7 @@ type Story = StoryObj<typeof ProjectFeed>
 
 const liveProject1: ProjectListItem = {
   id: 'proj-live-1',
+  slug: 'app-productividad-freelancers',
   title: 'App de productividad para freelancers',
   imageUrls: ['https://picsum.photos/seed/proj1/400/300'],
   status: 'live',
@@ -29,6 +30,7 @@ const liveProject1: ProjectListItem = {
 
 const liveProject2: ProjectListItem = {
   id: 'proj-live-2',
+  slug: 'marketplace-servicios-locales',
   title: 'Marketplace de servicios locales',
   imageUrls: [],
   status: 'live',
@@ -38,6 +40,7 @@ const liveProject2: ProjectListItem = {
 
 const inactiveProject1: ProjectListItem = {
   id: 'proj-inactive-1',
+  slug: 'plataforma-mentoring-p2p',
   title: 'Plataforma de mentoring P2P',
   imageUrls: ['https://picsum.photos/seed/proj3/400/300'],
   status: 'inactive',
@@ -47,6 +50,7 @@ const inactiveProject1: ProjectListItem = {
 
 const inactiveProject2: ProjectListItem = {
   id: 'proj-inactive-2',
+  slug: 'herramienta-retrospectivas-asincronas',
   title: 'Herramienta de retrospectivas asíncronas',
   imageUrls: [],
   status: 'inactive',

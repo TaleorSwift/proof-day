@@ -20,22 +20,21 @@ describe('ImageUploader — render', () => {
     expect(screen.getByTestId('modal-field-images')).toBeInTheDocument()
   })
 
-  it('muestra el botón "Añadir imagen" cuando no se ha alcanzado el límite', () => {
+  it('muestra el botón de añadir cuando no se ha alcanzado el límite', () => {
     render(<ImageUploader images={[]} onImagesChange={vi.fn()} maxImages={3} />)
-    expect(screen.getByText('Añadir imagen')).toBeInTheDocument()
+    expect(screen.getByText('Añadir')).toBeInTheDocument()
   })
 })
 
 describe('ImageUploader — AC-6: límite de imágenes', () => {
-  it('el botón está desactivado cuando se alcanzan 3 imágenes', () => {
+  it('oculta el botón de añadir cuando se alcanzan 3 imágenes', () => {
     const images = [
       { url: 'https://example.com/a.jpg', path: 'path/a.jpg' },
       { url: 'https://example.com/b.jpg', path: 'path/b.jpg' },
       { url: 'https://example.com/c.jpg', path: 'path/c.jpg' },
     ]
     render(<ImageUploader images={images} onImagesChange={vi.fn()} maxImages={3} />)
-    const btn = screen.getByRole('button', { name: /límite alcanzado/i })
-    expect(btn).toBeDisabled()
+    expect(screen.queryByText('Añadir')).not.toBeInTheDocument()
   })
 
   it('el input acepta solo los tipos MIME permitidos (JPEG, PNG, WebP)', () => {

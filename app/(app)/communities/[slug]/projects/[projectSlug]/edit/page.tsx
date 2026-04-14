@@ -4,31 +4,15 @@ import { ProjectForm } from '@/components/projects/ProjectForm'
 import type { ProjectRow } from '@/lib/types/projects'
 
 interface Props {
-  params: Promise<{ slug: string; id: string }>
+  params: Promise<{ slug: string; projectSlug: string }>
 }
 
 export default async function EditProjectPage({ params }: Props) {
-  const { slug, id } = await params
+  const { slug, projectSlug } = await params
   const supabase = await createClient()
 
   const { data: authData, error: authError } = await supabase.auth.getUser()
   if (authError || !authData.user) redirect('/login')
-
-  const { data: project } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('id', id)
-    .single()
-
-  if (!project) notFound()
-
-  const typedProject = project as ProjectRow
-
-  // Solo el builder puede editar su draft
-  if (typedProject.builder_id !== authData.user.id) redirect(`/communities/${slug}/projects/${id}`)
-
-  // Solo se puede editar en estado draft
-  if (typedProject.status !== 'draft') notFound()
 
   const { data: community } = await supabase
     .from('communities')
@@ -37,6 +21,23 @@ export default async function EditProjectPage({ params }: Props) {
     .single()
 
   if (!community) notFound()
+
+  const { data: project } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('community_id', community.id)
+    .eq('slug', projectSlug)
+    .single()
+
+  if (!project) notFound()
+
+  const typedProject = project as ProjectRow
+
+  // Solo el builder puede editar su draft
+  if (typedProject.builder_id !== authData.user.id) redirect(`/communities/${slug}/projects/${projectSlug}`)
+
+  // Solo se puede editar en estado draft
+  if (typedProject.status !== 'draft') notFound()
 
   return (
     <main

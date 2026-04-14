@@ -60,20 +60,20 @@ describe('formatFeedbackCount', () => {
 // ── B. buildProjectUrl ────────────────────────────────────────────────────────
 
 describe('buildProjectUrl', () => {
-  it('genera la URL correcta con communitySlug e id', () => {
-    expect(buildProjectUrl('startup-madrid', 'proj-123')).toBe(
-      '/communities/startup-madrid/projects/proj-123'
+  it('genera la URL correcta con communitySlug y projectSlug', () => {
+    expect(buildProjectUrl('startup-madrid', 'pulse-check')).toBe(
+      '/communities/startup-madrid/projects/pulse-check'
     )
   })
 
   it('funciona con slugs que contienen guiones', () => {
-    expect(buildProjectUrl('mi-comunidad-2026', 'abc-def')).toBe(
-      '/communities/mi-comunidad-2026/projects/abc-def'
+    expect(buildProjectUrl('mi-comunidad-2026', 'carbon-ledger')).toBe(
+      '/communities/mi-comunidad-2026/projects/carbon-ledger'
     )
   })
 
   it('no añade slash final', () => {
-    const url = buildProjectUrl('startup-madrid', 'proj-1')
+    const url = buildProjectUrl('startup-madrid', 'scale-engine')
     expect(url.endsWith('/')).toBe(false)
   })
 })
@@ -133,6 +133,7 @@ import { ProjectCard } from '@/components/projects/ProjectCard'
 
 const PROJECT_MINIMAL = {
   id: 'proj-1',
+  slug: 'mi-proyecto',
   title: 'Mi Proyecto',
   imageUrls: [] as string[],
   status: 'live' as const,

@@ -15,6 +15,7 @@ type Story = StoryObj<typeof ProjectCard>
 
 const baseProject = {
   id: 'proj-001',
+  slug: 'app-productividad-freelancers',
   title: 'App de productividad para freelancers',
   imageUrls: [],
   builderId: 'user-123',
@@ -78,6 +79,7 @@ export const SinDescripcion: Story = {
   args: {
     project: {
       id: 'proj-002',
+      slug: 'proyecto-sin-descripcion',
       title: 'Proyecto sin descripción ni imagen',
       imageUrls: [],
       status: 'live',

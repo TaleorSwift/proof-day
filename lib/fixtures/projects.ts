@@ -18,6 +18,7 @@ import {
 
 const pulseCheckRow: ProjectRow = {
   id: PROJECT_PULSE_CHECK,
+  slug: 'pulse-check',
   community_id: COMMUNITY_ALPHA,
   builder_id: USER_ALEX,
   title: 'Pulse Check',
@@ -39,6 +40,7 @@ const pulseCheckRow: ProjectRow = {
 
 const docBridgeRow: ProjectRow = {
   id: PROJECT_DOC_BRIDGE,
+  slug: 'docbridge',
   community_id: COMMUNITY_ALPHA,
   builder_id: USER_SARA,
   title: 'DocBridge',
@@ -60,6 +62,7 @@ const docBridgeRow: ProjectRow = {
 
 const carbonLedgerRow: ProjectRow = {
   id: PROJECT_CARBON_LEDGER,
+  slug: 'carbon-ledger',
   community_id: COMMUNITY_ALPHA,
   builder_id: USER_TOM,
   title: 'Carbon Ledger',
@@ -81,6 +84,7 @@ const carbonLedgerRow: ProjectRow = {
 
 const retroReplayRow: ProjectRow = {
   id: PROJECT_RETRO_REPLAY,
+  slug: 'retro-replay',
   community_id: COMMUNITY_ALPHA,
   builder_id: USER_AVA,
   title: 'Retro Replay',
@@ -102,6 +106,7 @@ const retroReplayRow: ProjectRow = {
 
 const draftNewRow: ProjectRow = {
   id: PROJECT_DRAFT_NEW,
+  slug: 'idea-sketch',
   community_id: COMMUNITY_ALPHA,
   builder_id: USER_ALEX,
   title: 'Idea Sketch',
@@ -123,6 +128,7 @@ const draftNewRow: ProjectRow = {
 
 const liveIterateRow: ProjectRow = {
   id: PROJECT_LIVE_ITERATE,
+  slug: 'iterate-labs',
   community_id: COMMUNITY_STARTUP_LAB,
   builder_id: USER_KAI,
   title: 'Iterate Labs',
@@ -144,6 +150,7 @@ const liveIterateRow: ProjectRow = {
 
 const liveScaleRow: ProjectRow = {
   id: PROJECT_LIVE_SCALE,
+  slug: 'scale-engine',
   community_id: COMMUNITY_STARTUP_LAB,
   builder_id: USER_PRIYA,
   title: 'Scale Engine',
@@ -165,6 +172,7 @@ const liveScaleRow: ProjectRow = {
 
 const inactiveIterateRow: ProjectRow = {
   id: PROJECT_INACTIVE_ITERATE,
+  slug: 'pivot-tracker',
   community_id: COMMUNITY_STARTUP_LAB,
   builder_id: USER_SARA,
   title: 'Pivot Tracker',
@@ -186,6 +194,7 @@ const inactiveIterateRow: ProjectRow = {
 
 const inactiveScaleRow: ProjectRow = {
   id: PROJECT_INACTIVE_SCALE,
+  slug: 'growth-pulse',
   community_id: COMMUNITY_STARTUP_LAB,
   builder_id: USER_TOM,
   title: 'Growth Pulse',

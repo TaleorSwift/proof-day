@@ -30,7 +30,7 @@ export function LaunchIdeaForm({
   } = useFormContext<LaunchIdeaFormValues>()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
       {/* Project name */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
         <Label htmlFor="launch-title">
@@ -147,9 +147,19 @@ export function LaunchIdeaForm({
       </div>
 
       {/* Hypothesis */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+      <div
+        style={{
+          backgroundColor: 'var(--color-hypothesis-modal-bg)',
+          border: '1px solid var(--color-hypothesis-modal-border)',
+          borderRadius: 'var(--radius-lg)',
+          padding: 'var(--space-3)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-2)',
+        }}
+      >
         <Label htmlFor="launch-hypothesis">
-          Hipótesis a validar{' '}
+          🚀 Hipótesis a validar{' '}
           <span aria-hidden="true" style={{ color: 'var(--color-accent)' }}>*</span>
         </Label>
         <Textarea
@@ -158,6 +168,7 @@ export function LaunchIdeaForm({
           placeholder="Si [acción], entonces [resultado]…"
           rows={3}
           aria-invalid={!!errors.hypothesis}
+          className="border-0 shadow-none focus:ring-0"
           {...register('hypothesis')}
         />
         {errors.hypothesis && (

@@ -15,9 +15,9 @@ import { test, expect } from '@playwright/test'
  */
 
 test.describe('ValidationSignalCard (Story 8.8)', () => {
-  const COMMUNITY_SLUG = 'test-community'
-  const PROJECT_ID = 'test-project-with-score'
-  const PROJECT_DETAIL_URL = `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_ID}`
+  const COMMUNITY_SLUG = 'producto-alpha'
+  const PROJECT_SLUG = 'pulse-check'
+  const PROJECT_DETAIL_URL = `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_SLUG}`
 
   test.skip(
     'renderiza SignalIndicator con nivel Promising cuando el score es alto',

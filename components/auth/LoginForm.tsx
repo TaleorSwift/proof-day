@@ -29,7 +29,7 @@ const CONTAINER_STYLE: React.CSSProperties = {
   alignItems: 'center',
   gap: 'var(--space-6)',
   width: '100%',
-  maxWidth: '380px',
+  maxWidth: '384px',
   textAlign: 'center',
 }
 
@@ -63,7 +63,7 @@ export function LoginForm({ errorParam, initialSent = false }: LoginFormProps) {
   if (sent) {
     return (
       <div style={CONTAINER_STYLE}>
-        <Image src="/logo.png" alt="Proof Day" width={128} height={128} priority />
+        <Image src="/logo.png" alt="Proof Day" width={192} height={192} priority />
         <h1
           style={{
             fontSize: 'var(--text-2xl)',
@@ -82,7 +82,7 @@ export function LoginForm({ errorParam, initialSent = false }: LoginFormProps) {
 
   return (
     <div style={CONTAINER_STYLE}>
-      <Image src="/logo.png" alt="Proof Day" width={128} height={128} priority />
+      <Image src="/logo.png" alt="Proof Day" width={192} height={192} priority />
 
       <h1
         style={{
@@ -152,6 +152,9 @@ export function LoginForm({ errorParam, initialSent = false }: LoginFormProps) {
               style={{
                 backgroundColor: isLoading ? undefined : 'var(--color-primary)',
                 color: isLoading ? undefined : 'var(--color-surface)',
+                height: '44px',
+                borderRadius: '10px',
+                fontSize: 'var(--text-base)',
               }}
             >
               {isLoading ? 'Enviando...' : 'Continuar'}

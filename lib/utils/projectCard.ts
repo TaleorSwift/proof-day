@@ -23,11 +23,11 @@ export function formatFeedbackCount(count: number): string {
 /**
  * Genera la URL canónica de la página de detalle de un proyecto.
  * @example
- *   buildProjectUrl('startup-madrid', 'proj-123')
- *   → '/communities/startup-madrid/projects/proj-123'
+ *   buildProjectUrl('startup-madrid', 'pulse-check')
+ *   → '/communities/startup-madrid/projects/pulse-check'
  */
-export function buildProjectUrl(communitySlug: string, projectId: string): string {
-  return `/communities/${communitySlug}/projects/${projectId}`
+export function buildProjectUrl(communitySlug: string, projectSlug: string): string {
+  return `/communities/${communitySlug}/projects/${projectSlug}`
 }
 
 // ── Iniciales para el placeholder de imagen ──────────────────────────────────

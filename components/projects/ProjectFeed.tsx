@@ -8,9 +8,10 @@ import type { ProjectListItem } from '@/lib/api/projects'
 export interface ProjectFeedProps {
   projects: ProjectListItem[]
   communitySlug: string
+  currentUserId?: string
 }
 
-export function ProjectFeed({ projects, communitySlug }: ProjectFeedProps) {
+export function ProjectFeed({ projects, communitySlug, currentUserId }: ProjectFeedProps) {
   const liveProjects = projects.filter((p) => p.status === 'live')
   const closedProjects = projects.filter((p) => p.status === 'inactive')
 
@@ -60,6 +61,7 @@ export function ProjectFeed({ projects, communitySlug }: ProjectFeedProps) {
                 key={project.id}
                 project={project}
                 communitySlug={communitySlug}
+                isOwner={currentUserId === project.builderId}
               />
             ))}
           </div>
@@ -100,6 +102,7 @@ export function ProjectFeed({ projects, communitySlug }: ProjectFeedProps) {
                 key={project.id}
                 project={project}
                 communitySlug={communitySlug}
+                isOwner={currentUserId === project.builderId}
               />
             ))}
           </div>

@@ -25,7 +25,7 @@ import {
 import Link from 'next/link'
 
 interface Props {
-  params: Promise<{ slug: string; id: string }>
+  params: Promise<{ slug: string; projectSlug: string }>
 }
 
 // ---------------------------------------------------------------------------
@@ -66,7 +66,7 @@ function calculateValidationMetrics(
 // ---------------------------------------------------------------------------
 
 export default async function ProjectPage({ params }: Props) {
-  const { slug, id } = await params
+  const { slug, projectSlug } = await params
   const supabase = await createClient()
 
   const { data: authData, error: authError } = await supabase.auth.getUser()
@@ -74,10 +74,19 @@ export default async function ProjectPage({ params }: Props) {
 
   const user = authData.user
 
+  const { data: community } = await supabase
+    .from('communities')
+    .select('id')
+    .eq('slug', slug)
+    .single()
+
+  if (!community) notFound()
+
   const { data: project } = await supabase
     .from('projects')
-    .select('id, title, tagline, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at, decision, target_user, demo_url, feedback_topics')
-    .eq('id', id)
+    .select('id, slug, title, tagline, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at, decision, target_user, demo_url, feedback_topics')
+    .eq('community_id', community.id)
+    .eq('slug', projectSlug)
     .single()
 
   if (!project) notFound()
@@ -96,7 +105,7 @@ export default async function ProjectPage({ params }: Props) {
   // Query incondicional de feedbacks — visible para todos los miembros (Story 8.9).
   // La RLS policy "member_read_community_feedbacks" (migration 012) garantiza el acceso.
   const feedbackRepo = createFeedbackRepository(supabase)
-  const { data: feedbacksRaw } = await feedbackRepo.findByProject(id)
+  const { data: feedbacksRaw } = await feedbackRepo.findByProject(project.id)
   const feedbacks = feedbacksRaw ?? []
   const feedbackCount = feedbacks.length
 
@@ -209,7 +218,7 @@ export default async function ProjectPage({ params }: Props) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', flexShrink: 0 }}>
                 {isOwner && project.status === 'draft' && (
                   <Link
-                    href={`/communities/${slug}/projects/${id}/edit`}
+                    href={`/communities/${slug}/projects/${project.slug}/edit`}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',

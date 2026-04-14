@@ -45,7 +45,7 @@ export default async function CommunityPage({ params }: Props) {
     // Server Component lee directamente — RLS filtra: live+inactive para todos, draft solo al builder
     supabase
       .from('projects')
-      .select('id, title, image_urls, status, builder_id, created_at, problem, tagline, would_use_count')
+      .select('id, slug, title, image_urls, status, builder_id, created_at, problem, tagline, would_use_count')
       .eq('community_id', community.id)
       .order('created_at', { ascending: false }),
   ])
@@ -73,6 +73,7 @@ export default async function CommunityPage({ params }: Props) {
   // Mapear rows de Supabase a ProjectListItem (camelCase)
   const projects: ProjectListItem[] = (projectRows ?? []).map((r: Record<string, unknown>) => ({
     id: r.id as string,
+    slug: r.slug as string,
     title: r.title as string,
     imageUrls: r.image_urls as string[],
     status: r.status as 'draft' | 'live' | 'inactive',
@@ -90,41 +91,37 @@ export default async function CommunityPage({ params }: Props) {
       style={{
         minHeight: '100vh',
         backgroundColor: 'var(--color-background)',
-        padding: 'var(--space-8)',
       }}
     >
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        <CommunityFeedHeader
-          communityName={community.name}
-          communitySlug={slug}
-        />
-
-        {/* Metadatos secundarios de comunidad */}
-        <CommunityHeader
-          community={{
-            ...community,
-            member_count: memberCount ?? 0,
-          }}
-          isAdmin={isAdmin}
-        />
-
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'var(--space-8)' }}>
         {/* Layout de 2 columnas: proyectos + sidebar gamificación */}
         <div
           style={{
-            marginTop: 'var(--space-8)',
             display: 'grid',
             gridTemplateColumns: '1fr 280px',
             gap: 'var(--space-8)',
             alignItems: 'start',
           }}
         >
-          {/* Columna principal: proyectos — Story 8.5 */}
+          {/* Columna principal: header + proyectos */}
           <div>
-            <ProjectFeed projects={projects} communitySlug={slug} />
+            <CommunityFeedHeader
+              communityName={community.name}
+              communitySlug={slug}
+            />
+            <ProjectFeed projects={projects} communitySlug={slug} currentUserId={user.id} />
           </div>
 
-          {/* Sidebar derecho: gamificación — Story 8.6 */}
+          {/* Sidebar derecho: info comunidad + gamificación */}
           <aside style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            {/* Metadatos de comunidad — nombre, descripción, miembros */}
+            <CommunityHeader
+              community={{
+                ...community,
+                member_count: memberCount ?? 0,
+              }}
+              isAdmin={isAdmin}
+            />
             <TopContributors communityId={community.id} />
           </aside>
         </div>

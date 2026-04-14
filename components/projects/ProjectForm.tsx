@@ -116,7 +116,7 @@ export function ProjectForm({
         const fullData: CreateProjectInput = { ...normalizedData, imageUrls: [] }
         const project = await createProject(fullData)
         // Redirigir a edición para que el builder pueda subir imágenes de inmediato
-        router.push(`/communities/${communitySlug}/projects/${project.id}/edit`)
+        router.push(`/communities/${communitySlug}/projects/${project.slug}/edit`)
       }
     } catch (err) {
       console.error(err)

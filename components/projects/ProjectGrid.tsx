@@ -33,7 +33,7 @@ export function ProjectGrid({
         ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (
             <ProjectCard
               key={i}
-              project={{ id: '', title: '', imageUrls: [], status: 'draft', builderId: '' }}
+              project={{ id: '', slug: '', title: '', imageUrls: [], status: 'draft', builderId: '' }}
               communitySlug={communitySlug}
               isLoading
             />

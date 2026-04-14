@@ -20,10 +20,10 @@ export function TopContributorsList({ contributors }: TopContributorsListProps) 
     <div
       data-testid="top-contributors"
       style={{
-        backgroundColor: 'var(--color-hypothesis-bg)',
-        border: '1px solid var(--color-hypothesis-border)',
-        borderRadius: 'var(--radius-md)',
-        padding: 'var(--space-4)',
+        backgroundColor: 'var(--color-surface)',
+        border: '1px solid var(--color-border)',
+        borderRadius: 'var(--radius-lg)',
+        padding: 'var(--space-6)',
       }}
     >
       <p
