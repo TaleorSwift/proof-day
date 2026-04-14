@@ -93,23 +93,21 @@ export default async function CommunityPage({ params }: Props) {
       }}
     >
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'var(--space-8)' }}>
-        <CommunityFeedHeader
-          communityName={community.name}
-          communitySlug={slug}
-        />
-
         {/* Layout de 2 columnas: proyectos + sidebar gamificación */}
         <div
           style={{
-            marginTop: 'var(--space-8)',
             display: 'grid',
             gridTemplateColumns: '1fr 280px',
             gap: 'var(--space-8)',
             alignItems: 'start',
           }}
         >
-          {/* Columna principal: proyectos — Story 8.5 */}
+          {/* Columna principal: header + proyectos */}
           <div>
+            <CommunityFeedHeader
+              communityName={community.name}
+              communitySlug={slug}
+            />
             <ProjectFeed projects={projects} communitySlug={slug} />
           </div>
 

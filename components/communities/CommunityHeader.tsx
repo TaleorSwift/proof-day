@@ -15,20 +15,20 @@ export function CommunityHeader({ community, isAdmin }: Props) {
       style={{
         display: 'flex',
         alignItems: 'flex-start',
-        gap: 'var(--space-6)',
-        marginBottom: 'var(--space-8)',
+        gap: 'var(--space-3)',
+        marginBottom: 'var(--space-6)',
       }}
     >
-      {/* Imagen o avatar con inicial */}
+      {/* Imagen o avatar con inicial — tamaño reducido */}
       {community.image_url ? (
         <Image
           src={community.image_url}
           alt={`Imagen de ${community.name}`}
-          width={80}
-          height={80}
+          width={48}
+          height={48}
           style={{
-            width: '80px',
-            height: '80px',
+            width: '48px',
+            height: '48px',
             borderRadius: 'var(--radius-full)',
             objectFit: 'cover',
             flexShrink: 0,
@@ -38,14 +38,14 @@ export function CommunityHeader({ community, isAdmin }: Props) {
         <div
           aria-hidden="true"
           style={{
-            width: '80px',
-            height: '80px',
+            width: '48px',
+            height: '48px',
             borderRadius: 'var(--radius-full)',
             backgroundColor: 'var(--color-accent)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 'var(--text-2xl)',
+            fontSize: 'var(--text-lg)',
             fontWeight: 'var(--font-semibold)',
             color: 'var(--color-surface)',
             flexShrink: 0,
@@ -57,50 +57,23 @@ export function CommunityHeader({ community, isAdmin }: Props) {
 
       {/* Info de comunidad */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div
+        <h2
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-4)',
-            marginBottom: 'var(--space-2)',
+            fontSize: 'var(--text-base)',
+            fontWeight: 'var(--font-semibold)',
+            color: 'var(--color-text-primary)',
+            margin: 0,
           }}
         >
-          <h1
-            style={{
-              fontSize: 'var(--text-2xl)',
-              fontWeight: 'var(--font-semibold)',
-              color: 'var(--color-text-primary)',
-              margin: 0,
-            }}
-          >
-            {community.name}
-          </h1>
-
-          {/* Botón de configuración — solo para admins */}
-          {isAdmin && (
-            <Link
-              href={`/communities/${community.slug}/settings`}
-              style={{
-                fontSize: 'var(--text-sm)',
-                color: 'var(--color-text-secondary)',
-                textDecoration: 'none',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-sm)',
-                padding: 'var(--space-1) var(--space-3)',
-                flexShrink: 0,
-              }}
-            >
-              Configuración
-            </Link>
-          )}
-        </div>
+          {community.name}
+        </h2>
 
         {community.description && (
           <p
             style={{
               fontSize: 'var(--text-sm)',
               color: 'var(--color-text-secondary)',
-              margin: 0,
+              margin: 'var(--space-1) 0 0',
             }}
           >
             {community.description}
@@ -111,11 +84,30 @@ export function CommunityHeader({ community, isAdmin }: Props) {
           style={{
             fontSize: 'var(--text-xs)',
             color: 'var(--color-text-muted)',
-            marginTop: 'var(--space-3)',
+            margin: 'var(--space-2) 0 0',
           }}
         >
           {community.member_count} {community.member_count === 1 ? 'miembro' : 'miembros'}
         </p>
+
+        {/* Botón de configuración en nueva línea — solo para admins */}
+        {isAdmin && (
+          <Link
+            href={`/communities/${community.slug}/settings`}
+            style={{
+              display: 'inline-block',
+              marginTop: 'var(--space-3)',
+              fontSize: 'var(--text-xs)',
+              color: 'var(--color-text-secondary)',
+              textDecoration: 'none',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-sm)',
+              padding: 'var(--space-1) var(--space-3)',
+            }}
+          >
+            Configuración
+          </Link>
+        )}
       </div>
     </div>
   )
