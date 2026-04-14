@@ -16,6 +16,7 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 - `/communities` muestra botón "+ Nueva comunidad" junto al título cuando el usuario ya tiene 2 o más comunidades. (bug fix 2026-04-14)
 - `/communities/[slug]` incluye enlace "← Mis comunidades" para volver al listado. (bug fix 2026-04-14)
 - Todas las comunidades de prueba (fixtures) tienen imagen asignada. (bug fix 2026-04-14)
+- El feed de comunidad muestra el conteo real de feedbacks por proyecto (batch-fetch por community_id, sin N+1). (bug fix 2026-04-14)
 - Los admins pueden actualizar roles y eliminar miembros (políticas RLS UPDATE y DELETE en `community_members`). La UI se implementa en stories futuras. (story 2.1, CR2-F1)
 - Toda mutación va por API Route, nunca por Server Actions. (story 2.1)
 
