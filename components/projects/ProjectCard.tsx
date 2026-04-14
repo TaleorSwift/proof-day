@@ -56,8 +56,9 @@ export function ProjectCard({
           gap: 'var(--space-3)',
           padding: 'var(--space-3)',
           backgroundColor: 'var(--color-surface)',
+          border: '1px solid var(--color-border)',
           borderRadius: 'var(--radius-lg)',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
           animation: 'pulse 2s infinite',
         }}
       >
@@ -82,8 +83,9 @@ export function ProjectCard({
         display: 'flex',
         alignItems: 'stretch',
         backgroundColor: 'var(--color-surface)',
+        border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-lg)',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
         transition: 'box-shadow 150ms ease',
         overflow: 'hidden',
       }}

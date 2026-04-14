@@ -16,11 +16,13 @@ export function HeartButton({
   onClick,
   disabled = false,
 }: HeartButtonProps) {
-  const activeColor = 'var(--color-primary)'
-  const idleColor   = 'rgb(106,113,129)'
-  const iconColor = isActive ? activeColor : idleColor
+  const activeColor  = 'var(--color-primary)'
+  const idleIcon    = '#9CA3AF'
+  const idleBorder  = '#D1D5DB'
+  const iconColor = isActive ? activeColor : idleIcon
   const iconFill  = isActive ? activeColor : 'transparent'
-  const textColor = isActive ? activeColor : idleColor
+  const textColor = isActive ? activeColor : idleIcon
+  const borderColor = isActive ? activeColor : idleBorder
 
   return (
     <button
@@ -38,7 +40,7 @@ export function HeartButton({
         width: 40,
         height: 48,
         background: 'transparent',
-        border: 'none',
+        border: `1px solid ${borderColor}`,
         borderRadius: '10px',
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.5 : 1,
