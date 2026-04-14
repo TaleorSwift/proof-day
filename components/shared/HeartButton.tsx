@@ -31,19 +31,21 @@ export function HeartButton({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '2px',
-        background: 'none',
-        border: 'none',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        padding: 'var(--space-1) var(--space-2)',
+        justifyContent: 'center',
+        gap: '4px',
+        width: 40,
+        height: 48,
+        background: 'var(--color-background)',
+        border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-md)',
+        cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.5 : 1,
         transition: 'opacity 0.15s ease',
-        minWidth: 32,
+        flexShrink: 0,
       }}
     >
       <Heart
-        size={18}
+        size={16}
         style={{
           color: iconColor,
           fill: iconFill,
@@ -56,7 +58,6 @@ export function HeartButton({
           fontSize: 'var(--text-xs)',
           fontWeight: 'var(--font-medium)' as CSSProperties['fontWeight'],
           color: textColor,
-          transition: 'color 0.15s ease',
           lineHeight: 1,
         }}
       >

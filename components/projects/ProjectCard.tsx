@@ -215,7 +215,6 @@ export function ProjectCard({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          borderLeft: '1px solid var(--color-border)',
           padding: '0 var(--space-3)',
         }}
         onClick={(e) => e.stopPropagation()}
