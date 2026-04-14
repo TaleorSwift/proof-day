@@ -56,8 +56,8 @@ export function ProjectCard({
           gap: 'var(--space-3)',
           padding: 'var(--space-3)',
           backgroundColor: 'var(--color-surface)',
-          border: '1px solid var(--color-border)',
           borderRadius: 'var(--radius-lg)',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
           animation: 'pulse 2s infinite',
         }}
       >
@@ -82,8 +82,8 @@ export function ProjectCard({
         display: 'flex',
         alignItems: 'stretch',
         backgroundColor: 'var(--color-surface)',
-        border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-lg)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
         transition: 'box-shadow 150ms ease',
         overflow: 'hidden',
       }}
@@ -108,7 +108,7 @@ export function ProjectCard({
           style={{
             width: 96,
             height: 64,
-            borderRadius: 'var(--radius-sm)',
+            borderRadius: 'var(--radius-md)',
             overflow: 'hidden',
             position: 'relative',
             backgroundColor: 'var(--color-hypothesis-bg)',
@@ -175,7 +175,7 @@ export function ProjectCard({
 
           {/* Fila inferior: autor + contadores */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginTop: 'var(--space-1)' }}>
-            <UserAvatar name={builderLabel} size="sm" showName={false} />
+            <UserAvatar name={builderLabel} size="xs" showName={false} />
             <span
               data-testid="project-card-author-name"
               style={{
@@ -216,7 +216,7 @@ export function ProjectCard({
           alignItems: 'center',
           justifyContent: 'center',
           borderLeft: '1px solid var(--color-border)',
-          padding: '0 var(--space-2)',
+          padding: '0 var(--space-3)',
         }}
         onClick={(e) => e.stopPropagation()}
       >

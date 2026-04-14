@@ -1,6 +1,6 @@
 import { type CSSProperties } from 'react'
 
-type AvatarSize = 'sm' | 'nav' | 'md' | 'lg'
+type AvatarSize = 'xs' | 'sm' | 'nav' | 'md' | 'lg'
 
 interface UserAvatarProps {
   name: string
@@ -9,6 +9,7 @@ interface UserAvatarProps {
 }
 
 const SIZE_STYLES: Record<AvatarSize, CSSProperties> = {
+  xs:  { width: 20, height: 20, fontSize: '10px' },
   sm:  { width: 28, height: 28, fontSize: 'var(--text-xs)' },
   nav: { width: 32, height: 32, fontSize: 'var(--text-xs)' },
   md:  { width: 36, height: 36, fontSize: 'var(--text-sm)' },
