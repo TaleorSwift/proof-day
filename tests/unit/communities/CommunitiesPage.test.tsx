@@ -180,10 +180,10 @@ describe('CommunitiesPage — AC-3: lista con 2+ comunidades', () => {
 })
 
 // ---------------------------------------------------------------------------
-// AC-4: botón nueva comunidad — no visible con 0 comunidades
+// AC-4: botón nueva comunidad — ausente con 0 o 1 comunidades
 // ---------------------------------------------------------------------------
 
-describe('CommunitiesPage — AC-4: botón nueva comunidad ausente en empty state', () => {
+describe('CommunitiesPage — AC-4: botón nueva comunidad ausente con 0 comunidades', () => {
   beforeEach(() => {
     getUserCommunitiesMock.mockResolvedValue([])
   })
@@ -196,5 +196,20 @@ describe('CommunitiesPage — AC-4: botón nueva comunidad ausente en empty stat
     const jsx = await CommunitiesPage({ searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.queryByTestId('btn-new-community')).not.toBeInTheDocument()
+  })
+})
+
+describe('CommunitiesPage — AC-5: botón nueva comunidad ausente con 1 comunidad', () => {
+  beforeEach(() => {
+    getUserCommunitiesMock.mockResolvedValue([makeCommunity('unica')])
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('llama a permanentRedirect (no renderiza la página)', async () => {
+    await CommunitiesPage({ searchParams: defaultSearchParams })
+    expect(permanentRedirectMock).toHaveBeenCalledWith('/communities/unica')
   })
 })

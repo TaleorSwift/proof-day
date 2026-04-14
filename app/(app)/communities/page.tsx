@@ -74,7 +74,7 @@ export default async function CommunitiesPage({ searchParams }: Props) {
           >
             Mis comunidades
           </h1>
-          {communityList.length > 0 && (
+          {communityList.length >= 2 && (
             <Link
               href="/communities/new"
               data-testid="btn-new-community"
