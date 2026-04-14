@@ -90,10 +90,9 @@ export default async function CommunityPage({ params }: Props) {
       style={{
         minHeight: '100vh',
         backgroundColor: 'var(--color-background)',
-        padding: 'var(--space-8)',
       }}
     >
-      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'var(--space-8)' }}>
         <CommunityFeedHeader
           communityName={community.name}
           communitySlug={slug}
