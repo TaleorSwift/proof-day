@@ -8,7 +8,7 @@ test.describe('FeedbackCTA — call-to-action contextual en página de proyecto'
   test.skip('muestra "Ayuda a mejorar esta idea" para miembro autenticado no-owner', async ({ page }) => {
     // Arrange: usuario autenticado que NO es el builder del proyecto
     // Navegar a un proyecto live
-    await page.goto('/communities/test-community/projects/test-project-id')
+    await page.goto('/communities/producto-alpha/projects/pulse-check')
 
     // Act & Assert: el CTA es visible con el heading correcto
     await expect(
@@ -29,7 +29,7 @@ test.describe('FeedbackCTA — call-to-action contextual en página de proyecto'
   test.skip('oculta el CTA cuando el usuario autenticado es el owner del proyecto', async ({ page }) => {
     // Arrange: usuario autenticado que ES el builder del proyecto
     // Navegar a un proyecto live propio
-    await page.goto('/communities/test-community/projects/owner-project-id')
+    await page.goto('/communities/producto-alpha/projects/idea-sketch')
 
     // Act & Assert: el CTA no existe en el DOM (variant owner devuelve null)
     await expect(
@@ -46,7 +46,7 @@ test.describe('FeedbackCTA — call-to-action contextual en página de proyecto'
     // Arrange: usuario no autenticado accede a una ruta pública de proyecto
     // Nota: actualmente page.tsx redirige a /auth/login si no hay sesión.
     // Este test cubre la variante unauthenticated para cuando se habiliten rutas públicas.
-    await page.goto('/communities/test-community/projects/public-project-id')
+    await page.goto('/communities/producto-alpha/projects/pulse-check')
 
     // Act & Assert: se muestra el CTA con link de sign-in
     await expect(

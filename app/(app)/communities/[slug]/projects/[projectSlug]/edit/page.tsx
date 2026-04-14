@@ -14,9 +14,18 @@ export default async function EditProjectPage({ params }: Props) {
   const { data: authData, error: authError } = await supabase.auth.getUser()
   if (authError || !authData.user) redirect('/login')
 
+  const { data: community } = await supabase
+    .from('communities')
+    .select('id, name')
+    .eq('slug', slug)
+    .single()
+
+  if (!community) notFound()
+
   const { data: project } = await supabase
     .from('projects')
     .select('*')
+    .eq('community_id', community.id)
     .eq('slug', projectSlug)
     .single()
 
@@ -29,14 +38,6 @@ export default async function EditProjectPage({ params }: Props) {
 
   // Solo se puede editar en estado draft
   if (typedProject.status !== 'draft') notFound()
-
-  const { data: community } = await supabase
-    .from('communities')
-    .select('id, name')
-    .eq('slug', slug)
-    .single()
-
-  if (!community) notFound()
 
   return (
     <main

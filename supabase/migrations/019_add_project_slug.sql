@@ -20,4 +20,6 @@ WHERE slug IS NULL;
 
 ALTER TABLE projects ALTER COLUMN slug SET NOT NULL;
 
-CREATE UNIQUE INDEX idx_projects_slug ON projects(slug);
+-- Scope de unicidad: (community_id, slug) — proyectos en distintas comunidades
+-- pueden compartir el mismo slug. El path público es /communities/[slug]/projects/[projectSlug].
+CREATE UNIQUE INDEX idx_projects_community_slug ON projects(community_id, slug);

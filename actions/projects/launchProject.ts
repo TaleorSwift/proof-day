@@ -18,7 +18,7 @@ export interface LaunchProjectInput {
 }
 
 export type LaunchProjectResult =
-  | { success: true; projectId: string }
+  | { success: true; projectId: string; projectSlug: string }
   | { success: false; error: string }
 
 export async function launchProject(input: LaunchProjectInput): Promise<LaunchProjectResult> {
@@ -59,7 +59,7 @@ export async function launchProject(input: LaunchProjectInput): Promise<LaunchPr
       builder_id: user.id,
       status: 'live',
     })
-    .select('id')
+    .select('id, slug')
     .single()
 
   if (error) {
@@ -68,5 +68,5 @@ export async function launchProject(input: LaunchProjectInput): Promise<LaunchPr
 
   revalidatePath(`/communities/${input.communitySlug}`)
 
-  return { success: true, projectId: data.id }
+  return { success: true, projectId: data.id, projectSlug: data.slug }
 }

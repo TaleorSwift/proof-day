@@ -8,7 +8,7 @@ test.describe('TeamPerspectives — feedbacks públicos para miembros', () => {
   test.skip('sección "Perspectivas del equipo" es visible para miembro no-owner', async ({ page }) => {
     // Arrange: miembro autenticado que NO es el builder del proyecto
     // Navegar a un proyecto live con feedbacks existentes
-    await page.goto('/communities/test-community/projects/test-project-id')
+    await page.goto('/communities/producto-alpha/projects/pulse-check')
 
     // Act & Assert: la sección aparece visible sin condición isOwner
     await expect(
@@ -18,7 +18,7 @@ test.describe('TeamPerspectives — feedbacks públicos para miembros', () => {
 
   test.skip('cada FeedbackEntry muestra UserAvatar + nombre + texto del reviewer', async ({ page }) => {
     // Arrange: proyecto live con al menos un feedback registrado
-    await page.goto('/communities/test-community/projects/test-project-id')
+    await page.goto('/communities/producto-alpha/projects/pulse-check')
 
     // Act & Assert: se renderiza al menos una entrada con avatar y nombre
     const firstEntry = page.getByRole('article').first()
@@ -31,7 +31,7 @@ test.describe('TeamPerspectives — feedbacks públicos para miembros', () => {
 
   test.skip('muestra empty state cuando el proyecto no tiene feedbacks', async ({ page }) => {
     // Arrange: proyecto live sin ningún feedback registrado
-    await page.goto('/communities/test-community/projects/empty-project-id')
+    await page.goto('/communities/producto-alpha/projects/carbon-ledger')
 
     // Act & Assert: se muestra el mensaje de empty state
     await expect(

@@ -16,9 +16,9 @@ import { test, expect } from '@playwright/test'
  */
 
 test.describe('ProjectDetail — Layout y contenido (Story 8.7)', () => {
-  const COMMUNITY_SLUG = 'test-community'
-  const PROJECT_ID = 'test-project-id'
-  const PROJECT_DETAIL_URL = `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_ID}`
+  const COMMUNITY_SLUG = 'producto-alpha'
+  const PROJECT_SLUG = 'pulse-check'
+  const PROJECT_DETAIL_URL = `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_SLUG}`
 
   test.skip(
     'muestra BackButton con label "← Volver al feed" enlazando a la comunidad (AC-1)',

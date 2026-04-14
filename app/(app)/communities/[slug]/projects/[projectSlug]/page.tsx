@@ -74,9 +74,18 @@ export default async function ProjectPage({ params }: Props) {
 
   const user = authData.user
 
+  const { data: community } = await supabase
+    .from('communities')
+    .select('id')
+    .eq('slug', slug)
+    .single()
+
+  if (!community) notFound()
+
   const { data: project } = await supabase
     .from('projects')
     .select('id, slug, title, tagline, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at, decision, target_user, demo_url, feedback_topics')
+    .eq('community_id', community.id)
     .eq('slug', projectSlug)
     .single()
 
