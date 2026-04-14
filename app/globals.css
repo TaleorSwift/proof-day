@@ -190,16 +190,6 @@
     left: var(--space-4);
   }
 
-  /* Override Dialog animation — fade-in suave desde centro, sin slide */
-  [data-slot="dialog-content"] {
-    /* Neutralizar el translate-y de Tailwind animate-in (causa slide desde abajo) */
-    --tw-enter-translate-y: 0 !important;
-    /* Fade + zoom sutil */
-    --tw-enter-opacity: 0;
-    --tw-enter-scale: 0.97;
-    animation-duration: 200ms;
-    animation-timing-function: ease-out;
-  }
 }
 
 @layer components {
