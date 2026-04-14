@@ -25,6 +25,17 @@ export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
       }}
       aria-label="Navegación principal"
     >
+      {/* Contenedor centrado — alineado con el layout de página (maxWidth 1200px) */}
+      <div
+        style={{
+          maxWidth: '1200px',
+          width: '100%',
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
       {/* Logo + nombre producto */}
       <Link
         href="/communities"
@@ -138,6 +149,7 @@ export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
           Iniciar sesión
         </a>
       )}
+      </div>
     </nav>
   )
 }
