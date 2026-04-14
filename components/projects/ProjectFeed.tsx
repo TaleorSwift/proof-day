@@ -61,6 +61,7 @@ export function ProjectFeed({ projects, communitySlug, currentUserId }: ProjectF
                 key={project.id}
                 project={project}
                 communitySlug={communitySlug}
+                feedbackCount={project.feedbackCount ?? 0}
                 isOwner={currentUserId === project.builderId}
               />
             ))}
@@ -102,6 +103,7 @@ export function ProjectFeed({ projects, communitySlug, currentUserId }: ProjectF
                 key={project.id}
                 project={project}
                 communitySlug={communitySlug}
+                feedbackCount={project.feedbackCount ?? 0}
                 isOwner={currentUserId === project.builderId}
               />
             ))}
