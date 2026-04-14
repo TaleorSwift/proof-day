@@ -135,6 +135,8 @@ export interface ProjectListItem {
   wouldUseCount?: number
   /** Nombre legible del builder (de profiles.name) */
   builderName?: string
+  /** Número de feedbacks recibidos */
+  feedbackCount?: number
 }
 
 export async function getProjects(communityId: string): Promise<ProjectListItem[]> {

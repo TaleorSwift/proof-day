@@ -4,6 +4,7 @@ import { CommunityHeader } from '@/components/communities/CommunityHeader'
 import { CommunityFeedHeader } from '@/components/communities/CommunityFeedHeader'
 import { ProjectFeed } from '@/components/projects/ProjectFeed'
 import { TopContributors } from '@/components/gamification/TopContributors'
+import { BackButton } from '@/components/shared/BackButton'
 import type { ProjectListItem } from '@/lib/api/projects'
 
 interface Props {
@@ -30,8 +31,8 @@ export default async function CommunityPage({ params }: Props) {
     notFound()
   }
 
-  // Obtener conteo de miembros, rol del usuario y proyectos en paralelo
-  const [{ count: memberCount }, { data: membership }, { data: projectRows }] = await Promise.all([
+  // Obtener conteo de miembros, rol del usuario, proyectos y feedbacks en paralelo
+  const [{ count: memberCount }, { data: membership }, { data: projectRows }, { data: feedbackRows }] = await Promise.all([
     supabase
       .from('community_members')
       .select('*', { count: 'exact', head: true })
@@ -48,6 +49,11 @@ export default async function CommunityPage({ params }: Props) {
       .select('id, slug, title, image_urls, status, builder_id, created_at, problem, tagline, would_use_count')
       .eq('community_id', community.id)
       .order('created_at', { ascending: false }),
+    // Conteo de feedbacks por proyecto — RLS member_read_community_feedbacks lo permite
+    supabase
+      .from('feedbacks')
+      .select('project_id')
+      .eq('community_id', community.id),
   ])
 
   // Si no hay membresía → redirect
@@ -70,6 +76,13 @@ export default async function CommunityPage({ params }: Props) {
     (builderProfiles ?? []).map((p: { id: string; name: string | null }) => [p.id, p.name ?? undefined])
   )
 
+  // Mapa project_id → conteo de feedbacks
+  const feedbackCountMap: Record<string, number> = {}
+  for (const row of feedbackRows ?? []) {
+    const pid = (row as { project_id: string }).project_id
+    feedbackCountMap[pid] = (feedbackCountMap[pid] ?? 0) + 1
+  }
+
   // Mapear rows de Supabase a ProjectListItem (camelCase)
   const projects: ProjectListItem[] = (projectRows ?? []).map((r: Record<string, unknown>) => ({
     id: r.id as string,
@@ -84,6 +97,7 @@ export default async function CommunityPage({ params }: Props) {
     tagline: (r.tagline as string | null) ?? null,
     wouldUseCount: (r.would_use_count as number) ?? 0,
     builderName: profileMap[r.builder_id as string],
+    feedbackCount: feedbackCountMap[r.id as string] ?? 0,
   }))
 
   return (
@@ -94,6 +108,10 @@ export default async function CommunityPage({ params }: Props) {
       }}
     >
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'var(--space-8)' }}>
+        <div style={{ marginBottom: 'var(--space-4)' }}>
+          <BackButton href="/communities" label="Mis comunidades" />
+        </div>
+
         {/* Layout de 2 columnas: proyectos + sidebar gamificación */}
         <div
           style={{
