@@ -150,7 +150,7 @@ export function LaunchIdeaForm({
       <div
         style={{
           backgroundColor: 'var(--color-hypothesis-modal-bg)',
-          border: '2px solid var(--color-hypothesis-modal-border)',
+          border: '1px solid var(--color-hypothesis-modal-border)',
           borderRadius: 'var(--radius-lg)',
           padding: 'var(--space-3)',
           display: 'flex',
@@ -159,7 +159,7 @@ export function LaunchIdeaForm({
         }}
       >
         <Label htmlFor="launch-hypothesis">
-          Hipótesis a validar{' '}
+          🚀 Hipótesis a validar{' '}
           <span aria-hidden="true" style={{ color: 'var(--color-accent)' }}>*</span>
         </Label>
         <Textarea
