@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { MessageCircle, Users } from 'lucide-react'
+import { MessageCircle, Users, Pencil } from 'lucide-react'
 import { HeartButton } from '@/components/shared/HeartButton'
 import { StatusBadge } from '@/components/projects/StatusBadge'
 import { UserAvatar } from '@/components/shared/UserAvatar'
@@ -29,6 +29,7 @@ export interface ProjectCardProps {
   communitySlug: string
   feedbackCount?: number
   initialLikeCount?: number
+  isOwner?: boolean
   /** Modo skeleton — mantiene compatibilidad con ProjectGrid */
   isLoading?: boolean
 }
@@ -38,6 +39,7 @@ export function ProjectCard({
   communitySlug,
   feedbackCount = 0,
   initialLikeCount = 0,
+  isOwner = false,
   isLoading = false,
 }: ProjectCardProps) {
   const [likeState, setLikeState] = useState({
@@ -210,7 +212,7 @@ export function ProjectCard({
         </div>
       </Link>
 
-      {/* HeartButton — separado con borde izquierdo */}
+      {/* Acción derecha: lápiz (owner) o heart (resto) */}
       <div
         style={{
           flexShrink: 0,
@@ -221,11 +223,34 @@ export function ProjectCard({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <HeartButton
-          count={likeState.count}
-          isActive={likeState.isActive}
-          onClick={handleLike}
-        />
+        {isOwner ? (
+          <Link
+            href={`/communities/${communitySlug}/projects/${project.id}/edit`}
+            aria-label="Editar proyecto"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '4px',
+              width: 40,
+              height: 48,
+              background: 'transparent',
+              border: '1px solid #D1D5DB',
+              borderRadius: '10px',
+              color: '#9CA3AF',
+              textDecoration: 'none',
+            }}
+          >
+            <Pencil size={16} aria-hidden="true" />
+          </Link>
+        ) : (
+          <HeartButton
+            count={likeState.count}
+            isActive={likeState.isActive}
+            onClick={handleLike}
+          />
+        )}
       </div>
     </div>
   )

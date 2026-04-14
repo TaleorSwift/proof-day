@@ -108,7 +108,7 @@ export default async function CommunityPage({ params }: Props) {
               communityName={community.name}
               communitySlug={slug}
             />
-            <ProjectFeed projects={projects} communitySlug={slug} />
+            <ProjectFeed projects={projects} communitySlug={slug} currentUserId={user.id} />
           </div>
 
           {/* Sidebar derecho: info comunidad + gamificación */}
