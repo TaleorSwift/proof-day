@@ -93,7 +93,7 @@ export default async function CommunityPage({ params }: Props) {
         padding: 'var(--space-8)',
       }}
     >
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <CommunityFeedHeader
           communityName={community.name}
           communitySlug={slug}
