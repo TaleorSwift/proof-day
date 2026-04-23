@@ -1,11 +1,10 @@
 import { test, expect } from '@playwright/test'
 
 // Story 8.9 — TeamPerspectives (feedbacks públicos)
-// Estos tests se activarán cuando el entorno E2E esté configurado con datos seed.
-// Por ahora se marcan como test.skip siguiendo el contrato TDD Outside-In.
+// Auth setup: tests/e2e/auth.setup.ts (storageState configurado en playwright.config.ts)
 
 test.describe('TeamPerspectives — feedbacks públicos para miembros', () => {
-  test.skip('sección "Perspectivas del equipo" es visible para miembro no-owner', async ({ page }) => {
+  test('sección "Perspectivas del equipo" es visible para miembro no-owner', async ({ page }) => {
     // Arrange: miembro autenticado que NO es el builder del proyecto
     // Navegar a un proyecto live con feedbacks existentes
     await page.goto('/communities/producto-alpha/projects/pulse-check')
@@ -16,7 +15,7 @@ test.describe('TeamPerspectives — feedbacks públicos para miembros', () => {
     ).toBeVisible()
   })
 
-  test.skip('cada FeedbackEntry muestra UserAvatar + nombre + texto del reviewer', async ({ page }) => {
+  test('cada FeedbackEntry muestra UserAvatar + nombre + texto del reviewer', async ({ page }) => {
     // Arrange: proyecto live con al menos un feedback registrado
     await page.goto('/communities/producto-alpha/projects/pulse-check')
 
@@ -29,7 +28,7 @@ test.describe('TeamPerspectives — feedbacks públicos para miembros', () => {
     await expect(firstEntry.getByRole('heading', { level: 3 })).toBeVisible()
   })
 
-  test.skip('muestra empty state cuando el proyecto no tiene feedbacks', async ({ page }) => {
+  test('muestra empty state cuando el proyecto no tiene feedbacks', async ({ page }) => {
     // Arrange: proyecto live sin ningún feedback registrado
     await page.goto('/communities/producto-alpha/projects/carbon-ledger')
 

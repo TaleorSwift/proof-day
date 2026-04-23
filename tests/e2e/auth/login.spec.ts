@@ -8,6 +8,11 @@ import { test, expect } from '@playwright/test'
  * Ejecutar con: npm run test:e2e (con el servidor ya arriba)
  */
 test.describe('Login page — Magic Link', () => {
+  // Limpiar auth cookies: la página /login redirige a /communities si hay sesión activa
+  test.beforeEach(async ({ page }) => {
+    await page.context().clearCookies()
+  })
+
   test('muestra el formulario de login en /login', async ({ page }) => {
     await page.goto('/login')
 

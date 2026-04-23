@@ -1,35 +1,30 @@
 import { test, expect } from '@playwright/test'
 
 // Story 8.10 — FeedbackCTA contextual
-// Tests marcados como test.skip siguiendo el contrato TDD Outside-In.
-// Se activarán cuando el entorno E2E esté configurado con datos seed y autenticación.
+// Auth setup: tests/e2e/auth.setup.ts (storageState configurado en playwright.config.ts)
 
 test.describe('FeedbackCTA — call-to-action contextual en página de proyecto', () => {
-  test.skip('muestra "Ayuda a mejorar esta idea" para miembro autenticado no-owner', async ({ page }) => {
+  test('muestra "Ayuda a mejorar esta idea" para miembro autenticado no-owner', async ({ page }) => {
     // Arrange: usuario autenticado que NO es el builder del proyecto
-    // Navegar a un proyecto live
+    // Navegar a un proyecto live — pulse-check es de Alex, test user es miembro de producto-alpha
     await page.goto('/communities/producto-alpha/projects/pulse-check')
 
-    // Act & Assert: el CTA es visible con el heading correcto
+    // Act & Assert: FeedbackFormInline aparece en la sidebar con el heading correcto
+    // (para no-owners en proyectos live se usa FeedbackFormInline, no FeedbackCTA)
     await expect(
       page.getByRole('heading', { name: 'Ayuda a mejorar esta idea' })
     ).toBeVisible()
 
-    // El botón "Dar feedback" está presente dentro del CTA
+    // El botón de submit del formulario inline está presente
     await expect(
-      page.getByTestId('feedback-cta-button-wrapper')
+      page.getByTestId('feedback-form-inline-submit')
     ).toBeVisible()
-
-    // No aparece el link de sign-in
-    await expect(
-      page.getByTestId('feedback-cta-signin-link')
-    ).not.toBeVisible()
   })
 
-  test.skip('oculta el CTA cuando el usuario autenticado es el owner del proyecto', async ({ page }) => {
+  test('oculta el CTA cuando el usuario autenticado es el owner del proyecto', async ({ page }) => {
     // Arrange: usuario autenticado que ES el builder del proyecto
-    // Navegar a un proyecto live propio
-    await page.goto('/communities/producto-alpha/projects/idea-sketch')
+    // e2e-own-project es propiedad del test user en producto-alpha
+    await page.goto('/communities/producto-alpha/projects/e2e-own-project')
 
     // Act & Assert: el CTA no existe en el DOM (variant owner devuelve null)
     await expect(

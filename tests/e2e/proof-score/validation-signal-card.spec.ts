@@ -1,47 +1,33 @@
 import { test, expect } from '@playwright/test'
 
-/**
- * E2E tests — Story 8.8: ValidationSignalCard + Storybook
- *
- * NOTA: Estos tests requieren sesión de usuario autenticado con proyectos
- * que tengan score calculado. Están marcados con test.skip hasta que se
- * configure el helper de autenticación E2E y datos seed de proof score.
- *
- * Para habilitarlos:
- * 1. Crear `tests/e2e/fixtures/auth.setup.ts` con login programático
- * 2. Configurar `storageState` en `playwright.config.ts`
- * 3. Asegurarse de que el proyecto seed tenga feedbackCount >= 3
- * 4. Reemplazar test.skip por test en los tests de abajo
- */
+// Story 8.8 — ValidationSignalCard + Storybook
+// Auth setup: tests/e2e/auth.setup.ts (storageState configurado en playwright.config.ts)
+// Nota: ValidationSignalCard se renderiza en la sidebar para usuarios no-owner.
+// ProofScoreSidebar es solo para owners — no se usa como contenedor aquí.
 
 test.describe('ValidationSignalCard (Story 8.8)', () => {
   const COMMUNITY_SLUG = 'producto-alpha'
   const PROJECT_SLUG = 'pulse-check'
   const PROJECT_DETAIL_URL = `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_SLUG}`
 
-  test.skip(
+  test(
     'renderiza SignalIndicator con nivel Promising cuando el score es alto',
     async ({ page }) => {
       await page.goto(PROJECT_DETAIL_URL)
 
-      // ProofScoreSidebar debe contener ValidationSignalCard
-      const sidebar = page.getByTestId('proof-score-sidebar')
-      await expect(sidebar).toBeVisible()
-
-      // SignalIndicator con nivel promising
-      const signalIndicator = sidebar.getByTestId('signal-indicator')
+      // ValidationSignalCard se muestra directamente en la sidebar para no-owners
+      const signalIndicator = page.getByTestId('signal-indicator')
       await expect(signalIndicator).toBeVisible()
       await expect(signalIndicator).toHaveText(/Promising/i)
     }
   )
 
-  test.skip(
+  test(
     'renderiza ProgressBar con porcentaje del score medio',
     async ({ page }) => {
       await page.goto(PROJECT_DETAIL_URL)
 
-      const sidebar = page.getByTestId('proof-score-sidebar')
-      const progressbar = sidebar.getByRole('progressbar')
+      const progressbar = page.getByRole('progressbar').first()
       await expect(progressbar).toBeVisible()
 
       // El progressbar debe tener aria-valuenow con el porcentaje
@@ -51,13 +37,12 @@ test.describe('ValidationSignalCard (Story 8.8)', () => {
     }
   )
 
-  test.skip(
+  test(
     'renderiza disclaimer con feedbackCount interpolado',
     async ({ page }) => {
       await page.goto(PROJECT_DETAIL_URL)
 
-      const sidebar = page.getByTestId('proof-score-sidebar')
-      const disclaimer = sidebar.getByText(/Basado en \d+ respuestas/)
+      const disclaimer = page.getByText(/Basado en \d+ feedbacks/)
       await expect(disclaimer).toBeVisible()
     }
   )
