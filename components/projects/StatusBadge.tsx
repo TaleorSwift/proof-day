@@ -26,6 +26,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
   const config = STATUS_CONFIG[status]
   return (
     <span
+      data-testid="status-badge"
       style={{
         backgroundColor: config.bg,
         color: config.color,

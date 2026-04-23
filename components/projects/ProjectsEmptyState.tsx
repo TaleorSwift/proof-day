@@ -9,6 +9,7 @@ interface ProjectsEmptyStateProps {
 export function ProjectsEmptyState({ communitySlug, canCreate = false }: ProjectsEmptyStateProps) {
   return (
     <div
+      data-testid="empty-state"
       style={{
         display: 'flex',
         flexDirection: 'column',

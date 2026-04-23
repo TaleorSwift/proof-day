@@ -58,6 +58,7 @@ export function HeartButton({
         aria-hidden="true"
       />
       <span
+        data-testid="project-card-like-count"
         style={{
           fontSize: 'var(--text-xs)',
           fontWeight: 'var(--font-medium)' as CSSProperties['fontWeight'],
