@@ -469,6 +469,321 @@ INSERT INTO feedbacks (id, project_id, community_id, reviewer_id, scores, text_r
     '2026-03-09T10:00:00Z'
   );
 
+-- ============================================================
+-- E2E TEST DATA — datos para tests automatizados Playwright
+-- UUID fijo del test user: e2e00000-0000-4000-8000-000000000099
+-- ============================================================
+
+-- ── Usuario de test E2E ──────────────────────────────────────
+
+INSERT INTO auth.users (
+  instance_id, id, aud, role, email, encrypted_password,
+  email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+  confirmation_token, recovery_token, email_change_token_new, email_change,
+  created_at, updated_at
+) VALUES (
+  '00000000-0000-0000-0000-000000000000',
+  'e2e00000-0000-4000-8000-000000000099',
+  'authenticated', 'authenticated', 'e2e-community@proofday.local',
+  crypt('E2eTest_Pass_123!', gen_salt('bf')), now(),
+  '{"provider":"email","providers":["email"]}', '{"email_verified":true}',
+  '', '', '', '',
+  now(), now()
+);
+
+INSERT INTO auth.identities (
+  id, provider_id, user_id, identity_data, provider,
+  last_sign_in_at, created_at, updated_at
+) VALUES (
+  gen_random_uuid(), 'e2e-community@proofday.local',
+  'e2e00000-0000-4000-8000-000000000099',
+  '{"sub":"e2e00000-0000-4000-8000-000000000099","email":"e2e-community@proofday.local","email_verified":true,"phone_verified":false}',
+  'email', now(), now(), now()
+);
+
+UPDATE profiles SET
+  name       = 'E2E Test User',
+  bio        = 'Usuario de test automatizado para Playwright E2E.',
+  interests  = ARRAY['testing'],
+  updated_at = now()
+WHERE id = 'e2e00000-0000-4000-8000-000000000099';
+
+-- ── Membresía del test user en producto-alpha ────────────────
+-- Necesaria para: project-detail, team-perspectives, feedback-cta, validation-signal-card
+
+INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUES
+  ('d0000000-0000-4000-8000-000000000099',
+   'b0000000-0000-4000-8000-000000000001',
+   'e2e00000-0000-4000-8000-000000000099',
+   'member', now());
+
+-- ── Proyecto owned by test user (para FeedbackCTA "owner" test) ─
+
+INSERT INTO projects (
+  id, community_id, builder_id, slug, title, tagline,
+  problem, solution, hypothesis,
+  target_user, demo_url, feedback_topics,
+  image_urls, status, decision, decided_at,
+  created_at, updated_at
+) VALUES (
+  'c0000000-0000-4000-8000-000000000011',
+  'b0000000-0000-4000-8000-000000000001',
+  'e2e00000-0000-4000-8000-000000000099',
+  'e2e-own-project',
+  'E2E Own Project',
+  'Proyecto propio del usuario de test',
+  'A test problem.', 'A test solution.', 'A test hypothesis.',
+  'Early adopters', 'https://example.com/e2e-demo',
+  ARRAY['UX', 'Performance'],
+  ARRAY['https://picsum.photos/seed/e2e-own-1/800/600'], 'live', NULL, NULL,
+  now(), now()
+);
+
+-- ── Proyecto minimal (para project-detail: sin campos opcionales) ─
+
+INSERT INTO projects (
+  id, community_id, builder_id, slug, title, tagline,
+  problem, solution, hypothesis,
+  target_user, demo_url, feedback_topics,
+  image_urls, status, decision, decided_at,
+  created_at, updated_at
+) VALUES (
+  'c0000000-0000-4000-8000-000000000010',
+  'b0000000-0000-4000-8000-000000000001',
+  'a0000000-0000-4000-8000-000000000001',
+  'minimal-project',
+  'Minimal Project',
+  NULL,
+  'A problem.', 'A solution.', 'A hypothesis.',
+  NULL, NULL, NULL,
+  '{}', 'live', NULL, NULL,
+  now(), now()
+);
+
+-- ── startup-madrid (para project-feed y top-contributors) ────
+
+INSERT INTO communities (id, name, slug, description, created_by, created_at, updated_at) VALUES
+  ('b0000000-0000-4000-8000-000000000010',
+   'Startup Madrid', 'startup-madrid',
+   'Comunidad de validación de startups de Madrid.',
+   'a0000000-0000-4000-8000-000000000001', now(), now());
+
+INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUES
+  ('d0000000-0000-4000-8000-000000000010', 'b0000000-0000-4000-8000-000000000010', 'a0000000-0000-4000-8000-000000000001', 'admin',  now()),
+  ('d0000000-0000-4000-8000-000000000011', 'b0000000-0000-4000-8000-000000000010', 'a0000000-0000-4000-8000-000000000002', 'member', now()),
+  ('d0000000-0000-4000-8000-000000000012', 'b0000000-0000-4000-8000-000000000010', 'a0000000-0000-4000-8000-000000000003', 'member', now()),
+  ('d0000000-0000-4000-8000-000000000013', 'b0000000-0000-4000-8000-000000000010', 'e2e00000-0000-4000-8000-000000000099', 'member', now());
+
+INSERT INTO projects (
+  id, community_id, builder_id, slug, title, tagline,
+  problem, solution, hypothesis,
+  target_user, demo_url, feedback_topics,
+  image_urls, status, decision, decided_at,
+  created_at, updated_at
+) VALUES
+  (
+    'c0000000-0000-4000-8000-000000000012',
+    'b0000000-0000-4000-8000-000000000010',
+    'a0000000-0000-4000-8000-000000000001',
+    'madrid-live',
+    'Madrid Live Project', 'Ideas en validación activa',
+    'Problem.', 'Solution.', 'Hypothesis.',
+    'Startup founders', NULL, ARRAY['Clarity', 'Market fit'],
+    ARRAY['https://picsum.photos/seed/madrid-live/800/600'], 'live', NULL, NULL,
+    now(), now()
+  ),
+  (
+    'c0000000-0000-4000-8000-000000000013',
+    'b0000000-0000-4000-8000-000000000010',
+    'a0000000-0000-4000-8000-000000000002',
+    'madrid-inactive',
+    'Madrid Inactive Project', 'Proyecto cerrado',
+    'Problem.', 'Solution.', 'Hypothesis.',
+    NULL, NULL, NULL,
+    '{}', 'inactive', 'abandon', now(),
+    now(), now()
+  );
+
+-- Feedbacks en startup-madrid (para que el leaderboard no esté vacío)
+INSERT INTO feedbacks (id, project_id, community_id, reviewer_id, scores, text_responses, created_at) VALUES
+  (
+    'e0000000-0000-4000-8000-000000000020',
+    'c0000000-0000-4000-8000-000000000012',
+    'b0000000-0000-4000-8000-000000000010',
+    'a0000000-0000-4000-8000-000000000002',
+    '{"p1": 3, "p2": 2, "p3": 2}',
+    '{"p4": "Buen concepto, necesita más diferenciación."}',
+    now()
+  ),
+  (
+    'e0000000-0000-4000-8000-000000000021',
+    'c0000000-0000-4000-8000-000000000012',
+    'b0000000-0000-4000-8000-000000000010',
+    'a0000000-0000-4000-8000-000000000003',
+    '{"p1": 2, "p2": 3, "p3": 2}',
+    '{"p4": "Interesante pero falta validación de mercado."}',
+    now()
+  );
+
+-- ── sin-revisores (para top-contributors empty state) ────────
+
+INSERT INTO communities (id, name, slug, description, created_by, created_at, updated_at) VALUES
+  ('b0000000-0000-4000-8000-000000000011',
+   'Sin Revisores', 'sin-revisores',
+   'Comunidad sin revisores — para el empty state del leaderboard.',
+   'a0000000-0000-4000-8000-000000000001', now(), now());
+
+INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUES
+  ('d0000000-0000-4000-8000-000000000014', 'b0000000-0000-4000-8000-000000000011', 'a0000000-0000-4000-8000-000000000001', 'admin',  now()),
+  ('d0000000-0000-4000-8000-000000000015', 'b0000000-0000-4000-8000-000000000011', 'e2e00000-0000-4000-8000-000000000099', 'member', now());
+
+INSERT INTO projects (
+  id, community_id, builder_id, slug, title, tagline,
+  problem, solution, hypothesis,
+  target_user, demo_url, feedback_topics,
+  image_urls, status, decision, decided_at,
+  created_at, updated_at
+) VALUES (
+  'c0000000-0000-4000-8000-000000000014',
+  'b0000000-0000-4000-8000-000000000011',
+  'a0000000-0000-4000-8000-000000000001',
+  'sin-revisores-project',
+  'Project Without Reviewers', NULL,
+  'Problem.', 'Solution.', 'Hypothesis.',
+  NULL, NULL, NULL,
+  '{}', 'live', NULL, NULL,
+  now(), now()
+);
+-- Sin feedbacks (intencional — empty leaderboard state)
+
+-- ── comunidad-sin-live (solo proyectos inactive) ─────────────
+
+INSERT INTO communities (id, name, slug, description, created_by, created_at, updated_at) VALUES
+  ('b0000000-0000-4000-8000-000000000012',
+   'Sin Proyectos Live', 'comunidad-sin-live',
+   'Comunidad solo con proyectos inactivos — para ocultar sección "En validación".',
+   'a0000000-0000-4000-8000-000000000001', now(), now());
+
+INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUES
+  ('d0000000-0000-4000-8000-000000000016', 'b0000000-0000-4000-8000-000000000012', 'a0000000-0000-4000-8000-000000000001', 'admin',  now()),
+  ('d0000000-0000-4000-8000-000000000017', 'b0000000-0000-4000-8000-000000000012', 'e2e00000-0000-4000-8000-000000000099', 'member', now());
+
+INSERT INTO projects (
+  id, community_id, builder_id, slug, title, tagline,
+  problem, solution, hypothesis,
+  target_user, demo_url, feedback_topics,
+  image_urls, status, decision, decided_at,
+  created_at, updated_at
+) VALUES (
+  'c0000000-0000-4000-8000-000000000015',
+  'b0000000-0000-4000-8000-000000000012',
+  'a0000000-0000-4000-8000-000000000001',
+  'only-inactive-project',
+  'Only Inactive Project', NULL,
+  'Problem.', 'Solution.', 'Hypothesis.',
+  NULL, NULL, NULL,
+  '{}', 'inactive', 'abandon', now(),
+  now(), now()
+);
+
+-- ── comunidad-sin-inactive (solo proyectos live) ──────────────
+
+INSERT INTO communities (id, name, slug, description, created_by, created_at, updated_at) VALUES
+  ('b0000000-0000-4000-8000-000000000013',
+   'Sin Proyectos Inactivos', 'comunidad-sin-inactive',
+   'Comunidad solo con proyectos live — para ocultar sección "Cerrados".',
+   'a0000000-0000-4000-8000-000000000001', now(), now());
+
+INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUES
+  ('d0000000-0000-4000-8000-000000000018', 'b0000000-0000-4000-8000-000000000013', 'a0000000-0000-4000-8000-000000000001', 'admin',  now()),
+  ('d0000000-0000-4000-8000-000000000019', 'b0000000-0000-4000-8000-000000000013', 'e2e00000-0000-4000-8000-000000000099', 'member', now());
+
+INSERT INTO projects (
+  id, community_id, builder_id, slug, title, tagline,
+  problem, solution, hypothesis,
+  target_user, demo_url, feedback_topics,
+  image_urls, status, decision, decided_at,
+  created_at, updated_at
+) VALUES (
+  'c0000000-0000-4000-8000-000000000016',
+  'b0000000-0000-4000-8000-000000000013',
+  'a0000000-0000-4000-8000-000000000001',
+  'only-live-project',
+  'Only Live Project', NULL,
+  'Problem.', 'Solution.', 'Hypothesis.',
+  NULL, NULL, NULL,
+  ARRAY['https://picsum.photos/seed/only-live/800/600'], 'live', NULL, NULL,
+  now(), now()
+);
+
+-- ── comunidad-vacia (sin proyectos — empty state) ─────────────
+
+INSERT INTO communities (id, name, slug, description, created_by, created_at, updated_at) VALUES
+  ('b0000000-0000-4000-8000-000000000014',
+   'Comunidad Vacía', 'comunidad-vacia',
+   'Comunidad sin proyectos — para el empty state global.',
+   'a0000000-0000-4000-8000-000000000001', now(), now());
+
+INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUES
+  ('d0000000-0000-4000-8000-000000000020', 'b0000000-0000-4000-8000-000000000014', 'a0000000-0000-4000-8000-000000000001', 'admin',  now()),
+  ('d0000000-0000-4000-8000-000000000021', 'b0000000-0000-4000-8000-000000000014', 'e2e00000-0000-4000-8000-000000000099', 'member', now());
+-- Sin proyectos (intencional — empty state)
+
+-- ── test-community (para project-card tests) ──────────────────
+
+INSERT INTO communities (id, name, slug, description, created_by, created_at, updated_at) VALUES
+  ('b0000000-0000-4000-8000-000000000015',
+   'Test Community', 'test-community',
+   'Comunidad de test para ProjectCard E2E tests.',
+   'a0000000-0000-4000-8000-000000000001', now(), now());
+
+INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUES
+  ('d0000000-0000-4000-8000-000000000022', 'b0000000-0000-4000-8000-000000000015', 'a0000000-0000-4000-8000-000000000001', 'admin',  now()),
+  ('d0000000-0000-4000-8000-000000000023', 'b0000000-0000-4000-8000-000000000015', 'a0000000-0000-4000-8000-000000000002', 'member', now()),
+  ('d0000000-0000-4000-8000-000000000024', 'b0000000-0000-4000-8000-000000000015', 'e2e00000-0000-4000-8000-000000000099', 'member', now());
+
+INSERT INTO projects (
+  id, community_id, builder_id, slug, title, tagline,
+  problem, solution, hypothesis,
+  target_user, demo_url, feedback_topics,
+  image_urls, status, decision, decided_at,
+  created_at, updated_at
+) VALUES
+  (
+    'c0000000-0000-4000-8000-000000000017',
+    'b0000000-0000-4000-8000-000000000015',
+    'a0000000-0000-4000-8000-000000000001',
+    'test-project-with-image',
+    'Test Project With Image', 'Proyecto con imagen para tests de tarjeta',
+    'Problem.', 'Solution.', 'Hypothesis.',
+    'Test users', NULL, ARRAY['Clarity', 'UX'],
+    ARRAY['https://picsum.photos/seed/test-proj-img/800/600'], 'live', NULL, NULL,
+    now(), now()
+  ),
+  (
+    'c0000000-0000-4000-8000-000000000018',
+    'b0000000-0000-4000-8000-000000000015',
+    'a0000000-0000-4000-8000-000000000002',
+    'test-project-no-image',
+    'Test Project No Image', 'Proyecto sin imagen — para el placeholder test',
+    'Problem.', 'Solution.', 'Hypothesis.',
+    'Test users', NULL, NULL,
+    '{}', 'live', NULL, NULL,
+    now(), now()
+  );
+
+-- Feedback en test-community (para project-card-feedback-count)
+INSERT INTO feedbacks (id, project_id, community_id, reviewer_id, scores, text_responses, created_at) VALUES
+  (
+    'e0000000-0000-4000-8000-000000000022',
+    'c0000000-0000-4000-8000-000000000017',
+    'b0000000-0000-4000-8000-000000000015',
+    'a0000000-0000-4000-8000-000000000002',
+    '{"p1": 3, "p2": 2, "p3": 3}',
+    '{"p4": "Buen concepto."}',
+    now()
+  );
+
 -- ── Invitation links ─────────────────────────────────────────
 
 INSERT INTO invitation_links (id, token, community_id, created_by, used_at, used_by, created_at) VALUES
