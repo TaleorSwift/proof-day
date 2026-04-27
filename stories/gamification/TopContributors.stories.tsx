@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { TopContributorsList } from '@/components/gamification/TopContributorsList'
 import type { TopContributor } from '@/lib/types/gamification'
 

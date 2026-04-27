@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ProjectFeed } from '@/components/projects/ProjectFeed'
 import type { ProjectListItem } from '@/lib/api/projects'
 

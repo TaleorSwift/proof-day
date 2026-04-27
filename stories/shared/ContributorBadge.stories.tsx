@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ContributorBadge } from '@/components/shared/ContributorBadge'
 
 const meta: Meta<typeof ContributorBadge> = {

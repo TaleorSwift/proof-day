@@ -74,6 +74,15 @@ El modo se configura en `.env.local`. Siempre se usa `npm run dev`.
 npm run supabase:reset
 ```
 
+## Storybook
+
+```bash
+npm run storybook        # Arranca en http://localhost:6006 (Storybook 9.1.20 + Vite)
+npm run build-storybook  # Genera build estático en storybook-static/
+```
+
+Framework: `@storybook/nextjs-vite` (Vite). Stories en `stories/**/*.stories.tsx`. Imports desde `@storybook/nextjs-vite`.
+
 ## Troubleshooting
 
 **`supabase start` falla con "port already in use"**

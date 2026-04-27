@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ContentTag } from '@/components/shared/ContentTag'
 
 const meta: Meta<typeof ContentTag> = {
