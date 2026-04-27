@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
@@ -16,11 +15,15 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { BrandHeader } from '@/components/shared/BrandHeader'
+import { LegalNotice } from '@/components/shared/LegalNotice'
 
 interface LoginFormProps {
   errorParam?: string
   /** Para Storybook: fuerza el estado "check email" sin interacción */
   initialSent?: boolean
+  /** Para Storybook/tests: pre-popula el mensaje de error de servidor */
+  initialServerError?: string
 }
 
 const CONTAINER_STYLE: React.CSSProperties = {
@@ -33,12 +36,11 @@ const CONTAINER_STYLE: React.CSSProperties = {
   textAlign: 'center',
 }
 
-export function LoginForm({ errorParam, initialSent = false }: LoginFormProps) {
+export function LoginForm({ errorParam, initialSent = false, initialServerError }: LoginFormProps) {
   const [sent, setSent] = useState(initialSent)
   const [serverError, setServerError] = useState<string | null>(
-    errorParam === 'link-invalid'
-      ? 'El link ha expirado o no es válido.'
-      : null
+    initialServerError ??
+    (errorParam === 'link-invalid' ? 'El link ha expirado o no es válido.' : null)
   )
 
   const form = useForm<LoginInput>({
@@ -63,40 +65,14 @@ export function LoginForm({ errorParam, initialSent = false }: LoginFormProps) {
   if (sent) {
     return (
       <div style={CONTAINER_STYLE}>
-        <Image src="/logo.png" alt="Proof Day" width={192} height={192} priority />
-        <h1
-          style={{
-            fontSize: 'var(--text-2xl)',
-            fontWeight: 'var(--font-semibold)',
-            color: 'var(--color-text-primary)',
-          }}
-        >
-          Bienvenido a Proof Day
-        </h1>
-        <p style={{ color: 'var(--color-text-primary)', fontSize: 'var(--text-base)' }}>
-          Revisa tu email — te hemos enviado un link de acceso
-        </p>
+        <BrandHeader subtitle="Revisa tu email — te hemos enviado un link de acceso" />
       </div>
     )
   }
 
   return (
     <div style={CONTAINER_STYLE}>
-      <Image src="/logo.png" alt="Proof Day" width={192} height={192} priority />
-
-      <h1
-        style={{
-          fontSize: 'var(--text-2xl)',
-          fontWeight: 'var(--font-semibold)',
-          color: 'var(--color-text-primary)',
-        }}
-      >
-        Bienvenido a Proof Day
-      </h1>
-
-      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--color-text-secondary)' }}>
-        Valida ideas. Aprende más rápido. Construye lo que importa.
-      </p>
+      <BrandHeader />
 
       <div style={{ width: '100%' }}>
         {serverError && (
@@ -163,15 +139,7 @@ export function LoginForm({ errorParam, initialSent = false }: LoginFormProps) {
         </Form>
       </div>
 
-      <p
-        style={{
-          fontSize: 'var(--text-xs)',
-          color: 'var(--color-text-secondary)',
-          lineHeight: '1.4',
-        }}
-      >
-        Al continuar, aceptas compartir feedback constructivo y ayudar a tu equipo a aprender.
-      </p>
+      <LegalNotice />
     </div>
   )
 }

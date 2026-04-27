@@ -50,3 +50,26 @@ export const CheckEmail: Story = {
     initialSent: true,
   },
 }
+
+/**
+ * Estado loading — el formulario está en medio del submit.
+ * LoginForm no acepta prop isLoading directa; el estado es efímero
+ * (form.formState.isSubmitting). Para Storybook se muestra el estado
+ * Default — el estado loading ocurre durante la transición de submit.
+ * Verificar manualmente: rellenar email y pulsar Continuar con Supabase offline.
+ */
+export const Loading: Story = {
+  args: {},
+}
+
+/**
+ * Estado server error — Supabase devuelve un error al enviar el magic link.
+ * Se muestra cuando sendMagicLink devuelve { error: '...' }.
+ * Usa errorParam con valor distinto de 'link-invalid' para mostrar el error
+ * genérico sin el CTA "Solicitar un nuevo link".
+ */
+export const ServerError: Story = {
+  args: {
+    initialServerError: 'No pudimos enviar el email. Intenta de nuevo.',
+  },
+}
