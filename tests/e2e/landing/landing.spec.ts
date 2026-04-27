@@ -25,3 +25,12 @@ test.describe('Landing page — visitante no autenticado', () => {
     expect(href).toBe('/login')
   })
 })
+
+test.describe('Landing page — usuario autenticado', () => {
+  // Sin clearCookies: storageState global del proyecto chromium ya tiene sesión activa.
+
+  test('redirige de / a /communities cuando hay sesión activa', async ({ page }) => {
+    await page.goto('/')
+    await expect(page).toHaveURL(/\/communities/)
+  })
+})
