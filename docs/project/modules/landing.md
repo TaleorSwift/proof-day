@@ -42,8 +42,26 @@ Su función es presentar la identidad visual y redirigir al flujo de autenticaci
 
 ## Storybook
 
-Story: `pages/LandingPage > Default`
+Story: `pages/LandingPage`
 Componente: `WelcomeScreen` (sin lógica de auth)
+
+Variantes:
+
+- `Default` — viewport por defecto.
+- `Mobile` — viewport 375px (decorator manual, sin `addon-viewport`).
+
+## Tests
+
+### Unit (Vitest)
+
+- `tests/unit/landing/landingPage.test.tsx` — render visual del componente puro `WelcomeScreen` (logo, H1, subtítulo, CTA, texto legal, ausencia de marketing).
+- `tests/unit/landing/HomePage.test.tsx` — Server Component `app/page.tsx`: redirect a `/communities` cuando hay sesión, render de `WelcomeScreen` cuando no la hay.
+
+### E2E (Playwright)
+
+- `tests/e2e/landing/landing.spec.ts`:
+  - **Visitante no autenticado**: `/` devuelve 200, h1 visible, CTA enlaza a `/login`.
+  - **Usuario autenticado**: `/` redirige a `/communities`.
 
 ## Historia
 
