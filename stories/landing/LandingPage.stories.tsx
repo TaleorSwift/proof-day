@@ -20,10 +20,15 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {}
 
 /**
- * Variante Mobile — viewport 375px (iPhone SE / pantalla pequeña).
- * Decorator manual porque el proyecto no usa `@storybook/addon-viewport`.
+ * Variante MobileFrame — wrapper de containment con 375px de ancho fijo
+ * (iPhone SE / pantalla pequeña). NO es un viewport real: solo restringe
+ * el ancho del contenedor para visualizar el layout en móvil.
+ *
+ * Para un viewport real (que afecte a `window.innerWidth`, media queries
+ * del navegador, etc.) haría falta `@storybook/addon-viewport`, que
+ * actualmente no está instalado en el proyecto (fuera de scope).
  */
-export const Mobile: Story = {
+export const MobileFrame: Story = {
   decorators: [
     (Story) => (
       <div

@@ -31,6 +31,6 @@ test.describe('Landing page — usuario autenticado', () => {
 
   test('redirige de / a /communities cuando hay sesión activa', async ({ page }) => {
     await page.goto('/')
-    await expect(page).toHaveURL(/\/communities/)
+    await expect(page).toHaveURL(/\/communities(\/|\?|$)/)
   })
 })

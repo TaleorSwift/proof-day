@@ -43,6 +43,12 @@ describe('HomePage — con sesión activa', () => {
       data: { user: { id: 'user-test-123' } },
       error: null,
     })
+    // En Next.js, `redirect()` lanza una excepción interna para detener el
+    // render del Server Component. Replicamos ese comportamiento para que
+    // HomePage no continúe ejecutándose tras el redirect.
+    redirectMock.mockImplementation(() => {
+      throw new Error('NEXT_REDIRECT')
+    })
   })
 
   afterEach(() => {
@@ -50,12 +56,12 @@ describe('HomePage — con sesión activa', () => {
   })
 
   it('llama a redirect("/communities") cuando hay usuario', async () => {
-    await HomePage()
+    await expect(HomePage()).rejects.toThrow('NEXT_REDIRECT')
     expect(redirectMock).toHaveBeenCalledWith('/communities')
   })
 
   it('llama a redirect exactamente una vez', async () => {
-    await HomePage()
+    await expect(HomePage()).rejects.toThrow('NEXT_REDIRECT')
     expect(redirectMock).toHaveBeenCalledTimes(1)
   })
 })
