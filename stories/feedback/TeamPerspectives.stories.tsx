@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { TeamPerspectives } from '@/components/feedback/TeamPerspectives'
 
 const meta: Meta<typeof TeamPerspectives> = {

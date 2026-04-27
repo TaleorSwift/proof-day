@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { FeedbackCTA } from '@/components/feedback/FeedbackCTA'
 
 const meta: Meta<typeof FeedbackCTA> = {

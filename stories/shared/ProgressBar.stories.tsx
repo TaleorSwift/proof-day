@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ProgressBar } from '@/components/shared/ProgressBar'
 
 const meta: Meta<typeof ProgressBar> = {
