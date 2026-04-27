@@ -64,3 +64,12 @@ test.describe('Login page — Magic Link', () => {
     await expect(page.getByRole('button', { name: 'Solicitar un nuevo link' })).toBeVisible()
   })
 })
+
+test.describe('Login page — usuario autenticado', () => {
+  // Sin clearCookies: storageState global del proyecto chromium ya tiene sesión activa.
+
+  test('redirige de /login a /communities cuando hay sesión activa', async ({ page }) => {
+    await page.goto('/login')
+    await expect(page).toHaveURL(/\/communities(\/|\?|$)/)
+  })
+})
