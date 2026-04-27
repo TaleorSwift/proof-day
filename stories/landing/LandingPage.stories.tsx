@@ -18,3 +18,25 @@ type Story = StoryObj<typeof meta>
  * Muestra logo, H1, subtítulo, CTA naranja y texto legal.
  */
 export const Default: Story = {}
+
+/**
+ * Variante Mobile — viewport 375px (iPhone SE / pantalla pequeña).
+ * Decorator manual porque el proyecto no usa `@storybook/addon-viewport`.
+ */
+export const Mobile: Story = {
+  decorators: [
+    (Story) => (
+      <div
+        style={{
+          width: 375,
+          margin: '0 auto',
+          borderLeft: '1px solid #e5e5e5',
+          borderRight: '1px solid #e5e5e5',
+          minHeight: '100vh',
+        }}
+      >
+        <Story />
+      </div>
+    ),
+  ],
+}
