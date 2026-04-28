@@ -13,7 +13,7 @@ const makeCommunity = (id: string, name: string, slug: string, memberCount: numb
   member_count: memberCount,
 })
 
-const meta: Meta<typeof CommunityList> = {
+const meta = {
   title: 'Communities/CommunityList',
   component: CommunityList,
   tags: ['autodocs'],
@@ -21,7 +21,7 @@ const meta: Meta<typeof CommunityList> = {
     layout: 'padded',
     nextjs: { appDirectory: true },
   },
-}
+} satisfies Meta<typeof CommunityList>
 
 export default meta
 type Story = StoryObj<typeof meta>

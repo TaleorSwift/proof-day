@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { LoginForm } from '@/components/auth/LoginForm'
 
-const meta: Meta<typeof LoginForm> = {
-  title: 'auth/LoginForm',
+const meta = {
+  title: 'Auth/LoginForm',
   component: LoginForm,
   parameters: {
     layout: 'fullscreen',
@@ -18,7 +18,7 @@ const meta: Meta<typeof LoginForm> = {
       </div>
     ),
   ],
-}
+} satisfies Meta<typeof LoginForm>
 
 export default meta
 type Story = StoryObj<typeof meta>

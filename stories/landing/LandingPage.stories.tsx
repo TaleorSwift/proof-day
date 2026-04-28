@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { WelcomeScreen } from '@/components/landing/WelcomeScreen'
 
-const meta: Meta<typeof WelcomeScreen> = {
-  title: 'pages/LandingPage',
+const meta = {
+  title: 'Pages/Landing',
   component: WelcomeScreen,
   parameters: {
     layout: 'fullscreen',
   },
   tags: ['autodocs'],
-}
+} satisfies Meta<typeof WelcomeScreen>
 
 export default meta
 type Story = StoryObj<typeof meta>

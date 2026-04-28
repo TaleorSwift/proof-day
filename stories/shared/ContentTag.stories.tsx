@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ContentTag } from '@/components/shared/ContentTag'
 
-const meta: Meta<typeof ContentTag> = {
-  title: 'shared/ContentTag',
+const meta = {
+  title: 'Shared/ContentTag',
   component: ContentTag,
   parameters: {
     layout: 'centered',
@@ -14,7 +14,7 @@ const meta: Meta<typeof ContentTag> = {
       options: ['default', 'outline'],
     },
   },
-}
+} satisfies Meta<typeof ContentTag>
 
 export default meta
 type Story = StoryObj<typeof meta>

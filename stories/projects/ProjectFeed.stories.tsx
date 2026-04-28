@@ -2,17 +2,17 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ProjectFeed } from '@/components/projects/ProjectFeed'
 import type { ProjectListItem } from '@/lib/api/projects'
 
-const meta: Meta<typeof ProjectFeed> = {
+const meta = {
   title: 'Projects/ProjectFeed',
   component: ProjectFeed,
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',
   },
-}
+} satisfies Meta<typeof ProjectFeed>
 
 export default meta
-type Story = StoryObj<typeof ProjectFeed>
+type Story = StoryObj<typeof meta>
 
 // ---------------------------------------------------------------------------
 // Fixtures

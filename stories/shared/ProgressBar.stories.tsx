@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ProgressBar } from '@/components/shared/ProgressBar'
 
-const meta: Meta<typeof ProgressBar> = {
-  title: 'shared/ProgressBar',
+const meta = {
+  title: 'Shared/ProgressBar',
   component: ProgressBar,
   parameters: {
-    layout: 'padded',
+    layout: 'centered',
   },
   tags: ['autodocs'],
   argTypes: {
@@ -13,7 +13,7 @@ const meta: Meta<typeof ProgressBar> = {
       control: { type: 'range', min: 0, max: 100, step: 1 },
     },
   },
-}
+} satisfies Meta<typeof ProgressBar>
 
 export default meta
 type Story = StoryObj<typeof meta>

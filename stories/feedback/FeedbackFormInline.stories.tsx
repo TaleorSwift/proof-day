@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { FeedbackFormInline } from '@/components/feedback/FeedbackFormInline'
 
-const meta: Meta<typeof FeedbackFormInline> = {
-  title: 'feedback/FeedbackFormInline',
+const meta = {
+  title: 'Feedback/FeedbackFormInline',
   component: FeedbackFormInline,
   parameters: {
     layout: 'padded',
   },
   tags: ['autodocs'],
-}
+} satisfies Meta<typeof FeedbackFormInline>
 
 export default meta
 type Story = StoryObj<typeof meta>

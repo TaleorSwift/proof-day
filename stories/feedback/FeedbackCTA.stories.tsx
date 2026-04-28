@@ -1,18 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { FeedbackCTA } from '@/components/feedback/FeedbackCTA'
 
-const meta: Meta<typeof FeedbackCTA> = {
-  title: 'feedback/FeedbackCTA',
+const meta = {
+  title: 'Feedback/FeedbackCTA',
   component: FeedbackCTA,
   parameters: {
-    layout: 'padded',
+    layout: 'centered',
   },
   tags: ['autodocs'],
   args: {
     projectId: 'project-demo-123',
     communityId: 'community-demo-abc',
   },
-}
+} satisfies Meta<typeof FeedbackCTA>
 
 export default meta
 type Story = StoryObj<typeof meta>

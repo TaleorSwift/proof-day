@@ -3,17 +3,17 @@ import { useState } from 'react'
 import { ImageUploader } from '@/components/projects/ImageUploader'
 import type { UploaderImage } from '@/components/projects/ImageUploader'
 
-const meta: Meta<typeof ImageUploader> = {
+const meta = {
   title: 'Projects/ImageUploader',
   component: ImageUploader,
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',
   },
-}
+} satisfies Meta<typeof ImageUploader>
 
 export default meta
-type Story = StoryObj<typeof ImageUploader>
+type Story = StoryObj<typeof meta>
 
 const sampleImages: UploaderImage[] = [
   {
@@ -49,12 +49,24 @@ function LimiteAlcanzadoTemplate() {
 
 export const SinImagenes: Story = {
   render: () => <SinImagenesTemplate />,
+  args: {
+    images: [],
+    onImagesChange: () => {},
+  },
 }
 
 export const ConDosImagenes: Story = {
   render: () => <ConDosImagenesTemplate />,
+  args: {
+    images: sampleImages,
+    onImagesChange: () => {},
+  },
 }
 
 export const LimiteAlcanzado: Story = {
   render: () => <LimiteAlcanzadoTemplate />,
+  args: {
+    images: sampleImages,
+    onImagesChange: () => {},
+  },
 }

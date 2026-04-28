@@ -15,12 +15,12 @@ const makeCommunity = (id: string, name: string, slug: string) => ({
   member_count: 5,
 })
 
-const meta: Meta<typeof CommunitySwitcher> = {
+const meta = {
   title: 'Communities/CommunitySwitcher',
   component: CommunitySwitcher,
   tags: ['autodocs'],
   parameters: {
-    layout: 'padded',
+    layout: 'centered',
     nextjs: {
       appDirectory: true,
       navigation: {
@@ -28,7 +28,7 @@ const meta: Meta<typeof CommunitySwitcher> = {
       },
     },
   },
-}
+} satisfies Meta<typeof CommunitySwitcher>
 
 export default meta
 type Story = StoryObj<typeof meta>

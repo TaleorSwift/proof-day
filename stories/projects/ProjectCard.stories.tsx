@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ProjectCard } from '@/components/projects/ProjectCard'
 
-const meta: Meta<typeof ProjectCard> = {
+const meta = {
   title: 'Projects/ProjectCard',
   component: ProjectCard,
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',
   },
-}
+} satisfies Meta<typeof ProjectCard>
 
 export default meta
-type Story = StoryObj<typeof ProjectCard>
+type Story = StoryObj<typeof meta>
 
 const baseProject = {
   id: 'proj-001',

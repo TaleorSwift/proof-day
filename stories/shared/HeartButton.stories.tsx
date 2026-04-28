@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { HeartButton } from '@/components/shared/HeartButton'
 
-const meta: Meta<typeof HeartButton> = {
-  title: 'shared/HeartButton',
+const meta = {
+  title: 'Shared/HeartButton',
   component: HeartButton,
   parameters: {
     layout: 'centered',
@@ -19,7 +19,7 @@ const meta: Meta<typeof HeartButton> = {
       control: 'boolean',
     },
   },
-}
+} satisfies Meta<typeof HeartButton>
 
 export default meta
 type Story = StoryObj<typeof meta>

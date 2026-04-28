@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { Navbar } from '@/components/layout/Navbar'
 
-const meta: Meta<typeof Navbar> = {
-  title: 'layout/Navbar',
+const meta = {
+  title: 'Layout/Navbar',
   component: Navbar,
   parameters: {
     layout: 'fullscreen',
@@ -20,7 +20,7 @@ const meta: Meta<typeof Navbar> = {
       action: 'logout',
     },
   },
-}
+} satisfies Meta<typeof Navbar>
 
 export default meta
 type Story = StoryObj<typeof meta>
