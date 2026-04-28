@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { BackButton } from '@/components/shared/BackButton'
 
 const meta: Meta<typeof BackButton> = {
-  title: 'shared/BackButton',
+  title: 'Shared/BackButton',
   component: BackButton,
   parameters: {
     layout: 'centered',

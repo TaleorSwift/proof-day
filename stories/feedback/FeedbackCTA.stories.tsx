@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { FeedbackCTA } from '@/components/feedback/FeedbackCTA'
 
 const meta: Meta<typeof FeedbackCTA> = {
-  title: 'feedback/FeedbackCTA',
+  title: 'Feedback/FeedbackCTA',
   component: FeedbackCTA,
   parameters: {
     layout: 'padded',

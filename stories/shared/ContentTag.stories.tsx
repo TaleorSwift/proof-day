@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ContentTag } from '@/components/shared/ContentTag'
 
 const meta: Meta<typeof ContentTag> = {
-  title: 'shared/ContentTag',
+  title: 'Shared/ContentTag',
   component: ContentTag,
   parameters: {
     layout: 'centered',

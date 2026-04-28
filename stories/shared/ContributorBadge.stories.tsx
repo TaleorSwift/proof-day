@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ContributorBadge } from '@/components/shared/ContributorBadge'
 
 const meta: Meta<typeof ContributorBadge> = {
-  title: 'shared/ContributorBadge',
+  title: 'Shared/ContributorBadge',
   component: ContributorBadge,
   parameters: {
     layout: 'centered',

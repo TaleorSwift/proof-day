@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ValidationSignalCard } from '@/components/proof-score/ValidationSignalCard'
 
 const meta: Meta<typeof ValidationSignalCard> = {
-  title: 'proof-score/ValidationSignalCard',
+  title: 'ProofScore/ValidationSignalCard',
   component: ValidationSignalCard,
   parameters: {
     layout: 'padded',

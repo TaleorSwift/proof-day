@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { TeamPerspectives } from '@/components/feedback/TeamPerspectives'
 
 const meta: Meta<typeof TeamPerspectives> = {
-  title: 'feedback/TeamPerspectives',
+  title: 'Feedback/TeamPerspectives',
   component: TeamPerspectives,
   parameters: {
     layout: 'padded',

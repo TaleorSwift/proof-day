@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { FeedbackFormInline } from '@/components/feedback/FeedbackFormInline'
 
 const meta: Meta<typeof FeedbackFormInline> = {
-  title: 'feedback/FeedbackFormInline',
+  title: 'Feedback/FeedbackFormInline',
   component: FeedbackFormInline,
   parameters: {
     layout: 'padded',

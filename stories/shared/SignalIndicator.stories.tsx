@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { SignalIndicator } from '@/components/shared/SignalIndicator'
 
 const meta: Meta<typeof SignalIndicator> = {
-  title: 'shared/SignalIndicator',
+  title: 'Shared/SignalIndicator',
   component: SignalIndicator,
   parameters: {
     layout: 'centered',

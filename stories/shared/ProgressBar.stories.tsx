@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ProgressBar } from '@/components/shared/ProgressBar'
 
 const meta: Meta<typeof ProgressBar> = {
-  title: 'shared/ProgressBar',
+  title: 'Shared/ProgressBar',
   component: ProgressBar,
   parameters: {
     layout: 'padded',

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ProofScoreBadge } from '@/components/proof-score/ProofScoreBadge'
 
 const meta: Meta<typeof ProofScoreBadge> = {
-  title: 'proof-score/ProofScoreBadge',
+  title: 'ProofScore/ProofScoreBadge',
   component: ProofScoreBadge,
   parameters: {
     layout: 'padded',

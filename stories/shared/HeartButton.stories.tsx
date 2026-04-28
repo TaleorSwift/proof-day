@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { HeartButton } from '@/components/shared/HeartButton'
 
 const meta: Meta<typeof HeartButton> = {
-  title: 'shared/HeartButton',
+  title: 'Shared/HeartButton',
   component: HeartButton,
   parameters: {
     layout: 'centered',

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { WelcomeScreen } from '@/components/landing/WelcomeScreen'
 
 const meta: Meta<typeof WelcomeScreen> = {
-  title: 'pages/LandingPage',
+  title: 'Pages/Landing',
   component: WelcomeScreen,
   parameters: {
     layout: 'fullscreen',

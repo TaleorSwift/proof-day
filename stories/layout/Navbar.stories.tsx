@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { Navbar } from '@/components/layout/Navbar'
 
 const meta: Meta<typeof Navbar> = {
-  title: 'layout/Navbar',
+  title: 'Layout/Navbar',
   component: Navbar,
   parameters: {
     layout: 'fullscreen',
