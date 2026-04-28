@@ -33,7 +33,7 @@ test.describe('Invite link — token ya usado', () => {
   test('visitar /invite/{token_ya_usado} muestra la página de error', async ({ page }) => {
     // Sustituir 'used-token-from-seed' por el token real del seed
     await page.goto('/invite/used-token-from-seed')
-    await expect(page.getByText('Link inválido')).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByRole('heading', { name: 'Link inválido' })).toBeVisible({ timeout: 10_000 })
     await expect(
       page.getByText('Este link ya no es válido')
     ).toBeVisible()

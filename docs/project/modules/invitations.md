@@ -4,7 +4,7 @@
 Permite a los admins de una comunidad generar links de invitación de un solo uso.
 Cuando un usuario visita `/invite/[token]`, el sistema valida el token, comprueba
 si ya es miembro y, si todo es correcto, lo incorpora a la comunidad con rol `member`
-y redirige a `/communities`. La ruta es pública — accesible sin sesión.
+y redirige a `/communities`. La ruta requiere sesión activa — si el usuario no está autenticado se redirige a `/login?next=/invite/[token]`.
 
 ## Reglas de comportamiento
 - Solo admins pueden generar invitation links desde `/communities/[slug]/settings` (story 2.2)

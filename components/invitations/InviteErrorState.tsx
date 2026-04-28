@@ -1,6 +1,8 @@
 // CR3-F6 + CR5-F2: CSS variables for colors, typography, and spacing
 // story 2.2 — token inválido, ya usado o inexistente
 
+// Server Component — sin interactividad de cliente
+
 interface Props {
   message: string
 }
@@ -9,11 +11,9 @@ export function InviteErrorState({ message }: Props) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center" style={{ padding: 'var(--space-6)' }}>
       <div
-        className="text-center"
+        className="max-w-md text-center"
         style={{
-          /* max-w-md (28rem) — no hay token CSS equivalente en design-tokens.md (story 2.2) */
           width: '100%',
-          maxWidth: '28rem',
           border: '1px solid var(--color-border)',
           backgroundColor: 'var(--color-weak-bg)',
           borderRadius: 'var(--radius-md)',

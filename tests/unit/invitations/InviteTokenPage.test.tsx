@@ -41,8 +41,7 @@ const {
     delete: mockDelete,
   }))
 
-  const mockMaybeSingleRpc = vi.fn()
-  const mockRpc = vi.fn(() => ({ maybeSingle: mockMaybeSingleRpc }))
+  const mockRpc = vi.fn()
 
   const mockGetUser = vi.fn()
   const mockRedirect = vi.fn()
@@ -141,6 +140,27 @@ describe('InviteTokenPage — token inválido (RPC null)', () => {
     const jsx = await InvitePage({ params: makeParams('invalid-token') })
     render(jsx as React.ReactElement)
     expect(screen.getByTestId('invite-error-state')).toHaveTextContent('Este link ya no es válido')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Suite 2b: RPC devuelve error → InviteErrorState
+// ---------------------------------------------------------------------------
+
+describe('InviteTokenPage — RPC devuelve error', () => {
+  beforeEach(() => {
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'user-001' } } })
+    mockRpc.mockReturnValue({
+      maybeSingle: vi.fn().mockResolvedValue({ data: null, error: { message: 'DB error' } }),
+    })
+  })
+
+  afterEach(() => vi.clearAllMocks())
+
+  it('renderiza el estado de error cuando el RPC devuelve error', async () => {
+    const jsx = await InvitePage({ params: makeParams('any-token') })
+    render(jsx as React.ReactElement)
+    expect(screen.getByTestId('invite-error-state')).toBeInTheDocument()
   })
 })
 
@@ -309,5 +329,40 @@ describe('InviteTokenPage — rollback ante fallo de invalidación', () => {
     expect(screen.getByTestId('invite-error-state')).toHaveTextContent(
       'Error al procesar el link. Por favor, inténtalo de nuevo.'
     )
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Suite 7: insert de membresía falla → InviteErrorState
+// ---------------------------------------------------------------------------
+
+describe('InviteTokenPage — insert de membresía falla', () => {
+  beforeEach(() => {
+    mockGetUser.mockResolvedValue({ data: { user: { id: 'user-001' } } })
+    mockRpc.mockReturnValue({
+      maybeSingle: vi.fn().mockResolvedValue({ data: validInvitation, error: null }),
+    })
+    mockFrom.mockReturnValue({
+      // community_members check → no es miembro
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+          }),
+        }),
+      }),
+      // insert → falla con FK violation
+      insert: vi.fn().mockResolvedValue({ error: { message: 'FK violation' } }),
+      update: vi.fn(),
+      delete: vi.fn(),
+    })
+  })
+
+  afterEach(() => vi.clearAllMocks())
+
+  it('renderiza el estado de error cuando el insert de membresía falla', async () => {
+    const jsx = await InvitePage({ params: makeParams('valid-token') })
+    render(jsx as React.ReactElement)
+    expect(screen.getByTestId('invite-error-state')).toBeInTheDocument()
   })
 })
