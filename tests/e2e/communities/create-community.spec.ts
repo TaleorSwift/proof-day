@@ -71,4 +71,83 @@ test.describe('Crear comunidad — usuario autenticado', () => {
     await page.reload()
     await expect(page.getByText(uniqueName)).toBeVisible({ timeout: 10_000 })
   })
+
+  test('muestra error inline bajo name al intentar crear comunidad con nombre duplicado', async ({ page }) => {
+    // Crear primera comunidad con nombre único
+    const duplicateName = `Comunidad Duplicada ${Date.now()}`
+    await page.goto('/communities/new')
+    await page.getByLabel('Nombre').fill(duplicateName)
+    await page.getByLabel('Descripción').fill('Primera creación para test de duplicado')
+    await page.getByRole('button', { name: 'Crear comunidad' }).click()
+    await expect(page).toHaveURL(/\/communities(?!\/new)/, { timeout: 15_000 })
+
+    // Volver a /communities/new e intentar crear la misma comunidad
+    await page.goto('/communities/new')
+    await page.getByLabel('Nombre').fill(duplicateName)
+    await page.getByLabel('Descripción').fill('Segunda creación con nombre duplicado')
+    await page.getByRole('button', { name: 'Crear comunidad' }).click()
+
+    // Error inline bajo el campo name — NO redirige
+    await expect(page.locator('#name-error')).toBeVisible({ timeout: 10_000 })
+    await expect(page).toHaveURL(/\/communities\/new/)
+  })
+
+  test('crea comunidad con imageUrl válida y redirige fuera de /communities/new', async ({ page }) => {
+    const nameWithImage = `Comunidad Imagen ${Date.now()}`
+    await page.goto('/communities/new')
+    await page.getByLabel('Nombre').fill(nameWithImage)
+    await page.getByLabel('Descripción').fill('Comunidad con imagen de portada')
+    await page.getByLabel('Imagen').fill('https://picsum.photos/200')
+    await page.getByRole('button', { name: 'Crear comunidad' }).click()
+
+    // Redirige — la URL ya no es /communities/new
+    await expect(page).toHaveURL(/\/communities(?!\/new)/, { timeout: 15_000 })
+  })
+
+  test('muestra error inline bajo imageUrl con URL inválida', async ({ page }) => {
+    await page.goto('/communities/new')
+    await page.getByLabel('Nombre').fill('Comunidad URL Inválida')
+    await page.getByLabel('Descripción').fill('Descripción válida para este test')
+    await page.getByLabel('Imagen').fill('esto-no-es-una-url')
+    await page.getByRole('button', { name: 'Crear comunidad' }).click()
+
+    await expect(page.getByText('URL de imagen inválida')).toBeVisible()
+    await expect(page).toHaveURL(/\/communities\/new/)
+  })
+
+  test('muestra error inline bajo name con nombre superior a 60 caracteres', async ({ page }) => {
+    await page.goto('/communities/new')
+    await page.getByLabel('Nombre').fill('A'.repeat(61))
+    await page.getByLabel('Descripción').fill('Descripción válida para test de límite')
+    await page.getByRole('button', { name: 'Crear comunidad' }).click()
+
+    await expect(page.getByText('El nombre no puede superar 60 caracteres')).toBeVisible()
+    await expect(page).toHaveURL(/\/communities\/new/)
+  })
+
+  test('muestra error inline bajo description con descripción superior a 500 caracteres', async ({ page }) => {
+    await page.goto('/communities/new')
+    await page.getByLabel('Nombre').fill('Nombre Válido')
+    await page.getByLabel('Descripción').fill('A'.repeat(501))
+    await page.getByRole('button', { name: 'Crear comunidad' }).click()
+
+    await expect(page.getByText('La descripción no puede superar 500 caracteres')).toBeVisible()
+    await expect(page).toHaveURL(/\/communities\/new/)
+  })
+
+  test('muestra error global de servidor cuando el backend devuelve 500', async ({ page }) => {
+    await page.route('**/api/communities', (route) => {
+      route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Error interno del servidor' }),
+      })
+    })
+    await page.goto('/communities/new')
+    await page.getByLabel('Nombre').fill('Comunidad Test 500')
+    await page.getByLabel('Descripción').fill('Una descripción para test de error de servidor')
+    await page.getByRole('button', { name: 'Crear comunidad' }).click()
+    await expect(page.getByRole('alert')).toBeVisible()
+    await expect(page).toHaveURL(/\/communities\/new/)
+  })
 })

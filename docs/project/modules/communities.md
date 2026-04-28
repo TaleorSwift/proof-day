@@ -29,13 +29,15 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 
 ### Unit
 - `tests/unit/communities/CommunitiesPage.test.tsx` — redirect AC-1/AC-5, empty state, lista, botón nueva comunidad, rama no-auth, banner no-access
+- `tests/unit/communities/CommunityForm.test.tsx` — render accesible, validación zod, submit válido (con/sin onSuccess), COMMUNITY_NAME_TAKEN inline, ApiError genérico, Error genérico, estado submitting
+- `tests/unit/communities/CommunitiesNewPage.test.tsx` — smoke: heading "Crear comunidad", mock CommunityForm presente
 - `tests/unit/communities/CommunityList.test.tsx` — render N tarjetas, hrefs correctos, lista vacía
 - `tests/unit/communities/CommunitySwitcher.test.tsx` — 0/1/N comunidades, navegación al slug
 - `tests/unit/communities/loadingState.test.tsx` — role="status", aria-busy, aria-label
 - `tests/unit/communities/errorState.test.tsx` — título, mensaje, botón Reintentar, callback reset
 
 ### E2E
-- `tests/e2e/communities/create-community.spec.ts` — creación de comunidad (flujo completo)
+- `tests/e2e/communities/create-community.spec.ts` — creación de comunidad (flujo completo), nombre duplicado (COMMUNITY_NAME_TAKEN inline), imageUrl válida, imageUrl inválida, name >60 chars, description >500 chars; error 500 → test.todo
 - `tests/e2e/communities/community-list.spec.ts` — banner no-access, switcher (skip: requiere seed ≥2 comunidades), empty state (skip: requiere usuario sin comunidades)
 
 ## Storybook
@@ -44,13 +46,8 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 - `stories/communities/EmptyCommunitiesState.stories.tsx` — Default
 - `stories/communities/CommunitySwitcher.stories.tsx` — OneCommunity, ManyCommunities, SinActiva
 - `stories/communities/CommunitiesPage.stories.tsx` — Empty, ConLista, ConBannerNoAccess (wrappers visuales — página async no mockeable en SB)
-
-## Ficheros clave
-- `app/api/communities/route.ts` — thin controller: GET + POST
-- `lib/repositories/communities.repository.ts` — queries Supabase (DIP)
-- `app/(app)/communities/page.tsx` — listado + redirect AC-1 + banner no-access
-- `components/shared/Spinner.tsx` — spinner accesible compartido (communities + profile)
-- `app/(app)/communities/error.tsx` — error boundary con botón Reintentar
+- `stories/communities/CommunityForm.stories.tsx` — Default, ErrorNombreTomado (docs), ErrorServidor (docs)
+- `stories/communities/CommunitiesNewPage.stories.tsx` — Default (fullscreen, wrapper inline de la página)
 
 ## Última actualización
-Story 2.3 — 2026-03-28 | A11y Fase 5 — 2026-03-28 | Bug fixes UI — 2026-04-14 | Cobertura tests+stories — 2026-04-28
+Story 2.3 — 2026-03-28 | A11y Fase 5 — 2026-03-28 | Bug fixes UI — 2026-04-14 | Cobertura tests+stories — 2026-04-28 | Cobertura /communities/new — 2026-04-28
