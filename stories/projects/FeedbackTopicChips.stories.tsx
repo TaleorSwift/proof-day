@@ -12,7 +12,7 @@ const meta = {
 } satisfies Meta<typeof FeedbackTopicChips>
 
 export default meta
-type Story = StoryObj<typeof FeedbackTopicChips>
+type Story = StoryObj<typeof meta>
 
 export const SinSeleccion: Story = {
   args: {
@@ -56,4 +56,8 @@ function InteractivoTemplate() {
 
 export const Interactivo: Story = {
   render: () => <InteractivoTemplate />,
+  args: {
+    value: [],
+    onChange: () => {},
+  },
 }

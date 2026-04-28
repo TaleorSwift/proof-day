@@ -15,7 +15,7 @@ const meta = {
 } satisfies Meta<typeof LaunchIdeaModal>
 
 export default meta
-type Story = StoryObj<typeof LaunchIdeaModal>
+type Story = StoryObj<typeof meta>
 
 function EstadoVacioTemplate() {
   const [open, setOpen] = useState(true)
@@ -73,14 +73,29 @@ function ConDatosRellenosTemplate() {
 
 export const EstadoVacio: Story = {
   render: () => <EstadoVacioTemplate />,
+  args: {
+    open: true,
+    onOpenChange: () => {},
+    communitySlug: 'startup-madrid',
+  },
 }
 
 export const ChipsSeleccionados: Story = {
   render: () => <ChipsSeleccionadosTemplate />,
+  args: {
+    open: true,
+    onOpenChange: () => {},
+    communitySlug: 'startup-madrid',
+  },
 }
 
 export const EstadoCargando: Story = {
   render: () => <EstadoCargandoTemplate />,
+  args: {
+    open: true,
+    onOpenChange: () => {},
+    communitySlug: 'startup-madrid',
+  },
   parameters: {
     docs: {
       description: {
@@ -92,4 +107,9 @@ export const EstadoCargando: Story = {
 
 export const ConDatosRellenos: Story = {
   render: () => <ConDatosRellenosTemplate />,
+  args: {
+    open: true,
+    onOpenChange: () => {},
+    communitySlug: 'startup-madrid',
+  },
 }
