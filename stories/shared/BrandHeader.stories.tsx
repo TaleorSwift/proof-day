@@ -5,6 +5,9 @@ const meta: Meta<typeof BrandHeader> = {
   title: 'Shared/BrandHeader',
   component: BrandHeader,
   tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+  },
 }
 export default meta
 type Story = StoryObj<typeof BrandHeader>

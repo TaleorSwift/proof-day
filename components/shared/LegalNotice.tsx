@@ -1,4 +1,9 @@
-export function LegalNotice() {
+interface LegalNoticeProps {
+  /** Texto alternativo al canónico. Por defecto se muestra el texto legal oficial. */
+  children?: React.ReactNode
+}
+
+export function LegalNotice({ children }: LegalNoticeProps) {
   return (
     <p
       style={{
@@ -7,7 +12,7 @@ export function LegalNotice() {
         lineHeight: '1.4',
       }}
     >
-      Al continuar, aceptas compartir feedback constructivo y ayudar a tu equipo a aprender.
+      {children ?? 'Al continuar, aceptas compartir feedback constructivo y ayudar a tu equipo a aprender.'}
     </p>
   )
 }

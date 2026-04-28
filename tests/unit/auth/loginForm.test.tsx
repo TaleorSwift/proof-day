@@ -123,4 +123,11 @@ describe('LoginForm — submit y estados de interacción', () => {
     render(<LoginForm initialSent />)
     expect(screen.queryByRole('button', { name: /nuevo link/i })).toBeNull()
   })
+
+  it('initialServerError pre-popula el mensaje de error en el DOM', () => {
+    render(<LoginForm initialServerError="Error de servidor genérico" />)
+    const alert = screen.getByRole('alert')
+    expect(alert).toBeInTheDocument()
+    expect(alert).toHaveTextContent('Error de servidor genérico')
+  })
 })
