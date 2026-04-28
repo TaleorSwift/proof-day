@@ -111,7 +111,7 @@ test.describe('Crear comunidad — usuario autenticado', () => {
     await page.getByLabel('Imagen').fill('esto-no-es-una-url')
     await page.getByRole('button', { name: 'Crear comunidad' }).click()
 
-    await expect(page.locator('#imageUrl-error')).toBeVisible()
+    await expect(page.getByText('URL de imagen inválida')).toBeVisible()
     await expect(page).toHaveURL(/\/communities\/new/)
   })
 
@@ -121,7 +121,6 @@ test.describe('Crear comunidad — usuario autenticado', () => {
     await page.getByLabel('Descripción').fill('Descripción válida para test de límite')
     await page.getByRole('button', { name: 'Crear comunidad' }).click()
 
-    await expect(page.locator('#name-error')).toBeVisible()
     await expect(page.getByText('El nombre no puede superar 60 caracteres')).toBeVisible()
     await expect(page).toHaveURL(/\/communities\/new/)
   })
@@ -132,13 +131,23 @@ test.describe('Crear comunidad — usuario autenticado', () => {
     await page.getByLabel('Descripción').fill('A'.repeat(501))
     await page.getByRole('button', { name: 'Crear comunidad' }).click()
 
-    await expect(page.locator('#description-error')).toBeVisible()
     await expect(page.getByText('La descripción no puede superar 500 caracteres')).toBeVisible()
     await expect(page).toHaveURL(/\/communities\/new/)
   })
 
-  // Error 500 del servidor — requiere interceptar la red o un endpoint de test.
-  // No se puede provocar un error 500 real sin modificar el servidor en tiempo de test.
-  // Para cubrirlo: usar page.route() en Playwright para interceptar POST /api/communities y devolver 500.
-  test.skip('muestra error global de servidor cuando el backend devuelve 500', () => {})
+  test('muestra error global de servidor cuando el backend devuelve 500', async ({ page }) => {
+    await page.route('**/api/communities', (route) => {
+      route.fulfill({
+        status: 500,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Error interno del servidor' }),
+      })
+    })
+    await page.goto('/communities/new')
+    await page.getByLabel('Nombre').fill('Comunidad Test 500')
+    await page.getByLabel('Descripción').fill('Una descripción para test de error de servidor')
+    await page.getByRole('button', { name: 'Crear comunidad' }).click()
+    await expect(page.getByRole('alert')).toBeVisible()
+    await expect(page).toHaveURL(/\/communities\/new/)
+  })
 })

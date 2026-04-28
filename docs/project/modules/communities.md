@@ -49,12 +49,5 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 - `stories/communities/CommunityForm.stories.tsx` — Default, ErrorNombreTomado (docs), ErrorServidor (docs)
 - `stories/communities/CommunitiesNewPage.stories.tsx` — Default (fullscreen, wrapper inline de la página)
 
-## Ficheros clave
-- `app/api/communities/route.ts` — thin controller: GET + POST
-- `lib/repositories/communities.repository.ts` — queries Supabase (DIP)
-- `app/(app)/communities/page.tsx` — listado + redirect AC-1 + banner no-access
-- `components/shared/Spinner.tsx` — spinner accesible compartido (communities + profile)
-- `app/(app)/communities/error.tsx` — error boundary con botón Reintentar
-
 ## Última actualización
 Story 2.3 — 2026-03-28 | A11y Fase 5 — 2026-03-28 | Bug fixes UI — 2026-04-14 | Cobertura tests+stories — 2026-04-28 | Cobertura /communities/new — 2026-04-28

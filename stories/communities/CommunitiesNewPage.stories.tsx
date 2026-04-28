@@ -4,18 +4,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { CommunityForm } from '@/components/communities/CommunityForm'
 
-const meta: Meta = {
-  title: 'Pages/CommunitiesNew',
-  tags: ['autodocs'],
-  parameters: {
-    layout: 'fullscreen',
-    nextjs: { appDirectory: true },
-  },
-}
-
-export default meta
-type Story = StoryObj<typeof meta>
-
 function CommunitiesNewPageWrapper() {
   return (
     <main
@@ -41,6 +29,19 @@ function CommunitiesNewPageWrapper() {
     </main>
   )
 }
+
+const meta = {
+  title: 'Pages/CommunitiesNew',
+  component: CommunitiesNewPageWrapper,
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'fullscreen',
+    nextjs: { appDirectory: true },
+  },
+} satisfies Meta<typeof CommunitiesNewPageWrapper>
+
+export default meta
+type Story = StoryObj<typeof meta>
 
 // Vista completa de la página /communities/new con formulario vacío.
 export const Default: Story = {

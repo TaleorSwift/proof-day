@@ -4,7 +4,7 @@
  * Verifica que la página renderiza el heading correcto y el formulario.
  * CommunityForm se mockea para aislar la página de dependencias de navegación.
  */
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
@@ -23,6 +23,10 @@ import NewCommunityPage from '@/app/(app)/communities/new/page'
 // ---------------------------------------------------------------------------
 
 describe('CommunitiesNewPage — smoke tests', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('renderiza el heading "Crear comunidad"', () => {
     render(<NewCommunityPage />)
     expect(

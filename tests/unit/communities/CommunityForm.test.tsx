@@ -1,9 +1,7 @@
 // @vitest-environment jsdom
-/**
- * Tests — CommunityForm
- * Cubre: render accesible, validación zod, submit válido, errores de servidor,
- * COMMUNITY_NAME_TAKEN inline, error global, estado submitting.
- */
+// Tests — CommunityForm
+// Cubre: render accesible, validación zod, submit válido, errores de servidor,
+// COMMUNITY_NAME_TAKEN inline, error global, estado submitting.
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
@@ -95,8 +93,8 @@ describe('CommunityForm — validación zod al submit vacío', () => {
     fireEvent.click(screen.getByRole('button', { name: /Crear comunidad/i }))
 
     await waitFor(() => {
-      const alerts = screen.getAllByRole('alert')
-      expect(alerts.length).toBeGreaterThanOrEqual(1)
+      expect(screen.getByText('El nombre debe tener al menos 3 caracteres')).toBeInTheDocument()
+      expect(screen.getByText('La descripción es obligatoria')).toBeInTheDocument()
     })
 
     expect(mockCreateCommunity).not.toHaveBeenCalled()
@@ -148,10 +146,11 @@ describe('CommunityForm — submit válido sin onSuccess', () => {
 describe('CommunityForm — submit válido con onSuccess', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockCreateCommunity.mockResolvedValue(makeCommunity())
   })
 
   it('llama a onSuccess con la comunidad creada y NO llama a router.push', async () => {
+    const community = makeCommunity()
+    mockCreateCommunity.mockResolvedValueOnce(community)
     const onSuccess = vi.fn()
     render(<CommunityForm onSuccess={onSuccess} />)
     fillValidForm()
@@ -159,7 +158,7 @@ describe('CommunityForm — submit válido con onSuccess', () => {
     fireEvent.click(screen.getByRole('button', { name: /Crear comunidad/i }))
 
     await waitFor(() => {
-      expect(onSuccess).toHaveBeenCalledWith(makeCommunity())
+      expect(onSuccess).toHaveBeenCalledWith(community)
     })
 
     expect(mockPush).not.toHaveBeenCalled()
