@@ -11,10 +11,11 @@ import '@testing-library/jest-dom'
 // Mocks hoisted
 // ---------------------------------------------------------------------------
 
-const { redirectMock, permanentRedirectMock, getUserCommunitiesMock } = vi.hoisted(() => ({
+const { redirectMock, permanentRedirectMock, getUserCommunitiesMock, createClientMock } = vi.hoisted(() => ({
   redirectMock: vi.fn(),
   permanentRedirectMock: vi.fn(),
   getUserCommunitiesMock: vi.fn(),
+  createClientMock: vi.fn(),
 }))
 
 vi.mock('next/navigation', () => ({
@@ -26,15 +27,17 @@ vi.mock('@/lib/queries/communities', () => ({
   getUserCommunities: getUserCommunitiesMock,
 }))
 
+createClientMock.mockResolvedValue({
+  auth: {
+    getUser: vi.fn().mockResolvedValue({
+      data: { user: { id: 'user-test-123' } },
+      error: null,
+    }),
+  },
+})
+
 vi.mock('@/lib/supabase/server', () => ({
-  createClient: vi.fn().mockResolvedValue({
-    auth: {
-      getUser: vi.fn().mockResolvedValue({
-        data: { user: { id: 'user-test-123' } },
-        error: null,
-      }),
-    },
-  }),
+  createClient: createClientMock,
 }))
 
 vi.mock('@/components/communities/CommunityList', () => ({
@@ -211,5 +214,93 @@ describe('CommunitiesPage — AC-5: botón nueva comunidad ausente con 1 comunid
   it('llama a permanentRedirect (no renderiza la página)', async () => {
     await CommunitiesPage({ searchParams: defaultSearchParams })
     expect(permanentRedirectMock).toHaveBeenCalledWith('/communities/unica')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Rama no-auth: usuario sin sesión → redirect a /login
+// ---------------------------------------------------------------------------
+
+describe('CommunitiesPage — rama no-auth: redirect a /login sin sesión', () => {
+  beforeEach(() => {
+    // Sobreescribir createClient para devolver usuario null
+    createClientMock.mockResolvedValueOnce({
+      auth: {
+        getUser: vi.fn().mockResolvedValue({
+          data: { user: null },
+          error: null,
+        }),
+      },
+    })
+    // redirect lanza para simular comportamiento de Next.js
+    redirectMock.mockImplementation(() => {
+      throw new Error('NEXT_REDIRECT')
+    })
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+    // Restaurar el mock por defecto para que los demás tests no se vean afectados
+    createClientMock.mockResolvedValue({
+      auth: {
+        getUser: vi.fn().mockResolvedValue({
+          data: { user: { id: 'user-test-123' } },
+          error: null,
+        }),
+      },
+    })
+  })
+
+  it('llama a redirect("/login") cuando no hay sesión activa', async () => {
+    await expect(
+      CommunitiesPage({ searchParams: defaultSearchParams })
+    ).rejects.toThrow('NEXT_REDIRECT')
+    expect(redirectMock).toHaveBeenCalledWith('/login')
+  })
+
+  it('llama a redirect exactamente una vez', async () => {
+    await expect(
+      CommunitiesPage({ searchParams: defaultSearchParams })
+    ).rejects.toThrow('NEXT_REDIRECT')
+    expect(redirectMock).toHaveBeenCalledTimes(1)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Banner no-access: searchParams con error=no-access
+// ---------------------------------------------------------------------------
+
+describe('CommunitiesPage — banner no-access', () => {
+  beforeEach(() => {
+    getUserCommunitiesMock.mockResolvedValue([
+      makeCommunity('alpha'),
+      makeCommunity('beta'),
+    ])
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renderiza el banner cuando searchParams incluye error=no-access', async () => {
+    const searchParamsWithError = Promise.resolve({ error: 'no-access' })
+    const jsx = await CommunitiesPage({ searchParams: searchParamsWithError })
+    render(jsx as React.ReactElement)
+    expect(
+      screen.getByText('No tienes acceso a esta comunidad.')
+    ).toBeInTheDocument()
+  })
+
+  it('el banner tiene role="alert" para accesibilidad', async () => {
+    const searchParamsWithError = Promise.resolve({ error: 'no-access' })
+    const jsx = await CommunitiesPage({ searchParams: searchParamsWithError })
+    render(jsx as React.ReactElement)
+    expect(screen.getByRole('alert')).toBeInTheDocument()
+  })
+
+  it('NO renderiza el banner cuando no hay error en searchParams', async () => {
+    const jsx = await CommunitiesPage({ searchParams: defaultSearchParams })
+    render(jsx as React.ReactElement)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 })
