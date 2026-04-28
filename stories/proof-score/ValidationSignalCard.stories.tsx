@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ValidationSignalCard } from '@/components/proof-score/ValidationSignalCard'
 
-const meta: Meta<typeof ValidationSignalCard> = {
+const meta = {
   title: 'ProofScore/ValidationSignalCard',
   component: ValidationSignalCard,
   parameters: {
-    layout: 'padded',
+    layout: 'centered',
   },
   tags: ['autodocs'],
-}
+} satisfies Meta<typeof ValidationSignalCard>
 
 export default meta
 type Story = StoryObj<typeof meta>

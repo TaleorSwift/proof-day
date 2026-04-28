@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { Button } from '@/components/ui/button'
 
-const meta: Meta<typeof Button> = {
+const meta = {
   title: 'Shared/Button',
   component: Button,
   parameters: {
@@ -18,7 +18,7 @@ const meta: Meta<typeof Button> = {
       options: ['default', 'sm', 'lg', 'icon'],
     },
   },
-}
+} satisfies Meta<typeof Button>
 
 export default meta
 type Story = StoryObj<typeof meta>

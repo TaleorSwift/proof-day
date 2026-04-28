@@ -2,17 +2,17 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { TopContributorsList } from '@/components/gamification/TopContributorsList'
 import type { TopContributor } from '@/lib/types/gamification'
 
-const meta: Meta<typeof TopContributorsList> = {
+const meta = {
   title: 'Gamification/TopContributors',
   component: TopContributorsList,
   tags: ['autodocs'],
   parameters: {
-    layout: 'padded',
+    layout: 'centered',
   },
-}
+} satisfies Meta<typeof TopContributorsList>
 
 export default meta
-type Story = StoryObj<typeof TopContributorsList>
+type Story = StoryObj<typeof meta>
 
 // ---------------------------------------------------------------------------
 // Fixtures

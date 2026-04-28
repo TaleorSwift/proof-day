@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { UserAvatar } from '@/components/shared/UserAvatar'
 
-const meta: Meta<typeof UserAvatar> = {
+const meta = {
   title: 'Shared/UserAvatar',
   component: UserAvatar,
   parameters: {
@@ -17,7 +17,7 @@ const meta: Meta<typeof UserAvatar> = {
       control: 'boolean',
     },
   },
-}
+} satisfies Meta<typeof UserAvatar>
 
 export default meta
 type Story = StoryObj<typeof meta>

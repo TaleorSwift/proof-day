@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { SignalIndicator } from '@/components/shared/SignalIndicator'
 
-const meta: Meta<typeof SignalIndicator> = {
+const meta = {
   title: 'Shared/SignalIndicator',
   component: SignalIndicator,
   parameters: {
@@ -14,7 +14,7 @@ const meta: Meta<typeof SignalIndicator> = {
       options: ['promising', 'needs-work', 'weak'],
     },
   },
-}
+} satisfies Meta<typeof SignalIndicator>
 
 export default meta
 type Story = StoryObj<typeof meta>

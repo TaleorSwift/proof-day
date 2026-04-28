@@ -2,14 +2,14 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useState } from 'react'
 import { FeedbackTopicChips } from '@/components/projects/FeedbackTopicChips'
 
-const meta: Meta<typeof FeedbackTopicChips> = {
+const meta = {
   title: 'Projects/FeedbackTopicChips',
   component: FeedbackTopicChips,
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',
   },
-}
+} satisfies Meta<typeof FeedbackTopicChips>
 
 export default meta
 type Story = StoryObj<typeof FeedbackTopicChips>

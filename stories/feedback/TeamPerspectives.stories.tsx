@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { TeamPerspectives } from '@/components/feedback/TeamPerspectives'
 
-const meta: Meta<typeof TeamPerspectives> = {
+const meta = {
   title: 'Feedback/TeamPerspectives',
   component: TeamPerspectives,
   parameters: {
     layout: 'padded',
   },
   tags: ['autodocs'],
-}
+} satisfies Meta<typeof TeamPerspectives>
 
 export default meta
 type Story = StoryObj<typeof meta>

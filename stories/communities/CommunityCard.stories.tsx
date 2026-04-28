@@ -13,12 +13,12 @@ const baseCommunity = {
   member_count: 8,
 }
 
-const meta: Meta<typeof CommunityCard> = {
+const meta = {
   title: 'Communities/CommunityCard',
   component: CommunityCard,
   tags: ['autodocs'],
   parameters: {
-    layout: 'padded',
+    layout: 'centered',
     nextjs: { appDirectory: true },
   },
   decorators: [
@@ -28,7 +28,7 @@ const meta: Meta<typeof CommunityCard> = {
       </div>
     ),
   ],
-}
+} satisfies Meta<typeof CommunityCard>
 
 export default meta
 type Story = StoryObj<typeof meta>

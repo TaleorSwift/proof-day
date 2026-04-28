@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { BrandHeader } from '@/components/shared/BrandHeader'
 
-const meta: Meta<typeof BrandHeader> = {
+const meta = {
   title: 'Shared/BrandHeader',
   component: BrandHeader,
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },
-}
+} satisfies Meta<typeof BrandHeader>
 export default meta
-type Story = StoryObj<typeof BrandHeader>
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
 

@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { ProofScoreBadge } from '@/components/proof-score/ProofScoreBadge'
 
-const meta: Meta<typeof ProofScoreBadge> = {
+const meta = {
   title: 'ProofScore/ProofScoreBadge',
   component: ProofScoreBadge,
   parameters: {
-    layout: 'padded',
+    layout: 'centered',
   },
   tags: ['autodocs'],
-}
+} satisfies Meta<typeof ProofScoreBadge>
 
 export default meta
 type Story = StoryObj<typeof meta>

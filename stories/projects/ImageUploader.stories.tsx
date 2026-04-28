@@ -3,14 +3,14 @@ import { useState } from 'react'
 import { ImageUploader } from '@/components/projects/ImageUploader'
 import type { UploaderImage } from '@/components/projects/ImageUploader'
 
-const meta: Meta<typeof ImageUploader> = {
+const meta = {
   title: 'Projects/ImageUploader',
   component: ImageUploader,
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',
   },
-}
+} satisfies Meta<typeof ImageUploader>
 
 export default meta
 type Story = StoryObj<typeof ImageUploader>

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { StatusBadge } from '@/components/projects/StatusBadge'
 
-const meta: Meta<typeof StatusBadge> = {
+const meta = {
   title: 'Projects/StatusBadge',
   component: StatusBadge,
   parameters: {
@@ -14,7 +14,7 @@ const meta: Meta<typeof StatusBadge> = {
       options: ['live', 'draft', 'inactive'],
     },
   },
-}
+} satisfies Meta<typeof StatusBadge>
 
 export default meta
 type Story = StoryObj<typeof meta>

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useState } from 'react'
 import { LaunchIdeaModal } from '@/components/projects/LaunchIdeaModal'
 
-const meta: Meta<typeof LaunchIdeaModal> = {
+const meta = {
   title: 'Projects/LaunchIdeaModal',
   component: LaunchIdeaModal,
   tags: ['autodocs'],
@@ -12,7 +12,7 @@ const meta: Meta<typeof LaunchIdeaModal> = {
       appDirectory: true,
     },
   },
-}
+} satisfies Meta<typeof LaunchIdeaModal>
 
 export default meta
 type Story = StoryObj<typeof LaunchIdeaModal>
