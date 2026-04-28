@@ -149,6 +149,7 @@ describe('InvitationSection — copiar link', () => {
   })
 
   it('el botón cambia a "¡Copiado!" tras hacer click', async () => {
+    vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined)
     const user = userEvent.setup()
     render(<InvitationSection communityId="community-1" />)
 
@@ -162,6 +163,7 @@ describe('InvitationSection — copiar link', () => {
   })
 
   it('el indicador de estado cambia a "Copiado" tras hacer click', async () => {
+    vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined)
     const user = userEvent.setup()
     render(<InvitationSection communityId="community-1" />)
 

@@ -13,20 +13,14 @@ import '@testing-library/jest-dom'
 
 const {
   redirectMock,
-  notFoundMock,
   createClientMock,
 } = vi.hoisted(() => ({
   redirectMock: vi.fn(),
-  notFoundMock: vi.fn(),
   createClientMock: vi.fn(),
 }))
 
 vi.mock('next/navigation', () => ({
   redirect: redirectMock,
-}))
-
-vi.mock('next/dist/client/components/not-found', () => ({
-  notFound: notFoundMock,
 }))
 
 // Mock BackButton para no depender de lucide-react en jsdom

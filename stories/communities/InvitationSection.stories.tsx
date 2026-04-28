@@ -46,6 +46,9 @@ export const ConLinks: Story = {
     // Generar segundo link
     await user.click(canvas.getByRole('button', { name: /Generar link/i }))
 
+    // Verificar que los 2 links generados son visibles
+    await expect(await canvas.findAllByRole('textbox')).toHaveLength(2)
+
     window.fetch = originalFetch
   },
 }
@@ -55,6 +58,7 @@ export const Copiado: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const originalFetch = window.fetch
+    const originalClipboardDescriptor = Object.getOwnPropertyDescriptor(navigator, 'clipboard')
 
     window.fetch = async () =>
       new Response(
@@ -80,6 +84,11 @@ export const Copiado: Story = {
     await expect(canvas.getByRole('button', { name: /¡Copiado!/i })).toBeInTheDocument()
 
     window.fetch = originalFetch
+
+    // Restaurar clipboard al descriptor original
+    if (originalClipboardDescriptor) {
+      Object.defineProperty(navigator, 'clipboard', originalClipboardDescriptor)
+    }
   },
 }
 
@@ -97,6 +106,9 @@ export const ErrorFetch: Story = {
 
     const user = userEvent.setup()
     await user.click(canvas.getByRole('button', { name: /Generar link/i }))
+
+    // Verificar que el mensaje de error es visible
+    await expect(canvas.findByText(/error/i)).resolves.toBeInTheDocument()
 
     window.fetch = originalFetch
   },
