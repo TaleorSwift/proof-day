@@ -1,97 +1,11 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import Link from 'next/link'
 import type { InvitationTokenResult } from '@/lib/types/invitations'
+import { InviteErrorState } from '@/components/invitations/InviteErrorState'
+import { InviteAlreadyMemberState } from '@/components/invitations/InviteAlreadyMemberState'
 
 interface Props {
   params: Promise<{ token: string }>
-}
-
-// Component: token inválido, ya usado o inexistente
-// CR3-F6 + CR5-F2: CSS variables for colors, typography, and spacing
-function InviteErrorState({ message }: { message: string }) {
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center" style={{ padding: 'var(--space-6)' }}>
-      <div
-        className="text-center"
-        style={{
-          /* max-w-md (28rem) — no hay token CSS equivalente en design-tokens.md (story 2.2) */
-          width: '100%',
-          maxWidth: '28rem',
-          border: '1px solid var(--color-border)',
-          backgroundColor: 'var(--color-weak-bg)',
-          borderRadius: 'var(--radius-md)',
-          padding: 'var(--space-8)',
-        }}
-      >
-        <h1
-          style={{
-            color: 'var(--color-weak-text)',
-            fontSize: 'var(--text-xl)',
-            fontWeight: 'var(--font-semibold)',
-            marginBottom: 'var(--space-3)',
-          }}
-        >
-          Link inválido
-        </h1>
-        <p style={{ color: 'var(--color-weak-text)', marginBottom: 'var(--space-6)' }}>
-          {message}
-        </p>
-        <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)' }}>
-          Solicita un nuevo link de invitación al administrador de la comunidad.
-        </p>
-      </div>
-    </div>
-  )
-}
-
-// Component: usuario ya es miembro de la comunidad (AC 6)
-// CR3-F6 + CR5-F2: CSS variables for colors, typography, and spacing
-function InviteAlreadyMemberState() {
-  return (
-    <div className="flex min-h-screen flex-col items-center justify-center" style={{ padding: 'var(--space-6)' }}>
-      <div
-        className="text-center"
-        style={{
-          /* max-w-md (28rem) — no hay token CSS equivalente en design-tokens.md (story 2.2) */
-          width: '100%',
-          maxWidth: '28rem',
-          border: '1px solid var(--color-border)',
-          backgroundColor: 'var(--color-promising-bg)',
-          borderRadius: 'var(--radius-md)',
-          padding: 'var(--space-8)',
-        }}
-      >
-        <h1
-          style={{
-            color: 'var(--color-promising-text)',
-            fontSize: 'var(--text-xl)',
-            fontWeight: 'var(--font-semibold)',
-            marginBottom: 'var(--space-3)',
-          }}
-        >
-          Ya eres miembro de esta comunidad
-        </h1>
-        <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-6)' }}>
-          Ya formas parte de esta comunidad. Puedes acceder directamente.
-        </p>
-        <Link
-          href="/communities"
-          style={{
-            display: 'inline-block',
-            backgroundColor: 'var(--color-primary)',
-            color: 'var(--color-surface)',
-            borderRadius: 'var(--radius-md)',
-            padding: 'var(--space-2) var(--space-5)',
-            fontSize: 'var(--text-sm)',
-            fontWeight: 'var(--font-medium)',
-          }}
-        >
-          Ver mis comunidades
-        </Link>
-      </div>
-    </div>
-  )
 }
 
 export default async function InvitePage({ params }: Props) {
