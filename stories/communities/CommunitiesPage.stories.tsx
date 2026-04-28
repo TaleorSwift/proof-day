@@ -26,7 +26,7 @@ const pageWrapper = (children: React.ReactNode) => (
     style={{
       minHeight: '100vh',
       backgroundColor: 'var(--color-background)',
-      padding: 'var(--space-8, 32px)',
+      padding: 'var(--space-8)',
     }}
   >
     <div style={{ maxWidth: '960px', margin: '0 auto' }}>

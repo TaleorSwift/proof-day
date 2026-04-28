@@ -22,10 +22,10 @@ export function Spinner({ ariaLabel = 'Cargando…' }: SpinnerProps) {
           borderRadius: '50%',
           border: '3px solid var(--color-border)',
           borderTopColor: 'var(--color-primary)',
-          animation: 'spin 0.8s linear infinite',
+          animation: 'spinner-rotate 0.8s linear infinite',
         }}
       />
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <style>{`@keyframes spinner-rotate { to { transform: rotate(360deg); } }`}</style>
     </div>
   )
 }
