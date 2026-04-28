@@ -50,3 +50,15 @@ export const CheckEmail: Story = {
     initialSent: true,
   },
 }
+
+/**
+ * Estado server error — Supabase devuelve un error al enviar el magic link.
+ * Se muestra cuando sendMagicLink devuelve { error: '...' }.
+ * Usa errorParam con valor distinto de 'link-invalid' para mostrar el error
+ * genérico sin el CTA "Solicitar un nuevo link".
+ */
+export const ServerError: Story = {
+  args: {
+    initialServerError: 'No pudimos enviar el email. Intenta de nuevo.',
+  },
+}

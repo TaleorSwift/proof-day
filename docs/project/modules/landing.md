@@ -17,6 +17,8 @@ Su función es presentar la identidad visual y redirigir al flujo de autenticaci
 | `app/page.tsx` | Server Component — lógica de auth + redirect + render WelcomeScreen |
 | `components/landing/WelcomeScreen.tsx` | Componente visual puro — testeable y usable en Storybook |
 
+`WelcomeScreen` usa los componentes compartidos `BrandHeader` y `LegalNotice` de `components/shared/`.
+
 ## Reglas
 
 1. `app/page.tsx` DEBE ser Server Component (no `'use client'`). El redirect requiere ejecución en servidor.

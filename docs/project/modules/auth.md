@@ -6,7 +6,7 @@ Gestiona la autenticación de usuarios mediante magic links (sin contraseña). E
 
 ## Reglas de comportamiento
 
-- El formulario de login se encuentra en `/login` y es accesible sin sesión activa. Muestra logo (`/logo.png`, 128px), H1 "Bienvenido a Proof Day", subtítulo motivador y texto legal — sin `Card` flotante. (story 1.2, story 9.2)
+- El formulario de login se encuentra en `/login` y es accesible sin sesión activa. Muestra logo (`/logo.png`, 192×192), H1 "Bienvenido a Proof Day", subtítulo motivador y texto legal — sin `Card` flotante. (story 1.2, story 9.2)
 - Al enviar un email válido, Supabase Auth dispara el magic link vía Resend SMTP sin código adicional en la app. (story 1.2)
 - Tras enviar el email, se muestra el success state (logo + mensaje) sin redirect y sin card: "Revisa tu email — te hemos enviado un link de acceso". (story 1.2, story 9.2)
 - Los errores de validación de email se muestran inline bajo el campo (no toast, no alert). (story 1.2)
@@ -34,7 +34,37 @@ Gestiona la autenticación de usuarios mediante magic links (sin contraseña). E
 - `components/auth/LoginForm.tsx` + `components/auth/ConfirmButton.tsx` — formularios de auth
 - `app/auth/confirm/page.tsx` — página intermedia anti-scanner magic link
 - `lib/auth/confirm.ts` — funciones puras: validateConfirmSearchParams, buildConfirmParams
+- `components/shared/BrandHeader.tsx` — logo + H1 + subtítulo compartido (usado en LoginForm y WelcomeScreen)
+- `components/shared/LegalNotice.tsx` — texto legal compartido (usado en LoginForm y WelcomeScreen)
+
+## Tests
+
+### Unit (Vitest)
+
+- `tests/unit/auth/loginForm.test.tsx` — layout sin card, submit válido → estado sent, validación inline email vacío, server error.
+- `tests/unit/auth/sendMagicLink.test.ts` — email válido + Supabase ok → `{ success: true }`, email inválido no llama a Supabase, error de Supabase → `{ error }`.
+- `tests/unit/auth/loginPage.test.tsx` — con sesión → redirect a `/communities`, sin sesión → render LoginForm, searchParams.error → pasa errorParam.
+- `tests/unit/auth/login-schema.test.ts` — validación zod del schema de login.
+- `tests/unit/auth/confirmButtonComponent.test.tsx` — botón de confirmación de magic link.
+
+### E2E (Playwright)
+
+- `tests/e2e/auth/login.spec.ts`:
+  - **Visitante no autenticado**: formulario visible, validación email inválido, success state al enviar, CTA link-invalid.
+  - **Usuario autenticado**: `/login` redirige a `/communities`.
+
+## Storybook
+
+Story: `auth/LoginForm`
+
+Variantes:
+
+- `Default` — campo email vacío.
+- `WithLinkInvalidError` — error de link expirado con CTA.
+- `CheckEmail` — success state tras envío.
+- `Loading` — estado efímero de submit (documentado; verificar manualmente).
+- `ServerError` — error genérico de servidor pre-poblado.
 
 ## Última actualización
 
-Story 9.2 — Login visual rediseño (logo + layout sin card) — 2026-04-10
+chore/login-coverage-gaps — extraer BrandHeader y LegalNotice, cobertura unit/e2e — 2026-04-27

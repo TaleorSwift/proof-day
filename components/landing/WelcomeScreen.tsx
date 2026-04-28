@@ -4,8 +4,9 @@
  * Extraído de app/page.tsx para permitir testing sin el wrapper async
  * de Server Component y uso en Storybook sin lógica de autenticación.
  */
-import Image from 'next/image'
 import Link from 'next/link'
+import { BrandHeader } from '@/components/shared/BrandHeader'
+import { LegalNotice } from '@/components/shared/LegalNotice'
 
 export function WelcomeScreen() {
   return (
@@ -25,30 +26,7 @@ export function WelcomeScreen() {
           padding: '0 var(--space-4)',
         }}
       >
-        <Image
-          src="/logo.png"
-          alt="Proof Day"
-          width={192}
-          height={192}
-          priority
-        />
-        <h1
-          style={{
-            fontSize: 'var(--text-2xl)',
-            fontWeight: 'var(--font-semibold)',
-            color: 'var(--color-text-primary)',
-          }}
-        >
-          Bienvenido a Proof Day
-        </h1>
-        <p
-          style={{
-            fontSize: 'var(--text-sm)',
-            color: 'var(--color-text-secondary)',
-          }}
-        >
-          Valida ideas. Aprende más rápido. Construye lo que importa.
-        </p>
+        <BrandHeader />
         <Link
           href="/login"
           style={{
@@ -68,15 +46,7 @@ export function WelcomeScreen() {
         >
           Continuar con email
         </Link>
-        <p
-          style={{
-            fontSize: 'var(--text-xs)',
-            color: 'var(--color-text-secondary)',
-            lineHeight: '1.4',
-          }}
-        >
-          Al continuar, aceptas compartir feedback constructivo y ayudar a tu equipo a aprender.
-        </p>
+        <LegalNotice />
       </div>
     </main>
   )
