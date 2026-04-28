@@ -72,8 +72,10 @@ function ConDatosRellenosTemplate() {
   )
 }
 
-async function rellenarCamposRequeridos(canvas: ReturnType<typeof within>) {
-  const user = userEvent.setup()
+async function rellenarCamposRequeridos(
+  canvas: ReturnType<typeof within>,
+  user: ReturnType<typeof userEvent.setup>
+) {
   await user.type(canvas.getByTestId('modal-field-title'), 'Idea de demostración')
   await user.type(canvas.getByTestId('modal-field-tagline'), 'El mejor tagline del mundo')
   await user.type(canvas.getByTestId('modal-field-problem'), 'Los desarrolladores no tienen tiempo para escribir tests')
@@ -125,19 +127,28 @@ export const ChipsSeleccionados: Story = {
     onOpenChange: () => {},
     communitySlug: 'startup-madrid',
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const user = userEvent.setup()
+    // Hace click en el primer chip de feedback ('Claridad del problema')
+    await user.click(canvas.getByRole('button', { name: 'Claridad del problema' }))
+  },
 }
 
-export const EstadoCargando: Story = {
+export const EstadoCargandoManual: Story = {
+  name: 'EstadoCargandoManual',
   render: () => <EstadoCargandoTemplate />,
   args: {
     open: true,
     onOpenChange: () => {},
     communitySlug: 'startup-madrid',
   },
+  tags: ['!autodocs'],
   parameters: {
     docs: {
       description: {
-        story: 'El botón "+ Lanzar proyecto" muestra "Lanzando..." durante el submit.',
+        story:
+          'Estado manual: rellenar campos y hacer submit para ver el botón "Lanzando…". No reproducible automáticamente sin mock del action.',
       },
     },
   },
@@ -170,8 +181,8 @@ export const ErrorServidor: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    await rellenarCamposRequeridos(canvas)
     const user = userEvent.setup()
+    await rellenarCamposRequeridos(canvas, user)
     await user.click(canvas.getByRole('button', { name: '+ Lanzar proyecto' }))
   },
   parameters: {
@@ -189,6 +200,8 @@ export const ErrorServidor: Story = {
  * El botón "Añadir" desaparece cuando images.length >= maxImages (3).
  * Interactúa manualmente con el uploader para llegar al estado de límite.
  */
+// No es posible pre-popular 3 imágenes programáticamente (el ImageUploader
+// requiere interacción real con el file input). Excluida de autodocs.
 export const ConTodasLasImagenes: Story = {
   render: () => <ConTodasLasImagenesTemplate />,
   args: {
@@ -196,6 +209,7 @@ export const ConTodasLasImagenes: Story = {
     onOpenChange: () => {},
     communitySlug: 'startup-madrid',
   },
+  tags: ['!autodocs'],
   parameters: {
     docs: {
       description: {

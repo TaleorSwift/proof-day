@@ -6,6 +6,14 @@ import { test, expect } from '@playwright/test'
 
 test.describe('LaunchIdeaModal — flujo modal lanzar idea (Story 9.8)', () => {
   const COMMUNITY_FEED_URL = '/communities/startup-madrid'
+  const testTitle = `Idea de test E2E ${Date.now()}`
+
+  // cleanup manual si es necesario en CI
+  test.afterAll(async () => {
+    // No hay patrón de supabase admin client en este repo — el título único con
+    // Date.now() garantiza idempotencia entre ejecuciones. Limpiar manualmente
+    // en caso de necesitar restablecer la BD de test.
+  })
 
   test(
     'abre el modal al hacer click en el botón "Lanzar idea"',
@@ -29,7 +37,7 @@ test.describe('LaunchIdeaModal — flujo modal lanzar idea (Story 9.8)', () => {
       await page.getByTestId('btn-launch-idea').click()
       await expect(page.getByRole('dialog')).toBeVisible()
 
-      await page.getByTestId('modal-field-title').fill('Idea de test E2E')
+      await page.getByTestId('modal-field-title').fill(testTitle)
       await page.getByTestId('modal-field-tagline').fill('Tagline de la idea de test')
       await page.getByTestId('modal-field-problem').fill('El problema es que los tests de e2e no cubren el modal')
       await page.getByTestId('modal-field-solution').fill('La solución es añadir un spec de e2e completo')
@@ -50,10 +58,8 @@ test.describe('LaunchIdeaModal — flujo modal lanzar idea (Story 9.8)', () => {
 
       await page.getByRole('button', { name: '+ Lanzar proyecto' }).click()
 
-      await expect(page.getByRole('alert').first()).toBeVisible()
-      // Los campos title, problem, solution e hypothesis deben mostrar error
-      const alerts = page.getByRole('alert')
-      await expect(alerts.first()).toBeVisible()
+      // Verificar los 5 campos requeridos: title, tagline, problem, solution, hypothesis
+      await expect(page.getByRole('alert')).toHaveCount(5)
     }
   )
 

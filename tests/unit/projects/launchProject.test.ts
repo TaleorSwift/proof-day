@@ -228,6 +228,44 @@ describe('launchProject — inserción exitosa', () => {
         community_id: MOCK_COMMUNITY.id,
         builder_id: MOCK_USER.id,
         title: VALID_INPUT.title,
+        slug: expect.any(String), // derivado de toSlug(input.title)
+        image_urls: VALID_INPUT.imageUrls,
+        feedback_topics: VALID_INPUT.feedbackTopics,
+      })
+    )
+  })
+
+  it('mapea imageUrls y feedbackTopics correctamente al insert', async () => {
+    const insertSpy = vi.fn().mockReturnThis()
+    const selectSpy = vi.fn().mockReturnThis()
+    const singleSpy = vi.fn().mockResolvedValue({ data: MOCK_PROJECT, error: null })
+
+    supabaseMock.from.mockImplementation((table: string) => {
+      if (table === 'communities') {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: MOCK_COMMUNITY, error: null }),
+        }
+      }
+      if (table === 'projects') {
+        return { insert: insertSpy, select: selectSpy, single: singleSpy }
+      }
+      return {}
+    })
+
+    const inputConMedia = {
+      ...VALID_INPUT,
+      imageUrls: ['https://picsum.photos/200'],
+      feedbackTopics: ['ux', 'product'],
+    }
+
+    await launchProject(inputConMedia)
+
+    expect(insertSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        image_urls: ['https://picsum.photos/200'],
+        feedback_topics: ['ux', 'product'],
       })
     )
   })
