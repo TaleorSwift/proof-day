@@ -4,18 +4,18 @@ interface SpinnerProps {
 
 export function Spinner({ ariaLabel = 'Cargando…' }: SpinnerProps) {
   return (
-    <main
+    <div
+      role="status"
+      aria-busy="true"
+      aria-label={ariaLabel}
       style={{
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '60vh',
       }}
-      aria-label={ariaLabel}
-      aria-busy="true"
     >
       <div
-        role="status"
         style={{
           width: '32px',
           height: '32px',
@@ -26,6 +26,6 @@ export function Spinner({ ariaLabel = 'Cargando…' }: SpinnerProps) {
         }}
       />
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-    </main>
+    </div>
   )
 }

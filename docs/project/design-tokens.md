@@ -234,3 +234,4 @@ Aplica a: tarjeta de hipótesis del proyecto, feedback pendiente, pre-Proof Scor
 4. **Proof Score siempre con Badge semántico** — nunca texto plano.
 5. **Decisión Builder siempre en Dialog** — nunca inline ni dropdown.
 6. **Estados loading siempre con Skeleton** — nunca pantalla en blanco.
+   - Excepción documentada: `Spinner` (`components/shared/Spinner`) se usa en límites de ruta completos (`loading.tsx`), donde la forma del contenido es desconocida. El Skeleton es para placeholder de contenido con forma conocida dentro de una página ya renderizada.

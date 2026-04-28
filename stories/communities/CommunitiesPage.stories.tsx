@@ -70,8 +70,8 @@ function NoAccessPage() {
       <div
         role="alert"
         style={{
-          backgroundColor: 'var(--color-hypothesis-bg, #fff8e1)',
-          border: '1px solid var(--color-hypothesis-border, #f0c040)',
+          backgroundColor: 'var(--color-hypothesis-bg)',
+          border: '1px solid var(--color-hypothesis-border)',
           borderRadius: '8px',
           padding: '16px',
           marginBottom: '24px',

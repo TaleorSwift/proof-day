@@ -49,7 +49,7 @@ export default function CommunitiesError({ error, reset }: ErrorProps) {
         style={{
           padding: 'var(--space-2) var(--space-4)',
           backgroundColor: 'var(--color-primary)',
-          color: '#fff',
+          color: 'var(--color-surface)',
           borderRadius: 'var(--radius-md)',
           border: 'none',
           fontSize: 'var(--text-sm)',

@@ -22,14 +22,13 @@ describe('CommunitiesLoading', () => {
 
   it('el contenedor principal tiene aria-busy="true"', () => {
     render(<CommunitiesLoading />)
-    const main = screen.getByRole('main')
-    expect(main).toHaveAttribute('aria-busy', 'true')
+    const container = screen.getByRole('status')
+    expect(container).toHaveAttribute('aria-busy', 'true')
   })
 
   it('el contenedor principal tiene aria-label descriptivo', () => {
     render(<CommunitiesLoading />)
-    const main = screen.getByRole('main')
-    expect(main).toHaveAttribute('aria-label')
-    expect(main.getAttribute('aria-label')).toBeTruthy()
+    const container = screen.getByRole('status')
+    expect(container.getAttribute('aria-label')).toBe('Cargando…')
   })
 })
