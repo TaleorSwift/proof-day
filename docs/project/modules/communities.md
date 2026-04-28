@@ -25,13 +25,32 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 - Cualquier error en rutas `/communities/*` muestra `error.tsx` con botón "Reintentar". (Fase 5)
 - Durante carga, se muestra `loading.tsx` con spinner accesible (`role="status"`, `aria-busy`). (Fase 5)
 
+## Tests
+
+### Unit
+- `tests/unit/communities/CommunitiesPage.test.tsx` — redirect AC-1/AC-5, empty state, lista, botón nueva comunidad, rama no-auth, banner no-access
+- `tests/unit/communities/CommunityList.test.tsx` — render N tarjetas, hrefs correctos, lista vacía
+- `tests/unit/communities/CommunitySwitcher.test.tsx` — 0/1/N comunidades, navegación al slug
+- `tests/unit/communities/loadingState.test.tsx` — role="status", aria-busy, aria-label
+- `tests/unit/communities/errorState.test.tsx` — título, mensaje, botón Reintentar, callback reset
+
+### E2E
+- `tests/e2e/communities/create-community.spec.ts` — creación de comunidad (flujo completo)
+- `tests/e2e/communities/community-list.spec.ts` — banner no-access, switcher (skip: requiere seed ≥2 comunidades), empty state (skip: requiere usuario sin comunidades)
+
+## Storybook
+- `stories/communities/CommunityCard.stories.tsx` — Default, SinImagen, SinDescripcion, SingleMember, MultipleMembers
+- `stories/communities/CommunityList.stories.tsx` — TwoCards, ManyCards
+- `stories/communities/EmptyCommunitiesState.stories.tsx` — Default
+- `stories/communities/CommunitySwitcher.stories.tsx` — OneCommunity, ManyCommunities, SinActiva
+- `stories/communities/CommunitiesPage.stories.tsx` — Empty, ConLista, ConBannerNoAccess (wrappers visuales — página async no mockeable en SB)
+
 ## Ficheros clave
-- `app/api/communities/route.ts` — thin controller (~50 líneas): GET + POST
+- `app/api/communities/route.ts` — thin controller: GET + POST
 - `lib/repositories/communities.repository.ts` — queries Supabase (DIP)
-- `lib/services/communities.service.ts` — validateMembership, generateUniqueSlug
-- `app/(app)/communities/layout.tsx` — navbar + skip nav + main-content wrapper
-- `app/(app)/communities/error.tsx` — error boundary para todas las rutas de comunidades
-- `app/(app)/communities/loading.tsx` — loading state accesible
+- `app/(app)/communities/page.tsx` — listado + redirect AC-1 + banner no-access
+- `components/shared/Spinner.tsx` — spinner accesible compartido (communities + profile)
+- `app/(app)/communities/error.tsx` — error boundary con botón Reintentar
 
 ## Última actualización
-Story 2.3 — 2026-03-28 | Arch Fase 3 — 2026-03-28 | A11y Fase 5 — 2026-03-28 | Bug fixes UI — 2026-04-14
+Story 2.3 — 2026-03-28 | A11y Fase 5 — 2026-03-28 | Bug fixes UI — 2026-04-14 | Cobertura tests+stories — 2026-04-28
