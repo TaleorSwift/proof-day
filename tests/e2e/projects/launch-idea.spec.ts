@@ -17,10 +17,13 @@ test.describe('LaunchIdeaModal — flujo modal lanzar idea (Story 9.8)', () => {
   const testTitle = `Idea de test E2E ${Date.now()}`
 
   test.afterAll(async () => {
-    await fetch(
+    const res = await fetch(
       `${SUPABASE_URL}/rest/v1/projects?slug=ilike.idea-de-test-e2e-*`,
       { method: 'DELETE', headers: ADMIN_HEADERS, signal: AbortSignal.timeout(5000) }
     )
+    if (!res.ok) {
+      console.warn(`[afterAll] Cleanup de proyectos e2e falló (${res.status}). Verificar SUPABASE_SERVICE_ROLE_KEY.`)
+    }
   })
 
   test(
@@ -55,8 +58,8 @@ test.describe('LaunchIdeaModal — flujo modal lanzar idea (Story 9.8)', () => {
 
       await expect(page.getByText('¡Idea lanzada! Ya está recibiendo feedback.')).toBeVisible({ timeout: 10_000 })
 
-      // Verificar que el proyecto aparece en el feed tras submit
-      await expect(page.getByText(testTitle)).toBeVisible({ timeout: 10_000 })
+      // Verificar que el proyecto aparece en el feed tras submit (scoped al card title para evitar falsos positivos)
+      await expect(page.getByTestId('project-card-title').filter({ hasText: testTitle })).toBeVisible({ timeout: 10_000 })
     }
   )
 
@@ -69,8 +72,8 @@ test.describe('LaunchIdeaModal — flujo modal lanzar idea (Story 9.8)', () => {
 
       await page.getByRole('button', { name: '+ Lanzar proyecto' }).click()
 
-      // Verificar los 5 campos requeridos: title, tagline, problem, solution, hypothesis
-      await expect(page.getByRole('alert')).toHaveCount(5)
+      // Verificar los 5 campos requeridos: title, tagline, problem, solution, hypothesis (scoped al dialog)
+      await expect(page.getByRole('dialog').getByRole('alert')).toHaveCount(5)
     }
   )
 

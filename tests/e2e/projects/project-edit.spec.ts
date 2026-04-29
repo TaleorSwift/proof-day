@@ -66,8 +66,8 @@ test.describe('ProjectEdit — /edit page (flujo de edición)', () => {
 
       await page.getByRole('button', { name: /guardar cambios/i }).click()
 
-      // Tras guardar no debe haber mensaje de error — el botón vuelve a estar enabled
-      await expect(page.getByRole('button', { name: /guardar cambios/i })).toBeVisible()
+      // Esperar señal de éxito: el botón vuelve a estar habilitado (submit terminó)
+      await expect(page.getByRole('button', { name: /guardar cambios/i })).not.toBeDisabled({ timeout: 5_000 })
       // Verificar que no hay alertas de validación del formulario (excluye el route announcer de Next.js)
       await expect(page.locator('p[role="alert"]')).not.toBeVisible()
 
@@ -95,8 +95,8 @@ test.describe('ProjectEdit — /edit page (flujo de edición)', () => {
       // e2e-own-project tiene status live — notFound() en Next.js App Router NO cambia la URL,
       // renderiza el componente not-found.tsx (o la página 404 por defecto de Next.js) en la misma URL.
       await page.goto(LIVE_PROJECT_EDIT_URL)
-      // notFound() no cambia la URL — verificar que se renderiza el 404
-      await expect(page.getByRole('heading', { name: /not found|no encontrado|404/i })).toBeVisible({ timeout: 10_000 })
+      // notFound() no cambia la URL — verificar que se renderiza el not-found.tsx custom
+      await expect(page.getByRole('heading', { name: 'Página no encontrada' })).toBeVisible({ timeout: 10_000 })
       await expect(page.getByRole('button', { name: /guardar cambios/i })).not.toBeVisible()
     }
   )

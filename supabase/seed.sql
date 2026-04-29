@@ -562,7 +562,10 @@ INSERT INTO projects (
   ARRAY['UX', 'Hipótesis'],
   '{}', 'draft', NULL, NULL,
   now(), now()
-) ON CONFLICT (id) DO UPDATE SET updated_at = EXCLUDED.updated_at;
+) ON CONFLICT (id) DO UPDATE SET
+  target_user = 'Engineering managers',
+  status = 'draft',
+  updated_at = EXCLUDED.updated_at;
 
 -- ── Proyecto minimal (para project-detail: sin campos opcionales) ─
 
