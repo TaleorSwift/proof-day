@@ -1,7 +1,47 @@
 import { test, expect } from '@playwright/test'
+import { TEST_USER_ID } from '../test-users'
 
 // story 2.2 — flujo link de invitación
 // Auth setup: tests/e2e/auth.setup.ts (storageState configurado en playwright.config.ts)
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'http://127.0.0.1:54321'
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
+
+const ADMIN_HEADERS = {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${SERVICE_KEY}`,
+  apikey: SERVICE_KEY,
+}
+
+// startup-lab (b0000000-...002): el e2e user NO es miembro — válido para happy path
+const HAPPY_PATH_COMMUNITY_ID = 'b0000000-0000-4000-8000-000000000002'
+// Token sin usar para startup-lab — insertado en seed (seed.sql)
+const HAPPY_PATH_TOKEN = 'invite-token-lab-e2e-happy'
+
+async function removeE2eMembershipFromStartupLab(): Promise<void> {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/community_members?community_id=eq.${HAPPY_PATH_COMMUNITY_ID}&user_id=eq.${TEST_USER_ID}`,
+    { method: 'DELETE', headers: ADMIN_HEADERS }
+  )
+  if (!res.ok) {
+    // ignorar errores de cleanup — el miembro puede no existir si el test falló antes de unirse
+    console.error(`cleanup membership: ${res.status}`)
+  }
+}
+
+async function resetInviteToken(): Promise<void> {
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/invitation_links?token=eq.${HAPPY_PATH_TOKEN}`,
+    {
+      method: 'PATCH',
+      headers: ADMIN_HEADERS,
+      body: JSON.stringify({ used_at: null, used_by: null }),
+    }
+  )
+  if (!res.ok) {
+    console.error(`reset invite token: ${res.status}`)
+  }
+}
 
 test.describe('Invite link — sin autenticación', () => {
   // Limpiar auth cookies: verifica comportamiento sin sesión activa
@@ -21,18 +61,9 @@ test.describe('Invite link — sin autenticación', () => {
 })
 
 test.describe('Invite link — token ya usado', () => {
-  // Requiere usuario autenticado (storageState de auth.setup.ts)
-  // Requiere token ya usado en el seed: un invitation_link con used_at no nulo.
-  // Si no hay token usado en el seed, marcar como skip.
-  test.skip(
-    true,
-    'Requiere un token con used_at no nulo en el seed de Supabase local. ' +
-    'Cuando el seed incluya un token ya usado, eliminar este skip.'
-  )
-
+  // invite-token-lab-xyz789 tiene used_at = '2026-03-05T14:30:00Z' en el seed
   test('visitar /invite/{token_ya_usado} muestra la página de error', async ({ page }) => {
-    // Sustituir 'used-token-from-seed' por el token real del seed
-    await page.goto('/invite/used-token-from-seed')
+    await page.goto('/invite/invite-token-lab-xyz789')
     await expect(page.getByRole('heading', { name: 'Link inválido' })).toBeVisible({ timeout: 10_000 })
     await expect(
       page.getByText('Este link ya no es válido')
@@ -40,29 +71,39 @@ test.describe('Invite link — token ya usado', () => {
   })
 
   test('la página de error muestra el texto de solicitar nuevo link', async ({ page }) => {
-    await page.goto('/invite/used-token-from-seed')
+    await page.goto('/invite/invite-token-lab-xyz789')
     await expect(
       page.getByText('Solicita un nuevo link de invitación al administrador de la comunidad.')
     ).toBeVisible({ timeout: 10_000 })
   })
 })
 
-test.describe('Invite link — happy path (join completo)', () => {
-  // Requiere: usuario autenticado + token válido (no usado) para una comunidad del seed.
-  // El token debe generarse en el seed de Supabase vía SQL INSERT en invitation_links.
-  // Ejemplo de seed SQL:
-  //   INSERT INTO invitation_links (token, community_id, created_by)
-  //   VALUES ('e2e-happy-token-001', '<community_id_del_seed>', '<admin_user_id>');
-  test.skip(
-    true,
-    'Requiere token válido insertado en el seed de Supabase local. ' +
-    'Setup: INSERT en invitation_links con token conocido + community_id del seed. ' +
-    'Cuando el seed soporte esto, eliminar este skip y actualizar el token.'
+test.describe('Invite link — ya eres miembro', () => {
+  // invite-token-alpha-abc123 apunta a producto-alpha (b0000000-...001).
+  // El e2e user YA es miembro de producto-alpha → muestra InviteAlreadyMemberState.
+  test(
+    'visitar /invite/{token} siendo miembro muestra "Ya eres miembro de esta comunidad"',
+    async ({ page }) => {
+      await page.goto('/invite/invite-token-alpha-abc123')
+      await expect(
+        page.getByRole('heading', { name: 'Ya eres miembro de esta comunidad' })
+      ).toBeVisible({ timeout: 10_000 })
+    }
   )
+})
+
+test.describe('Invite link — happy path (join completo)', () => {
+  // invite-token-lab-e2e-happy apunta a startup-lab (b0000000-...002).
+  // El e2e user NO es miembro de startup-lab → join exitoso → redirect a /communities.
+  // afterEach limpia la membresía y resetea el token para idempotencia.
+
+  test.afterEach(async () => {
+    await removeE2eMembershipFromStartupLab()
+    await resetInviteToken()
+  })
 
   test('visitar /invite/{token_valido} redirige a /communities tras join exitoso', async ({ page }) => {
-    // Sustituir 'e2e-happy-token-001' por el token real del seed
-    await page.goto('/invite/e2e-happy-token-001')
+    await page.goto(`/invite/${HAPPY_PATH_TOKEN}`)
     await expect(page).toHaveURL(/\/communities(\/|\?|#|$)/, { timeout: 15_000 })
   })
 })
