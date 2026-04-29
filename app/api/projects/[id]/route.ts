@@ -76,8 +76,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   // Story 8.1 — campos opcionales: se pasa null explícitamente para permitir borrar el valor
   if (result.data.targetUser !== undefined) updateFields.target_user = result.data.targetUser !== '' ? result.data.targetUser : null
   if (result.data.demoUrl !== undefined) updateFields.demo_url = result.data.demoUrl !== '' ? result.data.demoUrl : null
+  // [] se envía directamente a Supabase como borrado explícito de temas (E3: array vacío = cleared)
   if (result.data.feedbackTopics !== undefined)
-    updateFields.feedback_topics = result.data.feedbackTopics?.length ? result.data.feedbackTopics : null
+    updateFields.feedback_topics = result.data.feedbackTopics ?? null
 
   const { data: project, error } = await supabase
     .from('projects')

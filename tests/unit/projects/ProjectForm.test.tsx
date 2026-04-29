@@ -348,7 +348,7 @@ describe('ProjectForm — AC-5: normalización de campos opcionales', () => {
     })
   })
 
-  it('envía feedbackTopics como undefined cuando no hay chips seleccionados', async () => {
+  it('envía feedbackTopics como [] cuando no hay chips seleccionados (borrado explícito)', async () => {
     const user = userEvent.setup()
     // Renderizar en modo editar sin topics — eliminamos todos los chips existentes
     renderModoEditar({ feedback_topics: [] })
@@ -358,7 +358,7 @@ describe('ProjectForm — AC-5: normalización de campos opcionales', () => {
     await waitFor(() => {
       expect(mockUpdateProject).toHaveBeenCalledWith(
         PROJECT_ID,
-        expect.objectContaining({ feedbackTopics: undefined })
+        expect.objectContaining({ feedbackTopics: [] })
       )
     })
   })

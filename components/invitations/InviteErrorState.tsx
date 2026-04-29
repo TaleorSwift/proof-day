@@ -15,14 +15,14 @@ export function InviteErrorState({ message }: Props) {
         style={{
           width: '100%',
           border: '1px solid var(--color-border)',
-          backgroundColor: 'var(--color-weak-bg)',
+          backgroundColor: 'var(--color-surface)',
           borderRadius: 'var(--radius-md)',
           padding: 'var(--space-8)',
         }}
       >
         <h1
           style={{
-            color: 'var(--color-weak-text)',
+            color: 'var(--color-text-primary)',
             fontSize: 'var(--text-xl)',
             fontWeight: 'var(--font-semibold)',
             marginBottom: 'var(--space-3)',
@@ -30,7 +30,7 @@ export function InviteErrorState({ message }: Props) {
         >
           Link inválido
         </h1>
-        <p style={{ color: 'var(--color-weak-text)', marginBottom: 'var(--space-6)' }}>
+        <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-6)' }}>
           {message}
         </p>
         <p style={{ color: 'var(--color-text-secondary)', fontSize: 'var(--text-sm)' }}>

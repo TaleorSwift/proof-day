@@ -13,14 +13,14 @@ export function InviteAlreadyMemberState() {
         style={{
           width: '100%',
           border: '1px solid var(--color-border)',
-          backgroundColor: 'var(--color-promising-bg)',
+          backgroundColor: 'var(--color-surface)',
           borderRadius: 'var(--radius-md)',
           padding: 'var(--space-8)',
         }}
       >
         <h1
           style={{
-            color: 'var(--color-promising-text)',
+            color: 'var(--color-text-primary)',
             fontSize: 'var(--text-xl)',
             fontWeight: 'var(--font-semibold)',
             marginBottom: 'var(--space-3)',

@@ -103,7 +103,7 @@ export function ProjectForm({
         ...data,
         targetUser: data.targetUser?.trim() || undefined,
         demoUrl: data.demoUrl?.trim() || undefined,
-        feedbackTopics: feedbackTopics.length > 0 ? feedbackTopics : undefined,
+        feedbackTopics,
       }
 
       if (isEdit && projectId) {

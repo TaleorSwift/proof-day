@@ -115,7 +115,7 @@ function ProjectDetailLayout({
     >
       <div
         style={{
-          maxWidth: 'var(--container-max-width, 960px)',
+          maxWidth: 'var(--container-max-width)',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',

@@ -7,6 +7,7 @@ export interface ValidationMetrics {
   wouldUsePercent: number
 }
 
+// KPI: % sobre total esperado. Denominador = feedbackCount. No-respuestas (p1 o p2 = 0) cuentan como "no entiende".
 export function calculateValidationMetrics(
   feedbacks: Array<{ scores: unknown }>,
   feedbackCount: number,

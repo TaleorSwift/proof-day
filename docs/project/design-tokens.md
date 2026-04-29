@@ -96,6 +96,9 @@ Añadir en `app/globals.css` dentro de `:root`:
   --shadow-sm: 0 1px 2px rgba(26, 26, 24, 0.05);
   --shadow-md: 0 4px 8px rgba(26, 26, 24, 0.08);
   --shadow-lg: 0 8px 24px rgba(26, 26, 24, 0.12);
+
+  /* === LAYOUT === */
+  --container-max-width: 960px;  /* Ancho máximo del contenedor principal de página. Usado en page layouts y stories. */
 }
 ```
 

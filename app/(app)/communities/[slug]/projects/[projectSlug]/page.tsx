@@ -105,7 +105,7 @@ export default async function ProjectPage({ params }: Props) {
     >
       <div
         style={{
-          maxWidth: '960px',
+          maxWidth: 'var(--container-max-width)',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
