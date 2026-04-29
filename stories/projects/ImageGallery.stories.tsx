@@ -92,7 +92,9 @@ export const EditableConfirmacionBorrado: Story = {
     const deleteButtons = canvas.getAllByRole('button', { name: /eliminar imagen/i })
     await user.click(deleteButtons[0])
 
-    // El diálogo de confirmación debe aparecer
-    await expect(canvas.findByText('Eliminar?')).resolves.toBeInTheDocument()
+    // El diálogo de confirmación inline debe aparecer con el texto y botones de acción
+    await expect(await canvas.findByText('Eliminar?')).toBeInTheDocument()
+    await expect(canvas.getByRole('button', { name: 'Si' })).toBeInTheDocument()
+    await expect(canvas.getByRole('button', { name: 'No' })).toBeInTheDocument()
   },
 }

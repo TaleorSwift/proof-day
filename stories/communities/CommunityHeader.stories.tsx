@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import { within, expect } from 'storybook/test'
 import { CommunityHeader } from '@/components/communities/CommunityHeader'
 
 const baseCommunity = {
@@ -46,6 +47,11 @@ export const ComoAdmin: Story = {
   args: {
     community: baseCommunity,
     isAdmin: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // El diferencial visual admin es el enlace a Configuración
+    await expect(canvas.getByRole('link', { name: /configuración/i })).toBeInTheDocument()
   },
 }
 
