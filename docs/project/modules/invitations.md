@@ -15,6 +15,8 @@ y redirige a `/communities`. La ruta requiere sesión activa — si el usuario n
 - Si la invalidación del token falla tras el join, se hace rollback de la membresía y se muestra error (story 2.2)
 - El token solo aparece en parámetros SQL — nunca en URLs ni logs (story 2.2)
 
+Ver también: [communities.md](./communities.md)
+
 ## Ficheros clave
 - `app/invite/[token]/page.tsx`
 - `components/invitations/InviteErrorState.tsx`
@@ -22,5 +24,13 @@ y redirige a `/communities`. La ruta requiere sesión activa — si el usuario n
 - `app/api/communities/[communityId]/invitations/route.ts`
 - `supabase/migrations/001_create_invitation_links.sql`
 
+## Tests
+- `tests/unit/invitations/InviteTokenPage.test.tsx`
+- `tests/e2e/invitations/use-invite-link.spec.ts`
+
+## Storybook
+- `stories/invitations/InviteErrorState.stories.tsx`
+- `stories/invitations/InviteAlreadyMemberState.stories.tsx`
+
 ## Última actualización
-Story 2.2 — 2026-04-28
+Story 2.2 — 2026-04-28 | PR-FU7 docs cleanup — 2026-04-29

@@ -10,7 +10,7 @@ export interface Community {
   id: string
   name: string
   slug: string
-  description: string
+  description: string | null
   image_url: string | null
   created_by: string
   created_at: string
