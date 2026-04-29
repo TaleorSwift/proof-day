@@ -69,6 +69,7 @@ export function ProjectDetailFeaturedImage({ imageUrls, projectTitle }: ProjectD
           fill
           priority
           style={{ objectFit: 'cover' }}
+          // 960px coincide con --container-max-width
           sizes="(max-width: 960px) 100vw, 960px"
         />
       </div>

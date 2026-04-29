@@ -37,7 +37,7 @@ export default async function CommunitiesPage({ searchParams }: Props) {
         padding: 'var(--space-8)',
       }}
     >
-      <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+      <div style={{ maxWidth: 'var(--container-max-width)', margin: '0 auto' }}>
         {/* AC-2: Banner de error cuando se redirige desde una comunidad sin acceso */}
         {errorParam === 'no-access' && (
           <div
