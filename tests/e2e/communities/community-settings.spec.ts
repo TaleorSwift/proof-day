@@ -35,9 +35,10 @@ test.describe('Community Settings — admin autenticado', () => {
     // El link debe aparecer en la lista (input de sólo lectura con la URL)
     await expect(page.getByRole('textbox').first()).toBeVisible({ timeout: 10_000 })
 
-    // Verificar que la URL del link contiene "/invite/"
+    // Verificar que la URL del link contiene un token real (no undefined/null)
     const linkValue = await page.getByRole('textbox').first().inputValue()
-    expect(linkValue).toContain('/invite/')
+    const url = new URL(linkValue, 'http://localhost:3000')
+    expect(url.pathname).toMatch(/^\/invite\/[A-Za-z0-9_-]{8,}$/)
   })
 
   test('admin ve el botón "Copiar link" junto al link generado', async ({ page }) => {
