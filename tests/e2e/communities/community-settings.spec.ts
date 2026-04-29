@@ -58,17 +58,4 @@ test.describe('Community Settings — admin autenticado', () => {
   })
 })
 
-test.describe('Community Settings — acceso no-admin', () => {
-  // Requiere un segundo usuario con rol "member" (no admin) en la comunidad startup-madrid.
-  // El seed de test actual solo tiene el usuario admin. Activar cuando haya fixture de miembro.
-  test.skip(
-    true,
-    'Requiere seed con usuario member (no admin) en startup-madrid. ' +
-    'Cuando haya fixture, crear usuario member en auth.setup.ts y eliminar este skip.'
-  )
-
-  test('miembro sin rol admin es redirigido a /communities', async ({ page }) => {
-    await page.goto('/communities/startup-madrid/settings')
-    await expect(page).toHaveURL(/\/communities(\/|\?|#|$)/, { timeout: 10_000 })
-  })
-})
+// Acceso no-admin → tests/e2e/communities/community-settings.reviewer.spec.ts (chromium-reviewer)

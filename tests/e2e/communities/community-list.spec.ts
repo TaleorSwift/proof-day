@@ -22,14 +22,7 @@ test.describe('Banner no-access — usuario autenticado', () => {
 })
 
 test.describe('CommunitySwitcher — cambio de comunidad', () => {
-  // Requiere usuario e2e-community@proofday.local con ≥2 comunidades en el seed.
-  // El seed de test incluye al menos "Producto Alpha" asignada al TEST_USER_ID.
-  // Si el usuario solo tiene 1 comunidad, el switcher no aparece (AC-6) y el test falla.
-  test.skip(
-    true,
-    'Requiere seed con ≥2 comunidades para el usuario e2e-community@proofday.local. ' +
-    'Cuando el seed tenga múltiples comunidades, eliminar este skip y activar el test.'
-  )
+  // e2e-community@proofday.local tiene 7 comunidades en el seed (producto-alpha, startup-madrid, etc.)
 
   test('abre el switcher y navega a otra comunidad', async ({ page }) => {
     // Navegar a una comunidad conocida del seed
@@ -54,20 +47,4 @@ test.describe('CommunitySwitcher — cambio de comunidad', () => {
   })
 })
 
-test.describe('Empty state — usuario sin comunidades', () => {
-  // Requiere un usuario de test sin comunidades asignadas.
-  // El usuario actual (e2e-community@proofday.local) tiene comunidades en el seed.
-  // Para activar este test, crear un usuario separado sin membresías en auth.setup.ts.
-  test.skip(
-    true,
-    'Requiere usuario de test sin comunidades. Crear fixture específico en auth.setup.ts.'
-  )
-
-  test('muestra el empty state cuando el usuario no tiene comunidades', async ({ page }) => {
-    await page.goto('/communities')
-    await expect(
-      page.getByText('Aún no perteneces a ninguna comunidad')
-    ).toBeVisible({ timeout: 10_000 })
-    await expect(page.getByTestId('btn-create-community')).toBeVisible()
-  })
-})
+// Empty state (usuario sin comunidades) → community-list.isolated.spec.ts (chromium-isolated)

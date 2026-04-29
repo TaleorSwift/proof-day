@@ -13,7 +13,8 @@
  * Storage states generados:
  *   tests/e2e/.auth/user.json     ← usuario principal (member)
  *   tests/e2e/.auth/admin.json    ← usuario admin (admin de startup-madrid)
- *   tests/e2e/.auth/reviewer.json ← usuario reviewer (member de producto-alpha, sin proyectos)
+ *   tests/e2e/.auth/reviewer.json ← usuario reviewer (member de producto-alpha + startup-madrid)
+ *   tests/e2e/.auth/isolated.json ← usuario sin comunidades (empty state de /communities)
  */
 import { test as setup, expect } from '@playwright/test'
 import path from 'path'
@@ -24,13 +25,21 @@ import {
   ADMIN_EMAIL,
   REVIEWER_USER_ID,
   REVIEWER_EMAIL,
+  ISOLATED_USER_ID,
+  ISOLATED_EMAIL,
 } from './test-users'
 
-export { TEST_USER_ID, TEST_EMAIL, ADMIN_USER_ID, ADMIN_EMAIL, REVIEWER_USER_ID, REVIEWER_EMAIL }
+export {
+  TEST_USER_ID, TEST_EMAIL,
+  ADMIN_USER_ID, ADMIN_EMAIL,
+  REVIEWER_USER_ID, REVIEWER_EMAIL,
+  ISOLATED_USER_ID, ISOLATED_EMAIL,
+}
 
 export const AUTH_STATE_PATH = path.join(__dirname, '.auth', 'user.json')
 export const ADMIN_AUTH_STATE_PATH = path.join(__dirname, '.auth', 'admin.json')
 export const REVIEWER_AUTH_STATE_PATH = path.join(__dirname, '.auth', 'reviewer.json')
+export const ISOLATED_AUTH_STATE_PATH = path.join(__dirname, '.auth', 'isolated.json')
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'http://127.0.0.1:54321'
 const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? ''
@@ -132,6 +141,13 @@ setup('autenticar usuario admin y guardar estado', async ({ page }) => {
 setup('autenticar usuario reviewer y guardar estado', async ({ page }) => {
   await createAuthState(
     { id: REVIEWER_USER_ID, email: REVIEWER_EMAIL, statePath: REVIEWER_AUTH_STATE_PATH },
+    page
+  )
+})
+
+setup('autenticar usuario isolated y guardar estado', async ({ page }) => {
+  await createAuthState(
+    { id: ISOLATED_USER_ID, email: ISOLATED_EMAIL, statePath: ISOLATED_AUTH_STATE_PATH },
     page
   )
 })
