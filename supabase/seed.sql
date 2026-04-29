@@ -1,6 +1,6 @@
 -- ============================================================
 -- SEED DATA — datos de muestra para desarrollo local
--- Sincronizado con lib/fixtures/ — 6 usuarios, 9 proyectos, 12 feedbacks
+-- Sincronizado con lib/fixtures/ — 6 usuarios, 10 proyectos, 12 feedbacks
 -- ============================================================
 
 -- ── Auth users ──────────────────────────────────────────────
@@ -536,6 +536,30 @@ INSERT INTO projects (
   'Early adopters', 'https://example.com/e2e-demo',
   ARRAY['UX', 'Performance'],
   ARRAY['https://picsum.photos/seed/e2e-own-1/800/600'], 'live', NULL, NULL,
+  now(), now()
+);
+
+-- ── Proyecto draft del test user (para project-edit e2e tests) ──────────────
+-- Necesario para: project-edit.spec.ts — cargar /edit, guardar cambios
+
+INSERT INTO projects (
+  id, community_id, builder_id, slug, title, tagline,
+  problem, solution, hypothesis,
+  target_user, demo_url, feedback_topics,
+  image_urls, status, decision, decided_at,
+  created_at, updated_at
+) VALUES (
+  'c0000000-0000-4000-8000-000000000099',
+  'b0000000-0000-4000-8000-000000000001',
+  'e2e00000-0000-4000-8000-000000000099',
+  'e2e-draft-project',
+  'E2E Draft Project',
+  'Proyecto en borrador del usuario de test',
+  'Un problema que estamos validando con el equipo.', 'Una solución basada en encuestas semanales.',
+  'Si simplificamos el flujo, la tasa de respuesta superará el 80%.',
+  'Engineering managers', 'https://example.com/e2e-draft-demo',
+  ARRAY['UX', 'Hipótesis'],
+  '{}', 'draft', NULL, NULL,
   now(), now()
 );
 
