@@ -147,7 +147,7 @@ test.describe('Crear comunidad — usuario autenticado', () => {
     await page.getByLabel('Nombre').fill('Comunidad Test 500')
     await page.getByLabel('Descripción').fill('Una descripción para test de error de servidor')
     await page.getByRole('button', { name: 'Crear comunidad' }).click()
-    await expect(page.getByRole('alert')).toBeVisible()
+    await expect(page.locator('form').getByRole('alert')).toBeVisible()
     await expect(page).toHaveURL(/\/communities\/new/)
   })
 })

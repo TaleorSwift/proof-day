@@ -23,7 +23,6 @@ export function ProjectStateActions({
   const [error, setError] = useState<string | null>(null)
 
   if (!isBuilder) return null
-  if (status === 'inactive') return null
 
   async function handlePublish() {
     setIsLoading(true)
@@ -152,6 +151,30 @@ export function ProjectStateActions({
             </div>
           )}
         </>
+      )}
+
+      {status === 'inactive' && (
+        <button
+          type="button"
+          onClick={handlePublish}
+          disabled={isLoading}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 'var(--space-2) var(--space-6)',
+            backgroundColor: 'var(--color-primary)',
+            color: 'var(--color-surface)',
+            border: 'none',
+            borderRadius: 'var(--radius-md)',
+            fontSize: 'var(--text-sm)',
+            fontWeight: 'var(--font-semibold)',
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            opacity: isLoading ? 0.6 : 1,
+          }}
+        >
+          {isLoading ? 'Publicando...' : 'Publicar'}
+        </button>
       )}
 
       {status === 'live' && (
