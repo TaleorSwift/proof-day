@@ -1,7 +1,7 @@
 // InvitationSection es un Client Component con estado local + fetch.
 // Los estados que requieren interacción usan play functions con mock de window.fetch.
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import { within, userEvent, expect } from 'storybook/test'
+import { within, userEvent, expect, spyOn } from 'storybook/test'
 import InvitationSection from '@/components/communities/InvitationSection'
 
 const meta = {
@@ -58,7 +58,6 @@ export const Copiado: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const originalFetch = window.fetch
-    const originalClipboardDescriptor = Object.getOwnPropertyDescriptor(navigator, 'clipboard')
 
     window.fetch = async () =>
       new Response(
@@ -66,28 +65,22 @@ export const Copiado: Story = {
         { status: 200, headers: { 'Content-Type': 'application/json' } }
       )
 
-    // Mockear clipboard API
-    Object.defineProperty(navigator, 'clipboard', {
-      value: { writeText: async () => Promise.resolve() },
-      writable: true,
-      configurable: true,
-    })
+    // Usar spyOn para mockear clipboard con restauración garantizada
+    const clipboardSpy = spyOn(navigator.clipboard, 'writeText').mockResolvedValue()
 
-    const user = userEvent.setup()
-    await user.click(canvas.getByRole('button', { name: /Generar link/i }))
+    try {
+      const user = userEvent.setup()
+      await user.click(canvas.getByRole('button', { name: /Generar link/i }))
 
-    // Esperar a que aparezca el botón "Copiar link"
-    const copyBtn = await canvas.findByRole('button', { name: /Copiar link/i })
-    await user.click(copyBtn)
+      // Esperar a que aparezca el botón "Copiar link"
+      const copyBtn = await canvas.findByRole('button', { name: /Copiar link/i })
+      await user.click(copyBtn)
 
-    // El botón debe mostrar "¡Copiado!"
-    await expect(canvas.getByRole('button', { name: /¡Copiado!/i })).toBeInTheDocument()
-
-    window.fetch = originalFetch
-
-    // Restaurar clipboard al descriptor original
-    if (originalClipboardDescriptor) {
-      Object.defineProperty(navigator, 'clipboard', originalClipboardDescriptor)
+      // El botón debe mostrar "¡Copiado!"
+      await expect(canvas.getByRole('button', { name: /¡Copiado!/i })).toBeInTheDocument()
+    } finally {
+      clipboardSpy.mockRestore()
+      window.fetch = originalFetch
     }
   },
 }

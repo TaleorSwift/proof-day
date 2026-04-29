@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { useState } from 'react'
-import { within, userEvent } from 'storybook/test'
+import { within, userEvent, spyOn } from 'storybook/test'
 import { LaunchIdeaModal } from '@/components/projects/LaunchIdeaModal'
+import * as launchProjectModule from '@/actions/projects/launchProject'
 
 const meta = {
   title: 'Projects/LaunchIdeaModal',
@@ -148,9 +149,20 @@ export const EstadoCargandoManual: Story = {
     docs: {
       description: {
         story:
-          'Estado manual: rellenar campos y hacer submit para ver el botón "Lanzando…". No reproducible automáticamente sin mock del action.',
+          'Estado loading real: la play function rellena los campos y hace submit. El action está mockeado con una promesa que nunca resuelve, dejando el botón en estado "Lanzando…".',
       },
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const user = userEvent.setup()
+
+    // Mock launchProject con una promesa que nunca resuelve → estado loading permanente
+    spyOn(launchProjectModule, 'launchProject').mockReturnValue(new Promise(() => {}))
+
+    await rellenarCamposRequeridos(canvas, user)
+    await user.click(canvas.getByRole('button', { name: '+ Lanzar proyecto' }))
+    // El botón ahora muestra "Lanzando…" y está deshabilitado
   },
 }
 
@@ -164,13 +176,10 @@ export const ConDatosRellenos: Story = {
 }
 
 /**
- * ErrorServidor — submit con respuesta 500 del servidor.
- * La play function rellena los campos requeridos y hace submit. El servidor action
- * devuelve { success: false, error: 'Error interno del servidor' }, lo que provoca
- * que el mensaje de error global aparezca bajo el formulario (role="alert").
- *
- * Nota: en este entorno de Storybook la acción real falla por falta de sesión/DB,
- * por lo que el error de servidor se muestra igualmente bajo el formulario.
+ * ErrorServidor — submit con respuesta de error del servidor.
+ * La play function rellena los campos requeridos y hace submit. El action está
+ * mockeado para devolver { success: false, error: 'Error interno del servidor' },
+ * lo que provoca que el mensaje de error global aparezca bajo el formulario (role="alert").
  */
 export const ErrorServidor: Story = {
   render: () => <ErrorServidorTemplate />,
@@ -182,14 +191,22 @@ export const ErrorServidor: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     const user = userEvent.setup()
+
+    // Mock launchProject para simular respuesta de error del servidor
+    spyOn(launchProjectModule, 'launchProject').mockResolvedValue({
+      success: false,
+      error: 'Error interno del servidor',
+    })
+
     await rellenarCamposRequeridos(canvas, user)
     await user.click(canvas.getByRole('button', { name: '+ Lanzar proyecto' }))
+    // El mensaje de error debe aparecer bajo el formulario
   },
   parameters: {
     docs: {
       description: {
         story:
-          'Submit con todos los campos válidos. En el entorno Storybook (sin sesión activa), el servidor action devuelve un error, lo que muestra el mensaje de error global bajo el formulario.',
+          'Submit con todos los campos válidos. El action devuelve { success: false, error: "Error interno del servidor" }, lo que muestra el mensaje de error global bajo el formulario (role="alert").',
       },
     },
   },

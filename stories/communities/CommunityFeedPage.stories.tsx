@@ -3,6 +3,7 @@
 // Esta story replica el layout visual de la página (grid 2 columnas) con subcomponentes
 // reales y datos mockeados, cubriendo los estados visuales posibles.
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import { within, expect } from 'storybook/test'
 import { CommunityHeader } from '@/components/communities/CommunityHeader'
 import { CommunityFeedHeader } from '@/components/communities/CommunityFeedHeader'
 import { ProjectFeed } from '@/components/projects/ProjectFeed'
@@ -139,6 +140,11 @@ export const ConProyectos: Story = {
 // Admin — sidebar muestra enlace a Configuración
 export const ConProyectosComoAdmin: Story = {
   render: () => <CommunityFeedPageLayout projects={mockProjects} isAdmin={true} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // El diferencial visual admin es el enlace a Configuración en el sidebar
+    await expect(canvas.getByRole('link', { name: /configuración/i })).toBeInTheDocument()
+  },
 }
 
 // EmptyState visible — sin proyectos
