@@ -1,6 +1,6 @@
 # Módulo: Proyectos
 
-**Última actualización:** Story 9.7 — Project detail tagline + sidebar universal + feedback inline (2026-04-11)
+**Última actualización:** PR6 — Cobertura /projects/[slug]/edit — stories, unit tests, e2e (2026-04-29)
 
 ---
 
@@ -114,20 +114,25 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 ### Páginas
 - `app/(app)/communities/[slug]/page.tsx` — lista de proyectos de la comunidad
 - `app/(app)/communities/[slug]/projects/new/page.tsx` — crear proyecto (fallback; se mantiene intacto)
-- `app/(app)/communities/[slug]/projects/[id]/page.tsx` — ver proyecto
-- `app/(app)/communities/[slug]/projects/[id]/edit/page.tsx` — editar proyecto
+- `app/(app)/communities/[slug]/projects/[projectSlug]/page.tsx` — ver proyecto
+- `app/(app)/communities/[slug]/projects/[projectSlug]/edit/page.tsx` — editar proyecto
 
 ### Storybook
 - `stories/projects/ProjectCard.stories.tsx` — 5 stories: Live, LiveWithScore, Draft, Inactive, Loading
 - `stories/projects/LaunchIdeaModal.stories.tsx` — 4 stories: EstadoVacio, ConDatosRellenos, EstadoCargando, ChipsSeleccionados (story 9.8)
 - `stories/projects/FeedbackTopicChips.stories.tsx` — 4 stories: SinSeleccion, TresSeleccionados, TodosSeleccionados, Interactivo (story 9.8)
 - `stories/projects/ImageUploader.stories.tsx` — 3 stories: SinImagenes, ConDosImagenes, LimiteAlcanzado (story 9.8)
+- `stories/projects/ProjectForm.stories.tsx` — 4 stories: ModoCrear, ModoEditar, ErrorValidacion, ErrorServidor (story PR6)
+- `stories/projects/ImageGallery.stories.tsx` — 4 stories: ReadOnly, SinImagenes, Editable, EditableConfirmacionBorrado (story PR6)
 
 ### Tests
 - `tests/unit/projects/projectList.test.ts` — lógica de visibilidad y ordenación
 - `tests/unit/projects/LaunchIdeaModal.test.tsx` — 19 tests: render, campos, validación, submit (story 9.8)
 - `tests/unit/projects/FeedbackTopicChips.test.tsx` — 13 tests: render, aria-pressed, toggle, mapeo (story 9.8)
 - `tests/unit/projects/ImageUploader.test.tsx` — 7 tests: render, límite, previews, eliminar (story 9.8)
+- `tests/unit/projects/ProjectForm.test.tsx` — 27 tests: render, submit, defaultValues, feedbackTopics, isSubmitting (PR6)
+- `tests/unit/projects/ProjectEditPage.test.tsx` — 12 tests: no-auth, non-owner, non-draft, happy path (PR6)
+- `tests/e2e/projects/project-edit.spec.ts` — 7 tests: defaults, guardar, non-owner, non-draft, validación, no-auth (PR6)
 
 ---
 
