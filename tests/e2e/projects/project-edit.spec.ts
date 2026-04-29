@@ -9,7 +9,7 @@ test.describe('ProjectEdit — /edit page (flujo de edición)', () => {
   const EDIT_URL = `/communities/${COMMUNITY_SLUG}/projects/e2e-draft-project/edit`
   // Proyecto live owned by test user (para validar no-draft → notFound)
   const LIVE_PROJECT_EDIT_URL = `/communities/${COMMUNITY_SLUG}/projects/e2e-own-project/edit`
-  // Proyecto draft owned by otro usuario (para validar non-owner → redirect)
+  // Proyecto live owned by otro usuario (para validar non-owner → redirect)
   // idea-sketch pertenece a a0000000-0000-4000-8000-000000000001 (Alex), no al test user
   const OTHER_USER_DRAFT_EDIT_URL = `/communities/${COMMUNITY_SLUG}/projects/idea-sketch/edit`
 
@@ -107,7 +107,13 @@ test.describe('ProjectEdit — /edit page (flujo de edición)', () => {
       await page.goto(EDIT_URL)
 
       const titleInput = page.getByLabel(/título/i)
-      await titleInput.fill('')
+      // Verificar que el input está hidratado antes de interactuar
+      await expect(titleInput).toHaveValue('E2E Draft Project')
+      // Limpiar con teclado para asegurar que React Hook Form actualiza su estado interno
+      await titleInput.click()
+      await page.keyboard.press('ControlOrMeta+a')
+      await page.keyboard.press('Delete')
+      await expect(titleInput).toHaveValue('')
 
       await page.getByRole('button', { name: /guardar cambios/i }).click()
 

@@ -57,7 +57,7 @@ test.describe('Invite link — sin autenticación', () => {
 
   test('la URL de redirect incluye next=/invite/{token}', async ({ page }) => {
     await page.goto('/invite/mi-token-abc')
-    await expect(page).toHaveURL(/next=%2Finvite%2Fmi-token-abc/, { timeout: 10_000 })
+    await expect(page).toHaveURL(/next=\/invite\/mi-token-abc/, { timeout: 10_000 })
   })
 })
 

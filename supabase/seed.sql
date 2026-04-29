@@ -281,7 +281,7 @@ INSERT INTO projects (
     NULL,
     '', '', '',
     NULL, NULL, NULL,
-    '{}', 'draft', NULL, NULL,
+    '{}', 'live', NULL, NULL,
     '2026-04-01T09:00:00Z', '2026-04-01T09:00:00Z'
   ),
   -- Startup Lab
