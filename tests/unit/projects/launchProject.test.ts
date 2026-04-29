@@ -182,6 +182,34 @@ describe('launchProject — error de DB al insertar proyecto', () => {
 })
 
 // ---------------------------------------------------------------------------
+// Helper — configura mocks para inserción exitosa y retorna los spies
+// ---------------------------------------------------------------------------
+
+function mockProjectInsertOk() {
+  const insertSpy = vi.fn().mockReturnThis()
+  const selectSpy = vi.fn().mockReturnThis()
+  const singleSpy = vi.fn().mockResolvedValue({ data: MOCK_PROJECT, error: null })
+
+  supabaseMock.from.mockImplementation((table: string) => {
+    if (table === 'communities') {
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: MOCK_COMMUNITY, error: null }),
+      }
+    }
+    if (table === 'projects') {
+      return { insert: insertSpy, select: selectSpy, single: singleSpy }
+    }
+    return {
+      select: () => ({ eq: () => ({ single: vi.fn().mockResolvedValue({ data: null, error: null }) }) }),
+    }
+  })
+
+  return { insertSpy, selectSpy, singleSpy }
+}
+
+// ---------------------------------------------------------------------------
 // Suite 4: Inserción exitosa
 // ---------------------------------------------------------------------------
 
@@ -202,23 +230,7 @@ describe('launchProject — inserción exitosa', () => {
   })
 
   it('inserta el proyecto con status "live"', async () => {
-    const insertSpy = vi.fn().mockReturnThis()
-    const selectSpy = vi.fn().mockReturnThis()
-    const singleSpy = vi.fn().mockResolvedValue({ data: MOCK_PROJECT, error: null })
-
-    supabaseMock.from.mockImplementation((table: string) => {
-      if (table === 'communities') {
-        return {
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: MOCK_COMMUNITY, error: null }),
-        }
-      }
-      if (table === 'projects') {
-        return { insert: insertSpy, select: selectSpy, single: singleSpy }
-      }
-      return {}
-    })
+    const { insertSpy } = mockProjectInsertOk()
 
     await launchProject(VALID_INPUT)
 
@@ -236,23 +248,7 @@ describe('launchProject — inserción exitosa', () => {
   })
 
   it('mapea imageUrls y feedbackTopics correctamente al insert', async () => {
-    const insertSpy = vi.fn().mockReturnThis()
-    const selectSpy = vi.fn().mockReturnThis()
-    const singleSpy = vi.fn().mockResolvedValue({ data: MOCK_PROJECT, error: null })
-
-    supabaseMock.from.mockImplementation((table: string) => {
-      if (table === 'communities') {
-        return {
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: MOCK_COMMUNITY, error: null }),
-        }
-      }
-      if (table === 'projects') {
-        return { insert: insertSpy, select: selectSpy, single: singleSpy }
-      }
-      return {}
-    })
+    const { insertSpy } = mockProjectInsertOk()
 
     const inputConMedia = {
       ...VALID_INPUT,
@@ -276,23 +272,7 @@ describe('launchProject — inserción exitosa', () => {
   })
 
   it('incluye targetUser y demoLink opcionales en el insert cuando se proporcionan', async () => {
-    const insertSpy = vi.fn().mockReturnThis()
-    const selectSpy = vi.fn().mockReturnThis()
-    const singleSpy = vi.fn().mockResolvedValue({ data: MOCK_PROJECT, error: null })
-
-    supabaseMock.from.mockImplementation((table: string) => {
-      if (table === 'communities') {
-        return {
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: MOCK_COMMUNITY, error: null }),
-        }
-      }
-      if (table === 'projects') {
-        return { insert: insertSpy, select: selectSpy, single: singleSpy }
-      }
-      return {}
-    })
+    const { insertSpy } = mockProjectInsertOk()
 
     await launchProject({
       ...VALID_INPUT,
@@ -309,23 +289,7 @@ describe('launchProject — inserción exitosa', () => {
   })
 
   it('pasa null a target_user y demo_url cuando no se proporcionan opcionales', async () => {
-    const insertSpy = vi.fn().mockReturnThis()
-    const selectSpy = vi.fn().mockReturnThis()
-    const singleSpy = vi.fn().mockResolvedValue({ data: MOCK_PROJECT, error: null })
-
-    supabaseMock.from.mockImplementation((table: string) => {
-      if (table === 'communities') {
-        return {
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: MOCK_COMMUNITY, error: null }),
-        }
-      }
-      if (table === 'projects') {
-        return { insert: insertSpy, select: selectSpy, single: singleSpy }
-      }
-      return {}
-    })
+    const { insertSpy } = mockProjectInsertOk()
 
     await launchProject(VALID_INPUT)
 

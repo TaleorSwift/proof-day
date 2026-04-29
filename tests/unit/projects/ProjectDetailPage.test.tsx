@@ -21,6 +21,7 @@ const {
   mockProofScoreSidebar,
   mockDraftBanner,
   mockInactiveBanner,
+  mockValidationSignalCard,
   createFeedbackRepoMock,
   createProfilesRepoMock,
 } = vi.hoisted(() => ({
@@ -33,6 +34,7 @@ const {
   mockProofScoreSidebar: vi.fn(),
   mockDraftBanner: vi.fn(),
   mockInactiveBanner: vi.fn(),
+  mockValidationSignalCard: vi.fn(),
   createFeedbackRepoMock: vi.fn(),
   createProfilesRepoMock: vi.fn(),
 }))
@@ -114,7 +116,10 @@ vi.mock('@/components/feedback/FeedbackCTA', () => ({
 }))
 
 vi.mock('@/components/proof-score/ValidationSignalCard', () => ({
-  ValidationSignalCard: () => <div data-testid='validation-signal-card' />,
+  ValidationSignalCard: (props: Record<string, unknown>) => {
+    mockValidationSignalCard(props)
+    return <div data-testid='validation-signal-card' />
+  },
 }))
 
 vi.mock('@/components/projects/ProjectDetailSections', () => ({
@@ -146,6 +151,7 @@ vi.mock('@/lib/projects/calculateValidationMetrics', () => ({
 }))
 
 import ProjectPage from '@/app/(app)/communities/[slug]/projects/[projectSlug]/page'
+import { calculateValidationMetrics } from '@/lib/projects/calculateValidationMetrics'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -477,5 +483,132 @@ describe('ProjectPage — AC-7: happy path renderiza estructura base', () => {
     render(jsx as React.ReactElement)
     expect(mockRedirect).not.toHaveBeenCalled()
     expect(mockNotFound).not.toHaveBeenCalled()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// AC-8: Integración calculateValidationMetrics → ValidationSignalCard
+// Usa la implementación real (no el mock) para verificar el flujo end-to-end
+// ---------------------------------------------------------------------------
+
+describe('ProjectPage — AC-8: métricas de validación calculadas correctamente', () => {
+  // Feedbacks con scores conocidos:
+  // - feedback-1: p1=3 (entiende), p2=3 (usaría) → computa como valid en ambas señales
+  // - feedback-2: p1=1 (NO entiende), p2=1 (NO usaría) → no computa en ninguna
+  // Con 2 feedbacks: understandPercent = 1/2*100 = 50, wouldUsePercent = 1/2*100 = 50
+  const feedbacksConScores = [
+    {
+      id: 'fb-001',
+      project_id: PROJECT_ID,
+      created_at: '2026-01-01T00:00:00Z',
+      scores: { p1: 3, p2: 3 },
+      text_responses: {},
+      profiles: { name: 'Ana García' },
+    },
+    {
+      id: 'fb-002',
+      project_id: PROJECT_ID,
+      created_at: '2026-01-02T00:00:00Z',
+      scores: { p1: 1, p2: 1 },
+      text_responses: {},
+      profiles: { name: 'Luis Ruiz' },
+    },
+  ]
+
+  beforeEach(async () => {
+    // Restaurar la implementación real de calculateValidationMetrics
+    const realModule = await vi.importActual<typeof import('@/lib/projects/calculateValidationMetrics')>(
+      '@/lib/projects/calculateValidationMetrics'
+    )
+    vi.mocked(calculateValidationMetrics).mockImplementation(realModule.calculateValidationMetrics)
+    createClientMock.mockResolvedValue(makeSupabaseMock({ userId: OTHER_USER_ID }))
+    createFeedbackRepoMock.mockReturnValue({
+      findByProject: vi.fn().mockResolvedValue({
+        data: feedbacksConScores,
+        error: null,
+      }),
+    })
+    createProfilesRepoMock.mockReturnValue({
+      findByIdForWidget: vi.fn().mockResolvedValue({ data: { name: 'Alex Builder' }, error: null }),
+    })
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+    // Restaurar al valor por defecto del vi.mock global para evitar contaminación
+    vi.mocked(calculateValidationMetrics).mockReturnValue({ understandPercent: 75, wouldUsePercent: 50 })
+  })
+
+  it('ValidationSignalCard recibe understandPercent y wouldUsePercent calculados por la implementación real', async () => {
+    const jsx = await ProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+
+    expect(mockValidationSignalCard).toHaveBeenCalledWith(
+      expect.objectContaining({
+        understandPercent: 50,
+        wouldUsePercent: 50,
+        feedbackCount: 2,
+      })
+    )
+  })
+
+  it('ValidationSignalCard se renderiza en el DOM para el reviewer en proyecto live', async () => {
+    const jsx = await ProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(screen.getByTestId('validation-signal-card')).toBeInTheDocument()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// AC-9: Proyecto inactive + non-owner — mensaje de cierre
+// ---------------------------------------------------------------------------
+
+describe('ProjectPage — AC-9: proyecto inactive + non-owner', () => {
+  const inactiveProject = { ...defaultProject, status: 'inactive', builder_id: OWNER_ID }
+
+  beforeEach(() => {
+    vi.mocked(calculateValidationMetrics).mockReturnValue({
+      understandPercent: 75,
+      wouldUsePercent: 50,
+    })
+    createClientMock.mockResolvedValue(
+      makeSupabaseMock({ userId: OTHER_USER_ID, project: inactiveProject })
+    )
+    setupDefaultRepos()
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('reviewer ve mensaje "Esta idea ya no acepta feedback."', async () => {
+    const jsx = await ProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(screen.getByText('Esta idea ya no acepta feedback.')).toBeInTheDocument()
+  })
+
+  it('NO renderiza FeedbackFormInline para reviewer en proyecto inactive', async () => {
+    const jsx = await ProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(screen.queryByTestId('feedback-form-inline')).not.toBeInTheDocument()
+  })
+
+  it('renderiza InactiveBanner cuando el proyecto está inactivo', async () => {
+    const jsx = await ProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(mockInactiveBanner).toHaveBeenCalled()
+  })
+
+  it('renderiza ValidationSignalCard para reviewer en proyecto inactive', async () => {
+    const jsx = await ProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(screen.getByTestId('validation-signal-card')).toBeInTheDocument()
+    expect(mockValidationSignalCard).toHaveBeenCalledWith(
+      expect.objectContaining({
+        understandPercent: 75,
+        wouldUsePercent: 50,
+        feedbackCount: 0,
+      })
+    )
   })
 })
