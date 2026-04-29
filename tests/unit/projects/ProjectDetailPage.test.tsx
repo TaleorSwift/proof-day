@@ -535,6 +535,8 @@ describe('ProjectPage — AC-8: métricas de validación calculadas correctament
 
   afterEach(() => {
     vi.clearAllMocks()
+    // Restaurar al valor por defecto del vi.mock global para evitar contaminación
+    vi.mocked(calculateValidationMetrics).mockReturnValue({ understandPercent: 75, wouldUsePercent: 50 })
   })
 
   it('ValidationSignalCard recibe understandPercent y wouldUsePercent calculados por la implementación real', async () => {
@@ -595,5 +597,18 @@ describe('ProjectPage — AC-9: proyecto inactive + non-owner', () => {
     const jsx = await ProjectPage({ params: defaultParams })
     render(jsx as React.ReactElement)
     expect(mockInactiveBanner).toHaveBeenCalled()
+  })
+
+  it('renderiza ValidationSignalCard para reviewer en proyecto inactive', async () => {
+    const jsx = await ProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(screen.getByTestId('validation-signal-card')).toBeInTheDocument()
+    expect(mockValidationSignalCard).toHaveBeenCalledWith(
+      expect.objectContaining({
+        understandPercent: 75,
+        wouldUsePercent: 50,
+        feedbackCount: 0,
+      })
+    )
   })
 })

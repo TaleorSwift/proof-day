@@ -230,7 +230,6 @@ describe('launchProject — inserción exitosa', () => {
   })
 
   it('inserta el proyecto con status "live"', async () => {
-    mockAuthOk()
     const { insertSpy } = mockProjectInsertOk()
 
     await launchProject(VALID_INPUT)
@@ -249,7 +248,6 @@ describe('launchProject — inserción exitosa', () => {
   })
 
   it('mapea imageUrls y feedbackTopics correctamente al insert', async () => {
-    mockAuthOk()
     const { insertSpy } = mockProjectInsertOk()
 
     const inputConMedia = {
@@ -274,7 +272,6 @@ describe('launchProject — inserción exitosa', () => {
   })
 
   it('incluye targetUser y demoLink opcionales en el insert cuando se proporcionan', async () => {
-    mockAuthOk()
     const { insertSpy } = mockProjectInsertOk()
 
     await launchProject({
@@ -292,7 +289,6 @@ describe('launchProject — inserción exitosa', () => {
   })
 
   it('pasa null a target_user y demo_url cuando no se proporcionan opcionales', async () => {
-    mockAuthOk()
     const { insertSpy } = mockProjectInsertOk()
 
     await launchProject(VALID_INPUT)

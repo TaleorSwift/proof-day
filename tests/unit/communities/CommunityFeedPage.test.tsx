@@ -89,8 +89,11 @@ function makeChain(resolvedValue: unknown) {
     chain[m] = () => chain
   })
   // Thenable: permite usar `await chain` y `await Promise.all([chain, ...])`
-  chain.then = (resolve: (v: unknown) => void) => resolve(resolvedValue)
-  chain.catch = () => chain
+  // Sigue PromiseLike spec — usa Promise.resolve().then.bind() para robustez
+  const p = Promise.resolve(resolvedValue)
+  chain.then = p.then.bind(p)
+  chain.catch = p.catch.bind(p)
+  chain.finally = p.finally.bind(p)
   return chain
 }
 
@@ -381,6 +384,8 @@ describe('CommunityPage — AC-5: Promise.all resuelve con proyectos', () => {
             builderName: expect.any(String),
             feedbackCount: expect.any(Number),
             imageUrls: expect.any(Array),
+            tagline: 'Tagline del proyecto',
+            wouldUseCount: 10,
           }),
         ]),
       })
