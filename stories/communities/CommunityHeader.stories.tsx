@@ -1,0 +1,93 @@
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import { CommunityHeader } from '@/components/communities/CommunityHeader'
+
+const baseCommunity = {
+  id: 'comm-001',
+  name: 'Startup Madrid',
+  slug: 'startup-madrid',
+  description: 'Espacio de validación de ideas para emprendedores de Madrid.',
+  image_url: 'https://picsum.photos/seed/startup-madrid/200/200',
+  created_by: 'user-001',
+  created_at: '2026-01-15T10:00:00Z',
+  updated_at: '2026-01-15T10:00:00Z',
+  member_count: 12,
+}
+
+const meta = {
+  title: 'Communities/CommunityHeader',
+  component: CommunityHeader,
+  tags: ['autodocs'],
+  parameters: {
+    layout: 'centered',
+    nextjs: { appDirectory: true },
+  },
+  decorators: [
+    (Story) => (
+      <div style={{ maxWidth: '280px', padding: 'var(--space-4)' }}>
+        <Story />
+      </div>
+    ),
+  ],
+} satisfies Meta<typeof CommunityHeader>
+
+export default meta
+type Story = StoryObj<typeof meta>
+
+// Vista de miembro sin permisos de administración
+export const Default: Story = {
+  args: {
+    community: baseCommunity,
+    isAdmin: false,
+  },
+}
+
+// Vista de admin — muestra el enlace a Configuración
+export const ComoAdmin: Story = {
+  args: {
+    community: baseCommunity,
+    isAdmin: true,
+  },
+}
+
+// Sin imagen de comunidad — muestra el avatar con inicial
+export const SinImagen: Story = {
+  args: {
+    community: {
+      ...baseCommunity,
+      id: 'comm-002',
+      name: 'Beta Testers',
+      slug: 'beta-testers',
+      image_url: null,
+    },
+    isAdmin: false,
+  },
+}
+
+// Sin descripción — la sección de descripción no se renderiza
+export const SinDescripcion: Story = {
+  args: {
+    community: {
+      ...baseCommunity,
+      id: 'comm-003',
+      name: 'Proyecto Stealth',
+      slug: 'proyecto-stealth',
+      description: '',
+      image_url: null,
+    },
+    isAdmin: false,
+  },
+}
+
+// Un solo miembro — texto en singular "miembro"
+export const UnSoloMiembro: Story = {
+  args: {
+    community: {
+      ...baseCommunity,
+      id: 'comm-004',
+      name: 'Solo Fundador',
+      slug: 'solo-fundador',
+      member_count: 1,
+    },
+    isAdmin: true,
+  },
+}
