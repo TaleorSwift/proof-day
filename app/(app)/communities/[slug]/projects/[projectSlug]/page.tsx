@@ -23,42 +23,10 @@ import {
   ProjectDetailFeedbackTopics,
 } from '@/components/projects/ProjectDetailSections'
 import Link from 'next/link'
+import { calculateValidationMetrics } from '@/lib/projects/calculateValidationMetrics'
 
 interface Props {
   params: Promise<{ slug: string; projectSlug: string }>
-}
-
-// ---------------------------------------------------------------------------
-// Cálculo de señales de validación desde feedbacks SSR
-// ---------------------------------------------------------------------------
-
-interface ValidationMetrics {
-  understandPercent: number
-  wouldUsePercent: number
-}
-
-function calculateValidationMetrics(
-  feedbacks: Array<{ scores: unknown }>,
-  feedbackCount: number,
-): ValidationMetrics {
-  if (feedbackCount === 0) {
-    return { understandPercent: 0, wouldUsePercent: 0 }
-  }
-
-  const understandCount = feedbacks.filter((f) => {
-    const s = f.scores as { p1?: number } | null
-    return (s?.p1 ?? 0) >= 2
-  }).length
-
-  const wouldUseCount = feedbacks.filter((f) => {
-    const s = f.scores as { p2?: number } | null
-    return s?.p2 === 3
-  }).length
-
-  return {
-    understandPercent: Math.round((understandCount / feedbackCount) * 100),
-    wouldUsePercent: Math.round((wouldUseCount / feedbackCount) * 100),
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -122,8 +90,9 @@ export default async function ProjectPage({ params }: Props) {
   const { understandPercent, wouldUsePercent } = calculateValidationMetrics(feedbacks, feedbackCount)
 
   // Regla de visibilidad de la sidebar (story 9.7):
-  // - draft: sidebar NUNCA visible para nadie
-  // - live/inactive: sidebar visible para TODOS (owner y reviewer)
+  // - draft + owner: sidebar visible (ve sus controles de gestión)
+  // - draft + reviewer: sidebar oculta
+  // - live/inactive: sidebar visible para TODOS
   const showSidebar = isOwner || project.status === 'live' || project.status === 'inactive'
 
   return (
