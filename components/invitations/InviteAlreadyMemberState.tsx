@@ -1,3 +1,4 @@
+import 'server-only'
 import Link from 'next/link'
 
 // CR3-F6 + CR5-F2: CSS variables for colors, typography, and spacing

@@ -120,7 +120,7 @@ export default async function ProjectPage({ params }: Props) {
           />
         </div>
 
-        {/* AC-6: Banner draft — solo visible para el builder */}
+        {/* AC-6: Banner draft — visible para cualquier miembro que acceda al proyecto en estado draft */}
         {project.status === 'draft' && <DraftBanner />}
 
         {/* Banner inactivo */}

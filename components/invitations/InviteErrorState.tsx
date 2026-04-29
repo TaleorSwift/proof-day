@@ -1,3 +1,4 @@
+import 'server-only'
 // CR3-F6 + CR5-F2: CSS variables for colors, typography, and spacing
 // story 2.2 — token inválido, ya usado o inexistente
 
