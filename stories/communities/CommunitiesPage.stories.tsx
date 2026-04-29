@@ -92,7 +92,7 @@ function NoAccessPage() {
 }
 
 const meta: Meta = {
-  title: 'Pages/Communities',
+  title: 'Communities/CommunitiesPage',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',

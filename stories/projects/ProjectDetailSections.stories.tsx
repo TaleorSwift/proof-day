@@ -13,7 +13,7 @@ import {
 // ── ProjectDetailAuthor ───────────────────────────────────────────────────────
 
 const authorMeta = {
-  title: 'Projects/ProjectDetailSections/Author',
+  title: 'Projects/ProjectDetailSections',
   component: ProjectDetailAuthor,
   tags: ['autodocs'],
   parameters: { layout: 'padded' },
