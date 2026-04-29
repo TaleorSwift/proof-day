@@ -4,6 +4,7 @@ import path from 'path'
 const AUTH_STATE_PATH = path.join(__dirname, 'tests/e2e/.auth/user.json')
 const ADMIN_AUTH_STATE_PATH = path.join(__dirname, 'tests/e2e/.auth/admin.json')
 const REVIEWER_AUTH_STATE_PATH = path.join(__dirname, 'tests/e2e/.auth/reviewer.json')
+const ISOLATED_AUTH_STATE_PATH = path.join(__dirname, 'tests/e2e/.auth/isolated.json')
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -35,6 +36,11 @@ export default defineConfig({
       testMatch: /auth\.setup\.ts/,
       grep: /autenticar usuario reviewer/,
     },
+    {
+      name: 'setup-isolated',
+      testMatch: /auth\.setup\.ts/,
+      grep: /autenticar usuario isolated/,
+    },
 
     // ── Proyecto principal (usuario regular) ───────────────────────────────────
     // Los specs que prueban escenarios sin sesión limpian las cookies en beforeEach
@@ -45,7 +51,7 @@ export default defineConfig({
         storageState: AUTH_STATE_PATH,
       },
       dependencies: ['setup'],
-      testIgnore: [/\.admin\.spec\.ts$/, /\.reviewer\.spec\.ts$/],
+      testIgnore: [/\.admin\.spec\.ts$/, /\.reviewer\.spec\.ts$/, /\.isolated\.spec\.ts$/],
     },
 
     // ── Proyecto admin ─────────────────────────────────────────────────────────
@@ -68,6 +74,17 @@ export default defineConfig({
       },
       dependencies: ['setup-reviewer'],
       testMatch: /\.reviewer\.spec\.ts$/,
+    },
+
+    // ── Proyecto isolated (usuario sin comunidades) ────────────────────────────
+    {
+      name: 'chromium-isolated',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: ISOLATED_AUTH_STATE_PATH,
+      },
+      dependencies: ['setup-isolated'],
+      testMatch: /\.isolated\.spec\.ts$/,
     },
   ],
   // No ejecutar servidor en tests — debe estar corriendo

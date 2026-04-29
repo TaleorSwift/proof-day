@@ -846,8 +846,9 @@ INSERT INTO invitation_links (id, token, community_id, created_by, used_at, used
 
 -- ============================================================
 -- E2E TEST DATA — usuarios adicionales para multi-storage-state
--- e2e-admin  : e2e00000-0000-4000-8000-000000000098 (admin de startup-madrid)
--- e2e-reviewer: e2e00000-0000-4000-8000-000000000097 (member de producto-alpha, sin proyectos)
+-- e2e-admin   : e2e00000-0000-4000-8000-000000000098 (admin de startup-madrid)
+-- e2e-reviewer: e2e00000-0000-4000-8000-000000000097 (member de producto-alpha + startup-madrid, sin proyectos)
+-- e2e-isolated: e2e00000-0000-4000-8000-000000000096 (sin membresías — para empty state de /communities)
 -- Requiere: supabase db reset para aplicar en base de datos local existente
 -- ============================================================
 
@@ -928,14 +929,53 @@ UPDATE profiles SET
   updated_at = now()
 WHERE id = 'e2e00000-0000-4000-8000-000000000097';
 
--- Membresía de e2e-reviewer como member de producto-alpha (sin ser builder de ningún proyecto)
--- d0000000-...026 es el siguiente UUID disponible
+-- Membresía de e2e-reviewer: member de producto-alpha + member de startup-madrid
 INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUES
   ('d0000000-0000-4000-8000-000000000026',
    'b0000000-0000-4000-8000-000000000001',
    'e2e00000-0000-4000-8000-000000000097',
+   'member', now()),
+  ('d0000000-0000-4000-8000-000000000027',
+   'b0000000-0000-4000-8000-000000000010',
+   'e2e00000-0000-4000-8000-000000000097',
    'member', now())
 ON CONFLICT (id) DO NOTHING;
+
+-- ── Usuario e2e-isolated ─────────────────────────────────────
+-- Sin membresías — para el empty state de /communities
+
+INSERT INTO auth.users (
+  instance_id, id, aud, role, email, encrypted_password,
+  email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+  confirmation_token, recovery_token, email_change_token_new, email_change,
+  created_at, updated_at
+) VALUES (
+  '00000000-0000-0000-0000-000000000000',
+  'e2e00000-0000-4000-8000-000000000096',
+  'authenticated', 'authenticated', 'e2e-isolated@proofday.local',
+  crypt('E2eTest_Pass_123!', gen_salt('bf')), now(),
+  '{"provider":"email","providers":["email"]}', '{"email_verified":true}',
+  '', '', '', '',
+  now(), now()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO auth.identities (
+  id, provider_id, user_id, identity_data, provider,
+  last_sign_in_at, created_at, updated_at
+) VALUES (
+  gen_random_uuid(), 'e2e-isolated@proofday.local',
+  'e2e00000-0000-4000-8000-000000000096',
+  '{"sub":"e2e00000-0000-4000-8000-000000000096","email":"e2e-isolated@proofday.local","email_verified":true,"phone_verified":false}',
+  'email', now(), now(), now()
+) ON CONFLICT (provider_id, provider) DO NOTHING;
+
+UPDATE profiles SET
+  name       = 'E2E Isolated User',
+  bio        = 'Usuario de test sin comunidades para Playwright E2E.',
+  interests  = ARRAY['testing'],
+  updated_at = now()
+WHERE id = 'e2e00000-0000-4000-8000-000000000096';
+-- Sin membresías — el empty state de /communities depende de esto
 
 -- ── Proyecto inactive del test user (para owner inactive tests) ──────────────
 -- Necesario para: project-detail-roles.spec.ts — owner con proyecto inactive
