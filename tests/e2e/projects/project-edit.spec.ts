@@ -32,15 +32,15 @@ test.describe('ProjectEdit — /edit page (flujo de edición)', () => {
 
       const problemField = page.getByLabel(/descripción del problema/i)
       await expect(problemField).toBeVisible()
-      await expect(problemField).not.toBeEmpty()
+      await expect(problemField).toHaveValue('Un problema que estamos validando con el equipo.')
 
       const solutionField = page.getByLabel(/solución propuesta/i)
       await expect(solutionField).toBeVisible()
-      await expect(solutionField).not.toBeEmpty()
+      await expect(solutionField).toHaveValue('Una solución basada en encuestas semanales.')
 
-      const hypothesisField = page.getByLabel(/hipótesis/i)
+      const hypothesisField = page.getByRole('textbox', { name: /hipótesis/i })
       await expect(hypothesisField).toBeVisible()
-      await expect(hypothesisField).not.toBeEmpty()
+      await expect(hypothesisField).toHaveValue('Si simplificamos el flujo, la tasa de respuesta superará el 80%.')
     }
   )
 
@@ -66,11 +66,13 @@ test.describe('ProjectEdit — /edit page (flujo de edición)', () => {
 
       await page.getByRole('button', { name: /guardar cambios/i }).click()
 
-      // Tras guardar no debe haber mensaje de error — el botón vuelve a estar enabled
-      await expect(page.getByRole('button', { name: /guardar cambios/i })).toBeVisible()
-      await expect(page.getByRole('alert')).not.toBeVisible()
+      // Esperar señal de éxito: el botón vuelve a estar habilitado (submit terminó)
+      await expect(page.getByRole('button', { name: /guardar cambios/i })).not.toBeDisabled({ timeout: 5_000 })
+      // Verificar que no hay alertas de validación del formulario (excluye el route announcer de Next.js)
+      await expect(page.locator('p[role="alert"]')).not.toBeVisible()
 
-      // Verificar que el campo sigue con el valor nuevo (no se resetea)
+      // Recargar para confirmar persistencia real (evita falsos positivos con cache stale de router.refresh)
+      await page.reload()
       await expect(page.getByLabel(/usuario objetivo/i)).toHaveValue(expectedValue)
     }
   )
@@ -90,11 +92,12 @@ test.describe('ProjectEdit — /edit page (flujo de edición)', () => {
   test(
     'proyecto en estado live devuelve error al intentar acceder a /edit (AC-4)',
     async ({ page }) => {
-      // e2e-own-project tiene status live — la página debe redirigir a la página de error de Next.js
-      // notFound() en Next.js App Router renderiza la página not-found.tsx (status 404 en producción,
-      // puede variar en desarrollo local — verificamos que NO se queda en /edit)
+      // e2e-own-project tiene status live — notFound() en Next.js App Router NO cambia la URL,
+      // renderiza el componente not-found.tsx (o la página 404 por defecto de Next.js) en la misma URL.
       await page.goto(LIVE_PROJECT_EDIT_URL)
-      await expect(page).not.toHaveURL(/\/edit/)
+      // notFound() no cambia la URL — verificar que se renderiza el not-found.tsx custom
+      await expect(page.getByRole('heading', { name: 'Página no encontrada' })).toBeVisible({ timeout: 10_000 })
+      await expect(page.getByRole('button', { name: /guardar cambios/i })).not.toBeVisible()
     }
   )
 
@@ -108,8 +111,8 @@ test.describe('ProjectEdit — /edit page (flujo de edición)', () => {
 
       await page.getByRole('button', { name: /guardar cambios/i }).click()
 
-      // El error de validación debe ser visible
-      const alert = page.getByRole('alert').first()
+      // El error de validación del formulario debe ser visible (p[role="alert"] del ProjectForm)
+      const alert = page.locator('p[role="alert"]').first()
       await expect(alert).toBeVisible()
     }
   )
