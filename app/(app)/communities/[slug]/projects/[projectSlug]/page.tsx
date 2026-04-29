@@ -90,8 +90,9 @@ export default async function ProjectPage({ params }: Props) {
   const { understandPercent, wouldUsePercent } = calculateValidationMetrics(feedbacks, feedbackCount)
 
   // Regla de visibilidad de la sidebar (story 9.7):
-  // - draft: sidebar NUNCA visible para nadie
-  // - live/inactive: sidebar visible para TODOS (owner y reviewer)
+  // - draft + owner: sidebar visible (ve sus controles de gestión)
+  // - draft + reviewer: sidebar oculta
+  // - live/inactive: sidebar visible para TODOS
   const showSidebar = isOwner || project.status === 'live' || project.status === 'inactive'
 
   return (

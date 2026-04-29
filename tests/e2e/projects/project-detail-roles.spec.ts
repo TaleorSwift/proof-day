@@ -15,6 +15,7 @@ test.describe('ProjectDetail — Roles owner vs reviewer (Story 9.7)', () => {
   // Owner — verificar que ve sus controles de gestión
   // ---------------------------------------------------------------------------
 
+  // Requiere proyecto 'pulse-check' con builder_id === usuario de test (e2e@proofday.local) en el seed
   test.describe('Owner', () => {
     test(
       've el botón "Publicar" o "Marcar como inactivo" (ProjectStateActions) en un proyecto propio',

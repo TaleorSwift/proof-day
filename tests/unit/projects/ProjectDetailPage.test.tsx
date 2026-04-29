@@ -153,9 +153,9 @@ import ProjectPage from '@/app/(app)/communities/[slug]/projects/[projectSlug]/p
 
 function makeChain(resolvedValue: unknown) {
   const chain: Record<string, unknown> = {}
-  const methods = ['select', 'eq', 'in', 'order', 'single']
+  const methods = ['select', 'eq', 'single']
   for (const method of methods) {
-    if (method === 'single' || method === 'order') {
+    if (method === 'single') {
       chain[method] = vi.fn().mockResolvedValue(resolvedValue)
     } else {
       chain[method] = vi.fn().mockReturnValue(chain)
@@ -353,6 +353,22 @@ describe('ProjectPage — AC-4: isOwner = true → sidebar de owner', () => {
     const jsx = await ProjectPage({ params: defaultParams })
     render(jsx as React.ReactElement)
     expect(mockProjectStateActions).toHaveBeenCalledWith(
+      expect.objectContaining({ isBuilder: true })
+    )
+  })
+
+  it('pasa isBuilder: true a ProofScoreSidebar', async () => {
+    const jsx = await ProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(mockProofScoreSidebar).toHaveBeenCalledWith(
+      expect.objectContaining({ isBuilder: true })
+    )
+  })
+
+  it('pasa isBuilder: true a FeedbackList', async () => {
+    const jsx = await ProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(mockFeedbackList).toHaveBeenCalledWith(
       expect.objectContaining({ isBuilder: true })
     )
   })

@@ -115,7 +115,7 @@ function ProjectDetailLayout({
     >
       <div
         style={{
-          maxWidth: '960px',
+          maxWidth: 'var(--container-max-width, 960px)',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
@@ -408,6 +408,20 @@ export const ReviewerInactive: Story = {
     ...baseProjectData,
     status: 'inactive',
     isOwner: false,
+    initialDecision: null,
+  },
+}
+
+export const ReviewerDraft: Story = {
+  name: 'Reviewer — Draft (sin sidebar)',
+  args: {
+    ...baseProjectData,
+    status: 'draft',
+    isOwner: false,
+    feedbackCount: 0,
+    feedbackEntries: [],
+    understandPercent: 0,
+    wouldUsePercent: 0,
     initialDecision: null,
   },
 }

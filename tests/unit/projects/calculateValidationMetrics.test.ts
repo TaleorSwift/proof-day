@@ -63,4 +63,11 @@ describe('calculateValidationMetrics', () => {
     expect(result.understandPercent).toBe(33)
     expect(result.wouldUsePercent).toBe(33)
   })
+
+  it('usa feedbackCount como denominador incluso si supera el largo del array (feedbacks paginados)', () => {
+    const feedbacks = [{ scores: { p1: 3, p2: 3 } }] // 1 entrada
+    const result = calculateValidationMetrics(feedbacks, 10)
+    expect(result.understandPercent).toBe(10) // Math.round(1/10*100)
+    expect(result.wouldUsePercent).toBe(10)
+  })
 })

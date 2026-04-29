@@ -14,21 +14,20 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 // FeedbackList es 'use client' y hace fetch interno vía getFeedbacks.
-// En Storybook se renderiza en estado de carga inicial o vacío.
-// Para variantes con datos, mockear getFeedbacks en el decorator si se necesita.
+// Sin mock de getFeedbacks, todas las stories muestran el estado de carga inicial.
+// Para variantes con datos reales, mockear getFeedbacks en un decorator de story.
 
-export const OwnerConFeedbacks: Story = {
-  name: 'Owner — con feedbacks (estado inicial/carga)',
+export const OwnerCargaInicial: Story = {
+  name: 'Owner — Carga inicial (getFeedbacks sin mock)',
+  parameters: {
+    docs: {
+      description: {
+        story: 'Vista inicial mientras carga. Sin mock de getFeedbacks, el estado de datos no es reproducible automáticamente.',
+      },
+    },
+  },
   args: {
     projectId: 'proj-storybook-001',
-    isBuilder: true,
-  },
-}
-
-export const OwnerSinFeedbacks: Story = {
-  name: 'Owner — sin feedbacks aún',
-  args: {
-    projectId: 'proj-storybook-002',
     isBuilder: true,
   },
 }
