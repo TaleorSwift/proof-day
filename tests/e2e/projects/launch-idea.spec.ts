@@ -4,15 +4,23 @@ import { test, expect } from '@playwright/test'
 // Auth setup: tests/e2e/auth.setup.ts (storageState configurado en playwright.config.ts)
 // Requiere comunidad con slug 'startup-madrid' y el e2e test user como miembro en el seed
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'http://127.0.0.1:54321'
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
+const ADMIN_HEADERS = {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${SERVICE_KEY}`,
+  apikey: SERVICE_KEY,
+}
+
 test.describe('LaunchIdeaModal — flujo modal lanzar idea (Story 9.8)', () => {
   const COMMUNITY_FEED_URL = '/communities/startup-madrid'
   const testTitle = `Idea de test E2E ${Date.now()}`
 
-  // cleanup manual si es necesario en CI
   test.afterAll(async () => {
-    // No hay patrón de supabase admin client en este repo — el título único con
-    // Date.now() garantiza idempotencia entre ejecuciones. Limpiar manualmente
-    // en caso de necesitar restablecer la BD de test.
+    await fetch(
+      `${SUPABASE_URL}/rest/v1/projects?slug=ilike.idea-de-test-e2e-*`,
+      { method: 'DELETE', headers: ADMIN_HEADERS, signal: AbortSignal.timeout(5000) }
+    )
   })
 
   test(
@@ -46,6 +54,9 @@ test.describe('LaunchIdeaModal — flujo modal lanzar idea (Story 9.8)', () => {
       await page.getByRole('button', { name: '+ Lanzar proyecto' }).click()
 
       await expect(page.getByText('¡Idea lanzada! Ya está recibiendo feedback.')).toBeVisible({ timeout: 10_000 })
+
+      // Verificar que el proyecto aparece en el feed tras submit
+      await expect(page.getByText(testTitle)).toBeVisible({ timeout: 10_000 })
     }
   )
 
