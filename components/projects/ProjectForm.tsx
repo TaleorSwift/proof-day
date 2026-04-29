@@ -129,8 +129,8 @@ export function ProjectForm({
       noValidate
       style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}
     >
-      {/* Campo oculto communityId */}
-      <input type="hidden" {...register('communityId')} />
+      {/* Campo oculto communityId — solo en modo crear */}
+      {!isEdit && <input type="hidden" {...register('communityId')} />}
 
       {/* Título */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
@@ -402,7 +402,7 @@ export function ProjectForm({
 
       {/* Submit */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 'var(--space-2)' }}>
-        <Button type="submit" disabled={isSubmitting}>
+        <Button type="submit" disabled={isSubmitting} aria-busy={isSubmitting}>
           {isSubmitting ? 'Guardando...' : isEdit ? 'Guardar cambios' : 'Crear proyecto'}
         </Button>
       </div>

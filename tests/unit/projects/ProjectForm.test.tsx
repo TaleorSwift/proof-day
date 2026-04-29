@@ -212,6 +212,16 @@ describe('ProjectForm — AC-3: submit modo editar', () => {
         PROJECT_ID,
         expect.objectContaining({ title: 'Mi proyecto editable' })
       )
+    })
+  })
+
+  it('NO incluye communityId en el objeto pasado a updateProject (modo editar)', async () => {
+    const user = userEvent.setup()
+    renderModoEditar()
+
+    await user.click(screen.getByRole('button', { name: /guardar cambios/i }))
+
+    await waitFor(() => {
       expect(mockUpdateProject).toHaveBeenCalledWith(
         PROJECT_ID,
         expect.not.objectContaining({ communityId: expect.anything() })
@@ -302,6 +312,27 @@ describe('ProjectForm — AC-4: submit modo crear', () => {
     await waitFor(() => {
       expect(mockRouterPush).toHaveBeenCalledWith(
         `/communities/${COMMUNITY_SLUG}/projects/nuevo-proyecto/edit`
+      )
+    })
+  })
+
+  it('SÍ incluye communityId en el objeto pasado a createProject (modo crear)', async () => {
+    const user = userEvent.setup()
+    renderModoCrear()
+
+    await user.type(screen.getByLabelText(/título/i), 'Proyecto con communityId')
+    await user.type(
+      screen.getByLabelText(/descripción del problema/i),
+      'Problema de prueba.'
+    )
+    await user.type(screen.getByLabelText(/solución propuesta/i), 'Solución de prueba.')
+    await user.type(screen.getByLabelText(/hipótesis/i), 'Hipótesis de prueba.')
+
+    await user.click(screen.getByRole('button', { name: /crear proyecto/i }))
+
+    await waitFor(() => {
+      expect(mockCreateProject).toHaveBeenCalledWith(
+        expect.objectContaining({ communityId: COMMUNITY_ID })
       )
     })
   })
@@ -452,6 +483,26 @@ describe('ProjectForm — AC-7: isSubmitting → botón disabled', () => {
     // Durante la petición el botón debe estar deshabilitado
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /guardando.../i })).toBeDisabled()
+    })
+
+    // Limpiar: resolver la promesa pendiente
+    resolveUpdate({ ...defaultProject })
+  })
+
+  it('el botón submit tiene aria-busy=true mientras la petición está en curso', async () => {
+    let resolveUpdate!: (value: ProjectRow) => void
+    mockUpdateProject.mockImplementation(
+      () => new Promise<ProjectRow>((res) => { resolveUpdate = res })
+    )
+
+    const user = userEvent.setup()
+    renderModoEditar()
+
+    await user.click(screen.getByRole('button', { name: /guardar cambios/i }))
+
+    await waitFor(() => {
+      const btn = screen.getByRole('button', { name: /guardando.../i })
+      expect(btn).toHaveAttribute('aria-busy', 'true')
     })
 
     // Limpiar: resolver la promesa pendiente

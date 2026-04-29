@@ -330,6 +330,83 @@ describe('InviteTokenPage — rollback ante fallo de invalidación', () => {
       'Error al procesar el link. Por favor, inténtalo de nuevo.'
     )
   })
+
+  // Test A — rollback con orden de operaciones
+  it('llama a insert (membresía) ANTES de delete (rollback) cuando la invalidación falla', async () => {
+    const callOrder: string[] = []
+    const insertSpy = vi.fn().mockImplementation(() => {
+      callOrder.push('insert')
+      return Promise.resolve({ error: null })
+    })
+    const mockDeleteEq2Ordered = vi.fn().mockImplementation(() => {
+      callOrder.push('delete')
+      return Promise.resolve({ error: null })
+    })
+    const mockDeleteEqOrdered = vi.fn(() => ({ eq: mockDeleteEq2Ordered }))
+    const mockDeleteOrdered = vi.fn(() => ({ eq: mockDeleteEqOrdered }))
+
+    mockFrom.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+          }),
+        }),
+      }),
+      insert: insertSpy,
+      update: vi.fn().mockReturnValue({
+        eq: vi.fn().mockResolvedValue({ error: { message: 'RLS blocked', code: '42501' } }),
+      }),
+      delete: mockDeleteOrdered,
+    })
+
+    await InvitePage({ params: makeParams('valid-token') })
+
+    expect(callOrder).toEqual(['insert', 'delete'])
+    expect(callOrder.indexOf('insert')).toBeLessThan(callOrder.indexOf('delete'))
+  })
+
+  // Test B — rollback fallido (delete de membresía también falla)
+  it('llama a console.error sin exponer el token cuando el rollback también falla', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    const mockDeleteEq2Failing = vi.fn().mockResolvedValue({ error: { message: 'Delete failed' } })
+    const mockDeleteEqFailing = vi.fn(() => ({ eq: mockDeleteEq2Failing }))
+    const mockDeleteFailing = vi.fn(() => ({ eq: mockDeleteEqFailing }))
+
+    mockFrom.mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+          }),
+        }),
+      }),
+      insert: vi.fn().mockResolvedValue({ error: null }),
+      update: vi.fn().mockReturnValue({
+        eq: vi.fn().mockResolvedValue({ error: { message: 'RLS blocked', code: '42501' } }),
+      }),
+      delete: mockDeleteFailing,
+    })
+
+    const jsx = await InvitePage({ params: makeParams('secret-token-xyz') })
+
+    // console.error debe haber sido llamado
+    expect(consoleSpy).toHaveBeenCalled()
+
+    // El payload logueado no debe contener el token
+    const loggedArgs = consoleSpy.mock.calls[0]
+    const loggedPayload = JSON.stringify(loggedArgs)
+    expect(loggedPayload).not.toContain('secret-token-xyz')
+
+    // El usuario ve el mensaje de error de la UI (no estado corrupto)
+    render(jsx as React.ReactElement)
+    expect(screen.getByTestId('invite-error-state')).toHaveTextContent(
+      'Error al procesar el link. Por favor, inténtalo de nuevo.'
+    )
+
+    consoleSpy.mockRestore()
+  })
 })
 
 // ---------------------------------------------------------------------------
