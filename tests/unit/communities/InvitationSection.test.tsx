@@ -132,6 +132,10 @@ describe('InvitationSection — copiar link', () => {
     generateInvitationLinkMock.mockResolvedValue('https://example.com/invite/token-xyz')
   })
 
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it('llama a clipboard.writeText con la URL del link', async () => {
     // Spy sobre el clipboard real de jsdom en tiempo de ejecución del test
     const writeTextSpy = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined)

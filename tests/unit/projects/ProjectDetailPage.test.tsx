@@ -449,6 +449,12 @@ describe('ProjectPage — AC-6: proyecto draft + non-owner', () => {
     expect(screen.queryByTestId('feedback-form-inline')).not.toBeInTheDocument()
   })
 
+  it('NO renderiza ValidationSignalCard para non-owner en proyecto draft (sidebar oculta)', async () => {
+    const jsx = await ProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(screen.queryByTestId('validation-signal-card')).not.toBeInTheDocument()
+  })
+
   it('NO llama a redirect ni notFound para non-owner en draft (no hay protección de ruta)', async () => {
     await ProjectPage({ params: defaultParams })
     expect(mockRedirect).not.toHaveBeenCalled()
