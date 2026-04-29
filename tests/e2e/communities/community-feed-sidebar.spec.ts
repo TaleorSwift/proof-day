@@ -12,7 +12,8 @@ test.describe('Community Feed — sidebar CommunityHeader', () => {
 
   test('muestra el conteo de miembros en el sidebar', async ({ page }) => {
     await page.goto('/communities/startup-madrid')
-    await expect(page.getByText(/\d+ miembros?/)).toBeVisible()
+    // startup-madrid tiene 5 miembros: Alex (admin), Sara, Tom, e2e-community, e2e-admin
+    await expect(page.getByText('5 miembros')).toBeVisible()
   })
 })
 
@@ -27,22 +28,5 @@ test.describe('Community Feed — BackButton', () => {
     await page.goto('/communities/startup-madrid')
     await page.getByRole('link', { name: /Mis comunidades/i }).click()
     await expect(page).toHaveURL(/\/communities(\/|\?|#|$)/)
-  })
-})
-
-test.describe('Community Feed — enlace Configuración (rol admin)', () => {
-  // El usuario e2e@proofday.local es `member` en el seed, no `admin`.
-  // Estos tests requieren seed con e2e user como admin de la comunidad.
-  test.skip(true, 'Requiere seed con e2e user como admin de la comunidad.')
-  test('el admin ve el enlace "Configuración" en el sidebar', async ({ page }) => {
-    await page.goto('/communities/startup-madrid')
-    const link = page.getByRole('link', { name: 'Configuración' })
-    await expect(link).toBeVisible()
-  })
-
-  test('el enlace Configuración apunta a /communities/[slug]/settings', async ({ page }) => {
-    await page.goto('/communities/startup-madrid')
-    const link = page.getByRole('link', { name: 'Configuración' })
-    await expect(link).toHaveAttribute('href', '/communities/startup-madrid/settings')
   })
 })

@@ -2,6 +2,8 @@ import { defineConfig, devices } from '@playwright/test'
 import path from 'path'
 
 const AUTH_STATE_PATH = path.join(__dirname, 'tests/e2e/.auth/user.json')
+const ADMIN_AUTH_STATE_PATH = path.join(__dirname, 'tests/e2e/.auth/admin.json')
+const REVIEWER_AUTH_STATE_PATH = path.join(__dirname, 'tests/e2e/.auth/reviewer.json')
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -15,12 +17,26 @@ export default defineConfig({
     trace: 'on-first-retry',
   },
   projects: [
-    // Setup: crea usuario de test y guarda auth state
+    // ── Setup: crea usuarios de test y guarda auth states ──────────────────────
+    // IMPORTANTE: los patrones grep deben mantenerse sincronizados con los títulos
+    // de los tests en tests/e2e/auth.setup.ts. No renombrar esos tests sin actualizar aquí.
     {
       name: 'setup',
       testMatch: /auth\.setup\.ts/,
+      grep: /autenticar usuario de test/,
     },
-    // Proyecto principal: usa el auth state guardado por setup
+    {
+      name: 'setup-admin',
+      testMatch: /auth\.setup\.ts/,
+      grep: /autenticar usuario admin/,
+    },
+    {
+      name: 'setup-reviewer',
+      testMatch: /auth\.setup\.ts/,
+      grep: /autenticar usuario reviewer/,
+    },
+
+    // ── Proyecto principal (usuario regular) ───────────────────────────────────
     // Los specs que prueban escenarios sin sesión limpian las cookies en beforeEach
     {
       name: 'chromium',
@@ -29,6 +45,29 @@ export default defineConfig({
         storageState: AUTH_STATE_PATH,
       },
       dependencies: ['setup'],
+      testIgnore: [/\.admin\.spec\.ts$/, /\.reviewer\.spec\.ts$/],
+    },
+
+    // ── Proyecto admin ─────────────────────────────────────────────────────────
+    {
+      name: 'chromium-admin',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: ADMIN_AUTH_STATE_PATH,
+      },
+      dependencies: ['setup-admin'],
+      testMatch: /\.admin\.spec\.ts$/,
+    },
+
+    // ── Proyecto reviewer ──────────────────────────────────────────────────────
+    {
+      name: 'chromium-reviewer',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: REVIEWER_AUTH_STATE_PATH,
+      },
+      dependencies: ['setup-reviewer'],
+      testMatch: /\.reviewer\.spec\.ts$/,
     },
   ],
   // No ejecutar servidor en tests — debe estar corriendo

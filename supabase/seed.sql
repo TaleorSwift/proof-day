@@ -489,7 +489,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}', '{"email_verified":true}',
   '', '', '', '',
   now(), now()
-);
+) ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO auth.identities (
   id, provider_id, user_id, identity_data, provider,
@@ -499,7 +499,7 @@ INSERT INTO auth.identities (
   'e2e00000-0000-4000-8000-000000000099',
   '{"sub":"e2e00000-0000-4000-8000-000000000099","email":"e2e-community@proofday.local","email_verified":true,"phone_verified":false}',
   'email', now(), now(), now()
-);
+) ON CONFLICT (provider_id, provider) DO NOTHING;
 
 UPDATE profiles SET
   name       = 'E2E Test User',
@@ -515,7 +515,8 @@ INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUE
   ('d0000000-0000-4000-8000-000000000099',
    'b0000000-0000-4000-8000-000000000001',
    'e2e00000-0000-4000-8000-000000000099',
-   'member', now());
+   'member', now())
+ON CONFLICT (id) DO NOTHING;
 
 -- ── Proyecto owned by test user (para FeedbackCTA "owner" test) ─
 
@@ -596,7 +597,8 @@ INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUE
   ('d0000000-0000-4000-8000-000000000010', 'b0000000-0000-4000-8000-000000000010', 'a0000000-0000-4000-8000-000000000001', 'admin',  now()),
   ('d0000000-0000-4000-8000-000000000011', 'b0000000-0000-4000-8000-000000000010', 'a0000000-0000-4000-8000-000000000002', 'member', now()),
   ('d0000000-0000-4000-8000-000000000012', 'b0000000-0000-4000-8000-000000000010', 'a0000000-0000-4000-8000-000000000003', 'member', now()),
-  ('d0000000-0000-4000-8000-000000000013', 'b0000000-0000-4000-8000-000000000010', 'e2e00000-0000-4000-8000-000000000099', 'member', now());
+  ('d0000000-0000-4000-8000-000000000013', 'b0000000-0000-4000-8000-000000000010', 'e2e00000-0000-4000-8000-000000000099', 'member', now())
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO projects (
   id, community_id, builder_id, slug, title, tagline,
@@ -827,4 +829,130 @@ INSERT INTO invitation_links (id, token, community_id, created_by, used_at, used
     '2026-03-05T14:30:00Z',
     'a0000000-0000-4000-8000-000000000002',
     '2026-03-01T09:00:00Z'
+  ),
+  -- Happy path e2e: token sin usar para startup-lab (e2e user NO es miembro)
+  -- afterEach del test limpia la membresía y resetea used_at para idempotencia
+  (
+    'f0000000-0000-4000-8000-000000000003',
+    'invite-token-lab-e2e-happy',
+    'b0000000-0000-4000-8000-000000000002',
+    'a0000000-0000-4000-8000-000000000002',
+    NULL, NULL,
+    '2026-03-02T10:00:00Z'
   );
+
+-- ============================================================
+-- E2E TEST DATA — usuarios adicionales para multi-storage-state
+-- e2e-admin  : e2e00000-0000-4000-8000-000000000098 (admin de startup-madrid)
+-- e2e-reviewer: e2e00000-0000-4000-8000-000000000097 (member de producto-alpha, sin proyectos)
+-- Requiere: supabase db reset para aplicar en base de datos local existente
+-- ============================================================
+
+-- ── Usuario e2e-admin ────────────────────────────────────────
+
+INSERT INTO auth.users (
+  instance_id, id, aud, role, email, encrypted_password,
+  email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+  confirmation_token, recovery_token, email_change_token_new, email_change,
+  created_at, updated_at
+) VALUES (
+  '00000000-0000-0000-0000-000000000000',
+  'e2e00000-0000-4000-8000-000000000098',
+  'authenticated', 'authenticated', 'e2e-admin@proofday.local',
+  crypt('E2eTest_Pass_123!', gen_salt('bf')), now(),
+  '{"provider":"email","providers":["email"]}', '{"email_verified":true}',
+  '', '', '', '',
+  now(), now()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO auth.identities (
+  id, provider_id, user_id, identity_data, provider,
+  last_sign_in_at, created_at, updated_at
+) VALUES (
+  gen_random_uuid(), 'e2e-admin@proofday.local',
+  'e2e00000-0000-4000-8000-000000000098',
+  '{"sub":"e2e00000-0000-4000-8000-000000000098","email":"e2e-admin@proofday.local","email_verified":true,"phone_verified":false}',
+  'email', now(), now(), now()
+) ON CONFLICT (provider_id, provider) DO NOTHING;
+
+UPDATE profiles SET
+  name       = 'E2E Admin User',
+  bio        = 'Usuario de test admin para Playwright E2E.',
+  interests  = ARRAY['testing'],
+  updated_at = now()
+WHERE id = 'e2e00000-0000-4000-8000-000000000098';
+
+-- Membresía de e2e-admin como admin de startup-madrid
+-- d0000000-...025 es el siguiente UUID disponible tras d0000000-...024
+INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUES
+  ('d0000000-0000-4000-8000-000000000025',
+   'b0000000-0000-4000-8000-000000000010',
+   'e2e00000-0000-4000-8000-000000000098',
+   'admin', now())
+ON CONFLICT (id) DO NOTHING;
+
+-- ── Usuario e2e-reviewer ─────────────────────────────────────
+
+INSERT INTO auth.users (
+  instance_id, id, aud, role, email, encrypted_password,
+  email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+  confirmation_token, recovery_token, email_change_token_new, email_change,
+  created_at, updated_at
+) VALUES (
+  '00000000-0000-0000-0000-000000000000',
+  'e2e00000-0000-4000-8000-000000000097',
+  'authenticated', 'authenticated', 'e2e-reviewer@proofday.local',
+  crypt('E2eTest_Pass_123!', gen_salt('bf')), now(),
+  '{"provider":"email","providers":["email"]}', '{"email_verified":true}',
+  '', '', '', '',
+  now(), now()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO auth.identities (
+  id, provider_id, user_id, identity_data, provider,
+  last_sign_in_at, created_at, updated_at
+) VALUES (
+  gen_random_uuid(), 'e2e-reviewer@proofday.local',
+  'e2e00000-0000-4000-8000-000000000097',
+  '{"sub":"e2e00000-0000-4000-8000-000000000097","email":"e2e-reviewer@proofday.local","email_verified":true,"phone_verified":false}',
+  'email', now(), now(), now()
+) ON CONFLICT (provider_id, provider) DO NOTHING;
+
+UPDATE profiles SET
+  name       = 'E2E Reviewer User',
+  bio        = 'Usuario de test reviewer para Playwright E2E.',
+  interests  = ARRAY['testing'],
+  updated_at = now()
+WHERE id = 'e2e00000-0000-4000-8000-000000000097';
+
+-- Membresía de e2e-reviewer como member de producto-alpha (sin ser builder de ningún proyecto)
+-- d0000000-...026 es el siguiente UUID disponible
+INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUES
+  ('d0000000-0000-4000-8000-000000000026',
+   'b0000000-0000-4000-8000-000000000001',
+   'e2e00000-0000-4000-8000-000000000097',
+   'member', now())
+ON CONFLICT (id) DO NOTHING;
+
+-- ── Proyecto inactive del test user (para owner inactive tests) ──────────────
+-- Necesario para: project-detail-roles.spec.ts — owner con proyecto inactive
+
+INSERT INTO projects (
+  id, community_id, builder_id, slug, title, tagline,
+  problem, solution, hypothesis,
+  target_user, demo_url, feedback_topics,
+  image_urls, status, decision, decided_at,
+  created_at, updated_at
+) VALUES (
+  'c0000000-0000-4000-8000-000000000100',
+  'b0000000-0000-4000-8000-000000000001',
+  'e2e00000-0000-4000-8000-000000000099',
+  'e2e-inactive-project',
+  'E2E Inactive Project',
+  'Proyecto inactivo del usuario de test',
+  'A test problem.', 'A test solution.', 'A test hypothesis.',
+  'Early adopters', NULL,
+  ARRAY['UX'],
+  '{}', 'inactive', 'abandon', now(),
+  now(), now()
+) ON CONFLICT (id) DO NOTHING;
