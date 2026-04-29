@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import { within, userEvent, expect } from 'storybook/test'
+import { within, userEvent, expect, spyOn } from 'storybook/test'
 import { ProjectForm } from '@/components/projects/ProjectForm'
 import type { ProjectRow } from '@/lib/types/projects'
 
@@ -82,7 +82,8 @@ export const ErrorValidacion: Story = {
     await user.click(submitButton)
 
     // El formulario debe mostrar errores de validación bajo los campos requeridos
-    await expect(canvas.findByRole('alert')).resolves.toBeInTheDocument()
+    const alert = await canvas.findByRole('alert')
+    await expect(alert).toBeInTheDocument()
   },
 }
 
@@ -104,12 +105,12 @@ export const ErrorServidor: Story = {
     const user = userEvent.setup()
 
     // Mock global fetch para devolver 500
-    const originalFetch = window.fetch
-    window.fetch = async () =>
+    const fetchSpy = spyOn(window, 'fetch').mockResolvedValue(
       new Response(JSON.stringify({ error: 'Error interno del servidor' }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
       })
+    )
 
     try {
       await user.type(canvas.getByLabelText(/título/i), 'Proyecto de prueba')
@@ -124,7 +125,7 @@ export const ErrorServidor: Story = {
       await user.click(submitButton)
     } finally {
       // Restaurar fetch original siempre, incluso si la interacción falla
-      window.fetch = originalFetch
+      fetchSpy.mockRestore()
     }
   },
 }

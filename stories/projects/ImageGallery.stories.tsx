@@ -75,9 +75,8 @@ export const Editable: Story = {
 
 /**
  * EditableConfirmacionBorrado — click en eliminar muestra diálogo de confirmación inline.
- * La play function activa el flujo de confirmación sobre la segunda imagen
- * (la primera no tiene botón de borrar cuando hay >1 imagen: las reglas del componente
- * muestran el botón solo cuando images.length > 1).
+ * El botón "Eliminar imagen" se muestra para todas las imágenes cuando images.length > 1.
+ * La play function activa el flujo de confirmación sobre la primera imagen.
  */
 export const EditableConfirmacionBorrado: Story = {
   args: {

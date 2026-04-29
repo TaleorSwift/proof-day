@@ -114,8 +114,8 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 ### Páginas
 - `app/(app)/communities/[slug]/page.tsx` — lista de proyectos de la comunidad
 - `app/(app)/communities/[slug]/projects/new/page.tsx` — crear proyecto (fallback; se mantiene intacto)
-- `app/(app)/communities/[slug]/projects/[id]/page.tsx` — ver proyecto
-- `app/(app)/communities/[slug]/projects/[id]/edit/page.tsx` — editar proyecto
+- `app/(app)/communities/[slug]/projects/[projectSlug]/page.tsx` — ver proyecto
+- `app/(app)/communities/[slug]/projects/[projectSlug]/edit/page.tsx` — editar proyecto
 
 ### Storybook
 - `stories/projects/ProjectCard.stories.tsx` — 5 stories: Live, LiveWithScore, Draft, Inactive, Loading

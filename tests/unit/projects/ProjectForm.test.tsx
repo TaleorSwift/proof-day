@@ -212,6 +212,10 @@ describe('ProjectForm — AC-3: submit modo editar', () => {
         PROJECT_ID,
         expect.objectContaining({ title: 'Mi proyecto editable' })
       )
+      expect(mockUpdateProject).toHaveBeenCalledWith(
+        PROJECT_ID,
+        expect.not.objectContaining({ communityId: expect.anything() })
+      )
     })
   })
 
@@ -340,6 +344,21 @@ describe('ProjectForm — AC-5: normalización de campos opcionales', () => {
       expect(mockUpdateProject).toHaveBeenCalledWith(
         PROJECT_ID,
         expect.objectContaining({ demoUrl: undefined })
+      )
+    })
+  })
+
+  it('envía feedbackTopics como undefined cuando no hay chips seleccionados', async () => {
+    const user = userEvent.setup()
+    // Renderizar en modo editar sin topics — eliminamos todos los chips existentes
+    renderModoEditar({ feedback_topics: [] })
+
+    await user.click(screen.getByRole('button', { name: /guardar cambios/i }))
+
+    await waitFor(() => {
+      expect(mockUpdateProject).toHaveBeenCalledWith(
+        PROJECT_ID,
+        expect.objectContaining({ feedbackTopics: undefined })
       )
     })
   })

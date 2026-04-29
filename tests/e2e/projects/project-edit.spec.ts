@@ -61,13 +61,17 @@ test.describe('ProjectEdit — /edit page (flujo de edición)', () => {
       // para tener algo que guardar sin modificar el título ni campos requeridos
       const targetUserInput = page.getByLabel(/usuario objetivo/i)
       const originalValue = await targetUserInput.inputValue()
-      await targetUserInput.fill(originalValue.trim() + ' v2')
+      const expectedValue = originalValue.trim() + ' v2'
+      await targetUserInput.fill(expectedValue)
 
       await page.getByRole('button', { name: /guardar cambios/i }).click()
 
       // Tras guardar no debe haber mensaje de error — el botón vuelve a estar enabled
       await expect(page.getByRole('button', { name: /guardar cambios/i })).toBeVisible()
       await expect(page.getByRole('alert')).not.toBeVisible()
+
+      // Verificar que el campo sigue con el valor nuevo (no se resetea)
+      await expect(page.getByLabel(/usuario objetivo/i)).toHaveValue(expectedValue)
     }
   )
 
