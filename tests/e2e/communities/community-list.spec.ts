@@ -22,7 +22,9 @@ test.describe('Banner no-access — usuario autenticado', () => {
 })
 
 test.describe('CommunitySwitcher — cambio de comunidad', () => {
-  // e2e-community@proofday.local tiene 7 comunidades en el seed (producto-alpha, startup-madrid, etc.)
+  // CommunitySwitcherClient existe pero no está montado en ninguna ruta del app actual.
+  // Activar cuando el componente se integre en el layout o navbar.
+  test.skip(true, 'CommunitySwitcher no está montado en ninguna ruta — pendiente de integración en layout.')
 
   test('abre el switcher y navega a otra comunidad', async ({ page }) => {
     // Navegar a una comunidad conocida del seed

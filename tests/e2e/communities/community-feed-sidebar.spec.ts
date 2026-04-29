@@ -12,8 +12,8 @@ test.describe('Community Feed — sidebar CommunityHeader', () => {
 
   test('muestra el conteo de miembros en el sidebar', async ({ page }) => {
     await page.goto('/communities/startup-madrid')
-    // startup-madrid tiene 5 miembros: Alex (admin), Sara, Tom, e2e-community, e2e-admin
-    await expect(page.getByText('5 miembros')).toBeVisible()
+    // startup-madrid tiene 6 miembros: Alex (admin), Sara, Tom, e2e-community, e2e-admin, e2e-reviewer
+    await expect(page.getByText('6 miembros')).toBeVisible()
   })
 })
 
