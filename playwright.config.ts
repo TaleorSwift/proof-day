@@ -18,6 +18,8 @@ export default defineConfig({
   },
   projects: [
     // ── Setup: crea usuarios de test y guarda auth states ──────────────────────
+    // IMPORTANTE: los patrones grep deben mantenerse sincronizados con los títulos
+    // de los tests en tests/e2e/auth.setup.ts. No renombrar esos tests sin actualizar aquí.
     {
       name: 'setup',
       testMatch: /auth\.setup\.ts/,

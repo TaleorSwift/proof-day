@@ -21,7 +21,7 @@ const HAPPY_PATH_TOKEN = 'invite-token-lab-e2e-happy'
 async function removeE2eMembershipFromStartupLab(): Promise<void> {
   const res = await fetch(
     `${SUPABASE_URL}/rest/v1/community_members?community_id=eq.${HAPPY_PATH_COMMUNITY_ID}&user_id=eq.${TEST_USER_ID}`,
-    { method: 'DELETE', headers: ADMIN_HEADERS }
+    { method: 'DELETE', headers: ADMIN_HEADERS, signal: AbortSignal.timeout(5000) }
   )
   if (!res.ok) {
     // ignorar errores de cleanup — el miembro puede no existir si el test falló antes de unirse
@@ -36,6 +36,7 @@ async function resetInviteToken(): Promise<void> {
       method: 'PATCH',
       headers: ADMIN_HEADERS,
       body: JSON.stringify({ used_at: null, used_by: null }),
+      signal: AbortSignal.timeout(5000),
     }
   )
   if (!res.ok) {
@@ -78,6 +79,9 @@ test.describe('Invite link — token ya usado', () => {
   })
 })
 
+// Corre con el storageState del proyecto chromium (e2e-community@proofday.local, UUID e2e00000-...099).
+// El token invite-token-alpha-abc123 apunta a producto-alpha (b0000000-...001),
+// comunidad de la que el e2e user es miembro → renderiza InviteAlreadyMemberState.
 test.describe('Invite link — ya eres miembro', () => {
   // invite-token-alpha-abc123 apunta a producto-alpha (b0000000-...001).
   // El e2e user YA es miembro de producto-alpha → muestra InviteAlreadyMemberState.

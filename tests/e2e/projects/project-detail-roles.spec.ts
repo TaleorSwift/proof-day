@@ -31,4 +31,11 @@ test.describe('ProjectDetail — Owner (Story 9.7)', () => {
       await expect(feedbackForm).not.toBeVisible()
     }
   )
+
+  test('owner ve botón de reactivación en proyecto inactive propio', async ({ page }) => {
+    await page.goto(`/communities/producto-alpha/projects/e2e-inactive-project`)
+    // Owner en proyecto inactive → ve ProjectStateActions con "Publicar" o equivalente
+    const publishButton = page.getByRole('button', { name: /publicar/i })
+    await expect(publishButton).toBeVisible()
+  })
 })

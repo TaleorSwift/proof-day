@@ -489,7 +489,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}', '{"email_verified":true}',
   '', '', '', '',
   now(), now()
-);
+) ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO auth.identities (
   id, provider_id, user_id, identity_data, provider,
@@ -499,7 +499,7 @@ INSERT INTO auth.identities (
   'e2e00000-0000-4000-8000-000000000099',
   '{"sub":"e2e00000-0000-4000-8000-000000000099","email":"e2e-community@proofday.local","email_verified":true,"phone_verified":false}',
   'email', now(), now(), now()
-);
+) ON CONFLICT (provider_id, provider) DO NOTHING;
 
 UPDATE profiles SET
   name       = 'E2E Test User',
@@ -515,7 +515,8 @@ INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUE
   ('d0000000-0000-4000-8000-000000000099',
    'b0000000-0000-4000-8000-000000000001',
    'e2e00000-0000-4000-8000-000000000099',
-   'member', now());
+   'member', now())
+ON CONFLICT (id) DO NOTHING;
 
 -- ── Proyecto owned by test user (para FeedbackCTA "owner" test) ─
 
@@ -596,7 +597,8 @@ INSERT INTO community_members (id, community_id, user_id, role, joined_at) VALUE
   ('d0000000-0000-4000-8000-000000000010', 'b0000000-0000-4000-8000-000000000010', 'a0000000-0000-4000-8000-000000000001', 'admin',  now()),
   ('d0000000-0000-4000-8000-000000000011', 'b0000000-0000-4000-8000-000000000010', 'a0000000-0000-4000-8000-000000000002', 'member', now()),
   ('d0000000-0000-4000-8000-000000000012', 'b0000000-0000-4000-8000-000000000010', 'a0000000-0000-4000-8000-000000000003', 'member', now()),
-  ('d0000000-0000-4000-8000-000000000013', 'b0000000-0000-4000-8000-000000000010', 'e2e00000-0000-4000-8000-000000000099', 'member', now());
+  ('d0000000-0000-4000-8000-000000000013', 'b0000000-0000-4000-8000-000000000010', 'e2e00000-0000-4000-8000-000000000099', 'member', now())
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO projects (
   id, community_id, builder_id, slug, title, tagline,

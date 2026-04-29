@@ -8,7 +8,7 @@
  *
  * Cookie usada por @supabase/ssr:
  *   nombre : sb-{hostname[0]}-auth-token  → "sb-127-auth-token" en local
- *   valor  : "base64-" + btoa(JSON.stringify(session))
+ *   valor  : "base64-" + Buffer.from(JSON.stringify(session)).toString('base64')
  *
  * Storage states generados:
  *   tests/e2e/.auth/user.json     ← usuario principal (member)

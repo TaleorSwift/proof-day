@@ -19,6 +19,9 @@ test.describe('ProjectDetail — Reviewer no-owner (Story 9.7)', () => {
     async ({ page }) => {
       await page.goto(PROJECT_LIVE_URL)
 
+      // Esperar a que el título del proyecto sea visible (confirma que la página cargó)
+      await expect(page.getByRole('heading', { name: /pulse check/i })).toBeVisible({ timeout: 10_000 })
+
       const deactivateButton = page.getByRole('button', { name: /marcar como inactivo/i })
       await expect(deactivateButton).not.toBeVisible()
 
