@@ -18,6 +18,7 @@ const {
   createClientMock,
   mockCommunityHeader,
   mockTopContributors,
+  mockProjectFeed,
 } = vi.hoisted(() => ({
   mockRedirect: vi.fn(),
   mockNotFound: vi.fn(),
@@ -25,6 +26,7 @@ const {
   createClientMock: vi.fn(),
   mockCommunityHeader: vi.fn(),
   mockTopContributors: vi.fn(),
+  mockProjectFeed: vi.fn(),
 }))
 
 vi.mock('next/navigation', () => ({
@@ -49,7 +51,10 @@ vi.mock('@/components/communities/CommunityHeader', () => ({
 }))
 
 vi.mock('@/components/projects/ProjectFeed', () => ({
-  ProjectFeed: () => <div data-testid="project-feed" />,
+  ProjectFeed: (props: Record<string, unknown>) => {
+    mockProjectFeed(props)
+    return <div data-testid="project-feed" />
+  },
 }))
 
 vi.mock('@/components/gamification/TopContributors', () => ({
@@ -79,14 +84,13 @@ import CommunityPage from '@/app/(app)/communities/[slug]/page'
  */
 function makeChain(resolvedValue: unknown) {
   const chain: Record<string, unknown> = {}
-  const methods = ['select', 'eq', 'in', 'order', 'single']
-  for (const method of methods) {
-    if (method === 'single' || method === 'order' || method === 'in') {
-      chain[method] = vi.fn().mockResolvedValue(resolvedValue)
-    } else {
-      chain[method] = vi.fn().mockReturnValue(chain)
-    }
-  }
+  const methods = ['select', 'eq', 'in', 'order', 'single', 'maybeSingle', 'limit', 'range']
+  methods.forEach((m) => {
+    chain[m] = () => chain
+  })
+  // Thenable: permite usar `await chain` y `await Promise.all([chain, ...])`
+  chain.then = (resolve: (v: unknown) => void) => resolve(resolvedValue)
+  chain.catch = () => chain
   return chain
 }
 
@@ -305,10 +309,21 @@ describe('CommunityPage — AC-4: happy path con proyectos', () => {
     expect(mockNotFound).not.toHaveBeenCalled()
   })
 
-  it('renderiza TopContributors', async () => {
+  it('renderiza TopContributors con el testid correcto y recibe communityId', async () => {
     const jsx = await CommunityPage({ params: defaultParams })
     render(jsx as React.ReactElement)
-    expect(mockTopContributors).toHaveBeenCalled()
+    expect(screen.getByTestId('top-contributors')).toBeInTheDocument()
+    expect(mockTopContributors).toHaveBeenCalledWith(
+      expect.objectContaining({ communityId: expect.any(String) })
+    )
+  })
+
+  it('pasa isAdmin: false a CommunityHeader cuando el rol es member', async () => {
+    const jsx = await CommunityPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(mockCommunityHeader).toHaveBeenCalledWith(
+      expect.objectContaining({ isAdmin: false })
+    )
   })
 })
 
@@ -353,6 +368,23 @@ describe('CommunityPage — AC-5: Promise.all resuelve con proyectos', () => {
     const jsx = await CommunityPage({ params: defaultParams })
     render(jsx as React.ReactElement)
     expect(screen.getByTestId('project-feed')).toBeInTheDocument()
+  })
+
+  it('mapea correctamente snake_case→camelCase al pasar proyectos a ProjectFeed', async () => {
+    const jsx = await CommunityPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(mockProjectFeed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        projects: expect.arrayContaining([
+          expect.objectContaining({
+            id: 'proj-001',
+            builderName: expect.any(String),
+            feedbackCount: expect.any(Number),
+            imageUrls: expect.any(Array),
+          }),
+        ]),
+      })
+    )
   })
 
   it('NO lanza errores al resolver el batch-fetch de profiles', async () => {
