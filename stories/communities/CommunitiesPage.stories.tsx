@@ -29,7 +29,7 @@ const pageWrapper = (children: React.ReactNode) => (
       padding: 'var(--space-8)',
     }}
   >
-    <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+    <div style={{ maxWidth: 'var(--container-max-width)', margin: '0 auto' }}>
       <div
         style={{
           display: 'flex',

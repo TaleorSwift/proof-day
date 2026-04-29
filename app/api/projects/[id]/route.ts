@@ -76,8 +76,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   // Story 8.1 — campos opcionales: se pasa null explícitamente para permitir borrar el valor
   if (result.data.targetUser !== undefined) updateFields.target_user = result.data.targetUser !== '' ? result.data.targetUser : null
   if (result.data.demoUrl !== undefined) updateFields.demo_url = result.data.demoUrl !== '' ? result.data.demoUrl : null
+  // E3: array vacío = borrado explícito → se almacena como NULL en Supabase
   if (result.data.feedbackTopics !== undefined)
-    updateFields.feedback_topics = result.data.feedbackTopics?.length ? result.data.feedbackTopics : null
+    updateFields.feedback_topics = (result.data.feedbackTopics && result.data.feedbackTopics.length > 0)
+      ? result.data.feedbackTopics
+      : null
 
   const { data: project, error } = await supabase
     .from('projects')
