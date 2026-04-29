@@ -16,11 +16,15 @@ const {
   mockNotFound,
   mockPermanentRedirect,
   createClientMock,
+  mockCommunityHeader,
+  mockTopContributors,
 } = vi.hoisted(() => ({
   mockRedirect: vi.fn(),
   mockNotFound: vi.fn(),
   mockPermanentRedirect: vi.fn(),
   createClientMock: vi.fn(),
+  mockCommunityHeader: vi.fn(),
+  mockTopContributors: vi.fn(),
 }))
 
 vi.mock('next/navigation', () => ({
@@ -38,7 +42,10 @@ vi.mock('@/components/communities/CommunityFeedHeader', () => ({
 }))
 
 vi.mock('@/components/communities/CommunityHeader', () => ({
-  CommunityHeader: () => <div data-testid="community-header" />,
+  CommunityHeader: (props: Record<string, unknown>) => {
+    mockCommunityHeader(props)
+    return <div data-testid="community-header" />
+  },
 }))
 
 vi.mock('@/components/projects/ProjectFeed', () => ({
@@ -46,7 +53,10 @@ vi.mock('@/components/projects/ProjectFeed', () => ({
 }))
 
 vi.mock('@/components/gamification/TopContributors', () => ({
-  TopContributors: () => <div data-testid="top-contributors" />,
+  TopContributors: (props: Record<string, unknown>) => {
+    mockTopContributors(props)
+    return <div data-testid="top-contributors" />
+  },
 }))
 
 vi.mock('@/components/shared/BackButton', () => ({
@@ -294,6 +304,12 @@ describe('CommunityPage — AC-4: happy path con proyectos', () => {
     expect(mockRedirect).not.toHaveBeenCalled()
     expect(mockNotFound).not.toHaveBeenCalled()
   })
+
+  it('renderiza TopContributors', async () => {
+    const jsx = await CommunityPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(mockTopContributors).toHaveBeenCalled()
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -341,5 +357,29 @@ describe('CommunityPage — AC-5: Promise.all resuelve con proyectos', () => {
 
   it('NO lanza errores al resolver el batch-fetch de profiles', async () => {
     await expect(CommunityPage({ params: defaultParams })).resolves.toBeDefined()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// AC-6: isAdmin — CommunityHeader recibe isAdmin: true cuando rol es admin
+// ---------------------------------------------------------------------------
+
+describe('CommunityPage — AC-6: isAdmin se pasa a CommunityHeader', () => {
+  beforeEach(() => {
+    createClientMock.mockResolvedValue(
+      makeSupabaseMock({ membership: { role: 'admin' } })
+    )
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('pasa isAdmin: true a CommunityHeader cuando el rol es admin', async () => {
+    const jsx = await CommunityPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(mockCommunityHeader).toHaveBeenCalledWith(
+      expect.objectContaining({ isAdmin: true })
+    )
   })
 })

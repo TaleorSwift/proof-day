@@ -74,6 +74,19 @@ describe('CommunityHeader — AC-2: descripción', () => {
       screen.queryByText('Espacio de validación de ideas para emprendedores.')
     ).not.toBeInTheDocument()
   })
+
+  it('no muestra descripción cuando es null', () => {
+    render(
+      <CommunityHeader
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        community={{ ...baseCommunity, description: null } as any}
+        isAdmin={false}
+      />
+    )
+    expect(
+      screen.queryByText('Espacio de validación de ideas para emprendedores.')
+    ).not.toBeInTheDocument()
+  })
 })
 
 // ---------------------------------------------------------------------------
