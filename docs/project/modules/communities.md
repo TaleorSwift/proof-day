@@ -11,23 +11,25 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 - `/communities` lista solo las comunidades del usuario. Con 1 comunidad, redirige automáticamente. (story 2.3 AC-1)
 - Acceso sin membresía → redirect a `/communities?error=no-access` con banner. (story 2.3 AC-2)
 - Navbar muestra `CommunitySwitcher` con ≥2 comunidades. Con 1, muestra el nombre como texto. (story 2.3 AC-6)
-- `/communities/[slug]` — layout base. Botón "Configuración" visible solo para admins. (story 2.3 AC-8)
+- `/communities/[slug]` — feed con grid 2 columnas: columna principal (CommunityFeedHeader + ProjectFeed) y sidebar (CommunityHeader + TopContributors). (story 2.3 AC-8, PR4)
+- El sidebar muestra nombre de comunidad, descripción, conteo de miembros y enlace "Configuración" solo para admins. (PR4)
+- No autenticado → redirect `/login`. Comunidad no encontrada → `notFound()`. Sin membresía → redirect `/communities?error=no-access`. (PR4)
 - `/communities/[slug]/settings` — solo accesible para admins. No-admin y no-autenticado → redirect. (story 2.2, PR3)
 - Los admins generan links de invitación de un solo uso desde settings. Cada link solo puede usarse una vez. (story 2.2, PR3)
 - Click "Copiar link" copia la URL al portapapeles y muestra "¡Copiado!" durante 2 segundos. (story 2.2, PR3)
 - Toda mutación va por API Route, nunca por Server Actions. (story 2.1)
 
 ## Ficheros clave
+- `app/(app)/communities/[slug]/page.tsx`
 - `app/(app)/communities/[slug]/settings/page.tsx`
+- `components/communities/CommunityHeader.tsx`
 - `components/communities/InvitationSection.tsx`
-- `lib/api/invitations.ts`
 - `app/(app)/communities/page.tsx`
-- `components/communities/CommunityForm.tsx`
 
 ## Tests y Storybook
-- Unit: `CommunitiesPage`, `CommunityForm`, `CommunitiesNewPage`, `CommunityList`, `CommunitySwitcher`, `loadingState`, `errorState`, `CommunitySettingsPage`, `InvitationSection`
-- E2E: `create-community.spec.ts`, `community-list.spec.ts`, `community-settings.spec.ts`
-- Storybook: `CommunityCard`, `CommunityList`, `EmptyCommunitiesState`, `CommunitySwitcher`, `CommunitiesPage`, `CommunityForm`, `CommunitiesNewPage`, `InvitationSection`
+- Unit: `CommunitiesPage`, `CommunityForm`, `CommunitiesNewPage`, `CommunityList`, `CommunitySwitcher`, `loadingState`, `errorState`, `CommunitySettingsPage`, `InvitationSection`, `CommunityFeedPage`, `CommunityHeader`
+- E2E: `create-community.spec.ts`, `community-list.spec.ts`, `community-settings.spec.ts`, `project-feed.spec.ts`, `top-contributors.spec.ts`, `community-feed-sidebar.spec.ts`
+- Storybook: `CommunityCard`, `CommunityList`, `EmptyCommunitiesState`, `CommunitySwitcher`, `CommunitiesPage`, `CommunityForm`, `CommunitiesNewPage`, `InvitationSection`, `CommunityHeader`, `CommunityFeedPage`
 
 ## Última actualización
-Story 2.3 — 2026-03-28 | Bug fixes UI — 2026-04-14 | PR3 cobertura settings+InvitationSection — 2026-04-28
+Story 2.3 — 2026-03-28 | Bug fixes UI — 2026-04-14 | PR3 cobertura settings+InvitationSection — 2026-04-28 | PR4 cobertura feed page — 2026-04-29
