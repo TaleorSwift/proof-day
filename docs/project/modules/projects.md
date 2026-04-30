@@ -1,6 +1,6 @@
 # Módulo: Proyectos
 
-**Última actualización:** PR6 — Cobertura /projects/[slug]/edit — stories, unit tests, e2e (2026-04-29)
+**Última actualización:** Story 10.1 — Migraciones DB project_templates y extensiones projects (2026-04-30)
 
 ---
 
@@ -77,7 +77,8 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 ## Ficheros clave
 
 ### Types
-- `lib/types/projects.ts` — `ProjectStatus`, `Project`, `ProjectRow`, helpers
+- `lib/types/projects.ts` — `ProjectStatus`, `Project`, `ProjectRow`, helpers (incluye `templateId` — story 10.1)
+- `lib/types/templates.ts` — `ProjectTemplate`, `ProjectTemplateRow`, `templateFromRow` (story 10.1)
 
 ### API Routes
 - `app/api/projects/route.ts` — thin controller: POST (crear) + GET (listar por comunidad)
@@ -198,3 +199,27 @@ would_use_count  integer not null default 0  -- contador denormalizado; actualiz
 
 ### Contadores denormalizados (Story 9.1)
 - `would_use_count`: número de feedbacks donde el revisor respondió "Sí" a "¿Lo usarías?". Actualizado automáticamente por el trigger `feedbacks_recompute_would_use` en INSERT/UPDATE/DELETE de feedbacks. (story 9.1)
+
+### Extensión Phase 2 (Story 10.1)
+
+**Nueva columna en `projects`:**
+- `template_id uuid null` → FK a `project_templates.id` ON DELETE SET NULL. Nullable para retrocompatibilidad con proyectos existentes. (story 10.1)
+
+### Tabla `project_templates`
+
+Tabla global de tipos de proyecto — datos de configuración, no de usuario.
+
+```sql
+id                    uuid primary key default gen_random_uuid()
+type                  text not null unique    -- 'saas' | 'feature' | 'internal_process' | 'physical_product' | 'service'
+name                  text not null           -- nombre legible
+description_structure jsonb not null          -- {problem: {placeholder, example}, solution: {placeholder, example}}
+reviewer_context      text not null           -- instrucciones para el reviewer según el tipo
+created_at            timestamptz default now()
+```
+
+RLS: SELECT para `authenticated` (datos de config global, sin restricción de comunidad). (story 10.1)
+
+**5 tipos seeded** (migration 023): `feature`, `internal_process`, `physical_product`, `saas`, `service`. (story 10.1)
+
+**API:** `GET /api/templates` retorna `{ data: ProjectTemplate[] }` ordenados por name. Requiere autenticación. (story 10.1)

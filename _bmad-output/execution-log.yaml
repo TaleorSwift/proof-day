@@ -1,4 +1,378 @@
 workflows:
+  - id: "20260430-ned-VS-batch-all-phase2-closing"
+    timestamp: "2026-04-30T22:00:00"
+    agent: "Ned (SM)"
+    trigger: "VS closing — 9 critical fixes aplicados a stories Phase 2 MVP 2.0"
+    workflow: "validate-story"
+    mode: "GENERATE"
+    status: "SUCCESS"
+    result: "SUCCESS — 9 issues críticos resueltos. 18/18 stories Phase 2 pasan VS tras correcciones."
+    summary: "Aplicados 9 fixes críticos identificados en batch VS: IC-1 (10.3 submit temporal documentado), IC-2 (10.4 AC-4 con prerequisito Story 11.5 explícito), IC-3 (11.4 prerequisito Story 12.1 marcado como bloqueante), C1 (12.2 RPC eliminado → read-modify-write como implementación principal), C2 (12.3 nota service role client para RLS bypass en notifications), C3 (12.3 TODO Story 12.7 añadido), C4 (12.5 filtro explícito user_id en GET /api/notifications), C5 (12.6 reglas instanciación Resend documentadas), C6 (12.7 projectSlug añadido a payload AC-1). Todas las stories en estado ready-for-dev."
+    stories_fixed:
+      - "10-3 (IC-1): Estrategia de submit temporal en paso 3 — decisión documentada y T5.2 actualizado"
+      - "10-4 (IC-2): AC-4 reformulado con prerequisito bloqueante Story 11.5"
+      - "11-4 (IC-3): Prerequisito bloqueante Story 12.1 (tabla notifications) documentado con ⚠️"
+      - "12-2 (C1): updateCostTracking usa read-modify-write — eliminado supabase.rpc() inexistente"
+      - "12-3 (C2+C3): Nota service role client añadida + TODO Story 12.7 en insertInAppNotification"
+      - "12-5 (C4): .eq('user_id', user?.id) añadido al GET /api/notifications"
+      - "12-6 (C5): Reglas de instanciación Resend por request documentadas"
+      - "12-7 (C6): projectSlug añadido a payload de AC-1"
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/10-3-projectwizard-con-ejemplos-contextuales.md"
+      - "_bmad-output/implementation-artifacts/stories/10-4-preview-proyecto-antes-de-publicar.md"
+      - "_bmad-output/implementation-artifacts/stories/11-4-recordatorio-automatico-feedback-cron-job.md"
+      - "_bmad-output/implementation-artifacts/stories/12-2-integracion-claude-api-lib-ai-control-coste.md"
+      - "_bmad-output/implementation-artifacts/stories/12-3-webhook-sintesis-ia-trigger-upsert-notificacion.md"
+      - "_bmad-output/implementation-artifacts/stories/12-5-notificaciones-in-app-tabla-api-routes-notificationbell.md"
+      - "_bmad-output/implementation-artifacts/stories/12-6-notificaciones-email-resend-sdk.md"
+      - "_bmad-output/implementation-artifacts/stories/12-7-notificacion-builder-sintesis-lista-budget-alert.md"
+      - "_bmad-output/execution-log.yaml"
+    next_recommended: "DS (Homer) — Story 10.1 (migraciones project_templates) o Story 12.1 (migraciones IA) para habilitar tablas en BD antes de implementar stories dependientes. Respetar orden: 12.1 antes de 11.4; 11.5 antes de 10.4 flujo completo."
+
+  - id: "20260430-2110-ned-VS-epic12-7-stories"
+    timestamp: "2026-04-30T21:10:00"
+    agent: "Ned (SM)"
+    trigger: "VS — Validar 7 story files Epic 12 (12.1 a 12.7) contra checklist dev-readiness"
+    workflow: "validate-story"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    summary: "Validación completa de 7 stories Epic 12. Resultado: 2 PASS (12.1, 12.4) / 5 FAIL (12.2, 12.3, 12.5, 12.6, 12.7). 7 issues críticos y 17 menores identificados. Issues críticos principales: RPC inexistente en cost-guard (12.2), cliente Supabase no service-role en webhook (12.3), ambigüedad de responsabilidad insertInAppNotification vs dispatchNotification entre 12.3 y 12.7, filtrado de notificaciones solo por RLS sin query explícita (12.5), instanciación Resend sin documentar caller (12.6), contradicción payload AC-1 vs T4.2 en 12.7."
+    stories_validated:
+      - story: "12-1"
+        result: "PASS"
+        critical_issues: 0
+        minor_issues: 3
+      - story: "12-2"
+        result: "FAIL"
+        critical_issues: 1
+        minor_issues: 2
+      - story: "12-3"
+        result: "FAIL"
+        critical_issues: 2
+        minor_issues: 2
+      - story: "12-4"
+        result: "PASS"
+        critical_issues: 0
+        minor_issues: 2
+      - story: "12-5"
+        result: "FAIL"
+        critical_issues: 1
+        minor_issues: 3
+      - story: "12-6"
+        result: "FAIL"
+        critical_issues: 1
+        minor_issues: 3
+      - story: "12-7"
+        result: "FAIL"
+        critical_issues: 2
+        minor_issues: 2
+    errors: []
+    next_recommended: "CS (Ned) — Revisar y corregir los 7 issues críticos identificados en las stories 12.2, 12.3, 12.5, 12.6 y 12.7 antes de pasar a DS (Homer)"
+
+  - id: "20260430-2100-ned-VS-epic11-6-stories"
+    timestamp: "2026-04-30T21:00:00"
+    agent: "Ned (SM)"
+    trigger: "VS — Validar 6 stories Epic 11 (11.1–11.6)"
+    workflow: "validate-story"
+    mode: "VERIFY"
+    status: "SUCCESS"
+    closed_at: "2026-04-30T21:15:00"
+    result: "5 PASS / 1 FAIL — Story 11.4 falla por dependencia con tabla notifications (Story 12.1) no declarada formalmente"
+    summary: "Issue critico en 11.4: dependencia con tabla notifications de Story 12.1 no documentada como dependencia formal. 12 issues menores distribuidos. Solo 11.4 requiere correccion antes de DS."
+    artifacts_reviewed:
+      - "_bmad-output/implementation-artifacts/stories/11-1-migraciones-db-feedback-responses-projects-communities.md"
+      - "_bmad-output/implementation-artifacts/stories/11-2-pregunta-custom-builder-microcontexto-reviewer.md"
+      - "_bmad-output/implementation-artifacts/stories/11-3-filtro-completitud-feedback-quality-warning.md"
+      - "_bmad-output/implementation-artifacts/stories/11-4-recordatorio-automatico-feedback-cron-job.md"
+      - "_bmad-output/implementation-artifacts/stories/11-5-gate-reciprocidad-al-publicar.md"
+      - "_bmad-output/implementation-artifacts/stories/11-6-admin-configuracion-reciprocidad-comunidad.md"
+    errors:
+      - story: "11.4"
+        severity: "critical"
+        description: "Dependencia con tabla notifications (Story 12.1) no declarada como dependencia formal — solo mencionada en Dev Notes narrativamente"
+
+  - id: "20260430-1545-ned-VS-epic10-stories"
+    timestamp: "2026-04-30T15:45:00"
+    agent: "Ned (SM)"
+    trigger: "VS — Validar stories Epic 10 (10.1 a 10.5)"
+    workflow: "validate-story"
+    mode: "VERIFY"
+    result: "STARTED"
+    summary: "Validando 5 story files del Epic 10 contra checklist de dev-readiness: identity, ACs, technical context, implementation guidance y dev-ready gate"
+
+  - id: "20260430-1545-ned-VS-epic10-stories"
+    timestamp: "2026-04-30T15:55:00"
+    agent: "Ned (SM)"
+    trigger: "VS — Validar stories Epic 10 (10.1 a 10.5)"
+    workflow: "validate-story"
+    mode: "VERIFY"
+    result: "PARTIAL"
+    duration_estimate: "10 minutos"
+    summary: "Validadas 5 stories del Epic 10. 3 PASS (10.1, 10.2, 10.5) y 2 FAIL (10.3, 10.4). 2 issues criticos: ambiguedad en estado final del wizard paso 3 (Story 10.3) y contradiccion AC-4 vs fallback draft/live dependiente de Story 11.5 (Story 10.4). Requieren resolucion antes de dev."
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors:
+      - step: "validate-story-10.3"
+        action: "Verificar Dev-Ready Gate — scope del wizard en paso 3"
+        error: "AC-3 y Dev Notes ofrecen opciones incompatibles para el comportamiento del paso 3 (submit directo vs placeholder para paso 4)"
+        context: "Homer no puede implementar Story 10.3 sin decidir si el paso 3 hace submit o avanza a un stub del paso 4. La decision afecta a Stories 10.4 y 10.5."
+        recovery: "Actualizar AC-3 de Story 10.3 con la decision explicita sobre el comportamiento del paso 3 final"
+        severity: "blocking"
+      - step: "validate-story-10.4"
+        action: "Verificar consistencia AC-4 vs dependencia Story 11.5"
+        error: "AC-4 requiere status=live pero el fallback documentado en T3.2 genera status=draft si Story 11.5 no esta implementada"
+        context: "QA fallara AC-4 si Story 11.5 no esta en el mismo sprint. La story no declara si 11.5 es prerrequisito bloqueante."
+        recovery: "O bien añadir Story 11.5 como prerequisito bloqueante de Story 10.4, o reformular AC-4 para aceptar status=draft como comportamiento valido en esta story"
+        severity: "blocking"
+    next_recommended: "Resolver IC-1 e IC-2 — actualizar stories 10.3 y 10.4 — antes de Homer DS"
+
+  - id: "20260430-2300-homer-DS-10-1"
+    timestamp: "2026-04-30T23:00:00"
+    agent: "Homer"
+    trigger: "DS"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Implementando Story 10.1 — Migraciones DB project_templates y extensiones projects. 7 tasks: migraciones 021/022/023, tipos TypeScript, API GET /api/templates, tests, docs módulo."
+
+  - id: "20260430-ned-VS-batch-all-phase2"
+    timestamp: "2026-04-30T19:30:00"
+    agent: "Ned (SM)"
+    trigger: "/vs — Validar todas las stories Phase 2 MVP 2.0 (10.1–12.7)"
+    workflow: "validate-story"
+    mode: "GENERATE"
+    status: "STARTED"
+
+  - id: "20260430-ned-CS-12-batch-7-stories"
+    timestamp: "2026-04-30T20:00:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Batch create stories 12.1 a 12.7 — Epic 12 IA Sintetizadora y Notificaciones"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Creando 7 ficheros de story para Epic 12: migraciones DB (12.1), integración Claude API (12.2), webhook síntesis (12.3), AISummaryCard (12.4), notificaciones in-app (12.5), notificaciones email (12.6), integración completa builder + budget (12.7)"
+
+  - id: "20260430-ned-CS-12-batch-7-stories"
+    timestamp: "2026-04-30T20:30:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Batch create stories 12.1 a 12.7 — Epic 12 IA Sintetizadora y Notificaciones"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "30 minutos"
+    summary: "7 ficheros de story creados para Epic 12 (IA Sintetizadora y Notificaciones): 5 migraciones SQL completas (027-031), integración @anthropic-ai/sdk con cost guard, webhook Supabase, AISummaryCard, NotificationBell/Dropdown, email Resend SDK y story de integración final. Todos en status ready-for-dev."
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/stories/12-1-migraciones-db-ai-summaries-notifications-cost-tracking.md"
+      - "_bmad-output/implementation-artifacts/stories/12-2-integracion-claude-api-lib-ai-control-coste.md"
+      - "_bmad-output/implementation-artifacts/stories/12-3-webhook-sintesis-ia-trigger-upsert-notificacion.md"
+      - "_bmad-output/implementation-artifacts/stories/12-4-aisummarycard-vista-proyecto.md"
+      - "_bmad-output/implementation-artifacts/stories/12-5-notificaciones-in-app-tabla-api-routes-notificationbell.md"
+      - "_bmad-output/implementation-artifacts/stories/12-6-notificaciones-email-resend-sdk.md"
+      - "_bmad-output/implementation-artifacts/stories/12-7-notificacion-builder-sintesis-lista-budget-alert.md"
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, DS — Story 12.1 (migraciones) para habilitar las tablas en BD antes de implementar las stories siguientes"
+
+  - id: "20260430-ned-CS-11-batch-6-stories"
+    timestamp: "2026-04-30T19:00:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Batch create stories 11.1 a 11.6 — Epic 11 Calidad del Feedback y Reciprocidad"
+    workflow: "create-story"
+    mode: "GENERATE"
+    status: "SUCCESS"
+    closed_at: "2026-04-30T19:30:00"
+    result: "6 stories ready-for-dev — Epic 11 completo con migraciones 024-026, quality gate, cron job, reciprocity gate y admin settings"
+    key_findings:
+      - "Tabla confirmada: 'feedbacks' (no 'feedback_responses') — ver 008_create_feedbacks.sql"
+      - "Bug Phase 1 confirmado: PATCH /api/projects/[id]/status no existe — Story 11.5 lo crea"
+      - "settings/page.tsx ya existe con verificacion de admin — Story 11.6 solo añade componente"
+      - "countByReviewerInCommunity ya existe en feedback.repository.ts — reutilizable en reciprocity check"
+    artifacts:
+      - "_bmad-output/implementation-artifacts/stories/11-1-migraciones-db-feedback-responses-projects-communities.md"
+      - "_bmad-output/implementation-artifacts/stories/11-2-pregunta-custom-builder-microcontexto-reviewer.md"
+      - "_bmad-output/implementation-artifacts/stories/11-3-filtro-completitud-feedback-quality-warning.md"
+      - "_bmad-output/implementation-artifacts/stories/11-4-recordatorio-automatico-feedback-cron-job.md"
+      - "_bmad-output/implementation-artifacts/stories/11-5-gate-reciprocidad-al-publicar.md"
+      - "_bmad-output/implementation-artifacts/stories/11-6-admin-configuracion-reciprocidad-comunidad.md"
+
+  - id: "20260430-ned-CS-10-2-10-5-batch-stories"
+    timestamp: "2026-04-30T18:00:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Batch create stories 10.2, 10.3, 10.4, 10.5"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Creando 4 ficheros de story para Epic 10: selector de template (10.2), wizard con ejemplos (10.3), preview antes de publicar (10.4) y campo hipótesis en wizard (10.5)"
+
+  - id: "20260430-ned-CS-10-2-10-5-batch-stories"
+    timestamp: "2026-04-30T18:30:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Batch create stories 10.2, 10.3, 10.4, 10.5"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "30 minutes"
+    summary: "4 stories del Epic 10 creadas en estado ready-for-dev: selector de template (10.2), wizard multi-paso (10.3), preview antes de publicar (10.4) y campo hipótesis en wizard (10.5). hypothesis ya existe como NOT NULL en Phase 1 — no hay migración en 10.5. Schema Zod tiene hypothesis como min(1) — breaking change documentado en 10.5."
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/stories/10-2-selector-tipo-proyecto-project-template-selector.md"
+      - "_bmad-output/implementation-artifacts/stories/10-3-projectwizard-con-ejemplos-contextuales.md"
+      - "_bmad-output/implementation-artifacts/stories/10-4-preview-proyecto-antes-de-publicar.md"
+      - "_bmad-output/implementation-artifacts/stories/10-5-campo-hipotesis-en-wizard.md"
+    artifacts_modified: []
+    errors: []
+    next_recommended: "VS (Ned) — validar cada story antes de DS (Homer). Orden: 10.2 → 10.3 → 10.5 → 10.4 (10.4 depende de 11.5 para publish completo)"
+
+  - id: "20260430-ned-CS-10-1-migraciones-project-templates"
+    timestamp: "2026-04-30T17:00:00"
+    agent: "Ned (SM)"
+    trigger: "/cs — Create Story 10.1 — Migraciones DB project_templates"
+    workflow: "create-story"
+    mode: "GENERATE"
+    status: "SUCCESS"
+    closed_at: "2026-04-30T17:30:00"
+    result: "Story 10.1 ready-for-dev — 3 migraciones (021-023), tipos TS, API route GET /api/templates"
+    story_file: "_bmad-output/implementation-artifacts/stories/10-1-migraciones-db-project-templates-y-extensiones-projects.md"
+    key_notes:
+      - "hypothesis ya existe en Phase 1 como text NOT NULL — AC de epics-phase2.md supersedido"
+      - "Seed con ON CONFLICT DO UPDATE — idempotente"
+      - "RLS project_templates: SELECT para auth.uid() IS NOT NULL (global, sin restricción de comunidad)"
+
+  - id: "20260430-lisa-CE-epics-phase2"
+    timestamp: "2026-04-30T14:00:00"
+    agent: "Lisa (PM)"
+    trigger: "/ce — Crear épicas y stories Phase 2"
+    workflow: "create-epics-and-stories"
+    mode: "GENERATE"
+    status: "SUCCESS"
+    closed_at: "2026-04-30T16:30:00"
+    result: "5 épicas (E10–E14), 29 stories — 18 FRs MVP 2.0 cubiertos al 100%, 11 FRs Growth 2.1 listados (backlog)"
+    artifacts:
+      - "_bmad-output/planning-artifacts/epics-phase2.md"
+    coverage:
+      mvp_frs: "18/18"
+      growth_frs: "11/11 (high-level backlog)"
+      migrations: "9/9 cubiertos (007–015)"
+      stories_total: 29
+      stories_mvp: 18
+      stories_growth_highlevel: 11
+    epics:
+      - "E10 — Templates & Onboarding (5 stories, FR1-4)"
+      - "E11 — Calidad del Feedback y Reciprocidad (6 stories, FR5-8, FR10-11)"
+      - "E12 — IA Sintetizadora y Notificaciones (7 stories, FR12-15, FR26-29)"
+      - "E13 — Iteración, Cierre del Loop y Copiloto IA (backlog, FR9, FR16-22)"
+      - "E14 — Dashboard Admin y Gestión de Comunidad (backlog, FR23-25)"
+
+  - id: "20260430-frink-CA-architecture-phase2"
+    timestamp: "2026-04-30T10:00:00"
+    agent: "Frink (Architect)"
+    trigger: "/ca — Crear arquitectura Phase 2 — extensión brownfield sobre Phase 1"
+    workflow: "create-architecture"
+    mode: "GENERATE"
+    status: "SUCCESS"
+    closed_at: "2026-04-30T13:00:00"
+    result: "Arquitectura Phase 2 completa — 3 subsistemas nuevos · 18 FRs cubiertos · 2 gaps resueltos en validación"
+    artifacts:
+      - "_bmad-output/planning-artifacts/architecture-phase2.md"
+    key_decisions:
+      - "No RAG — síntesis directa con prompt caching (<3% ventana de contexto)"
+      - "Supabase Webhook → Next.js API Route (maxDuration=60) para síntesis asíncrona"
+      - "Promise.allSettled para fan-out notificaciones (email independiente de in-app)"
+      - "Templates globales en DB — 5 tipos, extensibles sin deploy"
+      - "Vercel Cron Job diario para FR8 (recordatorio automático)"
+    new_tables:
+      - "project_templates"
+      - "ai_summaries"
+      - "notifications"
+      - "notification_preferences"
+      - "ai_cost_tracking"
+    new_env_vars:
+      - "ANTHROPIC_API_KEY"
+      - "WEBHOOK_SECRET"
+      - "CRON_SECRET"
+      - "AI_MONTHLY_BUDGET_USD"
+    gaps_resolved:
+      - "FR8: mecanismo de job programado (Vercel Cron)"
+      - "NFR13: implementación de prompt caching (cache_control: ephemeral)"
+
+  - id: "20260429-lisa-CP-prd-phase2"
+    timestamp: "2026-04-29T15:30:00"
+    agent: "Lisa (PM)"
+    trigger: "/cp — Crear PRD Phase 2 — nuevas funcionalidades post-brainstorming"
+    workflow: "create-prd"
+    mode: "GENERATE"
+    status: "SUCCESS"
+    closed_at: "2026-04-29T18:00:00"
+    result: "PRD Phase 2 completo — 29 FRs · 15 NFRs · 4 journeys · MVP 2.0 + Growth 2.1 + Vision"
+    artifacts:
+      - "_bmad-output/planning-artifacts/prd-phase2.md"
+    sections_created:
+      - "Executive Summary"
+      - "Success Criteria (3 user + 2 business + 3 technical)"
+      - "Product Scope (MVP 2.0 / Growth 2.1 / Vision + risk table)"
+      - "User Journeys (Carlos, Marta, Roberto)"
+      - "Domain-Specific Requirements (privacidad + IA + stack)"
+      - "Innovation & Novel Patterns"
+      - "Project-Type Requirements"
+      - "Functional Requirements (29 FRs — FR-A..H)"
+      - "Non-Functional Requirements (15 NFRs — performance, seguridad, fiabilidad, integración)"
+    key_decisions:
+      - "IA Sintetizadora en MVP (sin ella la métrica decisión post-IA no existe)"
+      - "Templates en DB — 5 tipos, extensibles sin deploy"
+      - "Reciprocidad como server action — umbral configurable por Admin"
+      - "SDK solo en Vision — módulo independiente, no acoplado al core"
+      - "Diferenciador estratégico: validación humana certificada vs. IA generativa"
+    input_documents:
+      - "_bmad-output/brainstorming/brainstorming-session-2026-04-29.md"
+      - "_bmad-output/planning-artifacts/prd.md (Phase 1)"
+      - "_bmad-output/implementation-artifacts/retro-proyecto-completo-2026-04-29.md"
+
+  - id: "20260429-monty-BP-brainstorming"
+    timestamp: "2026-04-29T13:00:00"
+    agent: "Monty (Analyst)"
+    trigger: "/bp — Brainstorming session"
+    workflow: "brainstorming"
+    mode: "GENERATE"
+    status: "SUCCESS"
+    closed_at: "2026-04-29T15:00:00"
+    result: "38 ideas generadas · 6 temas · 3 temas priorizados con plan de acción"
+    artifacts:
+      - "_bmad-output/brainstorming/brainstorming-session-2026-04-29.md"
+    techniques_used: 7
+    ideas_generated: 38
+    priority_themes:
+      - "Guiar al Builder"
+      - "Calidad y Cantidad del Feedback"
+      - "IA y Automatización"
+    key_findings:
+      - "El feedback necesita cerrar el loop — iteración documentada como valor diferencial"
+      - "La IA amplifica sin reemplazar — 'validado por humanos reales' es el moat"
+      - "La comunidad privada es la feature, no la limitación"
+      - "El producto es evolución, no validación — cambio de frame pass/fail a curva de progreso"
+
+  - id: "20260429-ned-ER-retrospectiva-global"
+    timestamp: "2026-04-29T00:00:00"
+    agent: "Ned (SM)"
+    trigger: "/er — Retrospectiva global del proyecto — todos los epics completados"
+    workflow: "retrospective"
+    mode: "GENERATE"
+    status: "SUCCESS"
+    closed_at: "2026-04-29T12:00:00"
+    result: "Retrospectiva global completada — epics 1–9 revisados"
+    artifacts:
+      - "_bmad-output/implementation-artifacts/retro-proyecto-completo-2026-04-29.md"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml — epic-1..9-retrospective: optional → done"
+    action_items: 5
+    key_findings:
+      - "Planificación CS→VS→DS fue el mayor diferencial del proyecto"
+      - "Tests y Storybook como deuda acumulada — sesión 64%→100% al final evidencia el patrón"
+      - "Gap entre test verde y sistema funcionando — bug contador feedbacks en 0 pasó todos los unit tests"
+      - "0 usuarios reales — producto feature-complete pero no validado aún"
+    next_steps:
+      - "Fix token CSS EmptyCommunitiesState (deuda F4 PR#60) — /qd Bart"
+      - "Onboarding primer equipo real — compañeros de trabajo de Ximo"
+
   - id: "20260427-bart-storybook-9-vite-migration"
     timestamp: "2026-04-27T00:00:00"
     agent: "Bart (Quick Flow)"

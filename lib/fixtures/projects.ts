@@ -36,6 +36,7 @@ const pulseCheckRow: ProjectRow = {
   feedback_topics: ['Problem clarity', 'Willingness to use', 'Missing features'],
   tagline: 'Anonymous weekly mood tracking for distributed teams',
   would_use_count: 2,
+  template_id: null,
 }
 
 const docBridgeRow: ProjectRow = {
@@ -58,6 +59,7 @@ const docBridgeRow: ProjectRow = {
   feedback_topics: ['Onboarding speed', 'AI accuracy', 'Integration needs'],
   tagline: 'Auto-generate onboarding docs from Slack conversations',
   would_use_count: 1,
+  template_id: null,
 }
 
 const carbonLedgerRow: ProjectRow = {
@@ -80,6 +82,7 @@ const carbonLedgerRow: ProjectRow = {
   feedback_topics: ['Carbon accuracy', 'Cloud coverage', 'Action suggestions'],
   tagline: "Track your team's carbon footprint from cloud infrastructure",
   would_use_count: 0,
+  template_id: null,
 }
 
 const retroReplayRow: ProjectRow = {
@@ -102,6 +105,7 @@ const retroReplayRow: ProjectRow = {
   feedback_topics: ['Summary quality', 'Action tracking', 'Integrations'],
   tagline: 'AI-powered summaries of sprint retrospectives with action tracking',
   would_use_count: 2,
+  template_id: null,
 }
 
 const draftNewRow: ProjectRow = {
@@ -124,6 +128,7 @@ const draftNewRow: ProjectRow = {
   feedback_topics: null,
   tagline: null,
   would_use_count: 0,
+  template_id: null,
 }
 
 const liveIterateRow: ProjectRow = {
@@ -146,6 +151,7 @@ const liveIterateRow: ProjectRow = {
   feedback_topics: ['UX flow', 'Performance', 'Pricing'],
   tagline: 'Rapid prototype testing for indie hackers',
   would_use_count: 4,
+  template_id: null,
 }
 
 const liveScaleRow: ProjectRow = {
@@ -168,6 +174,7 @@ const liveScaleRow: ProjectRow = {
   feedback_topics: ['Scalability', 'Security', 'API design'],
   tagline: 'Auto-scaling infrastructure optimizer',
   would_use_count: 8,
+  template_id: null,
 }
 
 const inactiveIterateRow: ProjectRow = {
@@ -190,6 +197,7 @@ const inactiveIterateRow: ProjectRow = {
   feedback_topics: ['Feature set', 'Market fit'],
   tagline: 'Track strategic pivots across product teams',
   would_use_count: 1,
+  template_id: null,
 }
 
 const inactiveScaleRow: ProjectRow = {
@@ -212,6 +220,7 @@ const inactiveScaleRow: ProjectRow = {
   feedback_topics: ['Growth metrics', 'Reporting'],
   tagline: 'Growth metrics dashboard for startups',
   would_use_count: 3,
+  template_id: null,
 }
 
 // ── Projects (camelCase — forma interna de la app) ────────────────────────────
