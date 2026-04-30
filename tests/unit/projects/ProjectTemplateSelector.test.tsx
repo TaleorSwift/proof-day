@@ -27,11 +27,13 @@ export const TEMPLATE_SAAS: ProjectTemplate = makeTemplate({
   id: '11111111-0000-0000-0000-000000000001',
   type: 'saas',
   name: 'SaaS',
+  reviewerContext: 'Saas: valora tamaño de mercado y diferenciación.',
 })
 export const TEMPLATE_FEATURE: ProjectTemplate = makeTemplate({
   id: '11111111-0000-0000-0000-000000000002',
   type: 'feature',
   name: 'Feature / Mejora',
+  reviewerContext: 'Feature: valora impacto en UX y viabilidad técnica.',
   descriptionStructure: {
     problem: { placeholder: 'Feature problem placeholder', example: 'Feature problem example' },
     solution: { placeholder: 'Feature solution placeholder', example: 'Feature solution example' },
@@ -41,6 +43,7 @@ export const TEMPLATE_INTERNAL: ProjectTemplate = makeTemplate({
   id: '11111111-0000-0000-0000-000000000003',
   type: 'internal_process',
   name: 'Proceso Interno',
+  reviewerContext: 'Proceso Interno: valora ahorro de tiempo y ROI interno.',
   descriptionStructure: {
     problem: { placeholder: 'Internal problem placeholder', example: 'Internal problem example' },
     solution: { placeholder: 'Internal solution placeholder', example: 'Internal solution example' },
@@ -50,6 +53,7 @@ export const TEMPLATE_PHYSICAL: ProjectTemplate = makeTemplate({
   id: '11111111-0000-0000-0000-000000000004',
   type: 'physical_product',
   name: 'Producto Físico',
+  reviewerContext: 'Producto Físico: valora usabilidad y coste de fabricación.',
   descriptionStructure: {
     problem: { placeholder: 'Physical problem placeholder', example: 'Physical problem example' },
     solution: { placeholder: 'Physical solution placeholder', example: 'Physical solution example' },
@@ -59,6 +63,7 @@ export const TEMPLATE_SERVICE: ProjectTemplate = makeTemplate({
   id: '11111111-0000-0000-0000-000000000005',
   type: 'service',
   name: 'Servicio',
+  reviewerContext: 'Servicio: valora propuesta de valor y escalabilidad.',
   descriptionStructure: {
     problem: { placeholder: 'Service problem placeholder', example: 'Service problem example' },
     solution: { placeholder: 'Service solution placeholder', example: 'Service solution example' },
@@ -215,6 +220,87 @@ describe('ProjectTemplateSelector', () => {
       const buttons = screen.getAllByRole('button')
       expect(buttons).toHaveLength(1)
       expect(buttons[0]).toHaveAccessibleName(/sin tipo/i)
+    })
+  })
+
+  describe('HIGH-1 CR fix — descripción corta (reviewerContext)', () => {
+    it('muestra el reviewerContext como descripción corta en cada card', () => {
+      render(
+        <ProjectTemplateSelector
+          templates={ALL_TEMPLATES}
+          selectedId={null}
+          onSelect={vi.fn()}
+        />,
+      )
+
+      // TEMPLATE_SAAS tiene reviewerContext definido
+      expect(screen.getByText(TEMPLATE_SAAS.reviewerContext)).toBeInTheDocument()
+      expect(screen.getByText(TEMPLATE_FEATURE.reviewerContext)).toBeInTheDocument()
+    })
+
+    it('no renderiza descripción si reviewerContext es cadena vacía', () => {
+      const templateSinContext = makeTemplate({
+        id: 'sin-context-id',
+        reviewerContext: '',
+      })
+      render(
+        <ProjectTemplateSelector
+          templates={[templateSinContext]}
+          selectedId={null}
+          onSelect={vi.fn()}
+        />,
+      )
+
+      // El nombre sí debe aparecer, pero no descripción vacía adicional
+      expect(screen.getByText('SaaS')).toBeInTheDocument()
+    })
+  })
+
+  describe('HIGH-2 CR fix — grid responsive', () => {
+    it('el grid tiene className="template-grid" para responsive CSS', () => {
+      render(
+        <ProjectTemplateSelector
+          templates={ALL_TEMPLATES}
+          selectedId={null}
+          onSelect={vi.fn()}
+        />,
+      )
+
+      const grid = screen.getByTestId('template-grid')
+      expect(grid).toHaveClass('template-grid')
+    })
+  })
+
+  describe('MEDIUM-3 CR fix — sin role="button" redundante', () => {
+    it('los botones de template no tienen role="button" explícito', () => {
+      render(
+        <ProjectTemplateSelector
+          templates={ALL_TEMPLATES}
+          selectedId={null}
+          onSelect={vi.fn()}
+        />,
+      )
+
+      // role="button" en un <button> nativo es redundante — verificamos que no se asigna explícitamente
+      // (el role implícito de <button> sigue siendo button)
+      const templateButton = screen.getByRole('button', { name: /saas/i })
+      expect(templateButton.tagName.toLowerCase()).toBe('button')
+      // El role implícito es button — el atributo role no debe estar en el DOM si no se asignó explícitamente
+      expect(templateButton).not.toHaveAttribute('role', 'button')
+    })
+
+    it('el botón Sin tipo no tiene role="button" explícito', () => {
+      render(
+        <ProjectTemplateSelector
+          templates={ALL_TEMPLATES}
+          selectedId={null}
+          onSelect={vi.fn()}
+        />,
+      )
+
+      const skipButton = screen.getByRole('button', { name: /sin tipo/i })
+      expect(skipButton.tagName.toLowerCase()).toBe('button')
+      expect(skipButton).not.toHaveAttribute('role', 'button')
     })
   })
 })

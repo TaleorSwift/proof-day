@@ -240,4 +240,47 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
       expect(screen.getByTestId('modal-field-title')).toBeInTheDocument()
     })
   })
+
+  describe('MEDIUM-5 CR fix — estado vacío cuando fetch devuelve 0 templates', () => {
+    it('muestra mensaje "No hay tipos disponibles" cuando el fetch devuelve lista vacía', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ data: [] }),
+      } as Response)
+
+      render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
+
+      await waitFor(() => {
+        expect(screen.getByTestId('templates-empty-state')).toBeInTheDocument()
+      })
+
+      expect(screen.getByText(/no hay tipos disponibles/i)).toBeInTheDocument()
+    })
+
+    it('el formulario principal sigue accesible cuando no hay templates', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ data: [] }),
+      } as Response)
+
+      render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
+
+      await waitFor(() => {
+        expect(screen.getByTestId('templates-empty-state')).toBeInTheDocument()
+      })
+
+      expect(screen.getByTestId('modal-field-title')).toBeInTheDocument()
+    })
+  })
+
+  describe('MEDIUM-6 CR fix — DialogDescription para accesibilidad', () => {
+    it('el modal tiene DialogDescription para aria-describedby', async () => {
+      render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
+
+      // DialogDescription con clase sr-only — está en DOM aunque no visible
+      expect(
+        screen.getByText('Formulario para lanzar una nueva idea de proyecto'),
+      ).toBeInTheDocument()
+    })
+  })
 })

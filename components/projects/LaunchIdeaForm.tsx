@@ -160,10 +160,11 @@ export function LaunchIdeaForm({
       </div>
 
       {/* Hypothesis */}
+      {/* MEDIUM-4: usar tokens correctos --color-hypothesis-bg/border (Story 10.2 CR fix) */}
       <div
         style={{
-          backgroundColor: 'var(--color-hypothesis-modal-bg)',
-          border: '1px solid var(--color-hypothesis-modal-border)',
+          backgroundColor: 'var(--color-hypothesis-bg)',
+          border: '1px solid var(--color-hypothesis-border)',
           borderRadius: 'var(--radius-lg)',
           padding: 'var(--space-3)',
           display: 'flex',

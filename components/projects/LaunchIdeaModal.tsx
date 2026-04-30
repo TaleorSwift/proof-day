@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -132,6 +133,10 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
           <DialogTitle style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-semibold)' }}>
             Lanzar una nueva idea
           </DialogTitle>
+          {/* MEDIUM-6: aria-describedby para eliminar warning de accesibilidad shadcn/ui (Story 10.2 CR fix) */}
+          <DialogDescription className="sr-only">
+            Formulario para lanzar una nueva idea de proyecto
+          </DialogDescription>
         </DialogHeader>
 
         <FormProvider {...methods}>
@@ -141,25 +146,37 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
             style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}
           >
             {/* Story 10.2 — T2.3: selector de tipo encima del formulario */}
-            {templates.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+              <p
+                style={{
+                  fontSize: 'var(--text-sm)',
+                  fontWeight: 'var(--font-medium)',
+                  color: 'var(--color-text-secondary)',
+                  margin: 0,
+                }}
+              >
+                Tipo de proyecto (opcional)
+              </p>
+              {templates.length === 0 ? (
+                /* MEDIUM-5: estado vacío cuando fetch devuelve 0 templates (Story 10.2 CR fix) */
                 <p
+                  data-testid="templates-empty-state"
                   style={{
                     fontSize: 'var(--text-sm)',
-                    fontWeight: 'var(--font-medium)',
-                    color: 'var(--color-text-secondary)',
+                    color: 'var(--color-text-muted)',
                     margin: 0,
                   }}
                 >
-                  Tipo de proyecto (opcional)
+                  No hay tipos disponibles
                 </p>
+              ) : (
                 <ProjectTemplateSelector
                   templates={templates}
                   selectedId={templateId}
                   onSelect={handleSelectTemplate}
                 />
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Story 10.2 — T2.4: pasar descriptionStructure al formulario */}
             <LaunchIdeaForm

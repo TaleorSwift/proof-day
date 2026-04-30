@@ -1,6 +1,6 @@
 # Story 10.2: Selector de tipo de proyecto (FR1)
 
-Status: review
+Status: in-progress
 
 ## Story
 
@@ -10,7 +10,7 @@ para que los placeholders y ejemplos del formulario sean relevantes a mi caso de
 
 ## Acceptance Criteria
 
-1. **[AC-1]** Dado que estoy en la pantalla de crear proyecto (LaunchIdeaModal abierto), cuando la pantalla carga, entonces veo el componente `ProjectTemplateSelector` con los 5 tipos disponibles (nombre, descripción corta e icono por tipo) antes del formulario principal.
+1. **[AC-1]** Dado que estoy en la pantalla de crear proyecto (LaunchIdeaModal abierto), cuando la pantalla carga, entonces veo el componente `ProjectTemplateSelector` con los 5 tipos disponibles (nombre, `reviewer_context` como descripción corta e icono por tipo) antes del formulario principal. [Decisión producto 2026-04-30: campo `reviewer_context` de `ProjectTemplate` como descripción corta — sin nueva migración]
 
 2. **[AC-2]** Dado que selecciono un tipo de template en `ProjectTemplateSelector`, cuando avanzo al formulario de descripción, entonces los campos "Problema" y "Solución" muestran los `placeholder` y `example` definidos en `description_structure` del template seleccionado.
 
@@ -183,3 +183,91 @@ claude-sonnet-4-6 (Homer — DS workflow, 2026-04-30)
 - `tests/unit/projects/createProjectSchema.10-2.test.ts` — CREADO
 - `tests/component/projects/LaunchIdeaModal.10-2.test.tsx` — CREADO
 - `tests/component/projects/LaunchIdeaForm.10-2.test.tsx` — CREADO
+
+## CR Fixes — 2026-04-30 (Post CHANGES_REQUESTED)
+
+**Agent**: Homer (claude-sonnet-4-6)
+
+### Cambios aplicados
+
+- **HIGH-1**: `TemplateCard` muestra `template.reviewerContext` como descripción corta (texto xs, `--color-text-muted`, truncado a 2 líneas con `-webkit-line-clamp`). AC-1 actualizado. Decisión de producto: usar `reviewer_context` existente — sin nueva migración.
+- **HIGH-2**: Grid responsive implementado con CSS class `.template-grid` en `app/globals.css`. 2 columnas mobile, 3 columnas en `@media (min-width: 768px)`. `data-testid="template-grid"` usa `className="template-grid"` en lugar de `style` inline.
+- **MEDIUM-3**: `role="button"` eliminado de `TemplateCard` y `SkipButton` (redundante en `<button>` nativo).
+- **MEDIUM-4**: `--color-hypothesis-modal-bg` → `--color-hypothesis-bg` y `--color-hypothesis-modal-border` → `--color-hypothesis-border` en `LaunchIdeaForm.tsx`.
+- **MEDIUM-5**: Cuando `templates.length === 0`, se muestra `<p data-testid="templates-empty-state">No hay tipos disponibles</p>` en lugar de ocultar el selector completamente.
+- **MEDIUM-6**: `<DialogDescription className="sr-only">` añadido dentro de `DialogHeader` en `LaunchIdeaModal.tsx`.
+
+### Tests añadidos
+
+- 5 nuevos tests en `ProjectTemplateSelector.test.tsx`: HIGH-1 (reviewerContext visible), HIGH-2 (className template-grid), MEDIUM-3 (sin role=button).
+- 3 nuevos tests en `LaunchIdeaModal.10-2.test.tsx`: MEDIUM-5 (estado vacío), MEDIUM-6 (DialogDescription).
+- Total: 1311 tests — 127 ficheros — 0 regresiones.
+
+## Senior Developer Review (AI)
+
+**Fecha**: 2026-04-30
+**Revisor**: Homer (claude-sonnet-4-6) — Code Review workflow
+**Veredicto**: CHANGES_REQUESTED
+
+### Findings
+
+#### HIGH-1: AC-1 / T1.2 parcialmente incompletos — descripción corta no visible en TemplateCard
+
+- **Fichero**: `components/projects/ProjectTemplateSelector.tsx` — función `TemplateCard`
+- **Problema**: AC-1 dice "nombre, **descripción corta** e icono por tipo". T1.2: "Cada card muestra: icono, nombre del template y descripción corta (máx. 2 líneas)". La implementación solo muestra icono y nombre. El tipo `ProjectTemplate` no tiene campo `description` (solo `name`, `descriptionStructure`, `reviewerContext`). La migración `021_create_project_templates.sql` tampoco tiene columna de descripción corta.
+- **Opciones para resolver**: (a) Añadir columna `description text` a la tabla y campo al tipo/fixture/seed, o (b) Usar el primer placeholder de `descriptionStructure.problem.placeholder` como texto descriptivo, o (c) Acordar con producto que el diseño final no requiere descripción corta y actualizar AC-1 / T1.2.
+- **Requiere decisión de producto antes de implementar.**
+
+#### HIGH-2: T1.1 incompleto — grid siempre 2 columnas, media query para 3 columnas en desktop no implementada
+
+- **Fichero**: `components/projects/ProjectTemplateSelector.tsx` línea 139
+- **Problema**: `gridTemplateColumns: 'repeat(2, 1fr)'` es fijo. T1.1 especifica "3 columnas en desktop >= 768px". El comentario en código reconoce el gap pero no lo resuelve.
+- **Solución**: Añadir clase CSS en `app/globals.css`:
+  ```css
+  .template-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-2); }
+  @media (min-width: 768px) { .template-grid { grid-template-columns: repeat(3, 1fr); } }
+  ```
+  Y reemplazar el `style` inline del `data-testid="template-grid"` por `className="template-grid"`.
+
+#### MEDIUM-3: `role="button"` redundante en `<button>` nativo
+
+- **Fichero**: `components/projects/ProjectTemplateSelector.tsx` líneas 45 y 98
+- **Solución**: Eliminar `role="button"` de `TemplateCard` y `SkipButton`.
+
+#### MEDIUM-4: Tokens CSS no definidos — `--color-hypothesis-modal-bg` y `--color-hypothesis-modal-border`
+
+- **Fichero**: `components/projects/LaunchIdeaForm.tsx` líneas 165-166
+- **Problema**: Tokens no existen en `docs/project/design-tokens.md`. Los tokens correctos son `--color-hypothesis-bg` y `--color-hypothesis-border`. Bug pre-existente (commit dd2fccb) que Story 10.2 no corrigió al modificar el fichero.
+- **Solución**: Reemplazar los dos tokens incorrectos con los definidos.
+
+#### MEDIUM-5: Selector condicional — `templates.length > 0` oculta el selector completamente cuando no hay templates
+
+- **Fichero**: `components/projects/LaunchIdeaModal.tsx` línea 144
+- **Observación**: Si el fetch devuelve lista vacía, el selector (incluyendo el botón "Sin tipo") desaparece. AC-4 garantiza `template_id = null` pero no especifica UX cuando no hay templates. Comportamiento defensivo aceptable — verificar con producto si es el comportamiento deseado.
+
+#### MEDIUM-6: `DialogContent` sin `aria-describedby`
+
+- **Fichero**: `components/projects/LaunchIdeaModal.tsx`
+- **Problema**: Warning de accesibilidad shadcn/ui en 8 de 9 tests del modal. Requiere `<DialogDescription>` o `aria-describedby`.
+- **Solución**: Añadir `<DialogDescription className="sr-only">Formulario para lanzar una nueva idea de proyecto</DialogDescription>` dentro de `DialogHeader`.
+
+#### LOW-7: `imageUrls` — min(1) en `createProjectSchema` no verificado vía `launchProject` Server Action
+
+- **Observación**: La Server Action bypasa el schema Zod. No es un bug nuevo de Story 10.2 pero no hay test del caso `imageUrls: []` en el POST route.
+
+#### LOW-8: File List Story vs ficheros en commit
+
+- **Observación**: El commit 949c277 incluye ficheros de la rama de Story 10.1 (dependencia de rama). El File List es correcto para los cambios propios de Story 10.2. No es un false claim.
+
+### Resumen de issues a resolver antes del merge
+
+| # | Severidad | Descripción | Requiere decisión de producto |
+|---|---|---|---|
+| HIGH-1 | HIGH | Descripción corta ausente en TemplateCard | Sí |
+| HIGH-2 | HIGH | Grid 3 columnas desktop no implementado | No |
+| MEDIUM-3 | MEDIUM | role=button redundante | No |
+| MEDIUM-4 | MEDIUM | Tokens CSS hypothesis-modal no definidos | No |
+| MEDIUM-5 | MEDIUM | Selector oculto sin templates | Clarificar |
+| MEDIUM-6 | MEDIUM | DialogContent sin aria-describedby | No |
+
+**Tests verificados**: 26 tests — todos pasan (4 test files, 0 regresiones)

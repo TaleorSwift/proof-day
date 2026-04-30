@@ -1,4 +1,46 @@
 workflows:
+  - id: "20260430-homer-DS-10-2-cr-fixes-started"
+    timestamp: "2026-04-30T21:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — CHANGES_REQUESTED fixes Story 10.2 (PR #89)"
+    workflow: "dev-story"
+    mode: "REFINE"
+    story: "10-2-selector-tipo-proyecto-project-template-selector"
+    result: "STARTED"
+    issues_to_fix:
+      - "HIGH-1: reviewerContext como descripción corta en TemplateCard"
+      - "HIGH-2: grid 3 columnas en desktop >=768px"
+      - "MEDIUM-3: eliminar role=button redundante"
+      - "MEDIUM-4: reemplazar tokens hypothesis-modal por hypothesis"
+      - "MEDIUM-5: estado vacío cuando templates.length = 0"
+      - "MEDIUM-6: aria-describedby en DialogContent"
+
+  - id: "20260430-homer-CR-10-2-closing"
+    timestamp: "2026-04-30T20:30:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 10.2 Selector tipo proyecto (ProjectTemplateSelector)"
+    workflow: "code-review"
+    mode: "VERIFY"
+    story: "10-2-selector-tipo-proyecto-project-template-selector"
+    result: "CHANGES_REQUESTED"
+    verdict: "CHANGES_REQUESTED"
+    findings:
+      high: 2
+      medium: 4
+      low: 2
+    high_issues:
+      - "HIGH-1: AC-1/T1.2 parcialmente incompletos — descripción corta no visible en TemplateCard (campo no existe en ProjectTemplate)"
+      - "HIGH-2: T1.1 incompleto — grid siempre 2 columnas, media query 3 columnas desktop no implementada"
+    medium_issues:
+      - "MEDIUM-3: role=button redundante en <button> nativo (líneas 45, 98 de ProjectTemplateSelector.tsx)"
+      - "MEDIUM-4: tokens CSS no definidos — color-hypothesis-modal-bg y color-hypothesis-modal-border en LaunchIdeaForm.tsx"
+      - "MEDIUM-5: selector condicional templates.length > 0 — comportamiento sin templates no especificado en AC"
+      - "MEDIUM-6: DialogContent sin aria-describedby — warning accesibilidad shadcn/ui en 8 tests"
+    tests_verified: 26
+    tests_pass: true
+    pr: "#89"
+    next_step: "DS — Homer resuelve HIGH-1 y HIGH-2 (decisión de producto sobre descripción corta requerida para HIGH-1)"
+
   - id: "20260430-homer-DS-10-2-closing"
     timestamp: "2026-04-30T18:00:00"
     agent: "Homer (Dev)"

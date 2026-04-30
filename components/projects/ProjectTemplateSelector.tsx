@@ -42,7 +42,6 @@ function TemplateCard({ template, isSelected, onSelect }: TemplateCardProps) {
   return (
     <button
       type="button"
-      role="button"
       aria-pressed={isSelected}
       onClick={() => onSelect(template.id)}
       style={{
@@ -80,6 +79,22 @@ function TemplateCard({ template, isSelected, onSelect }: TemplateCardProps) {
       >
         {template.name}
       </span>
+      {/* HIGH-1: AC-1 — descripción corta usando reviewerContext (Story 10.2 CR fix) */}
+      {template.reviewerContext && (
+        <span
+          style={{
+            fontSize: 'var(--text-xs)',
+            color: 'var(--color-text-muted)',
+            lineHeight: 'var(--leading-xs)',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+          }}
+        >
+          {template.reviewerContext}
+        </span>
+      )}
     </button>
   )
 }
@@ -95,7 +110,6 @@ function SkipButton({ isSelected, onSelect }: SkipButtonProps) {
   return (
     <button
       type="button"
-      role="button"
       aria-pressed={isSelected}
       onClick={onSelect}
       style={{
@@ -134,14 +148,7 @@ export function ProjectTemplateSelector({ templates, selectedId, onSelect }: Pro
       {/* Grid de templates */}
       {templates.length > 0 && (
         <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: 'var(--space-2)',
-          }}
-          // En desktop (>=768px) usamos 3 columnas via style tag; para no usar Tailwind inline
-          // se aplica media query via className si estuviera disponible, pero usamos CSS-in-JS
-          // con un workaround de data attribute para tests y accesibilidad
+          className="template-grid"
           data-testid="template-grid"
         >
           {templates.map((template) => (

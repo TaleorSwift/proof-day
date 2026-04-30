@@ -1,6 +1,6 @@
 # Módulo: Proyectos
 
-**Última actualización:** Story 10.2 — Selector de tipo de proyecto (ProjectTemplateSelector) (2026-04-30)
+**Última actualización:** Story 10.2 — CR fixes (descripción corta, grid responsive, tokens, aria, empty state) (2026-04-30)
 
 ---
 
@@ -142,8 +142,11 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 
 ### Selector de tipo de proyecto — reglas (Story 10.2)
 
-- Al abrir `LaunchIdeaModal`, se hace fetch a `GET /api/templates` — el selector aparece cuando hay templates disponibles (story 10.2)
+- Al abrir `LaunchIdeaModal`, se hace fetch a `GET /api/templates` — siempre se muestra la sección "Tipo de proyecto (opcional)" (story 10.2)
+- Cada card muestra: icono Lucide, nombre del template y `reviewer_context` como descripción corta (máx. 2 líneas, `--color-text-muted`, `--text-xs`) (story 10.2)
+- Grid responsive: 2 columnas en mobile, 3 columnas en desktop (≥768px) — clase CSS `.template-grid` (story 10.2)
 - El selector es opcional — si no se selecciona ningún tipo, el proyecto se crea con `template_id = null` (retrocompatibilidad total con proyectos Phase 1) (story 10.2)
+- Cuando el fetch devuelve 0 templates, se muestra "No hay tipos disponibles" en lugar de un grid vacío (story 10.2)
 - Al seleccionar un tipo, los campos "Problema" y "Solución" muestran los placeholders del template seleccionado (story 10.2)
 - Si el fetch falla, el formulario principal sigue operativo (degradación silenciosa) (story 10.2)
 - El `template_id` se almacena en la columna `projects.template_id` (FK nullable) al guardar (story 10.2)
