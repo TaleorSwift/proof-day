@@ -24,7 +24,6 @@ vi.mock('@/lib/utils/imageUpload', () => ({
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const DEFAULT_PROPS = {
-  communitySlug: 'startup-madrid',
   templates: [] as typeof ALL_TEMPLATES,
   onSubmit: vi.fn(),
   onCancel: vi.fn(),

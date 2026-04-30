@@ -112,7 +112,7 @@ function isStepValid(step: number, data: WizardFormData): boolean {
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 interface Props {
-  communitySlug: string
+  // communitySlug se gestiona en LaunchIdeaModal — reservado para Story 10.4 (paso preview)
   templates: ProjectTemplate[]
   onSubmit: (data: WizardFormData) => void
   onCancel: () => void
@@ -193,13 +193,7 @@ function WizardProgress({
 
 // ── ProjectWizard ─────────────────────────────────────────────────────────────
 
-export function ProjectWizard({
-  templates,
-  onSubmit,
-  onCancel,
-  isSubmitting = false,
-  serverError = null,
-}: Props) {
+export function ProjectWizard({ templates, onSubmit, onCancel, isSubmitting = false, serverError = null }: Props) {
   const [state, dispatch] = useReducer(wizardReducer, {
     currentStep: 1,
     data: INITIAL_DATA,

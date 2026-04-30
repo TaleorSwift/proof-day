@@ -1,4 +1,52 @@
 workflows:
+  - id: "20260430-homer-DS-10-3-cr-fixes-started"
+    timestamp: "2026-04-30T23:59:59"
+    agent: "Homer (Dev)"
+    trigger: "DS — resolver CHANGES_REQUESTED CR Story 10.3 PR #90"
+    workflow: "dev-story"
+    mode: "REFINE"
+    result: "STARTED"
+    story: "10-3-projectwizard-con-ejemplos-contextuales"
+    branch: "feat/10-3-projectwizard-con-ejemplos-contextuales"
+    summary: "REFINE mode: resolver HIGH-1 (wizard no resetea al cerrar modal), MEDIUM-1 (communitySlug unused en Props), MEDIUM-2 (borderRadius hardcodeado). Añadir test para HIGH-1."
+
+  - id: "20260430-homer-CR-10-3-closing"
+    timestamp: "2026-04-30T23:59:59"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #90 Story 10.3 ProjectWizard con ejemplos contextuales"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    verdict: "CHANGES_REQUESTED"
+    story: "10-3-projectwizard-con-ejemplos-contextuales"
+    branch: "feat/10-3-projectwizard-con-ejemplos-contextuales"
+    pr: 90
+    summary: "CHANGES_REQUESTED — 1 HIGH (wizard no resetea al cerrar modal, regresión T5.3), 1 MEDIUM (communitySlug unused en Props), 1 MEDIUM (borderRadius hardcodeado en WizardStepDetails). ACs 1/2/3/5 IMPLEMENTED, AC-4 PARTIAL (sin test automatizado de viewport). Sprint status: review → in-progress."
+    issues_found:
+      high: 1
+      medium: 3
+      low: 2
+    blocking_issues:
+      - "HIGH-1: wizard state no resetea al cerrar modal — RESET nunca se invoca, regresión respecto a T5.3"
+      - "MEDIUM-1: communitySlug declarado en Props de ProjectWizard pero nunca usado"
+      - "MEDIUM-2: borderRadius: '10px' hardcodeado en WizardStepDetails.tsx línea 83"
+    non_blocking_issues:
+      - "MEDIUM-3: Storybook stories ConErrorDeServidor/Submitting no muestran paso 3 sin play function"
+      - "LOW-1: onSuccess callback sin test de verificación"
+      - "LOW-2: height: '4px' hardcodeado en barra de progreso"
+    next_step: "DS (Homer) — resolver CHANGES_REQUESTED y volver a CR"
+
+  - id: "20260430-homer-CR-10-3-started"
+    timestamp: "2026-04-30T23:59:30"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #90 Story 10.3 ProjectWizard con ejemplos contextuales"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "10-3-projectwizard-con-ejemplos-contextuales"
+    branch: "feat/10-3-projectwizard-con-ejemplos-contextuales"
+    summary: "VERIFY mode: revisar PR #90 — ProjectWizard, WizardStepDescription, WizardStepDetails, LaunchIdeaModal refactorizado. 49 tests nuevos TDD Outside-In. AC-1 a AC-5 declarados cubiertos."
+
   - id: "20260430-homer-DS-10-3-closing"
     timestamp: "2026-04-30T23:59:00"
     agent: "Homer (Dev)"

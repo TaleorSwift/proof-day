@@ -106,8 +106,9 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
           </DialogDescription>
         </DialogHeader>
 
+        {/* key fuerza desmontaje/remontaje al abrir/cerrar — garantiza reset de estado (T5.3) */}
         <ProjectWizard
-          communitySlug={communitySlug}
+          key={open ? 'open' : 'closed'}
           templates={templates}
           onSubmit={handleWizardSubmit}
           onCancel={handleClose}

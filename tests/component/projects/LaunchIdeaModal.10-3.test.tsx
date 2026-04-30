@@ -245,6 +245,36 @@ describe('LaunchIdeaModal con wizard — AC-1: ejemplos contextuales', () => {
   })
 })
 
+// ── HIGH-1: reset al cerrar y reabrir el modal ───────────────────────────────
+
+describe('LaunchIdeaModal con wizard — HIGH-1: reset al reabrir', () => {
+  beforeEach(() => {
+    mockTemplatesFetch([])
+  })
+
+  afterEach(() => {
+    global.fetch = originalFetch
+  })
+
+  it('al reabrir el modal el wizard empieza en el paso 1', () => {
+    const { rerender } = render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
+
+    // Navegar al paso 2
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    expect(screen.getByTestId('wizard-step-2')).toBeInTheDocument()
+
+    // Cerrar el modal (open=false)
+    rerender(<LaunchIdeaModal {...DEFAULT_PROPS} open={false} />)
+
+    // Reabrir el modal (open=true)
+    rerender(<LaunchIdeaModal {...DEFAULT_PROPS} open={true} />)
+
+    // El wizard debe estar de nuevo en el paso 1
+    expect(screen.getByTestId('wizard-step-1')).toBeInTheDocument()
+    expect(screen.queryByTestId('wizard-step-2')).not.toBeInTheDocument()
+  })
+})
+
 // ── Accesibilidad y estructura ────────────────────────────────────────────────
 
 describe('LaunchIdeaModal con wizard — accesibilidad y estructura', () => {

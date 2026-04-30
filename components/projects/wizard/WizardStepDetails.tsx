@@ -80,7 +80,7 @@ export function WizardStepDetails({
           disabled={isSubmitting}
           style={{
             padding: 'var(--space-2) var(--space-6)',
-            borderRadius: '10px',
+            borderRadius: 'var(--radius-lg)',
             border: 'none',
             background: 'var(--color-accent)',
             color: 'white',

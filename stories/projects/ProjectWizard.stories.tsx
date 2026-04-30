@@ -3,7 +3,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { fn } from 'storybook/test'
 import { ProjectWizard } from '@/components/projects/ProjectWizard'
-import { ALL_TEMPLATES, TEMPLATE_SAAS } from '@/lib/fixtures/templates'
+import { ALL_TEMPLATES } from '@/lib/fixtures/templates'
 
 const meta = {
   title: 'Projects/ProjectWizard',
@@ -20,7 +20,6 @@ type Story = StoryObj<typeof meta>
 /** Estado inicial: paso 1 — selector de tipo (sin templates cargados aún) */
 export const EstadoInicial: Story = {
   args: {
-    communitySlug: 'startup-madrid',
     templates: [],
     onSubmit: fn(),
     onCancel: fn(),
@@ -30,7 +29,6 @@ export const EstadoInicial: Story = {
 /** Paso 1 con templates cargados */
 export const Paso1ConTemplates: Story = {
   args: {
-    communitySlug: 'startup-madrid',
     templates: ALL_TEMPLATES,
     onSubmit: fn(),
     onCancel: fn(),
@@ -40,7 +38,6 @@ export const Paso1ConTemplates: Story = {
 /** Estado de error de servidor en paso 3 */
 export const ConErrorDeServidor: Story = {
   args: {
-    communitySlug: 'startup-madrid',
     templates: ALL_TEMPLATES,
     onSubmit: fn(),
     onCancel: fn(),
@@ -51,7 +48,6 @@ export const ConErrorDeServidor: Story = {
 /** Estado submitting en paso 3 */
 export const Submitting: Story = {
   args: {
-    communitySlug: 'startup-madrid',
     templates: ALL_TEMPLATES,
     onSubmit: fn(),
     onCancel: fn(),
