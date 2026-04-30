@@ -71,6 +71,7 @@ const defaultProject: ProjectRow = {
   feedback_topics: ['Claridad del problema', 'UX del onboarding'],
   tagline: 'Pulso semanal en 60 segundos',
   would_use_count: 0,
+  template_id: null,
 }
 
 // ---------------------------------------------------------------------------

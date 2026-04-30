@@ -1,6 +1,6 @@
 # Módulo: Proyectos
 
-**Última actualización:** PR6 — Cobertura /projects/[slug]/edit — stories, unit tests, e2e (2026-04-29)
+**Última actualización:** Story 10.2 — CR fixes (descripción corta, grid responsive, tokens, aria, empty state) (2026-04-30)
 
 ---
 
@@ -77,7 +77,8 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 ## Ficheros clave
 
 ### Types
-- `lib/types/projects.ts` — `ProjectStatus`, `Project`, `ProjectRow`, helpers
+- `lib/types/projects.ts` — `ProjectStatus`, `Project`, `ProjectRow`, helpers (incluye `templateId` — story 10.1)
+- `lib/types/templates.ts` — `ProjectTemplate`, `ProjectTemplateRow`, `templateFromRow` (story 10.1)
 
 ### API Routes
 - `app/api/projects/route.ts` — thin controller: POST (crear) + GET (listar por comunidad)
@@ -100,13 +101,14 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - `components/projects/ProjectCard.tsx` — tarjeta de proyecto (story 3.4)
 - `components/projects/ProjectGrid.tsx` — grid de proyectos (story 3.4)
 - `components/projects/ProjectsEmptyState.tsx` — estado vacío (story 3.4)
-- `components/projects/LaunchIdeaModal.tsx` — dialog ~540px para lanzar ideas desde el feed (story 9.8). Props: `open`, `onOpenChange`, `communitySlug`, `onSuccess?`
-- `components/projects/LaunchIdeaForm.tsx` — formulario interno del modal, usa FormProvider de react-hook-form (story 9.8)
+- `components/projects/LaunchIdeaModal.tsx` — dialog ~540px para lanzar ideas desde el feed. Incluye selector de template y fetch a `/api/templates` al montar (story 9.8, story 10.2). Props: `open`, `onOpenChange`, `communitySlug`, `onSuccess?`
+- `components/projects/LaunchIdeaForm.tsx` — formulario interno del modal, usa FormProvider de react-hook-form. Acepta `descriptionStructure?: DescriptionStructure` para placeholders dinámicos (story 9.8, story 10.2)
+- `components/projects/ProjectTemplateSelector.tsx` — selector de tipo de proyecto. Grid de cards con icono Lucide + nombre. Props: `templates`, `selectedId`, `onSelect`. Incluye opción "Sin tipo" (story 10.2)
 - `components/projects/FeedbackTopicChips.tsx` — chips toggleables reutilizables. Props: `value: string[]`, `onChange`. Usa mapeo display (español) → valor interno (story 9.8)
 - `components/projects/ImageUploader.tsx` — uploader inline hasta N imágenes con previews y eliminar. Props: `images`, `onImagesChange`, `maxImages` (story 9.8)
 
 ### Server Actions
-- `actions/projects/launchProject.ts` — crea un proyecto con `status = 'live'` directamente. Llama a `revalidatePath`. Input: `LaunchProjectInput`. Output: `{ success: true, projectId }` | `{ success: false, error }` (story 9.8)
+- `actions/projects/launchProject.ts` — crea un proyecto con `status = 'live'` directamente. Llama a `revalidatePath`. Input: `LaunchProjectInput` (incluye `templateId?: string | null`). Output: `{ success: true, projectId }` | `{ success: false, error }` (story 9.8, story 10.2)
 
 ### Utilidades
 - `lib/utils/imageUpload.ts` — `uploadImageToStorage(file): Promise<{ url, path }>` — subida directa a Supabase Storage bucket `project-images` desde el cliente. Usada por `ImageUploader` (story 9.8)
@@ -118,6 +120,8 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - `app/(app)/communities/[slug]/projects/[projectSlug]/edit/page.tsx` — editar proyecto
 
 ### Storybook
+- `lib/fixtures/templates.ts` — fixtures de los 5 templates para tests y Storybook (story 10.2)
+- `stories/projects/ProjectTemplateSelector.stories.tsx` — 3 stories: NingunoSeleccionado, UnoSeleccionado, SinTemplates (story 10.2)
 - `stories/projects/ProjectCard.stories.tsx` — 5 stories: Live, LiveWithScore, Draft, Inactive, Loading
 - `stories/projects/LaunchIdeaModal.stories.tsx` — 4 stories: EstadoVacio, ConDatosRellenos, EstadoCargando, ChipsSeleccionados (story 9.8)
 - `stories/projects/FeedbackTopicChips.stories.tsx` — 4 stories: SinSeleccion, TresSeleccionados, TodosSeleccionados, Interactivo (story 9.8)
@@ -133,6 +137,19 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - `tests/unit/projects/ProjectForm.test.tsx` — 27 tests: render, submit, defaultValues, feedbackTopics, isSubmitting (PR6)
 - `tests/unit/projects/ProjectEditPage.test.tsx` — 12 tests: no-auth, non-owner, non-draft, happy path (PR6)
 - `tests/e2e/projects/project-edit.spec.ts` — 7 tests: defaults, guardar, non-owner, non-draft, validación, no-auth (PR6)
+
+---
+
+### Selector de tipo de proyecto — reglas (Story 10.2)
+
+- Al abrir `LaunchIdeaModal`, se hace fetch a `GET /api/templates` — siempre se muestra la sección "Tipo de proyecto (opcional)" (story 10.2)
+- Cada card muestra: icono Lucide, nombre del template y `reviewer_context` como descripción corta (máx. 2 líneas, `--color-text-muted`, `--text-xs`) (story 10.2)
+- Grid responsive: 2 columnas en mobile, 3 columnas en desktop (≥768px) — clase CSS `.template-grid` (story 10.2)
+- El selector es opcional — si no se selecciona ningún tipo, el proyecto se crea con `template_id = null` (retrocompatibilidad total con proyectos Phase 1) (story 10.2)
+- Cuando el fetch devuelve 0 templates, se muestra "No hay tipos disponibles" en lugar de un grid vacío (story 10.2)
+- Al seleccionar un tipo, los campos "Problema" y "Solución" muestran los placeholders del template seleccionado (story 10.2)
+- Si el fetch falla, el formulario principal sigue operativo (degradación silenciosa) (story 10.2)
+- El `template_id` se almacena en la columna `projects.template_id` (FK nullable) al guardar (story 10.2)
 
 ---
 
@@ -198,3 +215,27 @@ would_use_count  integer not null default 0  -- contador denormalizado; actualiz
 
 ### Contadores denormalizados (Story 9.1)
 - `would_use_count`: número de feedbacks donde el revisor respondió "Sí" a "¿Lo usarías?". Actualizado automáticamente por el trigger `feedbacks_recompute_would_use` en INSERT/UPDATE/DELETE de feedbacks. (story 9.1)
+
+### Extensión Phase 2 (Story 10.1)
+
+**Nueva columna en `projects`:**
+- `template_id uuid null` → FK a `project_templates.id` ON DELETE SET NULL. Nullable para retrocompatibilidad con proyectos existentes. (story 10.1)
+
+### Tabla `project_templates`
+
+Tabla global de tipos de proyecto — datos de configuración, no de usuario.
+
+```sql
+id                    uuid primary key default gen_random_uuid()
+type                  text not null unique    -- 'saas' | 'feature' | 'internal_process' | 'physical_product' | 'service'
+name                  text not null           -- nombre legible
+description_structure jsonb not null          -- {problem: {placeholder, example}, solution: {placeholder, example}}
+reviewer_context      text not null           -- instrucciones para el reviewer según el tipo
+created_at            timestamptz default now()
+```
+
+RLS: SELECT para `authenticated` (datos de config global, sin restricción de comunidad). (story 10.1)
+
+**5 tipos seeded** (migration 023): `feature`, `internal_process`, `physical_product`, `saas`, `service`. (story 10.1)
+
+**API:** `GET /api/templates` retorna `{ data: ProjectTemplate[] }` ordenados por name. Requiere autenticación. (story 10.1)

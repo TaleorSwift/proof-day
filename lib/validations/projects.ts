@@ -23,6 +23,8 @@ export const createProjectSchema = z.object({
   feedbackTopics: z.array(
     z.string().min(1).max(100, 'Cada tema no puede superar 100 caracteres')
   ).max(10, 'No puedes añadir más de 10 temas').optional(),
+  // Story 10.2 — template Phase 2
+  template_id: z.string().uuid().nullable().optional(),
 })
 
 export const updateProjectSchema = createProjectSchema.partial().omit({ communityId: true })

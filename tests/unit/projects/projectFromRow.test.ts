@@ -27,6 +27,7 @@ const BASE_ROW: ProjectRow = {
   feedback_topics: null,
   tagline: null,
   would_use_count: 0,
+  template_id: null,
 }
 
 // Nota: el trigger usa feedback_would_use(scores) que acepta 'yes' (FeedbackFormInline)
