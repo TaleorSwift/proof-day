@@ -119,8 +119,8 @@ development_status:
   # ── EPIC 10: Templates & Onboarding del Builder ──────────────────
   epic-10: in-progress
   10-1-migraciones-db-project-templates-y-extensiones-projects: done  # CR APPROVED 2026-04-30 — HIGH-1 y HIGH-2 resueltos. 1277 tests verdes. PR #88
-  10-2-selector-tipo-proyecto-project-template-selector: review  # DS Homer 2026-04-30 — 1303 tests verdes
-  10-3-projectwizard-con-ejemplos-contextuales: in-progress
+  10-2-selector-tipo-proyecto-project-template-selector: done  # QA PASS 2026-04-30 — PR #89 merged
+  10-3-projectwizard-con-ejemplos-contextuales: done  # QA PASS 2026-04-30 — PR #90 pending merge
   10-4-preview-proyecto-antes-de-publicar: ready-for-dev
   10-5-campo-hipotesis-en-wizard: ready-for-dev
   epic-10-retrospective: optional
