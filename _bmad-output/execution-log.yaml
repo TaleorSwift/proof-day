@@ -1,15 +1,23 @@
 workflows:
-  - id: "20260430-homer-DS-10-1-CR-fixes-started"
-    timestamp: "2026-04-30T23:45:00"
+  - id: "20260430-homer-DS-10-1-CR-fixes-closing"
+    timestamp: "2026-04-30T23:55:00"
     agent: "Homer (Dev)"
     trigger: "DS — Resolver CHANGES_REQUESTED CR Story 10.1"
     workflow: "dev-story"
     mode: "REFINE"
-    status: "STARTED"
+    status: "SUCCESS"
     story: "10-1-migraciones-db-project-templates-y-extensiones-projects"
-    fixes:
-      - "HIGH-1: Actualizar AC-5 — reemplazar 'miembro de comunidad' por 'usuario autenticado'"
-      - "HIGH-2: Crear tests/integration/api/templates/ con tests 401 y 200"
+    fixes_applied:
+      - "HIGH-1 RESUELTO: AC-5 actualizado — 'miembro de comunidad' → 'usuario autenticado' con nota de semántica global"
+      - "HIGH-2 RESUELTO: tests/integration/api/templates/templates.route.test.ts — 3 tests (401, 200 con 5 templates camelCase, 500 DB error)"
+    test_results: "1277 tests (123 ficheros) — todos verdes"
+    commit: "bd3d7e3"
+    pr: "PR #88 (existente) — actualizado con nuevo commit"
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/10-1-migraciones-db-project-templates-y-extensiones-projects.md"
+      - "_bmad-output/execution-log.yaml"
+      - "tests/integration/api/templates/templates.route.test.ts"
+    next_recommended: "CR (Homer) — nuevo code review de Story 10.1 con los HIGH resueltos"
 
   - id: "20260430-homer-CR-10-1-closing"
     timestamp: "2026-04-30T23:30:00"
