@@ -1,4 +1,45 @@
 workflows:
+  - id: "20260430-homer-DS-10-1-CR-fixes-started"
+    timestamp: "2026-04-30T23:45:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Resolver CHANGES_REQUESTED CR Story 10.1"
+    workflow: "dev-story"
+    mode: "REFINE"
+    status: "STARTED"
+    story: "10-1-migraciones-db-project-templates-y-extensiones-projects"
+    fixes:
+      - "HIGH-1: Actualizar AC-5 — reemplazar 'miembro de comunidad' por 'usuario autenticado'"
+      - "HIGH-2: Crear tests/integration/api/templates/ con tests 401 y 200"
+
+  - id: "20260430-homer-CR-10-1-closing"
+    timestamp: "2026-04-30T23:30:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 10.1 migraciones DB project_templates"
+    workflow: "code-review"
+    mode: "VERIFY"
+    status: "SUCCESS"
+    result: "CHANGES_REQUESTED — 2 HIGH, 3 MEDIUM, 3 LOW. Bloqueantes: cero tests para GET /api/templates (HIGH-2) y ambigüedad semántica AC-5 'miembro de comunidad' vs 'autenticado' (HIGH-1). Story → in-progress."
+    verdict: "CHANGES_REQUESTED"
+    story: "10-1-migraciones-db-project-templates-y-extensiones-projects"
+    issues_found:
+      high: 2
+      medium: 3
+      low: 3
+    issues_fixed: 0
+    action_items_created: 3
+    ac_status:
+      AC-1: IMPLEMENTED
+      AC-2: IMPLEMENTED
+      AC-3: IMPLEMENTED
+      AC-4: IMPLEMENTED
+      AC-5: PARTIAL
+      AC-6: IMPLEMENTED
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/10-1-migraciones-db-project-templates-y-extensiones-projects.md"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/execution-log.yaml"
+    next_recommended: "DS (Homer) — resolver HIGH-1 (aclarar AC-5) y HIGH-2 (crear tests/integration/api/templates.route.test.ts) en Story 10.1"
+
   - id: "20260430-ned-VS-batch-all-phase2-closing"
     timestamp: "2026-04-30T22:00:00"
     agent: "Ned (SM)"

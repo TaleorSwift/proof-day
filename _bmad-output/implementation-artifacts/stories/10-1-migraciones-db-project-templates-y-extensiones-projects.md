@@ -1,6 +1,6 @@
 # Story 10.1: Migraciones DB — `project_templates` y extensiones a `projects`
 
-Status: done
+Status: in-progress
 
 ## Story
 
@@ -18,7 +18,7 @@ para que el selector de templates y el wizard tengan soporte de datos desde el p
 
 4. **[AC-4]** Dado un proyecto creado antes de las migraciones (filas existentes), cuando se consulta, entonces no hay error — retrocompatibilidad garantizada por la nullability de `template_id`.
 
-5. **[AC-5]** Dado que `GET /api/templates` se llama autenticado como miembro de una comunidad, cuando la respuesta llega, entonces retorna `{ data: ProjectTemplate[] }` con los 5 tipos ordenados por `name`.
+5. **[AC-5]** Dado que `GET /api/templates` se llama por un usuario autenticado, cuando la respuesta llega, entonces retorna `{ data: ProjectTemplate[] }` con los 5 tipos ordenados por `name`. _(Nota: los templates son datos de configuración global; no se requiere membresía de comunidad — solo autenticación genérica.)_
 
 6. **[AC-6]** Dado que los tipos TypeScript se actualizan, cuando se compila con `npx tsc --noEmit`, entonces `Project`, `ProjectRow` y `projectFromRow()` incluyen `templateId: string | null` sin errores.
 
@@ -59,6 +59,7 @@ para que el selector de templates y el wizard tengan soporte de datos desde el p
   - [x] T6.3 `npx tsc --noEmit` — solo 2 errores pre-existentes en FeedbackDialog.test.tsx (FeedbackScore, no relacionados con Story 10.1)
   - [x] T6.4 `npm run lint` — 30 problemas pre-existentes, 0 nuevos introducidos por Story 10.1
   - [x] T6.5 `npm test` — 415 tests pasados (39 ficheros)
+  - [x] T6.6 Tests de integración para `GET /api/templates` — `tests/integration/api/templates/templates.route.test.ts` (3 tests: 401 sin auth, 200 con 5 templates ordenados + camelCase, 500 con error DB) — **CR fix HIGH-2**
 
 - [x] **T7** — Actualizar módulo docs (AC: 1)
   - [x] T7.1 Actualizar `docs/project/modules/projects.md` con el nuevo campo `template_id` y la tabla `project_templates`
@@ -348,6 +349,10 @@ claude-sonnet-4-6 (Homer — DS)
 - `lib/types/projects.ts` actualizado en los 3 lugares: `Project`, `ProjectRow`, `projectFromRow()`.
 - `app/api/templates/route.ts` sigue el patrón de `requireAuth()` middleware consistente con las rutas existentes.
 
+**CR fixes (2026-04-30):**
+- **HIGH-1 resuelto:** AC-5 actualizado — "autenticado como miembro de una comunidad" reemplazado por "usuario autenticado" con nota explicativa de semántica global. La implementación con `requireAuth()` es correcta.
+- **HIGH-2 resuelto:** Creado `tests/integration/api/templates/templates.route.test.ts` con 3 tests de integración: 401 sin auth, 200 con 5 templates mapeados a camelCase, 500 con error DB. Full suite: 1277 tests (123 ficheros) — todos verdes.
+
 ### File List
 
 - `supabase/migrations/021_create_project_templates.sql` — CREADO
@@ -363,3 +368,43 @@ claude-sonnet-4-6 (Homer — DS)
 - `tests/component/projects/ProjectForm.test.tsx` — MODIFICADO (template_id: null en fixture)
 - `stories/projects/ProjectForm.stories.tsx` — MODIFICADO (template_id: null en fixture)
 - `docs/project/modules/projects.md` — MODIFICADO (tabla project_templates, columna template_id, API)
+- `tests/integration/api/templates/templates.route.test.ts` — CREADO (CR fix HIGH-2)
+
+## Senior Developer Review (AI)
+
+**Reviewer:** Homer (CR) — 2026-04-30
+**Veredicto original: CHANGES_REQUESTED**
+**CR fixes aplicados:** Homer (DS) — 2026-04-30 — HIGH-1 y HIGH-2 resueltos. Pendiente nuevo CR.
+
+### AC Validation
+
+| AC | Estado |
+|---|---|
+| AC-1: tabla `project_templates` con columnas exactas | IMPLEMENTED |
+| AC-2: seed 5 tipos exactos | IMPLEMENTED (SQL sin test de integración) |
+| AC-3: columna `template_id` nullable FK | IMPLEMENTED |
+| AC-4: retrocompatibilidad filas existentes | IMPLEMENTED |
+| AC-5: `GET /api/templates` con auth de miembro | PARTIAL — auth verificada, membresía no |
+| AC-6: tipos TS sin errores | IMPLEMENTED — tsc confirma 0 nuevos errores |
+
+### Issues — Bloqueantes
+
+**[HIGH-1]** `app/api/templates/route.ts` — AC-5 dice "autenticado como miembro de una comunidad" pero la implementación solo verifica `requireAuth()`. Hay una contradicción entre el AC y el Dev Notes ("datos de config global"). Decisión requerida: (a) si el AC es correcto → implementar verificación de membresía; (b) si el Dev Notes es correcto → actualizar el AC para que diga "autenticado" (sin membresía).
+
+**[HIGH-2]** Cero tests para `GET /api/templates`. T6 del story cubre solo los mappers de tipos. No existe `tests/integration/api/templates.route.test.ts`. Todos los otros API routes del proyecto tienen tests de integración. AC-5 no está cubierto por ningún test. Crear mínimo: (a) 401 sin auth, (b) 200 con los 5 templates ordenados por `name`.
+
+### Issues — No Bloqueantes
+
+**[MEDIUM-2]** `app/api/templates/route.ts:22` — cast `data as ProjectTemplateRow[]` sin validación de runtime del campo JSONB `description_structure`. Diferible hasta Story 10.2 cuando haya un consumidor real.
+
+**[MEDIUM-3]** `.select('*')` sin lista explícita de columnas — ineficiente para selectores que solo necesiten `id/type/name`. Considerar en Story 10.2.
+
+**[LOW-1]** `supabase/migrations/021_create_project_templates.sql:4` — `CREATE TABLE` sin `IF NOT EXISTS`. Inconsistente con 022 que usa `ADD COLUMN IF NOT EXISTS`.
+
+**[LOW-3]** No hay test que verifique exactamente 5 tipos del seed (AC-2). Corolario de HIGH-2.
+
+### Review Follow-ups (AI)
+
+- [x] [AI-Review][HIGH] Aclarar semántica AC-5 — "miembro de comunidad" vs "autenticado" — y actualizar AC o implementar verificación [app/api/templates/route.ts] — **RESUELTO: AC-5 actualizado, implementación requireAuth() es correcta**
+- [x] [AI-Review][HIGH] Crear `tests/integration/api/templates/templates.route.test.ts` con tests 401 y 200 para `GET /api/templates` [ausente] — **RESUELTO: 3 tests creados y verdes**
+- [ ] [AI-Review][LOW] Añadir `IF NOT EXISTS` en CREATE TABLE de migración 021 [supabase/migrations/021_create_project_templates.sql:4]
