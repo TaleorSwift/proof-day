@@ -103,7 +103,7 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - `components/projects/ProjectsEmptyState.tsx` — estado vacío (story 3.4)
 - `components/projects/LaunchIdeaModal.tsx` — dialog ~640px para lanzar ideas desde el feed. Orquesta `ProjectWizard` con fetch a `/api/templates`. Props: `open`, `onOpenChange`, `communitySlug`, `onSuccess?` (story 9.8, story 10.2, story 10.3)
 - `components/projects/LaunchIdeaForm.tsx` — formulario plano original, mantenido como referencia. Ya no usado directamente por `LaunchIdeaModal` (story 9.8)
-- `components/projects/ProjectWizard.tsx` — orquestador wizard multi-paso (pasos 1-3). Estado central con `useReducer`. Array `WIZARD_STEPS` extensible. Props: `communitySlug`, `templates`, `onSubmit`, `onCancel`, `isSubmitting?`, `serverError?` (story 10.3)
+- `components/projects/ProjectWizard.tsx` — orquestador wizard multi-paso (pasos 1-3). Estado central con `useReducer`. Array `WIZARD_STEPS` extensible. Props: `templates`, `onSubmit`, `onCancel`, `isSubmitting?`, `serverError?` (story 10.3)
 - `components/projects/wizard/WizardStepDescription.tsx` — paso 2 del wizard: title, tagline, problem, solution. Muestra hints "Ejemplo: …" bajo problem y solution cuando hay `selectedTemplate` (story 10.3)
 - `components/projects/wizard/WizardStepDetails.tsx` — paso 3 del wizard: targetUser, demoLink, images, feedbackTopics. Submit temporal con `// TODO Story 10.4: eliminar submit temporal` (story 10.3)
 - `components/projects/ProjectTemplateSelector.tsx` — selector de tipo de proyecto. Grid de cards con icono Lucide + nombre. Props: `templates`, `selectedId`, `onSelect`. Incluye opción "Sin tipo" (story 10.2)
@@ -154,6 +154,7 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - Si hay template seleccionado, los campos "Problema" y "Solución" muestran un hint contextual bajo el textarea: `"Ejemplo: {template.example}"` en `--color-text-muted`, italic. (story 10.3 — AC-1)
 - Sin template seleccionado, los hints de ejemplo no aparecen. (story 10.3 — AC-5)
 - El paso 3 incluye un submit temporal (`launchProject`) con comentario `// TODO Story 10.4: eliminar submit temporal`. Se reemplazará en Story 10.4 con el paso de preview. (story 10.3 — T5.2)
+- Al cerrar y reabrir `LaunchIdeaModal`, el wizard se reinicia en el paso 1. Implementado con `key={open ? 'open' : 'closed'}` en `<ProjectWizard>` dentro del modal. (story 10.3 — HIGH-1)
 
 ---
 

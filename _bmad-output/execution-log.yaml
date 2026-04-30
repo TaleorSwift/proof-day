@@ -1,4 +1,29 @@
 workflows:
+  - id: "20260430-homer-DS-10-3-cr-fixes-closing"
+    timestamp: "2026-04-30T23:59:59"
+    agent: "Homer (Dev)"
+    trigger: "DS — resolver CHANGES_REQUESTED CR Story 10.3 PR #90"
+    workflow: "dev-story"
+    mode: "REFINE"
+    result: "SUCCESS"
+    story: "10-3-projectwizard-con-ejemplos-contextuales"
+    commit: "9cea873"
+    branch: "feat/10-3-projectwizard-con-ejemplos-contextuales"
+    pr: 90
+    summary: "REFINE — resueltos los 3 blocking issues del CR. HIGH-1: key prop en LaunchIdeaModal fuerza remontaje del wizard al cerrar/abrir. MEDIUM-1: communitySlug eliminado de Props de ProjectWizard. MEDIUM-2: borderRadius 10px → var(--radius-lg). Test añadido para HIGH-1. 1361/1361 tests verdes."
+    tests_total: 1361
+    tests_new: 1
+    tests_pass: true
+    artifacts_modified:
+      - "components/projects/LaunchIdeaModal.tsx"
+      - "components/projects/ProjectWizard.tsx"
+      - "components/projects/wizard/WizardStepDetails.tsx"
+      - "stories/projects/ProjectWizard.stories.tsx"
+      - "tests/component/projects/LaunchIdeaModal.10-3.test.tsx"
+      - "tests/component/projects/ProjectWizard.10-3.test.tsx"
+      - "docs/project/modules/projects.md"
+    errors: []
+
   - id: "20260430-homer-DS-10-3-cr-fixes-started"
     timestamp: "2026-04-30T23:59:59"
     agent: "Homer (Dev)"
