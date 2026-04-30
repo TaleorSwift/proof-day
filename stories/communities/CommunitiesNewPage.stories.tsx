@@ -31,7 +31,7 @@ function CommunitiesNewPageWrapper() {
 }
 
 const meta = {
-  title: 'Pages/CommunitiesNew',
+  title: 'Communities/CommunitiesNewPage',
   component: CommunitiesNewPageWrapper,
   tags: ['autodocs'],
   parameters: {

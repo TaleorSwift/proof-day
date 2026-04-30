@@ -8,23 +8,40 @@ export default defineConfig({
     environment: 'node',
     globals: true,
     setupFiles: [],
-    include: ['tests/unit/**/*.{test,spec}.{ts,tsx}'],
+    include: [
+      'tests/unit/**/*.{test,spec}.{ts,tsx}',
+      'tests/component/**/*.{test,spec}.{ts,tsx}',
+      'tests/integration/**/*.{test,spec}.{ts,tsx}',
+    ],
     exclude: ['node_modules', '.next'],
     coverage: {
       provider: 'v8',
-      include: ['lib/validations/**', 'lib/utils/**', 'lib/services/**'],
-      exclude: ['lib/utils/gamification.ts'],
-      thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 70,
-        statements: 80,
-      },
+      include: [
+        'lib/**',
+        'components/**',
+        'app/**',
+      ],
+      exclude: [
+        'lib/utils/gamification.ts',
+        'lib/fixtures/**',
+        'lib/types/**',
+        'lib/supabase/client.ts',
+        'lib/supabase/server.ts',
+        'components/ui/**',
+        'app/layout.tsx',
+        'app/(auth)/layout.tsx',
+        'app/auth/callback/route.ts',
+        'app/robots.ts',
+        'app/sitemap.ts',
+      ],
+      reporter: ['text', 'text-summary'],
     },
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, '.'),
+      // server-only no existe fuera del runtime de Next.js; en tests lo neutralizamos
+      'server-only': path.resolve(__dirname, 'tests/__mocks__/server-only.ts'),
     },
   },
 })

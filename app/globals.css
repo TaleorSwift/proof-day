@@ -206,4 +206,17 @@
     box-shadow: var(--shadow-md);
     border-color: var(--color-text-muted);
   }
+
+  /* ProjectTemplateSelector grid — Story 10.2 HIGH-2 CR fix
+     2 columnas en mobile, 3 columnas en desktop (>=768px) */
+  .template-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+  @media (min-width: 768px) {
+    .template-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
 }

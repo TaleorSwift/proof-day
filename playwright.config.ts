@@ -1,5 +1,9 @@
 import { defineConfig, devices } from '@playwright/test'
 import path from 'path'
+import { config as loadEnv } from 'dotenv'
+
+// Playwright no carga .env.local automáticamente — necesario para SERVICE_KEY en auth.setup.ts
+loadEnv({ path: '.env.local', override: false })
 
 const AUTH_STATE_PATH = path.join(__dirname, 'tests/e2e/.auth/user.json')
 const ADMIN_AUTH_STATE_PATH = path.join(__dirname, 'tests/e2e/.auth/admin.json')

@@ -23,6 +23,8 @@ export interface Project {
   // Story 9.1 — tagline y contador would_use
   tagline: string | null
   wouldUseCount: number
+  // Story 10.1 — template Phase 2
+  templateId: string | null
 }
 
 /** Forma del row tal como lo devuelve Supabase (snake_case) */
@@ -48,6 +50,8 @@ export interface ProjectRow {
   // Story 9.1 — tagline y contador would_use
   tagline: string | null
   would_use_count: number
+  // Story 10.1 — template Phase 2
+  template_id: string | null
 }
 
 export function projectFromRow(row: ProjectRow): Project {
@@ -73,6 +77,8 @@ export function projectFromRow(row: ProjectRow): Project {
     // Story 9.1 — tagline y contador would_use
     tagline: row.tagline,
     wouldUseCount: row.would_use_count,
+    // Story 10.1 — template Phase 2
+    templateId: row.template_id,
   }
 }
 

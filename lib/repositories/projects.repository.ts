@@ -35,6 +35,8 @@ export function createProjectsRepository(supabase: SupabaseClient) {
       targetUser?: string
       demoUrl?: string
       feedbackTopics?: string[]
+      // Story 10.2 — template Phase 2
+      templateId?: string | null
     }) {
       return supabase
         .from('projects')
@@ -52,6 +54,8 @@ export function createProjectsRepository(supabase: SupabaseClient) {
           ...(data.targetUser !== undefined && { target_user: data.targetUser }),
           ...(data.demoUrl !== undefined && { demo_url: data.demoUrl }),
           ...(data.feedbackTopics !== undefined && { feedback_topics: data.feedbackTopics }),
+          // Story 10.2 — template Phase 2 (undefined no se envía a Supabase)
+          ...(data.templateId !== undefined && { template_id: data.templateId }),
         })
         .select()
         .single()

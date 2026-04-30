@@ -121,7 +121,7 @@ function CommunityFeedPageLayout({ projects, isAdmin = false }: PageLayoutProps)
 // ---------------------------------------------------------------------------
 
 const meta: Meta = {
-  title: 'Pages/CommunityFeed',
+  title: 'Communities/CommunityFeedPage',
   tags: ['autodocs'],
   parameters: {
     layout: 'fullscreen',
