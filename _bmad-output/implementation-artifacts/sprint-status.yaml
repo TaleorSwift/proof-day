@@ -45,14 +45,14 @@ development_status:
   1-1-project-setup-base-infrastructure: done
   1-2-magic-link-authentication: done
   1-3-auth-middleware-route-protection: done
-  epic-1-retrospective: optional
+  epic-1-retrospective: done  # retro global 2026-04-29
 
   # ── EPIC 2: Comunidades ──────────────────────────────────────────
   epic-2: done
   2-1-create-community: done
   2-2-invitation-links-generate-join: done
   2-3-community-access-control-listing: done
-  epic-2-retrospective: optional
+  epic-2-retrospective: done  # retro global 2026-04-29
 
   # ── EPIC 3: Proyectos ────────────────────────────────────────────
   epic-3: done
@@ -60,31 +60,31 @@ development_status:
   3-2-image-gallery-upload: done
   3-3-publish-manage-project-states: done
   3-4-project-list-view-in-community: done
-  epic-3-retrospective: optional
+  epic-3-retrospective: done  # retro global 2026-04-29
 
   # ── EPIC 4: Feedback ─────────────────────────────────────────────
   epic-4: done
   4-1-feedback-form-4-guided-questions: done
   4-2-feedback-submission-association: done
-  epic-4-retrospective: optional
+  epic-4-retrospective: done  # retro global 2026-04-29
 
   # ── EPIC 5: Proof Score & Decisión ───────────────────────────────
   epic-5: done
   5-1-proof-score-calculation-algorithm: done  # QA PASS 2026-03-28 — Edna qa-20260328-051
   5-2-proof-score-display-waiting-state: done  # QA PASS 2026-03-28 — Edna qa-20260328-052
   5-3-builder-decision-registration: done  # merged 2026-03-28 — PR#19
-  epic-5-retrospective: optional
+  epic-5-retrospective: done  # retro global 2026-04-29
 
   # ── EPIC 6: Perfiles & Gamificación ──────────────────────────────
   epic-6: done
   6-1-user-profile-view-edit: done  # merged 2026-03-28 — PR#20
   6-2-feedback-counter-top-reviewer-widget: done  # merged 2026-03-28 — PR#21
-  epic-6-retrospective: optional
+  epic-6-retrospective: done  # retro global 2026-04-29
 
   # ── EPIC 7: Landing Page ─────────────────────────────────────────
   epic-7: done
   7-1-landing-page-public-seo-optimized: done
-  epic-7-retrospective: optional
+  epic-7-retrospective: done  # retro global 2026-04-29
 
   # ── EPIC 8: Rediseño UI — Alineación con prototipo ───────────────
   epic-8: done
@@ -98,7 +98,7 @@ development_status:
   8-8-validationsignalcard-storybook: done  # merged 2026-04-10 — PR#49
   8-9-teamperspectives-feedbacks-publicos: done  # merged 2026-04-10 — PR#50
   8-10-feedbackcta-card-contextual-storybook: done  # merged 2026-04-10 — PR#51
-  epic-8-retrospective: optional
+  epic-8-retrospective: done  # retro global 2026-04-29
 
   # ── EPIC 9: Rediseño UI — Alineación prototipo Lovable v3 ────────
   epic-9: done
@@ -112,4 +112,57 @@ development_status:
   9-8-modal-lanzar-idea-tagline-chips-imagenes: done  # merged PR#63 — 2026-04-12
   9-9-feed-header-ideas-en-validacion-boton-lanzar: done  # merged PR#61 — 2026-04-12
   9-10-communities-redirect-condicional: done  # merged PR#60 — 2026-04-12 — permanentRedirect (308) + tests actualizados
-  epic-9-retrospective: optional
+  epic-9-retrospective: done  # retro global 2026-04-29
+
+  # ── PHASE 2 — MVP 2.0 ────────────────────────────────────────────
+
+  # ── EPIC 10: Templates & Onboarding del Builder ──────────────────
+  epic-10: in-progress
+  10-1-migraciones-db-project-templates-y-extensiones-projects: done  # CR APPROVED 2026-04-30 — HIGH-1 y HIGH-2 resueltos. 1277 tests verdes. PR #88
+  10-2-selector-tipo-proyecto-project-template-selector: done  # QA PASS 2026-04-30 — PR #89 merged
+  10-3-projectwizard-con-ejemplos-contextuales: done  # QA PASS 2026-04-30 — PR #90 pending merge
+  10-4-preview-proyecto-antes-de-publicar: ready-for-dev
+  10-5-campo-hipotesis-en-wizard: ready-for-dev
+  epic-10-retrospective: optional
+
+  # ── EPIC 11: Calidad del Feedback y Reciprocidad ─────────────────
+  epic-11: in-progress
+  11-1-migraciones-db-feedback-responses-projects-communities: ready-for-dev
+  11-2-pregunta-custom-builder-microcontexto-reviewer: ready-for-dev
+  11-3-filtro-completitud-feedback-quality-warning: ready-for-dev
+  11-4-recordatorio-automatico-feedback-cron-job: ready-for-dev
+  11-5-gate-reciprocidad-al-publicar: ready-for-dev
+  11-6-admin-configuracion-reciprocidad-comunidad: ready-for-dev
+  epic-11-retrospective: optional
+
+  # ── EPIC 12: IA Sintetizadora y Notificaciones ───────────────────
+  epic-12: in-progress
+  12-1-migraciones-db-ai-summaries-notifications-cost-tracking: ready-for-dev
+  12-2-integracion-claude-api-lib-ai-control-coste: ready-for-dev
+  12-3-webhook-sintesis-ia-trigger-upsert-notificacion: ready-for-dev
+  12-4-aisummarycard-vista-proyecto: ready-for-dev
+  12-5-notificaciones-in-app-tabla-api-routes-notificationbell: ready-for-dev
+  12-6-notificaciones-email-resend-sdk: ready-for-dev
+  12-7-notificacion-builder-sintesis-lista-budget-alert: ready-for-dev
+  epic-12-retrospective: optional
+
+  # ── PHASE 2 — GROWTH 2.1 (backlog — no implementar hasta validación con usuarios) ──
+
+  # ── EPIC 13: Iteración, Cierre del Loop y Copiloto IA ────────────
+  epic-13: backlog
+  13-1-db-extensiones-iteraciones-project-iterations: backlog
+  13-2-publicar-nueva-version-proyecto-iteracion: backlog
+  13-3-notificacion-reviewers-anteriores-nueva-version: backlog
+  13-4-atribucion-feedback-en-iteracion: backlog
+  13-5-notificacion-atribucion-reviewer-etiquetado: backlog
+  13-6-historial-versiones-proof-score-por-iteracion: backlog
+  13-7-copiloto-ia-creacion-proyecto: backlog
+  13-8-interpretacion-contextual-proof-score: backlog
+  epic-13-retrospective: optional
+
+  # ── EPIC 14: Dashboard Admin y Gestión de Comunidad ──────────────
+  epic-14: backlog
+  14-1-dashboard-metricas-salud-comunidad: backlog
+  14-2-nudge-reviewers-inactivos-dashboard: backlog
+  14-3-reactivar-proyectos-sin-feedback-dashboard: backlog
+  epic-14-retrospective: optional

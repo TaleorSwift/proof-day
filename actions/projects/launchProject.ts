@@ -15,6 +15,8 @@ export interface LaunchProjectInput {
   demoLink?: string
   imageUrls: string[]
   feedbackTopics: string[]
+  // Story 10.2 — template Phase 2
+  templateId?: string | null
 }
 
 export type LaunchProjectResult =
@@ -58,6 +60,8 @@ export async function launchProject(input: LaunchProjectInput): Promise<LaunchPr
       community_id: community.id,
       builder_id: user.id,
       status: 'live',
+      // Story 10.2 — template Phase 2 (undefined no se envía a Supabase)
+      ...(input.templateId !== undefined && { template_id: input.templateId }),
     })
     .select('id, slug')
     .single()

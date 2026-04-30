@@ -1,22 +1,21 @@
 'use client'
 
-import { useState } from 'react'
+// Story 10.3 — LaunchIdeaModal refactorizado para usar ProjectWizard
+
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm, FormProvider } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
 import { launchProject } from '@/actions/projects/launchProject'
-import { launchIdeaSchema, type LaunchIdeaFormValues } from '@/lib/validations/projects'
-import { LaunchIdeaForm } from './LaunchIdeaForm'
-import type { UploaderImage } from './ImageUploader'
+import { ProjectWizard } from './ProjectWizard'
+import type { WizardFormData } from './ProjectWizard'
+import type { ProjectTemplate } from '@/lib/types/templates'
 
 interface Props {
   open: boolean
@@ -27,36 +26,43 @@ interface Props {
 
 export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }: Props) {
   const router = useRouter()
-  const [feedbackTopics, setFeedbackTopics] = useState<string[]>([])
-  const [images, setImages] = useState<UploaderImage[]>([])
+  const [templates, setTemplates] = useState<ProjectTemplate[]>([])
   const [serverError, setServerError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const methods = useForm<LaunchIdeaFormValues>({
-    resolver: zodResolver(launchIdeaSchema),
-    defaultValues: {
-      title: '',
-      tagline: '',
-      problem: '',
-      solution: '',
-      targetUser: '',
-      hypothesis: '',
-      demoLink: '',
-    },
-  })
+  // Story 10.2 — fetch templates al montar (conservado desde Story 10.2)
+  useEffect(() => {
+    if (!open) return
 
-  const { handleSubmit, formState: { isSubmitting }, reset } = methods
+    let cancelled = false
+
+    fetch('/api/templates')
+      .then((res) => res.json())
+      .then((json: { data: ProjectTemplate[] }) => {
+        if (!cancelled) {
+          setTemplates(json.data ?? [])
+        }
+      })
+      .catch(() => {
+        // Fetch silencioso — el wizard sigue operativo sin templates
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [open])
 
   function handleClose() {
-    reset()
-    setFeedbackTopics([])
-    setImages([])
     setServerError(null)
     onOpenChange(false)
   }
 
-  async function onSubmit(data: LaunchIdeaFormValues) {
+  async function handleWizardSubmit(data: WizardFormData) {
     setServerError(null)
+    setIsSubmitting(true)
 
+    // Story 10.3 — T5.2: submit temporal desde paso 3
+    // TODO Story 10.4: eliminar submit temporal — reemplazar por avance al paso 'preview'
     const result = await launchProject({
       communitySlug,
       title: data.title,
@@ -64,11 +70,14 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
       problem: data.problem,
       solution: data.solution,
       targetUser: data.targetUser?.trim() || undefined,
-      hypothesis: data.hypothesis,
+      hypothesis: data.hypothesis || '',
       demoLink: data.demoLink?.trim() || undefined,
-      imageUrls: images.map((img) => img.path),
-      feedbackTopics,
+      imageUrls: data.images.map((img) => img.path),
+      feedbackTopics: data.feedbackTopics,
+      templateId: data.templateId,
     })
+
+    setIsSubmitting(false)
 
     if (!result.success) {
       setServerError(result.error)
@@ -91,55 +100,21 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
           <DialogTitle style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-semibold)' }}>
             Lanzar una nueva idea
           </DialogTitle>
+          {/* aria-describedby para eliminar warning de accesibilidad shadcn/ui */}
+          <DialogDescription className="sr-only">
+            Formulario para lanzar una nueva idea de proyecto
+          </DialogDescription>
         </DialogHeader>
 
-        <FormProvider {...methods}>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            noValidate
-            style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}
-          >
-            <LaunchIdeaForm
-              feedbackTopics={feedbackTopics}
-              onFeedbackTopicsChange={setFeedbackTopics}
-              images={images}
-              onImagesChange={setImages}
-            />
-
-            {serverError && (
-              <p
-                role="alert"
-                style={{ fontSize: 'var(--text-sm)', color: 'var(--color-weak-text)', margin: 0 }}
-              >
-                {serverError}
-              </p>
-            )}
-
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleClose}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                style={{
-                  background: 'var(--color-accent)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '10px',
-                  height: '40px',
-                }}
-              >
-                {isSubmitting ? 'Lanzando...' : '+ Lanzar proyecto'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </FormProvider>
+        {/* key fuerza desmontaje/remontaje al abrir/cerrar — garantiza reset de estado (T5.3) */}
+        <ProjectWizard
+          key={open ? 'open' : 'closed'}
+          templates={templates}
+          onSubmit={handleWizardSubmit}
+          onCancel={handleClose}
+          isSubmitting={isSubmitting}
+          serverError={serverError}
+        />
       </DialogContent>
     </Dialog>
   )
