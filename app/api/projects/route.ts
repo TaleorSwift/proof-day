@@ -82,6 +82,8 @@ export async function POST(request: Request) {
     ...(projectData.targetUser && { targetUser: projectData.targetUser }),
     ...(projectData.demoUrl && { demoUrl: projectData.demoUrl }),
     ...(projectData.feedbackTopics?.length && { feedbackTopics: projectData.feedbackTopics }),
+    // Story 10.2 — template Phase 2 (se pasa siempre para soportar null explícito)
+    ...(projectData.template_id !== undefined && { templateId: projectData.template_id }),
   })
 
   if (error || !project)

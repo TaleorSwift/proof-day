@@ -1,6 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+// Story 10.2 — T2: LaunchIdeaModal con ProjectTemplateSelector integrado
+
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm, FormProvider } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -16,7 +18,9 @@ import { Button } from '@/components/ui/button'
 import { launchProject } from '@/actions/projects/launchProject'
 import { launchIdeaSchema, type LaunchIdeaFormValues } from '@/lib/validations/projects'
 import { LaunchIdeaForm } from './LaunchIdeaForm'
+import { ProjectTemplateSelector } from './ProjectTemplateSelector'
 import type { UploaderImage } from './ImageUploader'
+import type { ProjectTemplate } from '@/lib/types/templates'
 
 interface Props {
   open: boolean
@@ -30,6 +34,11 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
   const [feedbackTopics, setFeedbackTopics] = useState<string[]>([])
   const [images, setImages] = useState<UploaderImage[]>([])
   const [serverError, setServerError] = useState<string | null>(null)
+
+  // Story 10.2 — T2.1: estado para templates y template seleccionado
+  const [templates, setTemplates] = useState<ProjectTemplate[]>([])
+  const [templateId, setTemplateId] = useState<string | null>(null)
+  const [selectedTemplate, setSelectedTemplate] = useState<ProjectTemplate | null>(null)
 
   const methods = useForm<LaunchIdeaFormValues>({
     resolver: zodResolver(launchIdeaSchema),
@@ -46,17 +55,48 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
 
   const { handleSubmit, formState: { isSubmitting }, reset } = methods
 
+  // Story 10.2 — T2.2: fetch templates al montar
+  useEffect(() => {
+    if (!open) return
+
+    let cancelled = false
+
+    fetch('/api/templates')
+      .then((res) => res.json())
+      .then((json: { data: ProjectTemplate[] }) => {
+        if (!cancelled) {
+          setTemplates(json.data ?? [])
+        }
+      })
+      .catch(() => {
+        // Fetch silencioso — el formulario sigue operativo sin templates
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [open])
+
+  // Sincronizar selectedTemplate al cambiar templateId
+  function handleSelectTemplate(id: string | null) {
+    setTemplateId(id)
+    setSelectedTemplate(id ? (templates.find((t) => t.id === id) ?? null) : null)
+  }
+
   function handleClose() {
     reset()
     setFeedbackTopics([])
     setImages([])
     setServerError(null)
+    setTemplateId(null)
+    setSelectedTemplate(null)
     onOpenChange(false)
   }
 
   async function onSubmit(data: LaunchIdeaFormValues) {
     setServerError(null)
 
+    // Story 10.2 — T2.5: incluir templateId en los datos pasados a launchProject
     const result = await launchProject({
       communitySlug,
       title: data.title,
@@ -68,6 +108,7 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
       demoLink: data.demoLink?.trim() || undefined,
       imageUrls: images.map((img) => img.path),
       feedbackTopics,
+      templateId,
     })
 
     if (!result.success) {
@@ -99,11 +140,34 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
             noValidate
             style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}
           >
+            {/* Story 10.2 — T2.3: selector de tipo encima del formulario */}
+            {templates.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                <p
+                  style={{
+                    fontSize: 'var(--text-sm)',
+                    fontWeight: 'var(--font-medium)',
+                    color: 'var(--color-text-secondary)',
+                    margin: 0,
+                  }}
+                >
+                  Tipo de proyecto (opcional)
+                </p>
+                <ProjectTemplateSelector
+                  templates={templates}
+                  selectedId={templateId}
+                  onSelect={handleSelectTemplate}
+                />
+              </div>
+            )}
+
+            {/* Story 10.2 — T2.4: pasar descriptionStructure al formulario */}
             <LaunchIdeaForm
               feedbackTopics={feedbackTopics}
               onFeedbackTopicsChange={setFeedbackTopics}
               images={images}
               onImagesChange={setImages}
+              descriptionStructure={selectedTemplate?.descriptionStructure}
             />
 
             {serverError && (

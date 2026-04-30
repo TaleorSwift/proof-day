@@ -1,4 +1,73 @@
 workflows:
+  - id: "20260430-homer-DS-10-2-started"
+    timestamp: "2026-04-30T16:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 10.2 Selector tipo proyecto (ProjectTemplateSelector)"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "IN_PROGRESS"
+    story: "10-2-selector-tipo-proyecto-project-template-selector"
+
+  - id: "20260430-edna-QA-10-1-started"
+    timestamp: "2026-04-30T15:10:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 10.1 migraciones DB project_templates"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    duration_estimate: "10 minutes"
+    story: "10-1-migraciones-db-project-templates-y-extensiones-projects"
+    verdict: "PASS"
+    summary: "VERIFY mode: 14 tests Story 10.1 ejecutados y verdes (4 unit projectFromRow-template, 7 unit templateFromRow, 3 integration GET /api/templates). Suite completa 1277 tests (123 ficheros) — sin regresiones. ACs 1-6 cubiertos."
+    tests_executed: 14
+    tests_passed: 14
+    tests_failed: 0
+    full_suite: "1277 tests (123 ficheros) — todos verdes"
+    ac_coverage:
+      AC-1: COVERED
+      AC-2: COVERED
+      AC-3: COVERED
+      AC-4: COVERED
+      AC-5: COVERED
+      AC-6: COVERED
+    bugs_found: 0
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/tests/test-summary.md"
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Story 10.2 — Selector tipo proyecto (DS Homer en feat/10-2-selector-tipo-proyecto-project-template-selector)"
+
+
+  - id: "20260430-edna-QA-10-1-started"
+    timestamp: "2026-04-30T15:00:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 10.1 migraciones DB project_templates"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "STARTED"
+    summary: "Validando Story 10.1: ejecutar 14 tests existentes (4 unit projectFromRow-template, 7 unit templateFromRow, 3 integration GET /api/templates). VRG: VERIFY — coverage >90% de ACs verificables programáticamente."
+
+
+  - id: "20260430-homer-CR-10-1-postfixes-closing"
+    timestamp: "2026-04-30T14:48:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #88 Story 10.1 post-fixes. Verificar HIGH-1 y HIGH-2 resueltos."
+    workflow: "code-review"
+    mode: "VERIFY"
+    status: "SUCCESS"
+    story: "10-1-migraciones-db-project-templates-y-extensiones-projects"
+    branch: "feat/10-1-migraciones-db-project-templates"
+    pr: "PR #88"
+    verdict: "APPROVED"
+    issues_found: "0 HIGH, 2 MEDIUM (diferibles), 1 LOW (diferible)"
+    suite: "1277 tests (123 ficheros) — todos verdes"
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/10-1-migraciones-db-project-templates-y-extensiones-projects.md"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/execution-log.yaml"
+    next_recommended: "QA (Edna) — tests automatizados Story 10.1"
+
   - id: "20260430-homer-DS-10-1-CR-fixes-closing"
     timestamp: "2026-04-30T23:55:00"
     agent: "Homer (Dev)"

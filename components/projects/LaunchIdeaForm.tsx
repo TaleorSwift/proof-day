@@ -1,5 +1,7 @@
 'use client'
 
+// Story 10.2 — T3: LaunchIdeaForm con placeholders dinámicos de template
+
 import { useFormContext } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -8,14 +10,20 @@ import { FeedbackTopicChips } from './FeedbackTopicChips'
 import { ImageUploader } from './ImageUploader'
 import type { UploaderImage } from './ImageUploader'
 import type { LaunchIdeaFormValues } from '@/lib/validations/projects'
+import type { DescriptionStructure } from '@/lib/types/templates'
 
 const MAX_MODAL_IMAGES = 3
+
+const DEFAULT_PROBLEM_PLACEHOLDER = '¿Qué problema resuelves?'
+const DEFAULT_SOLUTION_PLACEHOLDER = '¿Cuál es tu solución propuesta?'
 
 interface Props {
   feedbackTopics: string[]
   onFeedbackTopicsChange: (topics: string[]) => void
   images: UploaderImage[]
   onImagesChange: (images: UploaderImage[]) => void
+  // Story 10.2 — T3.1: placeholder dinámico según template seleccionado
+  descriptionStructure?: DescriptionStructure
 }
 
 export function LaunchIdeaForm({
@@ -23,11 +31,16 @@ export function LaunchIdeaForm({
   onFeedbackTopicsChange,
   images,
   onImagesChange,
+  descriptionStructure,
 }: Props) {
   const {
     register,
     formState: { errors },
   } = useFormContext<LaunchIdeaFormValues>()
+
+  // Story 10.2 — T3.2/T3.3/T3.4: placeholders dinámicos según template
+  const problemPlaceholder = descriptionStructure?.problem.placeholder ?? DEFAULT_PROBLEM_PLACEHOLDER
+  const solutionPlaceholder = descriptionStructure?.solution.placeholder ?? DEFAULT_SOLUTION_PLACEHOLDER
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
@@ -87,7 +100,7 @@ export function LaunchIdeaForm({
         <Textarea
           id="launch-problem"
           data-testid="modal-field-problem"
-          placeholder="¿Qué problema resuelves?"
+          placeholder={problemPlaceholder}
           rows={3}
           aria-invalid={!!errors.problem}
           {...register('problem')}
@@ -111,7 +124,7 @@ export function LaunchIdeaForm({
         <Textarea
           id="launch-solution"
           data-testid="modal-field-solution"
-          placeholder="¿Cuál es tu solución propuesta?"
+          placeholder={solutionPlaceholder}
           rows={3}
           aria-invalid={!!errors.solution}
           {...register('solution')}

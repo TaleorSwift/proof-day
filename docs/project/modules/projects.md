@@ -1,6 +1,6 @@
 # Módulo: Proyectos
 
-**Última actualización:** Story 10.1 — Migraciones DB project_templates y extensiones projects (2026-04-30)
+**Última actualización:** Story 10.2 — Selector de tipo de proyecto (ProjectTemplateSelector) (2026-04-30)
 
 ---
 
@@ -101,13 +101,14 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - `components/projects/ProjectCard.tsx` — tarjeta de proyecto (story 3.4)
 - `components/projects/ProjectGrid.tsx` — grid de proyectos (story 3.4)
 - `components/projects/ProjectsEmptyState.tsx` — estado vacío (story 3.4)
-- `components/projects/LaunchIdeaModal.tsx` — dialog ~540px para lanzar ideas desde el feed (story 9.8). Props: `open`, `onOpenChange`, `communitySlug`, `onSuccess?`
-- `components/projects/LaunchIdeaForm.tsx` — formulario interno del modal, usa FormProvider de react-hook-form (story 9.8)
+- `components/projects/LaunchIdeaModal.tsx` — dialog ~540px para lanzar ideas desde el feed. Incluye selector de template y fetch a `/api/templates` al montar (story 9.8, story 10.2). Props: `open`, `onOpenChange`, `communitySlug`, `onSuccess?`
+- `components/projects/LaunchIdeaForm.tsx` — formulario interno del modal, usa FormProvider de react-hook-form. Acepta `descriptionStructure?: DescriptionStructure` para placeholders dinámicos (story 9.8, story 10.2)
+- `components/projects/ProjectTemplateSelector.tsx` — selector de tipo de proyecto. Grid de cards con icono Lucide + nombre. Props: `templates`, `selectedId`, `onSelect`. Incluye opción "Sin tipo" (story 10.2)
 - `components/projects/FeedbackTopicChips.tsx` — chips toggleables reutilizables. Props: `value: string[]`, `onChange`. Usa mapeo display (español) → valor interno (story 9.8)
 - `components/projects/ImageUploader.tsx` — uploader inline hasta N imágenes con previews y eliminar. Props: `images`, `onImagesChange`, `maxImages` (story 9.8)
 
 ### Server Actions
-- `actions/projects/launchProject.ts` — crea un proyecto con `status = 'live'` directamente. Llama a `revalidatePath`. Input: `LaunchProjectInput`. Output: `{ success: true, projectId }` | `{ success: false, error }` (story 9.8)
+- `actions/projects/launchProject.ts` — crea un proyecto con `status = 'live'` directamente. Llama a `revalidatePath`. Input: `LaunchProjectInput` (incluye `templateId?: string | null`). Output: `{ success: true, projectId }` | `{ success: false, error }` (story 9.8, story 10.2)
 
 ### Utilidades
 - `lib/utils/imageUpload.ts` — `uploadImageToStorage(file): Promise<{ url, path }>` — subida directa a Supabase Storage bucket `project-images` desde el cliente. Usada por `ImageUploader` (story 9.8)
@@ -119,6 +120,8 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - `app/(app)/communities/[slug]/projects/[projectSlug]/edit/page.tsx` — editar proyecto
 
 ### Storybook
+- `lib/fixtures/templates.ts` — fixtures de los 5 templates para tests y Storybook (story 10.2)
+- `stories/projects/ProjectTemplateSelector.stories.tsx` — 3 stories: NingunoSeleccionado, UnoSeleccionado, SinTemplates (story 10.2)
 - `stories/projects/ProjectCard.stories.tsx` — 5 stories: Live, LiveWithScore, Draft, Inactive, Loading
 - `stories/projects/LaunchIdeaModal.stories.tsx` — 4 stories: EstadoVacio, ConDatosRellenos, EstadoCargando, ChipsSeleccionados (story 9.8)
 - `stories/projects/FeedbackTopicChips.stories.tsx` — 4 stories: SinSeleccion, TresSeleccionados, TodosSeleccionados, Interactivo (story 9.8)
@@ -134,6 +137,16 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - `tests/unit/projects/ProjectForm.test.tsx` — 27 tests: render, submit, defaultValues, feedbackTopics, isSubmitting (PR6)
 - `tests/unit/projects/ProjectEditPage.test.tsx` — 12 tests: no-auth, non-owner, non-draft, happy path (PR6)
 - `tests/e2e/projects/project-edit.spec.ts` — 7 tests: defaults, guardar, non-owner, non-draft, validación, no-auth (PR6)
+
+---
+
+### Selector de tipo de proyecto — reglas (Story 10.2)
+
+- Al abrir `LaunchIdeaModal`, se hace fetch a `GET /api/templates` — el selector aparece cuando hay templates disponibles (story 10.2)
+- El selector es opcional — si no se selecciona ningún tipo, el proyecto se crea con `template_id = null` (retrocompatibilidad total con proyectos Phase 1) (story 10.2)
+- Al seleccionar un tipo, los campos "Problema" y "Solución" muestran los placeholders del template seleccionado (story 10.2)
+- Si el fetch falla, el formulario principal sigue operativo (degradación silenciosa) (story 10.2)
+- El `template_id` se almacena en la columna `projects.template_id` (FK nullable) al guardar (story 10.2)
 
 ---
 
