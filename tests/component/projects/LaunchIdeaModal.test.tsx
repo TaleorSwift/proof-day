@@ -1,11 +1,15 @@
 // @vitest-environment jsdom
 /**
- * Tests — LaunchIdeaModal (Story 9.8)
+ * Tests — LaunchIdeaModal (Story 9.8, actualizado en Story 10.3 para wizard)
  * AC-1: dialog abierto/cerrado
- * AC-2: campos del formulario
- * AC-4: submit exitoso
- * AC-5: validación de campos requeridos
+ * AC-2: campos del formulario — ahora en pasos del wizard
+ * AC-4: submit exitoso — ahora desde el paso 3
+ * AC-5: el wizard no avanza si los campos requeridos están vacíos
  * AC-7: ruta /projects/new se mantiene (no se testea aquí, es comportamiento de rutas)
+ *
+ * Nota Story 10.3: la estructura ha cambiado de formulario plano a wizard multi-paso.
+ * Los campos de paso 2 usan data-testid "wizard-field-*" (en lugar de "modal-field-*").
+ * Los campos de paso 3 siguen con los testids propios de ImageUploader y FeedbackTopicChips.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
@@ -38,21 +42,22 @@ const DEFAULT_PROPS = {
   communitySlug: 'startup-madrid',
 }
 
-function fillRequiredFields() {
-  fireEvent.change(screen.getByTestId('modal-field-title'), {
+// Navega a paso 2 y rellena los campos requeridos
+function navigateToStep2AndFillRequired() {
+  // Paso 1 → Paso 2
+  fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+
+  fireEvent.change(screen.getByTestId('wizard-field-title'), {
     target: { value: 'Pulse Check' },
   })
-  fireEvent.change(screen.getByTestId('modal-field-tagline'), {
+  fireEvent.change(screen.getByTestId('wizard-field-tagline'), {
     target: { value: 'Valida tu idea en horas' },
   })
-  fireEvent.change(screen.getByTestId('modal-field-problem'), {
+  fireEvent.change(screen.getByTestId('wizard-field-problem'), {
     target: { value: 'Los builders no saben qué construir primero' },
   })
-  fireEvent.change(screen.getByTestId('modal-field-solution'), {
+  fireEvent.change(screen.getByTestId('wizard-field-solution'), {
     target: { value: 'Un modal rápido para lanzar ideas' },
-  })
-  fireEvent.change(screen.getByTestId('modal-field-hypothesis'), {
-    target: { value: 'Si lanzo rápido, entonces recibo feedback antes' },
   })
 }
 
@@ -67,94 +72,97 @@ describe('LaunchIdeaModal — AC-1: dialog', () => {
   })
 
   it('no renderiza contenido cuando open=false', () => {
-    render(
-      <LaunchIdeaModal {...DEFAULT_PROPS} open={false} />
-    )
+    render(<LaunchIdeaModal {...DEFAULT_PROPS} open={false} />)
     expect(screen.queryByText('Lanzar una nueva idea')).not.toBeInTheDocument()
   })
 
-  it('muestra el botón "Cancelar"', () => {
+  it('muestra el botón "Cancelar" en paso 1', () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
     expect(screen.getByRole('button', { name: 'Cancelar' })).toBeInTheDocument()
   })
 
-  it('muestra el botón "+ Lanzar proyecto"', () => {
+  it('muestra el botón "Continuar" en paso 1', () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
+    expect(screen.getByRole('button', { name: 'Continuar' })).toBeInTheDocument()
+  })
+
+  it('muestra el botón "+ Lanzar proyecto" en paso 3', () => {
+    render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
+    navigateToStep2AndFillRequired()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
     expect(screen.getByRole('button', { name: '+ Lanzar proyecto' })).toBeInTheDocument()
   })
 })
 
-describe('LaunchIdeaModal — AC-2: campos del formulario', () => {
-  it('renderiza campo Project name con data-testid correcto', () => {
+describe('LaunchIdeaModal — AC-2: campos del formulario (wizard)', () => {
+  it('renderiza campo title en paso 2', () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    expect(screen.getByTestId('modal-field-title')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    expect(screen.getByTestId('wizard-field-title')).toBeInTheDocument()
   })
 
-  it('renderiza campo Tagline con data-testid correcto', () => {
+  it('renderiza campo tagline en paso 2', () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    expect(screen.getByTestId('modal-field-tagline')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    expect(screen.getByTestId('wizard-field-tagline')).toBeInTheDocument()
   })
 
-  it('renderiza campo Problem con data-testid correcto', () => {
+  it('renderiza campo problem en paso 2', () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    expect(screen.getByTestId('modal-field-problem')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    expect(screen.getByTestId('wizard-field-problem')).toBeInTheDocument()
   })
 
-  it('renderiza campo Solution con data-testid correcto', () => {
+  it('renderiza campo solution en paso 2', () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    expect(screen.getByTestId('modal-field-solution')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    expect(screen.getByTestId('wizard-field-solution')).toBeInTheDocument()
   })
 
-  it('renderiza campo Target user con data-testid correcto', () => {
+  it('renderiza campo target-user en paso 3', () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    expect(screen.getByTestId('modal-field-target-user')).toBeInTheDocument()
+    navigateToStep2AndFillRequired()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    expect(screen.getByTestId('wizard-field-target-user')).toBeInTheDocument()
   })
 
-  it('renderiza campo Hypothesis con data-testid correcto', () => {
+  it('renderiza campo demo-link en paso 3', () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    expect(screen.getByTestId('modal-field-hypothesis')).toBeInTheDocument()
+    navigateToStep2AndFillRequired()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    expect(screen.getByTestId('wizard-field-demo-link')).toBeInTheDocument()
   })
 
-  it('renderiza campo Demo link con data-testid correcto', () => {
+  it('renderiza el uploader de imágenes en paso 3', () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    expect(screen.getByTestId('modal-field-demo-link')).toBeInTheDocument()
-  })
-
-  it('renderiza el uploader de imágenes con data-testid correcto', () => {
-    render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
+    navigateToStep2AndFillRequired()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
     expect(screen.getByTestId('modal-field-images')).toBeInTheDocument()
   })
 
-  it('renderiza los chips de feedback con data-testid correcto', () => {
+  it('renderiza los chips de feedback en paso 3', () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
+    navigateToStep2AndFillRequired()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
     expect(screen.getByTestId('modal-feedback-chips')).toBeInTheDocument()
   })
 })
 
-describe('LaunchIdeaModal — AC-5: validación de campos requeridos', () => {
-  it('muestra error cuando se intenta submit sin title', async () => {
+describe('LaunchIdeaModal — AC-5: campos requeridos del paso 2', () => {
+  it('el botón "Continuar" en paso 2 está deshabilitado si los campos están vacíos', () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
-    await waitFor(() => {
-      expect(screen.getByRole('alert', { name: /title/i }) ?? screen.getAllByRole('alert')[0]).toBeInTheDocument()
-    })
-    expect(vi.mocked(launchProject)).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    // En paso 2 sin rellenar, Continuar está deshabilitado
+    expect(screen.getByRole('button', { name: /continuar/i })).toBeDisabled()
   })
 
-  it('no llama a launchProject si los campos requeridos están vacíos', async () => {
+  it('no llama a launchProject desde paso 2 (Continuar no hace submit)', async () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    // Intentar hacer click en Continuar sin datos
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
     await waitFor(() => {
       expect(vi.mocked(launchProject)).not.toHaveBeenCalled()
-    })
-  })
-
-  it('los campos con error tienen aria-invalid="true"', async () => {
-    render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
-    await waitFor(() => {
-      const titleField = screen.getByTestId('modal-field-title')
-      expect(titleField).toHaveAttribute('aria-invalid', 'true')
     })
   })
 })
@@ -168,9 +176,10 @@ describe('LaunchIdeaModal — AC-4: submit exitoso', () => {
     })
   })
 
-  it('llama a launchProject con los datos del formulario', async () => {
+  it('llama a launchProject con los datos del formulario desde el paso 3', async () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    fillRequiredFields()
+    navigateToStep2AndFillRequired()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
     fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
     await waitFor(() => {
       expect(vi.mocked(launchProject)).toHaveBeenCalledWith(
@@ -180,21 +189,16 @@ describe('LaunchIdeaModal — AC-4: submit exitoso', () => {
           tagline: 'Valida tu idea en horas',
           problem: 'Los builders no saben qué construir primero',
           solution: 'Un modal rápido para lanzar ideas',
-          hypothesis: 'Si lanzo rápido, entonces recibo feedback antes',
-        })
+        }),
       )
     })
   })
 
   it('llama a onOpenChange(false) tras submit exitoso', async () => {
     const onOpenChange = vi.fn()
-    render(
-      <LaunchIdeaModal
-        {...DEFAULT_PROPS}
-        onOpenChange={onOpenChange}
-      />
-    )
-    fillRequiredFields()
+    render(<LaunchIdeaModal {...DEFAULT_PROPS} onOpenChange={onOpenChange} />)
+    navigateToStep2AndFillRequired()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
     fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
     await waitFor(() => {
       expect(onOpenChange).toHaveBeenCalledWith(false)
@@ -207,7 +211,8 @@ describe('LaunchIdeaModal — AC-4: submit exitoso', () => {
       error: 'Error de servidor',
     })
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    fillRequiredFields()
+    navigateToStep2AndFillRequired()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
     fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument()
@@ -216,11 +221,12 @@ describe('LaunchIdeaModal — AC-4: submit exitoso', () => {
 
   it('dispara toast.success tras submit exitoso (AC-4)', async () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    fillRequiredFields()
+    navigateToStep2AndFillRequired()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
     fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
     await waitFor(() => {
       expect(vi.mocked(toast.success)).toHaveBeenCalledWith(
-        '¡Idea lanzada! Ya está recibiendo feedback.'
+        '¡Idea lanzada! Ya está recibiendo feedback.',
       )
     })
   })

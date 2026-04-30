@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 /**
  * Tests de integración — LaunchIdeaModal + ProjectTemplateSelector (Story 10.2)
+ * Actualizado en Story 10.3: el modal ahora usa ProjectWizard — el selector
+ * de template es el paso 1 del wizard.
  * T2.6: modal con selector renderizado, selección de template, submit con templateId
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
@@ -48,25 +50,24 @@ function mockTemplatesFetch(templates = ALL_TEMPLATES) {
   } as Response)
 }
 
-function fillRequiredFields() {
-  fireEvent.change(screen.getByTestId('modal-field-title'), {
+// Navega al paso 2 y rellena los campos requeridos (wizard)
+function navigateToStep2AndFill() {
+  fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+  fireEvent.change(screen.getByTestId('wizard-field-title'), {
     target: { value: 'Pulse Check' },
   })
-  fireEvent.change(screen.getByTestId('modal-field-tagline'), {
+  fireEvent.change(screen.getByTestId('wizard-field-tagline'), {
     target: { value: 'Valida tu idea en horas' },
   })
-  fireEvent.change(screen.getByTestId('modal-field-problem'), {
+  fireEvent.change(screen.getByTestId('wizard-field-problem'), {
     target: { value: 'Los builders no saben qué construir primero' },
   })
-  fireEvent.change(screen.getByTestId('modal-field-solution'), {
+  fireEvent.change(screen.getByTestId('wizard-field-solution'), {
     target: { value: 'Un modal rápido para lanzar ideas' },
-  })
-  fireEvent.change(screen.getByTestId('modal-field-hypothesis'), {
-    target: { value: 'Si lanzo rápido, entonces recibo feedback antes' },
   })
 }
 
-describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
+describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2 (wizard)', () => {
   beforeEach(() => {
     vi.mocked(launchProject).mockReset()
     mockTemplatesFetch()
@@ -76,7 +77,7 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
     global.fetch = originalFetch
   })
 
-  describe('T2.2/T2.3: fetch y render del selector al montar', () => {
+  describe('T2.2/T2.3: fetch y render del selector al montar (paso 1 del wizard)', () => {
     it('renderiza el ProjectTemplateSelector con los 5 templates tras el fetch', async () => {
       render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
 
@@ -98,20 +99,19 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
       })
     })
 
-    it('el formulario principal sigue visible junto al selector', async () => {
+    it('el wizard sigue navegable junto al selector', async () => {
       render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
 
       await waitFor(() => {
         expect(screen.getByText('SaaS')).toBeInTheDocument()
       })
 
-      // El formulario sigue accesible
-      expect(screen.getByTestId('modal-field-title')).toBeInTheDocument()
-      expect(screen.getByTestId('modal-field-problem')).toBeInTheDocument()
+      // El botón Continuar del paso 1 está disponible
+      expect(screen.getByRole('button', { name: /continuar/i })).toBeInTheDocument()
     })
   })
 
-  describe('T2.4: placeholders dinámicos según template seleccionado', () => {
+  describe('T2.4: placeholders dinámicos según template seleccionado (paso 2 del wizard)', () => {
     it('el textarea de problema usa el placeholder del template seleccionado', async () => {
       render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
 
@@ -120,8 +120,10 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
       })
 
       fireEvent.click(screen.getByRole('button', { name: /saas/i }))
+      // Avanzar a paso 2
+      fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
 
-      const problemTextarea = screen.getByTestId('modal-field-problem')
+      const problemTextarea = screen.getByTestId('wizard-field-problem')
       expect(problemTextarea).toHaveAttribute(
         'placeholder',
         TEMPLATE_SAAS.descriptionStructure.problem.placeholder,
@@ -136,8 +138,9 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
       })
 
       fireEvent.click(screen.getByRole('button', { name: /saas/i }))
+      fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
 
-      const solutionTextarea = screen.getByTestId('modal-field-solution')
+      const solutionTextarea = screen.getByTestId('wizard-field-solution')
       expect(solutionTextarea).toHaveAttribute(
         'placeholder',
         TEMPLATE_SAAS.descriptionStructure.solution.placeholder,
@@ -151,13 +154,14 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
         expect(screen.getByText('SaaS')).toBeInTheDocument()
       })
 
-      // Seleccionar SaaS primero
+      // Seleccionar SaaS, luego deseleccionar
       fireEvent.click(screen.getByRole('button', { name: /saas/i }))
-
-      // Luego seleccionar "Sin tipo"
       fireEvent.click(screen.getByRole('button', { name: /sin tipo/i }))
 
-      const problemTextarea = screen.getByTestId('modal-field-problem')
+      // Avanzar a paso 2
+      fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+
+      const problemTextarea = screen.getByTestId('wizard-field-problem')
       expect(problemTextarea).toHaveAttribute('placeholder', '¿Qué problema resuelves?')
     })
   })
@@ -176,13 +180,14 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
         expect(screen.getByText('SaaS')).toBeInTheDocument()
       })
 
-      // Seleccionar SaaS
+      // Seleccionar SaaS en paso 1
       fireEvent.click(screen.getByRole('button', { name: /saas/i }))
 
-      // Rellenar campos requeridos
-      fillRequiredFields()
+      // Navegar a paso 2, rellenar, avanzar a paso 3
+      navigateToStep2AndFill()
+      fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
 
-      // Submit
+      // Submit en paso 3
       fireEvent.click(screen.getByRole('button', { name: /lanzar proyecto/i }))
 
       await waitFor(() => {
@@ -207,9 +212,9 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
         expect(screen.getByText('SaaS')).toBeInTheDocument()
       })
 
-      // No seleccionamos template — Sin tipo por defecto
-      fillRequiredFields()
-
+      // No seleccionamos template — avanzar directamente
+      navigateToStep2AndFill()
+      fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
       fireEvent.click(screen.getByRole('button', { name: /lanzar proyecto/i }))
 
       await waitFor(() => {
@@ -223,21 +228,20 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
   })
 
   describe('fallback sin templates', () => {
-    it('sigue mostrando el formulario cuando el fetch falla', async () => {
+    it('sigue mostrando el wizard cuando el fetch falla', async () => {
       global.fetch = vi.fn().mockRejectedValue(new Error('Network error'))
 
       render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
 
-      // El formulario debe estar disponible incluso si el fetch falla
-      expect(screen.getByTestId('modal-field-title')).toBeInTheDocument()
+      // El wizard debe estar disponible incluso si el fetch falla
+      expect(screen.getByRole('button', { name: /continuar/i })).toBeInTheDocument()
 
-      // Esperar a que el fetch se intente y falle
       await waitFor(() => {
         expect(global.fetch).toHaveBeenCalled()
       })
 
-      // El formulario sigue siendo accesible
-      expect(screen.getByTestId('modal-field-title')).toBeInTheDocument()
+      // El wizard sigue siendo accesible
+      expect(screen.getByRole('button', { name: /continuar/i })).toBeInTheDocument()
     })
   })
 
@@ -257,7 +261,7 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
       expect(screen.getByText(/no hay tipos disponibles/i)).toBeInTheDocument()
     })
 
-    it('el formulario principal sigue accesible cuando no hay templates', async () => {
+    it('el wizard sigue accesible cuando no hay templates', async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: async () => ({ data: [] }),
@@ -269,7 +273,8 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
         expect(screen.getByTestId('templates-empty-state')).toBeInTheDocument()
       })
 
-      expect(screen.getByTestId('modal-field-title')).toBeInTheDocument()
+      // El botón Continuar del paso 1 sigue disponible
+      expect(screen.getByRole('button', { name: /continuar/i })).toBeInTheDocument()
     })
   })
 
@@ -277,7 +282,6 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2', () => {
     it('el modal tiene DialogDescription para aria-describedby', async () => {
       render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
 
-      // DialogDescription con clase sr-only — está en DOM aunque no visible
       expect(
         screen.getByText('Formulario para lanzar una nueva idea de proyecto'),
       ).toBeInTheDocument()

@@ -1,11 +1,9 @@
 'use client'
 
-// Story 10.2 — T2: LaunchIdeaModal con ProjectTemplateSelector integrado
+// Story 10.3 — LaunchIdeaModal refactorizado para usar ProjectWizard
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm, FormProvider } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import {
   Dialog,
@@ -13,14 +11,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
 import { launchProject } from '@/actions/projects/launchProject'
-import { launchIdeaSchema, type LaunchIdeaFormValues } from '@/lib/validations/projects'
-import { LaunchIdeaForm } from './LaunchIdeaForm'
-import { ProjectTemplateSelector } from './ProjectTemplateSelector'
-import type { UploaderImage } from './ImageUploader'
+import { ProjectWizard } from './ProjectWizard'
+import type { WizardFormData } from './ProjectWizard'
 import type { ProjectTemplate } from '@/lib/types/templates'
 
 interface Props {
@@ -32,31 +26,11 @@ interface Props {
 
 export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }: Props) {
   const router = useRouter()
-  const [feedbackTopics, setFeedbackTopics] = useState<string[]>([])
-  const [images, setImages] = useState<UploaderImage[]>([])
-  const [serverError, setServerError] = useState<string | null>(null)
-
-  // Story 10.2 — T2.1: estado para templates y template seleccionado
   const [templates, setTemplates] = useState<ProjectTemplate[]>([])
-  const [templateId, setTemplateId] = useState<string | null>(null)
-  const [selectedTemplate, setSelectedTemplate] = useState<ProjectTemplate | null>(null)
+  const [serverError, setServerError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const methods = useForm<LaunchIdeaFormValues>({
-    resolver: zodResolver(launchIdeaSchema),
-    defaultValues: {
-      title: '',
-      tagline: '',
-      problem: '',
-      solution: '',
-      targetUser: '',
-      hypothesis: '',
-      demoLink: '',
-    },
-  })
-
-  const { handleSubmit, formState: { isSubmitting }, reset } = methods
-
-  // Story 10.2 — T2.2: fetch templates al montar
+  // Story 10.2 — fetch templates al montar (conservado desde Story 10.2)
   useEffect(() => {
     if (!open) return
 
@@ -70,7 +44,7 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
         }
       })
       .catch(() => {
-        // Fetch silencioso — el formulario sigue operativo sin templates
+        // Fetch silencioso — el wizard sigue operativo sin templates
       })
 
     return () => {
@@ -78,26 +52,17 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
     }
   }, [open])
 
-  // Sincronizar selectedTemplate al cambiar templateId
-  function handleSelectTemplate(id: string | null) {
-    setTemplateId(id)
-    setSelectedTemplate(id ? (templates.find((t) => t.id === id) ?? null) : null)
-  }
-
   function handleClose() {
-    reset()
-    setFeedbackTopics([])
-    setImages([])
     setServerError(null)
-    setTemplateId(null)
-    setSelectedTemplate(null)
     onOpenChange(false)
   }
 
-  async function onSubmit(data: LaunchIdeaFormValues) {
+  async function handleWizardSubmit(data: WizardFormData) {
     setServerError(null)
+    setIsSubmitting(true)
 
-    // Story 10.2 — T2.5: incluir templateId en los datos pasados a launchProject
+    // Story 10.3 — T5.2: submit temporal desde paso 3
+    // TODO Story 10.4: eliminar submit temporal — reemplazar por avance al paso 'preview'
     const result = await launchProject({
       communitySlug,
       title: data.title,
@@ -105,12 +70,14 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
       problem: data.problem,
       solution: data.solution,
       targetUser: data.targetUser?.trim() || undefined,
-      hypothesis: data.hypothesis,
+      hypothesis: data.hypothesis || '',
       demoLink: data.demoLink?.trim() || undefined,
-      imageUrls: images.map((img) => img.path),
-      feedbackTopics,
-      templateId,
+      imageUrls: data.images.map((img) => img.path),
+      feedbackTopics: data.feedbackTopics,
+      templateId: data.templateId,
     })
+
+    setIsSubmitting(false)
 
     if (!result.success) {
       setServerError(result.error)
@@ -133,94 +100,20 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
           <DialogTitle style={{ fontSize: 'var(--text-xl)', fontWeight: 'var(--font-semibold)' }}>
             Lanzar una nueva idea
           </DialogTitle>
-          {/* MEDIUM-6: aria-describedby para eliminar warning de accesibilidad shadcn/ui (Story 10.2 CR fix) */}
+          {/* aria-describedby para eliminar warning de accesibilidad shadcn/ui */}
           <DialogDescription className="sr-only">
             Formulario para lanzar una nueva idea de proyecto
           </DialogDescription>
         </DialogHeader>
 
-        <FormProvider {...methods}>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            noValidate
-            style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}
-          >
-            {/* Story 10.2 — T2.3: selector de tipo encima del formulario */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-              <p
-                style={{
-                  fontSize: 'var(--text-sm)',
-                  fontWeight: 'var(--font-medium)',
-                  color: 'var(--color-text-secondary)',
-                  margin: 0,
-                }}
-              >
-                Tipo de proyecto (opcional)
-              </p>
-              {templates.length === 0 ? (
-                /* MEDIUM-5: estado vacío cuando fetch devuelve 0 templates (Story 10.2 CR fix) */
-                <p
-                  data-testid="templates-empty-state"
-                  style={{
-                    fontSize: 'var(--text-sm)',
-                    color: 'var(--color-text-muted)',
-                    margin: 0,
-                  }}
-                >
-                  No hay tipos disponibles
-                </p>
-              ) : (
-                <ProjectTemplateSelector
-                  templates={templates}
-                  selectedId={templateId}
-                  onSelect={handleSelectTemplate}
-                />
-              )}
-            </div>
-
-            {/* Story 10.2 — T2.4: pasar descriptionStructure al formulario */}
-            <LaunchIdeaForm
-              feedbackTopics={feedbackTopics}
-              onFeedbackTopicsChange={setFeedbackTopics}
-              images={images}
-              onImagesChange={setImages}
-              descriptionStructure={selectedTemplate?.descriptionStructure}
-            />
-
-            {serverError && (
-              <p
-                role="alert"
-                style={{ fontSize: 'var(--text-sm)', color: 'var(--color-weak-text)', margin: 0 }}
-              >
-                {serverError}
-              </p>
-            )}
-
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleClose}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                style={{
-                  background: 'var(--color-accent)',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '10px',
-                  height: '40px',
-                }}
-              >
-                {isSubmitting ? 'Lanzando...' : '+ Lanzar proyecto'}
-              </Button>
-            </DialogFooter>
-          </form>
-        </FormProvider>
+        <ProjectWizard
+          communitySlug={communitySlug}
+          templates={templates}
+          onSubmit={handleWizardSubmit}
+          onCancel={handleClose}
+          isSubmitting={isSubmitting}
+          serverError={serverError}
+        />
       </DialogContent>
     </Dialog>
   )
