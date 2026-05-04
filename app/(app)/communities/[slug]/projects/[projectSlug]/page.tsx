@@ -403,6 +403,7 @@ export default async function ProjectPage({ params }: Props) {
                   <FeedbackFormInline
                     projectId={project.id}
                     communityId={project.community_id}
+                    hypothesis={project.hypothesis ?? undefined}
                   />
                 </div>
               ) : (

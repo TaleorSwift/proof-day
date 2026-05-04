@@ -6,6 +6,7 @@ import { useReducer, useCallback } from 'react'
 import { ProjectTemplateSelector } from './ProjectTemplateSelector'
 import { WizardStepDescription } from './wizard/WizardStepDescription'
 import { WizardStepDetails } from './wizard/WizardStepDetails'
+import { WizardStepHypothesis } from './wizard/WizardStepHypothesis'
 import type { ProjectTemplate } from '@/lib/types/templates'
 import type { UploaderImage } from './ImageUploader'
 
@@ -82,7 +83,7 @@ const WIZARD_STEPS: WizardStep[] = [
   { id: 'template', label: 'Tipo de proyecto' },
   { id: 'description', label: 'Descripción' },
   { id: 'details', label: 'Detalles' },
-  // { id: 'hypothesis', label: 'Hipótesis' },  // Story 10.5
+  { id: 'hypothesis', label: 'Hipótesis' },  // Story 10.5
   // { id: 'preview', label: 'Vista previa' },    // Story 10.4
 ]
 
@@ -103,6 +104,9 @@ function isStepValid(step: number, data: WizardFormData): boolean {
       )
     case 3:
       // Paso 3: todos los campos son opcionales — siempre válido
+      return true
+    case 4:
+      // Paso 4 (Story 10.5): hypothesis es opcional — siempre válido
       return true
     default:
       return true
@@ -275,6 +279,13 @@ export function ProjectWizard({ templates, onSubmit, onCancel, isSubmitting = fa
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting}
           />
+        </div>
+      )}
+
+      {/* Paso 4 (Story 10.5): hipótesis a validar */}
+      {currentStep === 4 && (
+        <div data-testid="wizard-step-4">
+          <WizardStepHypothesis data={data} onChange={handleFieldChange} />
         </div>
       )}
 

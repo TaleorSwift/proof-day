@@ -162,11 +162,12 @@ describe('ProjectWizard — AC-3: paso 3 Publicar siempre habilitado', () => {
 // ── AC-4: indicador de progreso visible ──────────────────────────────────────
 
 describe('ProjectWizard — AC-4: indicador de progreso', () => {
-  it('el indicador muestra los números de paso al inicio (1 de 3)', () => {
+  // Story 10.5: wizard ahora tiene 4 pasos (se añadió paso de hipótesis)
+  it('el indicador muestra los números de paso al inicio (1 de 4)', () => {
     render(<ProjectWizard {...DEFAULT_PROPS} />)
     const progress = screen.getByTestId('wizard-progress')
     expect(progress).toHaveTextContent('1')
-    expect(progress).toHaveTextContent('3')
+    expect(progress).toHaveTextContent('4')
   })
 
   it('el indicador muestra el número de paso actualizado al navegar a paso 2', () => {
@@ -174,7 +175,7 @@ describe('ProjectWizard — AC-4: indicador de progreso', () => {
     fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
     const progress = screen.getByTestId('wizard-progress')
     expect(progress).toHaveTextContent('2')
-    expect(progress).toHaveTextContent('3')
+    expect(progress).toHaveTextContent('4')
   })
 
   it('muestra el label del paso actual (Tipo de proyecto) en paso 1', () => {

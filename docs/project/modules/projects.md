@@ -1,6 +1,6 @@
 # Módulo: Proyectos
 
-**Última actualización:** Story 10.3 — ProjectWizard con ejemplos contextuales (2026-04-30)
+**Última actualización:** Story 10.5 — Campo hipótesis en wizard (2026-04-30)
 
 ---
 
@@ -144,17 +144,19 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 
 ---
 
-### Wizard multi-paso — reglas (Story 10.3)
+### Wizard multi-paso — reglas (Story 10.3, Story 10.5)
 
-- El wizard tiene 3 pasos definidos en `WIZARD_STEPS` (extensible con pasos 4 y 5 en Stories 10.5 y 10.4) (story 10.3)
+- El wizard tiene 4 pasos definidos en `WIZARD_STEPS` (el paso 5 "preview" se añade en Story 10.4) (story 10.5)
 - Paso 1 (Tipo de proyecto): siempre válido — el template es opcional. El botón "Anterior" no aparece. (story 10.3)
 - Paso 2 (Descripción): `title`, `tagline`, `problem`, `solution` requeridos — "Continuar" deshabilitado si alguno está vacío. (story 10.3)
 - Paso 3 (Detalles): todos los campos opcionales — el botón "+ Lanzar proyecto" siempre habilitado. (story 10.3)
-- Los datos introducidos en cualquier paso se conservan al navegar hacia atrás y adelante (estado centralizado en `useReducer`). (story 10.3 — AC-2)
+- Paso 4 (Hipótesis): campo `hypothesis` opcional — "Continuar" siempre habilitado. Es el último paso activo del wizard. (story 10.5)
+- Los datos de todos los pasos se conservan al navegar hacia atrás y adelante (estado centralizado en `useReducer`). (story 10.3 — AC-2, story 10.5 — AC-2)
 - Si hay template seleccionado, los campos "Problema" y "Solución" muestran un hint contextual bajo el textarea: `"Ejemplo: {template.example}"` en `--color-text-muted`, italic. (story 10.3 — AC-1)
 - Sin template seleccionado, los hints de ejemplo no aparecen. (story 10.3 — AC-5)
 - El paso 3 incluye un submit temporal (`launchProject`) con comentario `// TODO Story 10.4: eliminar submit temporal`. Se reemplazará en Story 10.4 con el paso de preview. (story 10.3 — T5.2)
 - Al cerrar y reabrir `LaunchIdeaModal`, el wizard se reinicia en el paso 1. Implementado con `key={open ? 'open' : 'closed'}` en `<ProjectWizard>` dentro del modal. (story 10.3 — HIGH-1)
+- El campo `hypothesis` en `launchIdeaSchema` es ahora `optional()` — puede llegar vacío al submit temporal del paso 3. (story 10.5 — BREAKING CHANGE)
 
 ---
 

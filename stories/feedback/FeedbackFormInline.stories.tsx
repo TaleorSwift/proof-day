@@ -51,3 +51,20 @@ export const Confirmacion: Story = {
     },
   },
 }
+
+// Story 10.5 — HypothesisContextBanner
+export const ConHipotesis: Story = {
+  name: 'Con hipótesis del proyecto',
+  args: {
+    projectId: 'proj-storybook-001',
+    communityId: 'comm-storybook-001',
+    hypothesis: 'Si reducimos el tiempo de onboarding a menos de 5 minutos, entonces la tasa de activación sube un 30%.',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Story 10.5 — Muestra el banner de hipótesis en modo read-only antes del formulario cuando el proyecto tiene hypothesis definida.',
+      },
+    },
+  },
+}

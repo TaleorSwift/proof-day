@@ -1,4 +1,15 @@
 workflows:
+  - id: "20260430-homer-DS-10-5-started"
+    timestamp: "2026-04-30T00:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 10.5: Campo hipótesis en wizard"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "10-5-campo-hipotesis-en-wizard"
+    branch: "feat/10-5-campo-hipotesis-en-wizard"
+    summary: "GENERATE mode: WizardStepHypothesis.tsx, paso 4 en WIZARD_STEPS, launchIdeaSchema.hypothesis → optional, HypothesisContextBanner en FeedbackFormInline."
+
   - id: "20260430-homer-CR-10-3-post-fixes-closing"
     timestamp: "2026-04-30T23:59:59"
     agent: "Homer (Dev)"
