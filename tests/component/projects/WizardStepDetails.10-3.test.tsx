@@ -36,8 +36,7 @@ const EMPTY_FORM_DATA: WizardFormData = {
 const DEFAULT_PROPS = {
   data: EMPTY_FORM_DATA,
   onChange: vi.fn(),
-  onSubmit: vi.fn(),
-  isSubmitting: false,
+  // Story 10.4: onSubmit eliminado de WizardStepDetails — submit en paso 5 (ProjectPreview)
 }
 
 // ── T4.1: campos opcionales ───────────────────────────────────────────────────
@@ -64,18 +63,13 @@ describe('WizardStepDetails — T4.1: campos opcionales', () => {
   })
 })
 
-// ── T4.2: botón siempre habilitado ───────────────────────────────────────────
+// ── T4.2: sin botón submit (Story 10.4 lo eliminó) ──────────────────────────
 
-describe('WizardStepDetails — T4.2: botón Lanzar proyecto', () => {
-  it('el botón "+ Lanzar proyecto" siempre está habilitado (campos opcionales)', () => {
+describe('WizardStepDetails — T4.2: sin botón de submit (Story 10.4)', () => {
+  it('NO renderiza botón "+ Lanzar proyecto" (submit eliminado en Story 10.4)', () => {
     render(<WizardStepDetails {...DEFAULT_PROPS} />)
-    expect(screen.getByRole('button', { name: /lanzar proyecto/i })).not.toBeDisabled()
-  })
-
-  it('el botón está deshabilitado cuando isSubmitting=true', () => {
-    render(<WizardStepDetails {...DEFAULT_PROPS} isSubmitting={true} />)
-    // En estado submitting, el botón está deshabilitado y muestra "Lanzando..."
-    expect(screen.getByRole('button', { name: /lanzando/i })).toBeDisabled()
+    // Story 10.4: el submit ocurre en el paso 5 (ProjectPreview)
+    expect(screen.queryByRole('button', { name: /lanzar proyecto/i })).not.toBeInTheDocument()
   })
 })
 

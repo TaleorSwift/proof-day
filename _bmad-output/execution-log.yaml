@@ -1,4 +1,50 @@
 workflows:
+  - id: "20260430-homer-DS-10-4-closing"
+    timestamp: "2026-04-30T14:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 10.4: Preview del proyecto antes de publicar"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    story: "10-4-preview-proyecto-antes-de-publicar"
+    pr: 92
+    branch: "feat/10-4-preview-proyecto-antes-de-publicar"
+    commit: "3b7a831"
+    tests_story: 27
+    tests_total: 1407
+    tests_failed: 0
+    summary: "SUCCESS — 27 tests nuevos (16 ProjectPreview + 11 ProjectWizard.10-4). Suite completa 1407/1407. Todos los ACs (1-9) implementados. TypeScript 0 errores nuevos. ESLint 0 errores. PR #92 abierto."
+    artifacts_created:
+      - "components/projects/ProjectPreview.tsx"
+      - "tests/component/projects/ProjectPreview.10-4.test.tsx"
+      - "tests/component/projects/ProjectWizard.10-4.test.tsx"
+      - "stories/projects/ProjectPreview.stories.tsx"
+      - "_bmad-output/implementation-artifacts/stories/10-4-preview-proyecto-antes-de-publicar.md"
+    artifacts_modified:
+      - "components/projects/ProjectWizard.tsx"
+      - "components/projects/LaunchIdeaModal.tsx"
+      - "components/projects/wizard/WizardStepDetails.tsx"
+      - "docs/project/modules/projects.md"
+      - "tests/component/projects/ProjectWizard.10-3.test.tsx"
+      - "tests/component/projects/ProjectWizard.10-5.test.tsx"
+      - "tests/component/projects/WizardStepDetails.10-3.test.tsx"
+      - "tests/component/projects/LaunchIdeaModal.test.tsx"
+      - "tests/component/projects/LaunchIdeaModal.10-2.test.tsx"
+      - "tests/component/projects/LaunchIdeaModal.10-3.test.tsx"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "CR — Story 10.4: Code review del PR #92"
+
+  - id: "20260430-homer-DS-10-4-started"
+    timestamp: "2026-04-30T13:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 10.4: Preview del proyecto antes de publicar"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "10-4-preview-proyecto-antes-de-publicar"
+    summary: "Implementando Story 10.4 — ProjectPreview component, paso 5 en WIZARD_STEPS, eliminación del submit temporal de WizardStepDetails, integración con launchProject server action"
+
   - id: "20260430-edna-QA-10-5-closing"
     timestamp: "2026-04-30T12:10:00"
     agent: "Edna (QA)"

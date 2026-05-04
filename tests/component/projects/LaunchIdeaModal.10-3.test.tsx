@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 /**
  * Tests de regresión — LaunchIdeaModal con ProjectWizard (Story 10.3)
+ * Story 10.4: submit migrado del paso 3 ("Lanzar proyecto") al paso 5 ("Publicar")
  * T5.5: comportamiento del modal antes de esta story sigue funcionando
  *        (submit, error handling, reset)
  * AC-1: ejemplos contextuales en paso 2 cuando hay template seleccionado
@@ -68,9 +69,27 @@ async function navigateToStep2AndFill() {
   })
 }
 
+// Navega hasta el paso 5 (preview) y hace click en Publicar
+// Story 10.4: submit ocurre ahora desde el paso 5
+async function navigateToPreviewAndPublish() {
+  await navigateToStep2AndFill()
+
+  // Paso 2 → Paso 3
+  fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+
+  // Paso 3 → Paso 4
+  fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+
+  // Paso 4 → Paso 5
+  fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+
+  // Submit desde paso 5
+  fireEvent.click(screen.getByRole('button', { name: /publicar/i }))
+}
+
 // ── T5.3: submit, toast, onSuccess, reset ────────────────────────────────────
 
-describe('LaunchIdeaModal con wizard — T5.3: submit exitoso', () => {
+describe('LaunchIdeaModal con wizard — T5.3: submit exitoso (Story 10.4: desde paso 5)', () => {
   beforeEach(() => {
     vi.mocked(launchProject).mockReset()
     mockTemplatesFetch()
@@ -80,7 +99,7 @@ describe('LaunchIdeaModal con wizard — T5.3: submit exitoso', () => {
     global.fetch = originalFetch
   })
 
-  it('llama a launchProject con los datos del wizard al publicar desde paso 3', async () => {
+  it('llama a launchProject con los datos del wizard al publicar desde paso 5', async () => {
     vi.mocked(launchProject).mockResolvedValue({
       success: true,
       projectId: 'new-id',
@@ -89,13 +108,7 @@ describe('LaunchIdeaModal con wizard — T5.3: submit exitoso', () => {
 
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
 
-    await navigateToStep2AndFill()
-
-    // Paso 2 → Paso 3
-    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-
-    // Submit en paso 3
-    fireEvent.click(screen.getByRole('button', { name: /lanzar proyecto/i }))
+    await navigateToPreviewAndPublish()
 
     await waitFor(() => {
       expect(launchProject).toHaveBeenCalledWith(
@@ -118,9 +131,7 @@ describe('LaunchIdeaModal con wizard — T5.3: submit exitoso', () => {
     })
 
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    await navigateToStep2AndFill()
-    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-    fireEvent.click(screen.getByRole('button', { name: /lanzar proyecto/i }))
+    await navigateToPreviewAndPublish()
 
     await waitFor(() => {
       expect(vi.mocked(toast.success)).toHaveBeenCalledWith(
@@ -138,9 +149,7 @@ describe('LaunchIdeaModal con wizard — T5.3: submit exitoso', () => {
     })
 
     render(<LaunchIdeaModal {...DEFAULT_PROPS} onOpenChange={onOpenChange} />)
-    await navigateToStep2AndFill()
-    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-    fireEvent.click(screen.getByRole('button', { name: /lanzar proyecto/i }))
+    await navigateToPreviewAndPublish()
 
     await waitFor(() => {
       expect(onOpenChange).toHaveBeenCalledWith(false)
@@ -154,9 +163,7 @@ describe('LaunchIdeaModal con wizard — T5.3: submit exitoso', () => {
     })
 
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    await navigateToStep2AndFill()
-    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-    fireEvent.click(screen.getByRole('button', { name: /lanzar proyecto/i }))
+    await navigateToPreviewAndPublish()
 
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument()
@@ -230,12 +237,8 @@ describe('LaunchIdeaModal con wizard — AC-1: ejemplos contextuales', () => {
     // Seleccionar SaaS
     fireEvent.click(screen.getByRole('button', { name: /saas/i }))
 
-    // Avanzar y rellenar
-    await navigateToStep2AndFill()
-
-    // Paso 2 → 3
-    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-    fireEvent.click(screen.getByRole('button', { name: /lanzar proyecto/i }))
+    // Avanzar y rellenar hasta paso 5
+    await navigateToPreviewAndPublish()
 
     await waitFor(() => {
       expect(launchProject).toHaveBeenCalledWith(

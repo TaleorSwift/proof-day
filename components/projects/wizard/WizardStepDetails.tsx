@@ -1,6 +1,7 @@
 'use client'
 
-// Story 10.3 — Paso 3 del wizard: detalles opcionales + submit temporal
+// Story 10.3 — Paso 3 del wizard: detalles opcionales
+// Story 10.4 — Submit temporal eliminado; publicación ocurre en el paso 5 (ProjectPreview)
 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,15 +14,11 @@ const MAX_MODAL_IMAGES = 3
 interface Props {
   data: WizardFormData
   onChange: (fields: Partial<WizardFormData>) => void
-  onSubmit: () => void
-  isSubmitting?: boolean
 }
 
 export function WizardStepDetails({
   data,
   onChange,
-  onSubmit,
-  isSubmitting = false,
 }: Props) {
   const { targetUser, demoLink, feedbackTopics, images } = data
 
@@ -69,30 +66,6 @@ export function WizardStepDetails({
           value={feedbackTopics}
           onChange={(topics) => onChange({ feedbackTopics: topics })}
         />
-      </div>
-
-      {/* Submit temporal — deuda técnica */}
-      {/* TODO Story 10.4: eliminar submit temporal — reemplazar por avance al paso 'preview' */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: 'var(--space-2)' }}>
-        <button
-          type="button"
-          onClick={onSubmit}
-          disabled={isSubmitting}
-          style={{
-            padding: 'var(--space-2) var(--space-6)',
-            borderRadius: 'var(--radius-lg)',
-            border: 'none',
-            background: 'var(--color-accent)',
-            color: 'white',
-            fontSize: 'var(--text-sm)',
-            fontWeight: 'var(--font-medium)',
-            height: '40px',
-            cursor: isSubmitting ? 'not-allowed' : 'pointer',
-            opacity: isSubmitting ? 0.7 : 1,
-          }}
-        >
-          {isSubmitting ? 'Lanzando...' : '+ Lanzar proyecto'}
-        </button>
       </div>
     </div>
   )

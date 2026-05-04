@@ -61,8 +61,7 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
     setServerError(null)
     setIsSubmitting(true)
 
-    // Story 10.3 — T5.2: submit temporal desde paso 3
-    // TODO Story 10.4: eliminar submit temporal — reemplazar por avance al paso 'preview'
+    // Story 10.4 — submit desde paso 5 (ProjectPreview) vía onSubmit del wizard
     const result = await launchProject({
       communitySlug,
       title: data.title,

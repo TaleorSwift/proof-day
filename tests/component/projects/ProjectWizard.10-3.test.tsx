@@ -141,8 +141,8 @@ describe('ProjectWizard — AC-2: datos conservados al regresar', () => {
 
 // ── AC-3: Continuar habilitado en paso 3 (campos opcionales) ──────────────────
 
-describe('ProjectWizard — AC-3: paso 3 Publicar siempre habilitado', () => {
-  it('"Publicar" está habilitado en el paso 3 sin rellenar ningún campo opcional', () => {
+describe('ProjectWizard — AC-3: paso 3 Continuar siempre habilitado', () => {
+  it('"Continuar" está habilitado en el paso 3 sin rellenar ningún campo opcional', () => {
     render(<ProjectWizard {...DEFAULT_PROPS} />)
 
     // Paso 1 → Paso 2
@@ -154,20 +154,20 @@ describe('ProjectWizard — AC-3: paso 3 Publicar siempre habilitado', () => {
     // Paso 2 → Paso 3
     fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
 
-    // En paso 3, el botón de publicar debe estar habilitado
-    expect(screen.getByRole('button', { name: /lanzar proyecto/i })).not.toBeDisabled()
+    // En paso 3, el botón Continuar debe estar habilitado (Story 10.4: submit en paso 5)
+    expect(screen.getByRole('button', { name: /continuar/i })).not.toBeDisabled()
   })
 })
 
 // ── AC-4: indicador de progreso visible ──────────────────────────────────────
 
 describe('ProjectWizard — AC-4: indicador de progreso', () => {
-  // Story 10.5: wizard ahora tiene 4 pasos (se añadió paso de hipótesis)
-  it('el indicador muestra los números de paso al inicio (1 de 4)', () => {
+  // Story 10.4: wizard ahora tiene 5 pasos (se añadió paso de preview)
+  it('el indicador muestra los números de paso al inicio (1 de 5)', () => {
     render(<ProjectWizard {...DEFAULT_PROPS} />)
     const progress = screen.getByTestId('wizard-progress')
     expect(progress).toHaveTextContent('1')
-    expect(progress).toHaveTextContent('4')
+    expect(progress).toHaveTextContent('5')
   })
 
   it('el indicador muestra el número de paso actualizado al navegar a paso 2', () => {
@@ -175,7 +175,7 @@ describe('ProjectWizard — AC-4: indicador de progreso', () => {
     fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
     const progress = screen.getByTestId('wizard-progress')
     expect(progress).toHaveTextContent('2')
-    expect(progress).toHaveTextContent('4')
+    expect(progress).toHaveTextContent('5')
   })
 
   it('muestra el label del paso actual (Tipo de proyecto) en paso 1', () => {
@@ -199,21 +199,27 @@ describe('ProjectWizard — AC-5: sin template, sin ejemplos contextuales', () =
 })
 
 // ── onSubmit ─────────────────────────────────────────────────────────────────
+// Story 10.4: el submit ocurre ahora desde el paso 5 (ProjectPreview → botón Publicar)
 
-describe('ProjectWizard — submit desde paso 3', () => {
-  it('llama a onSubmit al hacer click en "+ Lanzar proyecto" en el paso 3', () => {
+describe('ProjectWizard — submit desde paso 5 (preview)', () => {
+  function navigateToStep5AndFill() {
+    // Paso 1 → 2
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    fillStep2RequiredFields()
+    // Paso 2 → 3
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    // Paso 3 → 4
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    // Paso 4 → 5
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+  }
+
+  it('llama a onSubmit al hacer click en "Publicar" en el paso 5', () => {
     const onSubmit = vi.fn()
     render(<ProjectWizard {...DEFAULT_PROPS} onSubmit={onSubmit} />)
 
-    // Paso 1 → Paso 2
-    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-    fillStep2RequiredFields()
-
-    // Paso 2 → Paso 3
-    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-
-    // Submit en paso 3
-    fireEvent.click(screen.getByRole('button', { name: /lanzar proyecto/i }))
+    navigateToStep5AndFill()
+    fireEvent.click(screen.getByRole('button', { name: /publicar/i }))
 
     expect(onSubmit).toHaveBeenCalledOnce()
   })
@@ -222,10 +228,8 @@ describe('ProjectWizard — submit desde paso 3', () => {
     const onSubmit = vi.fn()
     render(<ProjectWizard {...DEFAULT_PROPS} onSubmit={onSubmit} />)
 
-    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-    fillStep2RequiredFields()
-    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-    fireEvent.click(screen.getByRole('button', { name: /lanzar proyecto/i }))
+    navigateToStep5AndFill()
+    fireEvent.click(screen.getByRole('button', { name: /publicar/i }))
 
     expect(onSubmit).toHaveBeenCalledWith(
       expect.objectContaining({
