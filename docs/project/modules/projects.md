@@ -1,6 +1,6 @@
 # Módulo: Proyectos
 
-**Última actualización:** Story 10.5 — Campo hipótesis en wizard (2026-04-30)
+**Última actualización:** Story 10.4 — Preview del proyecto antes de publicar (2026-04-30)
 
 ---
 
@@ -103,9 +103,10 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - `components/projects/ProjectsEmptyState.tsx` — estado vacío (story 3.4)
 - `components/projects/LaunchIdeaModal.tsx` — dialog ~640px para lanzar ideas desde el feed. Orquesta `ProjectWizard` con fetch a `/api/templates`. Props: `open`, `onOpenChange`, `communitySlug`, `onSuccess?` (story 9.8, story 10.2, story 10.3)
 - `components/projects/LaunchIdeaForm.tsx` — formulario plano original, mantenido como referencia. Ya no usado directamente por `LaunchIdeaModal` (story 9.8)
-- `components/projects/ProjectWizard.tsx` — orquestador wizard multi-paso (pasos 1-3). Estado central con `useReducer`. Array `WIZARD_STEPS` extensible. Props: `templates`, `onSubmit`, `onCancel`, `isSubmitting?`, `serverError?` (story 10.3)
+- `components/projects/ProjectWizard.tsx` — orquestador wizard multi-paso (5 pasos). Estado central con `useReducer`. Array `WIZARD_STEPS` extensible. Props: `templates`, `onSubmit`, `onCancel`, `isSubmitting?`, `serverError?` (story 10.3, actualizado story 10.4)
+- `components/projects/ProjectPreview.tsx` — paso 5 del wizard: vista read-only del proyecto con banner reviewer, pill de template, secciones de contenido, hipótesis condicional, botones Editar y Publicar. Props: `data`, `templateName?`, `onEdit`, `onPublish`, `isPublishing?` (story 10.4)
 - `components/projects/wizard/WizardStepDescription.tsx` — paso 2 del wizard: title, tagline, problem, solution. Muestra hints "Ejemplo: …" bajo problem y solution cuando hay `selectedTemplate` (story 10.3)
-- `components/projects/wizard/WizardStepDetails.tsx` — paso 3 del wizard: targetUser, demoLink, images, feedbackTopics. Submit temporal con `// TODO Story 10.4: eliminar submit temporal` (story 10.3)
+- `components/projects/wizard/WizardStepDetails.tsx` — paso 3 del wizard: targetUser, demoLink, images, feedbackTopics. Sin botón de submit (eliminado en story 10.4). (story 10.3, actualizado story 10.4)
 - `components/projects/ProjectTemplateSelector.tsx` — selector de tipo de proyecto. Grid de cards con icono Lucide + nombre. Props: `templates`, `selectedId`, `onSelect`. Incluye opción "Sin tipo" (story 10.2)
 - `components/projects/FeedbackTopicChips.tsx` — chips toggleables reutilizables. Props: `value: string[]`, `onChange`. Usa mapeo display (español) → valor interno (story 9.8)
 - `components/projects/ImageUploader.tsx` — uploader inline hasta N imágenes con previews y eliminar. Props: `images`, `onImagesChange`, `maxImages` (story 9.8)
@@ -126,6 +127,7 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - `lib/fixtures/templates.ts` — fixtures de los 5 templates para tests y Storybook (story 10.2)
 - `stories/projects/ProjectTemplateSelector.stories.tsx` — 3 stories: NingunoSeleccionado, UnoSeleccionado, SinTemplates (story 10.2)
 - `stories/projects/ProjectWizard.stories.tsx` — 4 stories: EstadoInicial, Paso1ConTemplates, ConErrorDeServidor, Submitting (story 10.3)
+- `stories/projects/ProjectPreview.stories.tsx` — 4 stories: ConTemplateYHipotesis, SinTemplate, SinHipotesis, Publicando (story 10.4)
 - `stories/projects/ProjectCard.stories.tsx` — 5 stories: Live, LiveWithScore, Draft, Inactive, Loading
 - `stories/projects/LaunchIdeaModal.stories.tsx` — 4 stories: EstadoVacio, ConDatosRellenos, EstadoCargando, ChipsSeleccionados (story 9.8)
 - `stories/projects/FeedbackTopicChips.stories.tsx` — 4 stories: SinSeleccion, TresSeleccionados, TodosSeleccionados, Interactivo (story 9.8)
@@ -144,19 +146,23 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 
 ---
 
-### Wizard multi-paso — reglas (Story 10.3, Story 10.5)
+### Wizard multi-paso — reglas (Story 10.3, Story 10.5, Story 10.4)
 
-- El wizard tiene 4 pasos definidos en `WIZARD_STEPS` (el paso 5 "preview" se añade en Story 10.4) (story 10.5)
+- El wizard tiene 5 pasos definidos en `WIZARD_STEPS`. (story 10.4)
 - Paso 1 (Tipo de proyecto): siempre válido — el template es opcional. El botón "Anterior" no aparece. (story 10.3)
 - Paso 2 (Descripción): `title`, `tagline`, `problem`, `solution` requeridos — "Continuar" deshabilitado si alguno está vacío. (story 10.3)
-- Paso 3 (Detalles): todos los campos opcionales — el botón "+ Lanzar proyecto" siempre habilitado. (story 10.3)
-- Paso 4 (Hipótesis): campo `hypothesis` opcional — "Continuar" siempre habilitado. Es el último paso activo del wizard. (story 10.5)
+- Paso 3 (Detalles): todos los campos opcionales — "Continuar" siempre habilitado. Sin botón de submit. (story 10.3, actualizado story 10.4)
+- Paso 4 (Hipótesis): campo `hypothesis` opcional — "Continuar" siempre habilitado. (story 10.5, actualizado story 10.4)
+- Paso 5 (Vista previa): muestra un preview read-only del proyecto con banner "Así verán tu proyecto los Reviewers". Botones "Editar" (regresa al paso 4) y "Publicar" (llama a `launchProject()`). (story 10.4)
+- Al hacer click en "Publicar" desde el paso 5, se llama a `launchProject()` → toast de éxito → `router.refresh()` → modal cerrado. (story 10.4 — AC-9)
+- El botón "Publicar" está deshabilitado y muestra "Publicando..." mientras `isSubmitting=true`. (story 10.4 — AC-6)
+- Si hay template seleccionado, el paso 5 muestra el nombre del template como pill antes del título. (story 10.4 — AC-2)
+- La hipótesis en el paso 5 es condicional — solo aparece si `data.hypothesis` tiene contenido. (story 10.4 — AC-3)
 - Los datos de todos los pasos se conservan al navegar hacia atrás y adelante (estado centralizado en `useReducer`). (story 10.3 — AC-2, story 10.5 — AC-2)
 - Si hay template seleccionado, los campos "Problema" y "Solución" muestran un hint contextual bajo el textarea: `"Ejemplo: {template.example}"` en `--color-text-muted`, italic. (story 10.3 — AC-1)
 - Sin template seleccionado, los hints de ejemplo no aparecen. (story 10.3 — AC-5)
-- El paso 3 incluye un submit temporal (`launchProject`) con comentario `// TODO Story 10.4: eliminar submit temporal`. Se reemplazará en Story 10.4 con el paso de preview. (story 10.3 — T5.2)
 - Al cerrar y reabrir `LaunchIdeaModal`, el wizard se reinicia en el paso 1. Implementado con `key={open ? 'open' : 'closed'}` en `<ProjectWizard>` dentro del modal. (story 10.3 — HIGH-1)
-- El campo `hypothesis` en `launchIdeaSchema` es ahora `optional()` — puede llegar vacío al submit temporal del paso 3. (story 10.5 — BREAKING CHANGE)
+- El campo `hypothesis` en `launchIdeaSchema` es `optional()` — puede llegar vacío al publicar desde el paso 5. (story 10.5 — BREAKING CHANGE)
 
 ---
 

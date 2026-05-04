@@ -86,11 +86,15 @@ describe('LaunchIdeaModal — AC-1: dialog', () => {
     expect(screen.getByRole('button', { name: 'Continuar' })).toBeInTheDocument()
   })
 
-  it('muestra el botón "+ Lanzar proyecto" en paso 3', () => {
+  // Story 10.4: submit temporal eliminado del paso 3 — ahora hay botón "Publicar" en paso 5
+  it('muestra el botón "Publicar" en paso 5 (preview)', () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
     navigateToStep2AndFillRequired()
+    // Paso 2 → 3 → 4 → 5
     fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-    expect(screen.getByRole('button', { name: '+ Lanzar proyecto' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    expect(screen.getByRole('button', { name: /publicar/i })).toBeInTheDocument()
   })
 })
 
@@ -167,7 +171,8 @@ describe('LaunchIdeaModal — AC-5: campos requeridos del paso 2', () => {
   })
 })
 
-describe('LaunchIdeaModal — AC-4: submit exitoso', () => {
+// Story 10.4: submit migrado al paso 5 (ProjectPreview → botón "Publicar")
+describe('LaunchIdeaModal — AC-4: submit exitoso (desde paso 5)', () => {
   beforeEach(() => {
     vi.mocked(launchProject).mockResolvedValue({
       success: true,
@@ -176,11 +181,19 @@ describe('LaunchIdeaModal — AC-4: submit exitoso', () => {
     })
   })
 
-  it('llama a launchProject con los datos del formulario desde el paso 3', async () => {
-    render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
+  // Helper: navega al paso 5 y hace click en Publicar
+  function navigateToStep5AndPublish() {
     navigateToStep2AndFillRequired()
+    // Paso 2 → 3 → 4 → 5
     fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-    fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+    fireEvent.click(screen.getByRole('button', { name: /publicar/i }))
+  }
+
+  it('llama a launchProject con los datos del formulario desde el paso 5', async () => {
+    render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
+    navigateToStep5AndPublish()
     await waitFor(() => {
       expect(vi.mocked(launchProject)).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -197,9 +210,7 @@ describe('LaunchIdeaModal — AC-4: submit exitoso', () => {
   it('llama a onOpenChange(false) tras submit exitoso', async () => {
     const onOpenChange = vi.fn()
     render(<LaunchIdeaModal {...DEFAULT_PROPS} onOpenChange={onOpenChange} />)
-    navigateToStep2AndFillRequired()
-    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-    fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
+    navigateToStep5AndPublish()
     await waitFor(() => {
       expect(onOpenChange).toHaveBeenCalledWith(false)
     })
@@ -211,9 +222,7 @@ describe('LaunchIdeaModal — AC-4: submit exitoso', () => {
       error: 'Error de servidor',
     })
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    navigateToStep2AndFillRequired()
-    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-    fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
+    navigateToStep5AndPublish()
     await waitFor(() => {
       expect(screen.getByRole('alert')).toBeInTheDocument()
     })
@@ -221,9 +230,7 @@ describe('LaunchIdeaModal — AC-4: submit exitoso', () => {
 
   it('dispara toast.success tras submit exitoso (AC-4)', async () => {
     render(<LaunchIdeaModal {...DEFAULT_PROPS} />)
-    navigateToStep2AndFillRequired()
-    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-    fireEvent.click(screen.getByRole('button', { name: '+ Lanzar proyecto' }))
+    navigateToStep5AndPublish()
     await waitFor(() => {
       expect(vi.mocked(toast.success)).toHaveBeenCalledWith(
         '¡Idea lanzada! Ya está recibiendo feedback.',

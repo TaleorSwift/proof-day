@@ -166,7 +166,17 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2 (wizard)', 
     })
   })
 
+  // Story 10.4: submit migrado al paso 5 (ProjectPreview → botón "Publicar")
   describe('T2.5: submit incluye templateId', () => {
+    function navigateToStep5AndPublish() {
+      // navigateToStep2AndFill ya está en el paso 2 con datos
+      // avanzar 2 → 3 → 4 → 5
+      fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+      fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+      fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+      fireEvent.click(screen.getByRole('button', { name: /publicar/i }))
+    }
+
     it('submit incluye templateId cuando hay un template seleccionado', async () => {
       vi.mocked(launchProject).mockResolvedValue({
         success: true,
@@ -183,12 +193,9 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2 (wizard)', 
       // Seleccionar SaaS en paso 1
       fireEvent.click(screen.getByRole('button', { name: /saas/i }))
 
-      // Navegar a paso 2, rellenar, avanzar a paso 3
+      // Navegar a paso 2, rellenar, avanzar hasta paso 5 y publicar
       navigateToStep2AndFill()
-      fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-
-      // Submit en paso 3
-      fireEvent.click(screen.getByRole('button', { name: /lanzar proyecto/i }))
+      navigateToStep5AndPublish()
 
       await waitFor(() => {
         expect(launchProject).toHaveBeenCalledWith(
@@ -212,10 +219,9 @@ describe('LaunchIdeaModal con ProjectTemplateSelector — Story 10.2 (wizard)', 
         expect(screen.getByText('SaaS')).toBeInTheDocument()
       })
 
-      // No seleccionamos template — avanzar directamente
+      // No seleccionamos template — avanzar hasta paso 5 y publicar
       navigateToStep2AndFill()
-      fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
-      fireEvent.click(screen.getByRole('button', { name: /lanzar proyecto/i }))
+      navigateToStep5AndPublish()
 
       await waitFor(() => {
         expect(launchProject).toHaveBeenCalledWith(

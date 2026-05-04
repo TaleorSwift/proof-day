@@ -1,12 +1,14 @@
 'use client'
 
 // Story 10.3 — ProjectWizard: orquestador multi-paso con useReducer
+// Story 10.4 — Paso 5: preview read-only + submit desde ProjectPreview
 
 import { useReducer, useCallback } from 'react'
 import { ProjectTemplateSelector } from './ProjectTemplateSelector'
 import { WizardStepDescription } from './wizard/WizardStepDescription'
 import { WizardStepDetails } from './wizard/WizardStepDetails'
 import { WizardStepHypothesis } from './wizard/WizardStepHypothesis'
+import { ProjectPreview } from './ProjectPreview'
 import type { ProjectTemplate } from '@/lib/types/templates'
 import type { UploaderImage } from './ImageUploader'
 
@@ -84,7 +86,7 @@ const WIZARD_STEPS: WizardStep[] = [
   { id: 'description', label: 'Descripción' },
   { id: 'details', label: 'Detalles' },
   { id: 'hypothesis', label: 'Hipótesis' },  // Story 10.5
-  // { id: 'preview', label: 'Vista previa' },    // Story 10.4
+  { id: 'preview', label: 'Vista previa' },  // Story 10.4
 ]
 
 // ── Validación de paso ────────────────────────────────────────────────────────
@@ -108,6 +110,9 @@ function isStepValid(step: number, data: WizardFormData): boolean {
     case 4:
       // Paso 4 (Story 10.5): hypothesis es opcional — siempre válido
       return true
+    case 5:
+      // Paso 5 (Story 10.4): preview — siempre válido
+      return true
     default:
       return true
   }
@@ -116,7 +121,6 @@ function isStepValid(step: number, data: WizardFormData): boolean {
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 interface Props {
-  // communitySlug se gestiona en LaunchIdeaModal — reservado para Story 10.4 (paso preview)
   templates: ProjectTemplate[]
   onSubmit: (data: WizardFormData) => void
   onCancel: () => void
@@ -270,14 +274,12 @@ export function ProjectWizard({ templates, onSubmit, onCancel, isSubmitting = fa
         </div>
       )}
 
-      {/* Paso 3: detalles opcionales */}
+      {/* Paso 3: detalles opcionales — Story 10.4: submit temporal eliminado */}
       {currentStep === 3 && (
         <div data-testid="wizard-step-3">
           <WizardStepDetails
             data={data}
             onChange={handleFieldChange}
-            onSubmit={handleSubmit}
-            isSubmitting={isSubmitting}
           />
         </div>
       )}
@@ -286,6 +288,19 @@ export function ProjectWizard({ templates, onSubmit, onCancel, isSubmitting = fa
       {currentStep === 4 && (
         <div data-testid="wizard-step-4">
           <WizardStepHypothesis data={data} onChange={handleFieldChange} />
+        </div>
+      )}
+
+      {/* Paso 5 (Story 10.4): vista previa read-only antes de publicar */}
+      {currentStep === 5 && (
+        <div data-testid="wizard-step-5">
+          <ProjectPreview
+            data={data}
+            templateName={data.selectedTemplate?.name ?? undefined}
+            onEdit={handlePrev}
+            onPublish={handleSubmit}
+            isPublishing={isSubmitting}
+          />
         </div>
       )}
 
@@ -302,7 +317,7 @@ export function ProjectWizard({ templates, onSubmit, onCancel, isSubmitting = fa
         </p>
       )}
 
-      {/* Botones de navegación — pasos 1 y 2 */}
+      {/* Botones de navegación — pasos 1-4 (el paso 5 usa los botones propios de ProjectPreview) */}
       {!isLastStep && (
         <div
           style={{
@@ -362,27 +377,6 @@ export function ProjectWizard({ templates, onSubmit, onCancel, isSubmitting = fa
             }}
           >
             Continuar
-          </button>
-        </div>
-      )}
-
-      {/* Botón Anterior visible en paso 3 */}
-      {isLastStep && (
-        <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
-          <button
-            type="button"
-            onClick={handlePrev}
-            style={{
-              padding: 'var(--space-2) var(--space-4)',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-border)',
-              background: 'transparent',
-              fontSize: 'var(--text-sm)',
-              color: 'var(--color-text-primary)',
-              cursor: 'pointer',
-            }}
-          >
-            Anterior
           </button>
         </div>
       )}

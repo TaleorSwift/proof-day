@@ -52,14 +52,15 @@ function navigateToStep4() {
   fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
 }
 
-// ── AC-4: total de pasos = 4 ──────────────────────────────────────────────────
+// ── AC-4 (Story 10.5): 4 pasos — actualizado en Story 10.4 a 5 pasos ────────
+// Story 10.4 añadió el paso 5 (preview). El wizard tiene ahora 5 pasos.
 
-describe('ProjectWizard — AC-4 (Story 10.5): total de pasos = 4', () => {
-  it('el indicador de progreso muestra "1 de 4" en el paso 1', () => {
+describe('ProjectWizard — AC-4 (Story 10.5, actualizado 10.4): total de pasos = 5', () => {
+  it('el indicador de progreso muestra "1 de 5" en el paso 1', () => {
     render(<ProjectWizard {...DEFAULT_PROPS} />)
     const progress = screen.getByTestId('wizard-progress')
     expect(progress).toHaveTextContent('1')
-    expect(progress).toHaveTextContent('4')
+    expect(progress).toHaveTextContent('5')
   })
 })
 
@@ -72,11 +73,12 @@ describe('ProjectWizard — T7.3 (Story 10.5): navegación al paso 4', () => {
     expect(screen.getByTestId('wizard-step-4')).toBeInTheDocument()
   })
 
-  it('el indicador de progreso muestra "4 de 4" en el paso 4', () => {
+  it('el indicador de progreso muestra "4 de 5" en el paso 4 (Story 10.4: wizard tiene 5 pasos)', () => {
     render(<ProjectWizard {...DEFAULT_PROPS} />)
     navigateToStep4()
     const progress = screen.getByTestId('wizard-progress')
     expect(progress).toHaveTextContent('4')
+    expect(progress).toHaveTextContent('5')
   })
 
   it('el paso 4 muestra el bloque de hipótesis', () => {
@@ -106,13 +108,15 @@ describe('ProjectWizard — T7.3 (Story 10.5): navegación al paso 4', () => {
 })
 
 // ── AC-3: Continuar habilitado en paso 4 ─────────────────────────────────────
+// Story 10.4: el paso 4 ya no es el último (hay un paso 5 de preview)
 
-describe('ProjectWizard — AC-3 (Story 10.5): paso 4 siempre habilitado', () => {
-  it('el paso 4 no muestra botón Continuar (es el último paso)', () => {
+describe('ProjectWizard — AC-3 (Story 10.5, actualizado 10.4): paso 4 tiene Continuar', () => {
+  it('el paso 4 tiene botón Continuar para avanzar al paso 5 (Story 10.4 añadió paso preview)', () => {
     render(<ProjectWizard {...DEFAULT_PROPS} />)
     navigateToStep4()
-    // El paso 4 es el último paso — no hay botón Continuar
-    expect(screen.queryByRole('button', { name: /continuar/i })).not.toBeInTheDocument()
+    // El paso 4 ya no es el último — tiene botón Continuar para ir al paso 5
+    expect(screen.getByRole('button', { name: /continuar/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /continuar/i })).not.toBeDisabled()
   })
 })
 

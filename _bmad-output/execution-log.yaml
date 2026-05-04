@@ -1,4 +1,14 @@
 workflows:
+  - id: "20260430-homer-DS-10-4-started"
+    timestamp: "2026-04-30T13:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 10.4: Preview del proyecto antes de publicar"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "10-4-preview-proyecto-antes-de-publicar"
+    summary: "Implementando Story 10.4 — ProjectPreview component, paso 5 en WIZARD_STEPS, eliminación del submit temporal de WizardStepDetails, integración con launchProject server action"
+
   - id: "20260430-edna-QA-10-5-closing"
     timestamp: "2026-04-30T12:10:00"
     agent: "Edna (QA)"
