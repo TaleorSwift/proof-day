@@ -147,5 +147,49 @@ claude-sonnet-4-6
 - `app/(app)/communities/[slug]/projects/[projectSlug]/page.tsx` — pasar hypothesis a FeedbackFormInline
 - `tests/component/projects/ProjectWizard.10-3.test.tsx` — actualizar "3" → "4" en indicador de progreso
 - `stories/feedback/FeedbackFormInline.stories.tsx` — añadir story ConHipotesis
+- `docs/project/modules/projects.md` — actualizado con reglas wizard 4 pasos, BREAKING CHANGE
+- `docs/project/modules/feedback.md` — actualizado con prop hypothesis en FeedbackFormInline
 - `_bmad-output/execution-log.yaml`
 - `_bmad-output/implementation-artifacts/sprint-status.yaml`
+
+## Senior Developer Review (AI)
+
+**Fecha:** 2026-04-30
+**Revisor:** Homer (claude-sonnet-4-6)
+**Veredicto:** APPROVED
+
+### AC Validation
+
+| AC | Estado | Evidencia |
+|----|--------|-----------|
+| AC-1 | IMPLEMENTADO | `WizardStepHypothesis.tsx`: textarea `wizard-field-hypothesis`, bloque `hypothesis-block`, tokens `--color-hypothesis-bg/border`, label "Hipótesis a validar" |
+| AC-2 | IMPLEMENTADO | `useReducer` + `SET_FIELD` conserva `hypothesis`. Test AC-2 en `ProjectWizard.10-5.test.tsx` |
+| AC-3 | IMPLEMENTADO | `isStepValid(4)` → `true`. Paso 4 es `isLastStep` → no renderiza "Continuar". Test explícito |
+| AC-4 | IMPLEMENTADO | `WIZARD_STEPS.length = 4` → `totalSteps = 4`. "1 de 4" verificado en tests 10-3 y 10-5 |
+| AC-5 | IMPLEMENTADO | `hypothesis-context-banner` visible cuando `hypothesis && hypothesis.trim().length > 0` |
+| AC-6 | IMPLEMENTADO | Misma condición cubre `undefined` y `''`. Tests T5.2 verifican ambos casos |
+| AC-7 | IMPLEMENTADO | `launchIdeaSchema.hypothesis`: `.min(1)` → `.optional()`. Documentado. `LaunchIdeaForm` (legado, sin consumers activos en producción) es el único afectado |
+
+### Findings
+
+**MEDIUM-1** — `docs/project/modules/feedback.md` y `docs/project/modules/projects.md` modificados en git pero no incluidos en el File List de la story. Corregido en este CR (ambos ficheros añadidos al File List).
+
+**MEDIUM-2** — Story marcada `Status: done` antes de completar el CR. Corregido a `Status: review` en este CR.
+
+**MEDIUM-3** — Paso 3 renderiza simultáneamente "Continuar" (barra de navegación) y "Lanzar proyecto" (WizardStepDetails). UX con 4 botones en paso 3 es confusa. Es deuda técnica conocida documentada con `TODO Story 10.4`, pero no hay test que documente explícitamente esta coexistencia como comportamiento esperado. Recomendación: añadir nota en Dev Notes de la story para Story 10.4.
+
+**LOW-1** — `ProjectWizard.tsx:305`: comentario `{/* Botones de navegación — pasos 1 y 2 */}` desactualizado (ahora aplica también al paso 3).
+
+**LOW-2** — `ProjectWizard.tsx:369`: comentario `{/* Botón Anterior visible en paso 3 */}` incorrecto (ahora aplica al paso 4).
+
+**LOW-3** — El bloque visual de hipótesis (tokens `--color-hypothesis-bg/border/radius-xl`) está inlined en 3 lugares sin extracción a componente compartido. Deuda de mantenibilidad, no bloqueante.
+
+**LOW-4** — No hay test de integración que verifique la coexistencia de "Continuar" + "Lanzar proyecto" en paso 3 como comportamiento intencionado.
+
+### Tests
+
+39 tests nuevos (20 de la story + 19 actualizados en 10-3), 1381 total, 100% verdes. TDD Outside-In verificado. TypeScript: 5 errores pre-existentes, 0 nuevos.
+
+### Security / Performance
+
+Sin riesgos. `hypothesis` renderizado en `<p>` (React escapa contenido). `project.hypothesis ?? undefined` maneja `null` de Supabase correctamente.

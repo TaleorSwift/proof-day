@@ -122,7 +122,7 @@ development_status:
   10-2-selector-tipo-proyecto-project-template-selector: done  # QA PASS 2026-04-30 — PR #89 merged
   10-3-projectwizard-con-ejemplos-contextuales: done  # QA PASS 2026-04-30 — PR #90 pending merge
   10-4-preview-proyecto-antes-de-publicar: ready-for-dev
-  10-5-campo-hipotesis-en-wizard: review  # feat/10-5-campo-hipotesis-en-wizard — 1381 tests verdes
+  10-5-campo-hipotesis-en-wizard: done  # CR APPROVED 2026-04-30 — APPROVED, 0 HIGH/CRITICAL, PR #91 pending merge
   epic-10-retrospective: optional
 
   # ── EPIC 11: Calidad del Feedback y Reciprocidad ─────────────────

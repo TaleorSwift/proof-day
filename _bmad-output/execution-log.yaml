@@ -1,4 +1,40 @@
 workflows:
+  - id: "20260430-homer-CR-10-5-closing"
+    timestamp: "2026-04-30T11:15:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #91 — Story 10.5: Campo hipótesis en wizard"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    story: "10-5-campo-hipotesis-en-wizard"
+    pr: 91
+    verdict: "APPROVED"
+    issues_found:
+      critical: 0
+      high: 0
+      medium: 2
+      low: 5
+    issues_fixed:
+      - "MEDIUM-1: docs/project/modules/feedback.md y projects.md añadidos al File List de la story"
+      - "MEDIUM-2: Status story corregido de 'done' prematuro a flujo correcto (done post-CR)"
+    issues_deferred:
+      - "MEDIUM-3: Coexistencia de Continuar + Lanzar en paso 3 — deuda técnica Story 10.4"
+      - "LOW-1/2: Comentarios obsoletos en ProjectWizard.tsx"
+      - "LOW-3: HypothesisBlock no extraído como componente compartido"
+      - "LOW-4: Test de coexistencia de botones en paso 3"
+    summary: "APPROVED — 7/7 ACs implementados, 1381/1381 tests verdes, 0 errores TS nuevos, tokens CSS correctos, TDD Outside-In verificado, BREAKING CHANGE documentado. 0 HIGH/CRITICAL. 2 MEDIUM resueltos en CR. 5 LOW diferidos a Story 10.4."
+    next_step: "QA (Edna) — tests automatizados PR #91"
+
+  - id: "20260430-homer-CR-10-5-started"
+    timestamp: "2026-04-30T11:07:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #91 — Story 10.5: Campo hipótesis en wizard"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "10-5-campo-hipotesis-en-wizard"
+    pr: 91
+
   - id: "20260430-homer-DS-10-5-closing"
     timestamp: "2026-04-30T00:00:00"
     agent: "Homer (Dev)"
