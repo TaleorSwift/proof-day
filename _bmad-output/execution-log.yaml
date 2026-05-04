@@ -1,4 +1,34 @@
 workflows:
+  - id: "20260430-edna-QA-10-5-closing"
+    timestamp: "2026-04-30T12:10:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 10.5: Campo hipótesis en wizard"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    story: "10-5-campo-hipotesis-en-wizard"
+    verdict: "PASS"
+    duration_estimate: "10 minutes"
+    tests_story: 20
+    tests_total: 1381
+    tests_failed: 0
+    summary: "PASS — 20/20 tests de story 10.5 verdes. Suite completa 1381/1381. Todos los ACs (1-7) verificados. Sin regresiones."
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Story 10.5 completada — siguiente story del sprint o cierre de epic"
+
+  - id: "20260430-edna-QA-10-5-started"
+    timestamp: "2026-04-30T12:00:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 10.5: Campo hipótesis en wizard"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "10-5-campo-hipotesis-en-wizard"
+    summary: "Verificando tests de story 10.5 — WizardStepHypothesis, ProjectWizard paso 4, FeedbackFormInline HypothesisContextBanner"
+
   - id: "20260430-homer-CR-10-5-closing"
     timestamp: "2026-04-30T11:15:00"
     agent: "Homer (Dev)"
