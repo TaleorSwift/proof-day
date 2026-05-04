@@ -121,7 +121,7 @@ development_status:
   10-1-migraciones-db-project-templates-y-extensiones-projects: done  # CR APPROVED 2026-04-30 — HIGH-1 y HIGH-2 resueltos. 1277 tests verdes. PR #88
   10-2-selector-tipo-proyecto-project-template-selector: done  # QA PASS 2026-04-30 — PR #89 merged
   10-3-projectwizard-con-ejemplos-contextuales: done  # QA PASS 2026-04-30 — PR #90 pending merge
-  10-4-preview-proyecto-antes-de-publicar: ready-for-dev
+  10-4-preview-proyecto-antes-de-publicar: done  # CR APPROVED 2026-04-30 — APPROVED, 0 HIGH/CRITICAL, 3 MEDIUM (naming/docs), PR #92
   10-5-campo-hipotesis-en-wizard: done  # CR APPROVED 2026-04-30 — APPROVED, 0 HIGH/CRITICAL, PR #91 pending merge
   epic-10-retrospective: optional
 

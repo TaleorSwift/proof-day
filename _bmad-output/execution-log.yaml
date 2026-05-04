@@ -2960,3 +2960,59 @@ workflows:
       - "_bmad-output/execution-log.yaml"
     errors: []
     next_recommended: "CS (Ned) — siguiente story del sprint. O ER si Epic 10 completado."
+
+  - id: "20260430-163000-homer-CR-10-4"
+    timestamp: "2026-04-30T16:30:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #92 Story 10.4: Preview del proyecto antes de publicar"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    summary: "Code review de PR #92 — Story 10.4: ProjectPreview con banner, paso 5 wizard, submit temporal eliminado, onPublish, Storybook, TDD Outside-In."
+
+  - id: "20260430-163000-homer-CR-10-4"
+    timestamp: "2026-04-30T16:45:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #92 Story 10.4: Preview del proyecto antes de publicar"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    duration_estimate: "15 minutos"
+    summary: "APPROVED — 9/9 ACs implementados. 0 HIGH/CRITICAL, 3 MEDIUM (naming onSubmit/onPublish, Props no exportada, testid sin uso), 4 LOW. Suite 1407/1407 tests. Story → done."
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/10-4-preview-proyecto-antes-de-publicar.md"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "QA (Edna) — validar suite completa y e2e. Luego merge PR #92."
+
+  - id: "20260430-edna-QA-10-4-started"
+    timestamp: "2026-04-30T11:34:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 10.4: Preview antes de publicar"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "10-4-preview-proyecto-antes-de-publicar"
+    summary: "Verificando tests de Story 10.4 — ProjectPreview (T2.1-T2.13) y ProjectWizard.10-4 (AC-4, AC-7, AC-8, AC-9, T7.4). CR APPROVED."
+
+  - id: "20260430-edna-QA-10-4-started"
+    timestamp: "2026-04-30T11:37:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 10.4: Preview antes de publicar"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    story: "10-4-preview-proyecto-antes-de-publicar"
+    verdict: "PASS"
+    duration_estimate: "3 minutos"
+    tests_story: 27
+    tests_total: 1407
+    tests_failed: 0
+    summary: "PASS — 27/27 tests de story 10.4 verdes. Suite completa 1407/1407. Todos los ACs (1-9) verificados. Sin regresiones."
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Merge PR #92 en main — story 10.4 completada."

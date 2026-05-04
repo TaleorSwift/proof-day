@@ -1,6 +1,6 @@
 # Story 10.4: Preview del proyecto antes de publicar
 
-Status: review
+Status: done
 
 ## Story
 
