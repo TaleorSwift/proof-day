@@ -61,10 +61,12 @@ export const launchIdeaSchema = z.object({
     .string()
     .max(300, 'El usuario objetivo no puede superar 300 caracteres')
     .optional(),
+  // Story 10.5 — BREAKING CHANGE: hypothesis pasa de min(1) requerido a optional
+  // La hipótesis se captura en el paso 4 del wizard y puede llegar vacía al submit temporal (paso 3)
   hypothesis: z
     .string()
-    .min(1, 'La hipótesis es obligatoria')
-    .max(500, 'La hipótesis no puede superar 500 caracteres'),
+    .max(500, 'La hipótesis no puede superar 500 caracteres')
+    .optional(),
   demoLink: z
     .string()
     .url('La URL de demo no es válida')

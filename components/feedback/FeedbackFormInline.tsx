@@ -11,6 +11,8 @@ import type { FeedbackScore } from '@/lib/types/feedback'
 export interface FeedbackFormInlineProps {
   projectId: string
   communityId: string
+  // Story 10.5 — hipótesis del proyecto como contexto para el reviewer (AC-5, AC-6)
+  hypothesis?: string
 }
 
 // ---------------------------------------------------------------------------
@@ -65,7 +67,7 @@ function ScoreSelector({ options, selected, onSelect }: ScoreSelectorProps) {
 // FeedbackFormInline
 // ---------------------------------------------------------------------------
 
-export function FeedbackFormInline({ projectId, communityId }: FeedbackFormInlineProps) {
+export function FeedbackFormInline({ projectId, communityId, hypothesis }: FeedbackFormInlineProps) {
   const [p1Score, setP1Score] = useState<FeedbackScore | undefined>(undefined)
   const [p2Score, setP2Score] = useState<FeedbackScore | undefined>(undefined)
   const [improvement, setImprovement] = useState('')
@@ -138,6 +140,43 @@ export function FeedbackFormInline({ projectId, communityId }: FeedbackFormInlin
         gap: 'var(--space-4)',
       }}
     >
+      {/* Story 10.5 — AC-5, AC-6: HypothesisContextBanner — visible solo si hay hypothesis */}
+      {hypothesis && hypothesis.trim().length > 0 && (
+        <div
+          data-testid="hypothesis-context-banner"
+          style={{
+            backgroundColor: 'var(--color-hypothesis-bg)',
+            border: '1px solid var(--color-hypothesis-border)',
+            borderRadius: 'var(--radius-xl)',
+            padding: 'var(--space-3)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-1)',
+          }}
+        >
+          <span
+            style={{
+              fontSize: 'var(--text-xs)',
+              fontWeight: 'var(--font-medium)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            🔬 Hipótesis a validar
+          </span>
+          <p
+            style={{
+              fontSize: 'var(--text-sm)',
+              color: 'var(--color-text-primary)',
+              margin: 0,
+              lineHeight: 'var(--leading-base)',
+              fontStyle: 'italic',
+            }}
+          >
+            {hypothesis}
+          </p>
+        </div>
+      )}
+
       {/* Encabezado del bloque */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
         <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 'var(--font-semibold)', color: 'var(--color-text-primary)', margin: 0 }}>
