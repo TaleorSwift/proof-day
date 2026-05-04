@@ -1,4 +1,37 @@
 workflows:
+  - id: "20260430-homer-CR-10-3-post-fixes-closing"
+    timestamp: "2026-04-30T23:59:59"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #90 Story 10.3 post-fixes: verificar HIGH-1, MEDIUM-1, MEDIUM-2"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    verdict: "APPROVED"
+    story: "10-3-projectwizard-con-ejemplos-contextuales"
+    branch: "feat/10-3-projectwizard-con-ejemplos-contextuales"
+    pr: 90
+    summary: "APPROVED — los 3 blocking issues del CR anterior resueltos y verificados. HIGH-1: key={open?'open':'closed'} fuerza remontaje del wizard, test pasa. MEDIUM-1: communitySlug eliminado de Props de ProjectWizard, solo comentario para Story 10.4. MEDIUM-2: borderRadius var(--radius-lg) en WizardStepDetails. 1361/1361 tests verdes. Sprint status: in-progress → done."
+    issues_resolved:
+      - "HIGH-1: key prop en LaunchIdeaModal fuerza remontaje de ProjectWizard al cerrar/abrir — IMPLEMENTADO y TESTADO"
+      - "MEDIUM-1: communitySlug eliminado de Props de ProjectWizard — IMPLEMENTADO"
+      - "MEDIUM-2: borderRadius 10px → var(--radius-lg) en WizardStepDetails — IMPLEMENTADO"
+    remaining_low_issues:
+      - "LOW-2: height: '4px' hardcodeado en barra de progreso (no bloqueante, no en scope de este CR)"
+    tests_total: 1361
+    tests_pass: true
+    next_step: "QA (Edna) — si aplica; o mergear PR #90 a main"
+
+  - id: "20260430-homer-CR-10-3-post-fixes-started"
+    timestamp: "2026-04-30T23:59:59"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #90 Story 10.3 post-fixes: verificar HIGH-1, MEDIUM-1, MEDIUM-2"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "10-3-projectwizard-con-ejemplos-contextuales"
+    branch: "feat/10-3-projectwizard-con-ejemplos-contextuales"
+    summary: "VERIFY mode: verificar que commit 9cea873 resuelve HIGH-1 (key reset wizard), MEDIUM-1 (communitySlug eliminado), MEDIUM-2 (var(--radius-lg))."
+
   - id: "20260430-homer-DS-10-3-cr-fixes-closing"
     timestamp: "2026-04-30T23:59:59"
     agent: "Homer (Dev)"
@@ -2750,3 +2783,27 @@ workflows:
       - "LOW: launchProject server action sin validación server-side de arrays feedbackTopics/imageUrls."
     next_recommended: "Homer DS para resolver bloqueantes. Crear rama fix/9-8-cr-fixes desde feat/9-8 y enviar nuevo push a la PR."
     next_recommended: "Migrar mocks inline de tests/Storybook existentes a @/lib/fixtures"
+
+  - id: "20260430-edna-QA-10-3"
+    timestamp: "2026-04-30T23:55:00"
+    agent: "Edna (QA)"
+    trigger: "QA"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "STARTED"
+    summary: "Verificando Story 10.3 — ProjectWizard con ejemplos contextuales. CR APPROVED. Ejecutando 4 ficheros de test (ProjectWizard, WizardStepDescription, WizardStepDetails, LaunchIdeaModal) para confirmar cobertura de AC-1..5."
+
+  - id: "20260430-edna-QA-10-3"
+    timestamp: "2026-04-30T23:58:00"
+    agent: "Edna (QA)"
+    trigger: "QA"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    duration_estimate: "3 minutos"
+    summary: "Story 10.3 — ProjectWizard con ejemplos contextuales — QA PASS. 51 tests en 4 ficheros de story, todos en verde. Suite completa 1361/1361 sin regresiones. Cobertura AC-1..5 verificada al 100%."
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "CS (Ned) — siguiente story del sprint. O ER si Epic 10 completado."
