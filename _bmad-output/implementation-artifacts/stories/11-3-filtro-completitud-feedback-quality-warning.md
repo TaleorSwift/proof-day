@@ -1,6 +1,6 @@
 # Story 11.3: Filtro de completitud del feedback + quality warning
 
-Status: ready-for-dev
+Status: done
 
 ## Metadata
 
@@ -70,50 +70,50 @@ entonces todos los tests nuevos pasan al 100% y los tests existentes no se rompe
 
 ## Tasks / Subtasks
 
-- [ ] **T1** — TDD: función pura `calculateQualityScore` (RED → GREEN → REFACTOR)
-  - [ ] T1.1 Crear `tests/unit/utils/feedbackQuality.test.ts`
-  - [ ] T1.2 Escribir test: `{}` → 0.0
-  - [ ] T1.3 Escribir test: `{ p4: "a".repeat(100) }` → 0.5
-  - [ ] T1.4 Escribir test: `{ p4: "a".repeat(200) }` → 1.0
-  - [ ] T1.5 Escribir test: `{ p4: "a".repeat(300) }` → 1.0 (capped)
-  - [ ] T1.6 Escribir test: múltiples campos suman sus longitudes
-  - [ ] T1.7 Escribir test: devuelve siempre un número en [0.0, 1.0]
-  - [ ] T1.8 Crear `lib/utils/feedbackQuality.ts` con `TARGET_CHARS = 200` y `calculateQualityScore`
-  - [ ] T1.9 Verificar todos los tests en verde
+- [x] **T1** — TDD: función pura `calculateQualityScore` (RED → GREEN → REFACTOR)
+  - [x] T1.1 Crear `tests/unit/utils/feedbackQuality.test.ts`
+  - [x] T1.2 Escribir test: `{}` → 0.0
+  - [x] T1.3 Escribir test: `{ p4: "a".repeat(100) }` → 0.5
+  - [x] T1.4 Escribir test: `{ p4: "a".repeat(200) }` → 1.0
+  - [x] T1.5 Escribir test: `{ p4: "a".repeat(300) }` → 1.0 (capped)
+  - [x] T1.6 Escribir test: múltiples campos suman sus longitudes
+  - [x] T1.7 Escribir test: devuelve siempre un número en [0.0, 1.0]
+  - [x] T1.8 Crear `lib/utils/feedbackQuality.ts` con `TARGET_CHARS = 200` y `calculateQualityScore`
+  - [x] T1.9 Verificar todos los tests en verde
 
-- [ ] **T2** — TDD: `POST /api/feedback` — calcula y persiste `quality_score` (RED → GREEN)
-  - [ ] T2.1 Escribir test de integración: body válido → response contiene `quality_score` calculado
-  - [ ] T2.2 Escribir test: `quality_score` es un número entre 0 y 1
-  - [ ] T2.3 Actualizar `POST /api/feedback` — importar `calculateQualityScore` y pasarlo al repo
-  - [ ] T2.4 Verificar tests en verde
+- [x] **T2** — TDD: `POST /api/feedback` — calcula y persiste `quality_score` (RED → GREEN)
+  - [x] T2.1 Escribir test de integración: body válido → response contiene `quality_score` calculado
+  - [x] T2.2 Escribir test: `quality_score` es un número entre 0 y 1
+  - [x] T2.3 Actualizar `POST /api/feedback` — importar `calculateQualityScore` y pasarlo al repo
+  - [x] T2.4 Verificar tests en verde
 
-- [ ] **T3** — TDD: `feedbackRepo.create` — incluye `quality_score` en insert (RED → GREEN)
-  - [ ] T3.1 Escribir test unitario: `create` con `qualityScore: 0.75` → insert incluye `quality_score: 0.75`
-  - [ ] T3.2 Actualizar firma de `create` en `lib/repositories/feedback.repository.ts` — añadir `qualityScore: number` al tipo de datos de entrada
-  - [ ] T3.3 Añadir `quality_score: data.qualityScore` al objeto de insert
-  - [ ] T3.4 Verificar tests en verde
+- [x] **T3** — TDD: `feedbackRepo.create` — incluye `quality_score` en insert (RED → GREEN)
+  - [x] T3.1 Escribir test unitario: `create` con `qualityScore: 0.75` → insert incluye `quality_score: 0.75`
+  - [x] T3.2 Actualizar firma de `create` en `lib/repositories/feedback.repository.ts` — añadir `qualityScore: number` al tipo de datos de entrada
+  - [x] T3.3 Añadir `quality_score: data.qualityScore` al objeto de insert
+  - [x] T3.4 Verificar tests en verde
 
-- [ ] **T4** — TDD: componente `FeedbackQualityStats` (RED → GREEN → REFACTOR)
-  - [ ] T4.1 Crear `tests/unit/feedback/FeedbackQualityStats.test.tsx`
-  - [ ] T4.2 Escribir test: sin feedbacks → componente no renderiza nada
-  - [ ] T4.3 Escribir test: 3 feedbacks, 2 completos (score >= 0.6) → "2 feedbacks completos de 3 totales"
-  - [ ] T4.4 Escribir test: 5 feedbacks, 2 completos (40%) → warning NO visible (ratio exacto = 40% no supera el umbral)
-  - [ ] T4.5 Escribir test: 5 feedbacks, 2 completos (60% incompletos) → warning visible con el texto exacto
-  - [ ] T4.6 Escribir test: 1 feedback completo de 1 → "1 feedbacks completos de 1 totales" (sin warning)
-  - [ ] T4.7 Crear `components/feedback/FeedbackQualityStats.tsx` — componente puro que recibe `feedbacks` y `qualityThreshold`
-  - [ ] T4.8 Verificar todos los tests en verde
+- [x] **T4** — TDD: componente `FeedbackQualityStats` (RED → GREEN → REFACTOR)
+  - [x] T4.1 Crear `tests/unit/feedback/FeedbackQualityStats.test.tsx`
+  - [x] T4.2 Escribir test: sin feedbacks → componente no renderiza nada
+  - [x] T4.3 Escribir test: 3 feedbacks, 2 completos (score >= 0.6) → "2 feedbacks completos de 3 totales"
+  - [x] T4.4 Escribir test: 5 feedbacks, 2 completos (40%) → warning NO visible (ratio exacto = 40% no supera el umbral)
+  - [x] T4.5 Escribir test: 5 feedbacks, 2 completos (60% incompletos) → warning visible con el texto exacto
+  - [x] T4.6 Escribir test: 1 feedback completo de 1 → "1 feedbacks completos de 1 totales" (sin warning)
+  - [x] T4.7 Crear `components/feedback/FeedbackQualityStats.tsx` — componente puro que recibe `feedbacks` y `qualityThreshold`
+  - [x] T4.8 Verificar todos los tests en verde
 
-- [ ] **T5** — Integrar `FeedbackQualityStats` en la sidebar del owner
-  - [ ] T5.1 Localizar donde se renderiza la sidebar del owner en la página de detalle del proyecto
-  - [ ] T5.2 Pasar `feedbacks` (con `quality_score`) y `project.quality_threshold` al componente
-  - [ ] T5.3 Asegurarse de que `findByProject` en el repositorio devuelve `quality_score` en el SELECT
+- [x] **T5** — Integrar `FeedbackQualityStats` en la sidebar del owner
+  - [x] T5.1 Localizar donde se renderiza la sidebar del owner en la página de detalle del proyecto
+  - [x] T5.2 Pasar `feedbacks` (con `quality_score`) y `project.quality_threshold` al componente
+  - [x] T5.3 Asegurarse de que `findByProject` en el repositorio devuelve `quality_score` en el SELECT
 
-- [ ] **T6** — Actualizar `findByProject` en el repositorio para incluir `quality_score`
-  - [ ] T6.1 Añadir `quality_score` al SELECT de `findByProject` en `lib/repositories/feedback.repository.ts`
-  - [ ] T6.2 Verificar que el mapper `feedbackFromRow` ya mapea `quality_score → qualityScore` (done en 11.1)
+- [x] **T6** — Actualizar `findByProject` en el repositorio para incluir `quality_score`
+  - [x] T6.1 Añadir `quality_score` al SELECT de `findByProject` en `lib/repositories/feedback.repository.ts`
+  - [x] T6.2 Verificar que el mapper `feedbackFromRow` ya mapea `quality_score → qualityScore` (done en 11.1)
 
-- [ ] **T7** — Storybook
-  - [ ] T7.1 Crear `stories/feedback/FeedbackQualityStats.stories.tsx` con stories: `SinFeedbacks`, `MayoriaCompletos`, `MayoriaIncompletos` (warning visible), `ExactoUmbral`
+- [x] **T7** — Storybook
+  - [x] T7.1 Crear `stories/feedback/FeedbackQualityStats.stories.tsx` con stories: `SinFeedbacks`, `MayoriaCompletos`, `MayoriaIncompletos` (warning visible), `ExactoUmbral`
 
 ## Dev Notes
 
@@ -186,3 +186,40 @@ tests/unit/utils/feedbackQuality.test.ts          (nuevo)
 tests/unit/feedback/FeedbackQualityStats.test.tsx  (nuevo)
 tests/integration/feedback/feedback-quality.test.ts  (nuevo)
 ```
+
+## Dev Agent Record
+
+**Implementado por:** Homer (DS)
+**Fecha:** 2026-05-06
+**Branch:** feat/11-3-filtro-completitud-feedback-quality-warning
+
+### Artefactos creados
+
+| Fichero | Descripción |
+|---|---|
+| `lib/utils/feedbackQuality.ts` | Función pura `calculateQualityScore` + constante `TARGET_CHARS = 200` |
+| `components/feedback/FeedbackQualityStats.tsx` | Componente puro: stats de completitud + warning condicional (>40% incompletos) |
+| `stories/feedback/FeedbackQualityStats.stories.tsx` | 4 stories: SinFeedbacks, MayoriaCompletos, MayoriaIncompletos, ExactoUmbral |
+| `tests/unit/utils/feedbackQuality.test.ts` | 7 tests unitarios para `calculateQualityScore` |
+| `tests/unit/feedback/FeedbackQualityStats.test.tsx` | 5 tests para el componente (jsdom) |
+| `tests/unit/feedback/feedbackRepoCreate.11-3.test.ts` | 2 tests unitarios para `feedbackRepo.create` con `qualityScore` |
+| `tests/integration/api/feedback-quality-score.11-3.test.ts` | 2 tests de integración para `POST /api/feedback` |
+
+### Artefactos modificados
+
+| Fichero | Cambio |
+|---|---|
+| `lib/repositories/feedback.repository.ts` | `create()` acepta `qualityScore?: number` e incluye `quality_score` en insert; `findByProject` añade `quality_score` al SELECT |
+| `app/api/feedback/route.ts` | Importa `calculateQualityScore`, calcula `qualityScore` antes de llamar al repo |
+| `app/(app)/communities/[slug]/projects/[projectSlug]/page.tsx` | Añade `quality_threshold` al SELECT de projects, importa y renderiza `FeedbackQualityStats` en sidebar del owner |
+
+### Decisiones tomadas
+
+- Usar tokens semáforo `needs` (`var(--color-needs-bg)` / `var(--color-needs-text)`) para el banner de warning, según design-tokens.md (no existen tokens `warning` separados).
+- El campo `quality_score` se pasa al componente extrayendo de los rows raw de Supabase, con cast `as unknown as { quality_score: number | null }` porque los rows de `findByProject` no están mapeados con `feedbackFromRow` en la página (se usan como raw rows para el mapeo a `FeedbackEntryData`).
+- Los tests de integración (T2) usan mock del repositorio para verificar el contrato, coherente con el patrón de `feedback-custom-answer.test.ts`.
+
+### Tests resultado
+
+- 148 test files / 1504 tests — 100% verde
+- 16 tests nuevos: 7 (feedbackQuality) + 5 (FeedbackQualityStats) + 2 (feedbackRepoCreate) + 2 (feedback-quality-score)

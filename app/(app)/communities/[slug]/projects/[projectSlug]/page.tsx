@@ -8,6 +8,7 @@ import { InactiveBanner } from '@/components/projects/InactiveBanner'
 import { ProjectStateActions } from '@/components/projects/ProjectStateActions'
 import { FeedbackList } from '@/components/feedback/FeedbackList'
 import { FeedbackCounter } from '@/components/feedback/FeedbackCounter'
+import { FeedbackQualityStats } from '@/components/feedback/FeedbackQualityStats'
 import { TeamPerspectives } from '@/components/feedback/TeamPerspectives'
 import { FeedbackCTA } from '@/components/feedback/FeedbackCTA'
 import { FeedbackFormInline } from '@/components/feedback/FeedbackFormInline'
@@ -52,7 +53,7 @@ export default async function ProjectPage({ params }: Props) {
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id, slug, title, tagline, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at, decision, target_user, demo_url, feedback_topics, custom_question')
+    .select('id, slug, title, tagline, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at, decision, target_user, demo_url, feedback_topics, custom_question, quality_threshold')
     .eq('community_id', community.id)
     .eq('slug', projectSlug)
     .single()
@@ -358,6 +359,14 @@ export default async function ProjectPage({ params }: Props) {
                     </h2>
                     <FeedbackCounter count={feedbackCount} />
                   </div>
+
+                  {/* Story 11.3 — stats de completitud + warning de calidad */}
+                  <FeedbackQualityStats
+                    feedbacks={feedbacks.map((f) => ({
+                      qualityScore: (f as unknown as { quality_score: number | null }).quality_score ?? null,
+                    }))}
+                    qualityThreshold={project.quality_threshold ?? 0.6}
+                  />
 
                   <FeedbackList projectId={project.id} isBuilder={isOwner} />
                 </div>

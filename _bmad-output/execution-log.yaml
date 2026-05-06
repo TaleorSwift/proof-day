@@ -1,4 +1,15 @@
 workflows:
+  - id: "20260506-homer-DS-11-3-started"
+    timestamp: "2026-05-06T10:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 11.3: Filtro de completitud del feedback + quality warning"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "11-3-filtro-completitud-feedback-quality-warning"
+    branch: "feat/11-3-filtro-completitud-feedback-quality-warning"
+    summary: "Implementación TDD Outside-In: calculateQualityScore, FeedbackQualityStats, feedbackRepo.create con qualityScore, POST /api/feedback, integración en sidebar del owner."
+
   - id: "20260506-homer-CR-11-2-started"
     timestamp: "2026-05-06T23:55:00"
     agent: "Homer (Dev)"
