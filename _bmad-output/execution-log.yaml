@@ -10,6 +10,47 @@ workflows:
     branch: "feat/11-2-pregunta-custom-builder-microcontexto-reviewer"
     summary: "Implementando Story 11.2: campo customQuestion en WizardStepDetails, campo condicional customAnswer en FeedbackFormInline, launchProject y POST /api/feedback actualizados, schemas Zod extendidos. TDD Outside-In: tests primero."
 
+  - id: "20260506-homer-DS-11-2-started"
+    timestamp: "2026-05-06T23:50:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 11.2: Pregunta custom del Builder + microcontexto al Reviewer"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    story: "11-2-pregunta-custom-builder-microcontexto-reviewer"
+    branch: "feat/11-2-pregunta-custom-builder-microcontexto-reviewer"
+    pr: "#95"
+    commit: "3b9e2ce"
+    duration_estimate: "20 minutos"
+    tests_story: 24
+    tests_story_passed: 24
+    tests_total: 1488
+    tests_total_passed: 1488
+    summary: "SUCCESS — Story 11.2 implementada con TDD Outside-In. 24 tests nuevos (10 WizardStepDetails, 9 FeedbackFormInline, 3 launchProject, 2 feedback-route). 1488/1488 suite completa verde. 8/9 ACs cubiertos por tests unitarios (AC-4 cubierto por T3, AC-7 cubierto por T4). PR #95 contra main."
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/stories/11-2-pregunta-custom-builder-microcontexto-reviewer.md"
+      - "tests/component/projects/WizardStepDetails.11-2.test.tsx"
+      - "tests/component/feedback/FeedbackFormInline.11-2.test.tsx"
+      - "tests/unit/projects/launchProject.11-2.test.ts"
+      - "tests/integration/api/feedback-custom-answer.test.ts"
+    artifacts_modified:
+      - "components/projects/ProjectWizard.tsx"
+      - "components/projects/wizard/WizardStepDetails.tsx"
+      - "components/feedback/FeedbackFormInline.tsx"
+      - "components/projects/LaunchIdeaModal.tsx"
+      - "actions/projects/launchProject.ts"
+      - "app/api/feedback/route.ts"
+      - "lib/repositories/feedback.repository.ts"
+      - "lib/validations/feedback.ts"
+      - "lib/validations/projects.ts"
+      - "lib/api/feedback.ts"
+      - "app/(app)/communities/[slug]/projects/[projectSlug]/page.tsx"
+      - "stories/projects/ProjectWizard.stories.tsx"
+      - "stories/feedback/FeedbackFormInline.stories.tsx"
+      - "tests/component/feedback/FeedbackFormInline.test.tsx"
+    errors: []
+    next_recommended: "Homer, CR — code review de PR #95"
+
   - id: "20260506-homer-CR2-11-1-closing"
     timestamp: "2026-05-06T23:00:00"
     agent: "Homer (Dev)"
