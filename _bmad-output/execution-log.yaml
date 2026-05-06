@@ -1,4 +1,14 @@
 workflows:
+  - id: "20260506-homer-CR-11-1-started"
+    timestamp: "2026-05-06T15:00:00"
+    agent: "Homer (Dev)"
+    trigger: "CR CHANGES_REQUESTED — Story 11.1: Resolver HIGH-1/HIGH-2/HIGH-3/HIGH-4/MEDIUM-1"
+    workflow: "dev-story (CR fix)"
+    mode: "REFINE"
+    result: "STARTED"
+    story: "11-1-migraciones-db-feedback-responses-projects-communities"
+    branch: "feat/11-1-migraciones-db-feedback-quality-reciprocidad"
+
   - id: "20260506-homer-DS-11-1-closing"
     timestamp: "2026-05-06T14:00:00"
     agent: "Homer (Dev)"
@@ -3177,3 +3187,45 @@ workflows:
       - "_bmad-output/execution-log.yaml"
     errors: []
     next_recommended: "Merge PR #93 en main — Story 12.1 completada."
+
+  - id: "20260506-homer-CR-11-1-started"
+    timestamp: "2026-05-06T22:31:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #94 Story 11.1: Migraciones DB feedback quality y reciprocidad"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "11-1-migraciones-db-feedback-responses-projects-communities"
+    pr: 94
+    branch: "feat/11-1-migraciones-db-feedback-quality-reciprocidad"
+
+  - id: "20260506-homer-CR-11-1-closing"
+    timestamp: "2026-05-06T22:32:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #94 Story 11.1: Migraciones DB feedback quality y reciprocidad"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "CHANGES_REQUESTED"
+    story: "11-1-migraciones-db-feedback-responses-projects-communities"
+    pr: 94
+    branch: "feat/11-1-migraciones-db-feedback-quality-reciprocidad"
+    verdict: "CHANGES_REQUESTED"
+    issues_found:
+      high: 4
+      medium: 3
+      low: 2
+    issues_critical:
+      - "[HIGH-1] CommunityRow = Community es un alias trivial sin type-safety real (lib/types/communities.ts:24)"
+      - "[HIGH-2] quality_threshold SQL nullable pero TS non-nullable — inconsistencia de contrato (migration 025 vs projects.ts:30,60)"
+      - "[HIGH-3] feedbackFromRow() y communityFromRow() no usados en producción — nuevos campos no llegarán a componentes"
+      - "[HIGH-4] communityFromRow tests no cubren regresión de campos pre-existentes (timestamps, created_by)"
+    issues_medium:
+      - "[MEDIUM-1] Falta ADD COLUMN IF NOT EXISTS en las 3 migraciones SQL"
+      - "[MEDIUM-2] getUserCommunities construye Community manualmente en lugar de usar communityFromRow()"
+      - "[MEDIUM-3] FeedbackRow fields (custom_answer, quality_score) no incluidos en SELECT queries del repository"
+    tests_verified: 1458
+    tests_passed: 1458
+    ts_errors_pre_existing: 3
+    ts_errors_introduced: 0
+    summary: "CHANGES_REQUESTED — 4 HIGH, 3 MEDIUM, 2 LOW. Issues bloqueantes: CommunityRow=Community alias sin valor, quality_threshold nullable-SQL/non-nullable-TS, mappers no adoptados en producción. Suite 1458/1458 verde."
+    next_recommended: "Homer DS — resolver HIGH-1/2/3/4 y MEDIUM-1/2 antes de volver a CR."

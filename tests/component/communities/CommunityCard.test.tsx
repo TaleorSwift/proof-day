@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 /**
  * Tests — CommunityCard
- * Verifica renderizado con imagen y fallback de avatar cuando image_url es null.
+ * Verifica renderizado con imagen y fallback de avatar cuando imageUrl es null.
  */
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
@@ -14,18 +14,18 @@ const base: Community = {
   name: 'Test Community',
   slug: 'test-community',
   description: 'Descripción de prueba',
-  image_url: null,
-  created_by: 'user-1',
-  created_at: '2026-01-01T00:00:00Z',
-  updated_at: '2026-01-01T00:00:00Z',
-  member_count: 3,
+  imageUrl: null,
+  createdBy: 'user-1',
+  createdAt: '2026-01-01T00:00:00Z',
+  updatedAt: '2026-01-01T00:00:00Z',
+  memberCount: 3,
   // Story 11.1 — reciprocidad
-  reciprocity_threshold: 3,
+  reciprocityThreshold: 3,
 }
 
 describe('CommunityCard — imagen', () => {
-  it('muestra la imagen cuando image_url tiene valor', () => {
-    render(<CommunityCard community={{ ...base, image_url: 'https://picsum.photos/seed/test/400/400' }} />)
+  it('muestra la imagen cuando imageUrl tiene valor', () => {
+    render(<CommunityCard community={{ ...base, imageUrl: 'https://picsum.photos/seed/test/400/400' }} />)
     expect(screen.getByAltText('Imagen de Test Community')).toBeInTheDocument()
   })
 
@@ -54,7 +54,7 @@ describe('CommunityCard — contenido', () => {
   })
 
   it('muestra "miembro" en singular con 1 miembro', () => {
-    render(<CommunityCard community={{ ...base, member_count: 1 }} />)
+    render(<CommunityCard community={{ ...base, memberCount: 1 }} />)
     expect(screen.getByText('1 miembro')).toBeInTheDocument()
   })
 

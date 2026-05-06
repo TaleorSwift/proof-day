@@ -3,7 +3,7 @@
 -- y quality score calculado para filtros de completitud (Epic 11)
 
 ALTER TABLE feedbacks
-  ADD COLUMN custom_answer  TEXT,
-  ADD COLUMN quality_score  NUMERIC(4,2);
+  ADD COLUMN IF NOT EXISTS custom_answer  TEXT,
+  ADD COLUMN IF NOT EXISTS quality_score  NUMERIC(4,2);
 
 -- RLS: sin cambios — las nuevas columnas heredan las políticas existentes de feedbacks

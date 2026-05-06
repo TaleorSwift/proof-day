@@ -6,13 +6,13 @@ const makeCommunity = (id: string, name: string, slug: string, memberCount: numb
   name,
   slug,
   description: `Descripción de la comunidad ${name}.`,
-  image_url: `https://picsum.photos/seed/${slug}/200/200`,
-  created_by: 'user-001',
-  created_at: '2026-01-15T10:00:00Z',
-  updated_at: '2026-01-15T10:00:00Z',
-  member_count: memberCount,
+  imageUrl: `https://picsum.photos/seed/${slug}/200/200`,
+  createdBy: 'user-001',
+  createdAt: '2026-01-15T10:00:00Z',
+  updatedAt: '2026-01-15T10:00:00Z',
+  memberCount,
   // Story 11.1 — reciprocidad
-  reciprocity_threshold: 3,
+  reciprocityThreshold: 3,
 })
 
 const meta = {

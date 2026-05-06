@@ -1,4 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
+import { feedbackFromRow } from '@/lib/types/feedback'
+import type { FeedbackRow, Feedback } from '@/lib/types/feedback'
 
 type SupabaseClient = Awaited<ReturnType<typeof createClient>>
 
@@ -38,8 +40,8 @@ export function createFeedbackRepository(supabase: SupabaseClient) {
       communityId: string
       scores: Record<string, number>
       textResponses: Record<string, string>
-    }) {
-      return supabase
+    }): Promise<{ data: Feedback | null; error: unknown }> {
+      const { data: row, error } = await supabase
         .from('feedbacks')
         .insert({
           project_id: data.projectId,
@@ -50,6 +52,10 @@ export function createFeedbackRepository(supabase: SupabaseClient) {
         })
         .select()
         .single()
+
+      if (error || !row) return { data: null, error }
+
+      return { data: feedbackFromRow(row as FeedbackRow), error: null }
     },
 
     async countByReviewerInCommunity(reviewerId: string, communityId: string) {

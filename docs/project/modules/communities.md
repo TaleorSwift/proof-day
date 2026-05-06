@@ -18,7 +18,8 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 - Los admins generan links de invitación de un solo uso desde settings. Cada link solo puede usarse una vez. (story 2.2, PR3)
 - Click "Copiar link" copia la URL al portapapeles y muestra "¡Copiado!" durante 2 segundos. (story 2.2, PR3)
 - Toda mutación va por API Route, nunca por Server Actions. (story 2.1)
-- Cada comunidad tiene un `reciprocity_threshold` (entero, DEFAULT 3) que define cuántos feedbacks debe haber dado un builder antes de poder publicar un nuevo proyecto (gate de reciprocidad). (story 11.1)
+- Cada comunidad tiene un `reciprocityThreshold` (entero, DEFAULT 3) que define cuántos feedbacks debe haber dado un builder antes de poder publicar un nuevo proyecto (gate de reciprocidad). (story 11.1)
+- El tipo `Community` (dominio) usa camelCase; `CommunityRow` (BD) usa snake_case. `communityFromRow()` mapea entre ambos. (story 11.1 CR)
 
 ## Ficheros clave
 - `app/(app)/communities/[slug]/page.tsx`
@@ -33,4 +34,4 @@ Permite a usuarios autenticados crear, listar y acceder a comunidades privadas. 
 - Storybook: `CommunityCard`, `CommunityList`, `EmptyCommunitiesState`, `CommunitySwitcher`, `CommunitiesPage`, `CommunityForm`, `CommunitiesNewPage`, `InvitationSection`, `CommunityHeader`, `CommunityFeedPage`
 
 ## Última actualización
-Story 11.1 — 2026-05-06
+Story 11.1 CR — 2026-05-06

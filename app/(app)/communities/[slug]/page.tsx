@@ -1,5 +1,7 @@
 import { redirect, notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { communityFromRow } from '@/lib/types/communities'
+import type { CommunityRow } from '@/lib/types/communities'
 import { CommunityHeader } from '@/components/communities/CommunityHeader'
 import { CommunityFeedHeader } from '@/components/communities/CommunityFeedHeader'
 import { ProjectFeed } from '@/components/projects/ProjectFeed'
@@ -21,13 +23,13 @@ export default async function CommunityPage({ params }: Props) {
 
   // RLS garantiza que solo miembros pueden leer.
   // Si el usuario no es miembro (o la comunidad no existe), data será null.
-  const { data: community } = await supabase
+  const { data: rawCommunity } = await supabase
     .from('communities')
     .select('id, name, slug, description, image_url, created_by, created_at, updated_at, reciprocity_threshold')
     .eq('slug', slug)
     .single()
 
-  if (!community) {
+  if (!rawCommunity) {
     notFound()
   }
 
@@ -36,24 +38,24 @@ export default async function CommunityPage({ params }: Props) {
     supabase
       .from('community_members')
       .select('*', { count: 'exact', head: true })
-      .eq('community_id', community.id),
+      .eq('community_id', rawCommunity.id),
     supabase
       .from('community_members')
       .select('role')
-      .eq('community_id', community.id)
+      .eq('community_id', rawCommunity.id)
       .eq('user_id', user.id)
       .single(),
     // Server Component lee directamente — RLS filtra: live+inactive para todos, draft solo al builder
     supabase
       .from('projects')
       .select('id, slug, title, image_urls, status, builder_id, created_at, problem, tagline, would_use_count')
-      .eq('community_id', community.id)
+      .eq('community_id', rawCommunity.id)
       .order('created_at', { ascending: false }),
     // Conteo de feedbacks por proyecto — RLS member_read_community_feedbacks lo permite
     supabase
       .from('feedbacks')
       .select('project_id')
-      .eq('community_id', community.id),
+      .eq('community_id', rawCommunity.id),
   ])
 
   // Si no hay membresía → redirect
@@ -62,6 +64,21 @@ export default async function CommunityPage({ params }: Props) {
   }
 
   const isAdmin = membership?.role === 'admin'
+
+  // Mapear el row de Supabase al tipo de dominio Community (camelCase)
+  const communityRow: CommunityRow = {
+    id: rawCommunity.id as string,
+    name: rawCommunity.name as string,
+    slug: rawCommunity.slug as string,
+    description: rawCommunity.description as string | null,
+    image_url: rawCommunity.image_url as string | null,
+    created_by: rawCommunity.created_by as string,
+    created_at: rawCommunity.created_at as string,
+    updated_at: rawCommunity.updated_at as string,
+    member_count: memberCount ?? 0,
+    reciprocity_threshold: (rawCommunity.reciprocity_threshold as number) ?? 3,
+  }
+  const community = communityFromRow(communityRow)
 
   // Batch-fetch de profiles para resolver builderName sin N+1
   // No hay FK PostgREST entre projects y profiles (builder_id → auth.users, no profiles)
@@ -134,10 +151,7 @@ export default async function CommunityPage({ params }: Props) {
           <aside style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
             {/* Metadatos de comunidad — nombre, descripción, miembros */}
             <CommunityHeader
-              community={{
-                ...community,
-                member_count: memberCount ?? 0,
-              }}
+              community={community}
               isAdmin={isAdmin}
             />
             <TopContributors communityId={community.id} />

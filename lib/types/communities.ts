@@ -1,12 +1,11 @@
 export type CommunityRole = 'admin' | 'member'
 
 /**
- * Representa una comunidad con campos en snake_case.
- * El tipo interno usa snake_case para consistencia con el esquema de BD.
- * La API Route GET /api/communities mapea estos campos a camelCase en la respuesta JSON
- * (image_url → imageUrl, created_at → createdAt, member_count → memberCount).
+ * Forma del row tal como lo devuelve Supabase (snake_case) — Story 11.1.
+ * Refleja exactamente las columnas de la tabla communities en BD.
+ * member_count es un campo computado (no columna BD) que se añade tras el conteo.
  */
-export interface Community {
+export interface CommunityRow {
   id: string
   name: string
   slug: string
@@ -15,21 +14,44 @@ export interface Community {
   created_by: string
   created_at: string
   updated_at: string
-  member_count: number  // número de miembros — añadido en story 2.3
-  // Story 11.1 — reciprocidad
+  member_count: number
   reciprocity_threshold: number
 }
 
-/** Forma del row tal como lo devuelve Supabase (snake_case) — Story 11.1 */
-export type CommunityRow = Community
+/**
+ * Tipo de dominio para una comunidad con campos en camelCase — Story 11.1.
+ * Se obtiene siempre a través de communityFromRow() para garantizar el mapeo correcto.
+ */
+export interface Community {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  imageUrl: string | null
+  createdBy: string
+  createdAt: string
+  updatedAt: string
+  memberCount: number
+  reciprocityThreshold: number
+}
 
 /**
- * Mapea un CommunityRow de Supabase a un objeto Community del dominio.
- * Community ya usa snake_case, por lo que el mapper es una copia directa.
- * Incluido para consistencia de patrón con el resto de entidades — Story 11.1.
+ * Mapea un CommunityRow de Supabase al tipo de dominio Community.
+ * Convierte todos los campos snake_case → camelCase — Story 11.1.
  */
 export function communityFromRow(row: CommunityRow): Community {
-  return { ...row }
+  return {
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    description: row.description,
+    imageUrl: row.image_url,
+    createdBy: row.created_by,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    memberCount: row.member_count,
+    reciprocityThreshold: row.reciprocity_threshold,
+  }
 }
 
 export interface CommunityMember {

@@ -199,11 +199,22 @@ describe('POST /api/feedback', () => {
       validateEligibility: vi.fn().mockResolvedValue({ eligible: true }),
     } as never)
 
-    const mockFeedback = { id: 'f1', project_id: PROJECT_ID }
+    // Mock row que devuelve Supabase (snake_case) — feedbackFromRow lo mapea a camelCase
+    const mockFeedbackRow = {
+      id: 'f1',
+      project_id: PROJECT_ID,
+      reviewer_id: MOCK_USER.id,
+      community_id: 'b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a22',
+      scores: { p1: 3, p2: 2, p3: 1 },
+      text_responses: { p4: 'Texto obligatorio con más de diez caracteres' },
+      created_at: '2026-01-01T00:00:00Z',
+      custom_answer: null,
+      quality_score: null,
+    }
     supabaseMock.from.mockReturnValue({
       insert: vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
-          single: vi.fn().mockResolvedValue({ data: mockFeedback, error: null }),
+          single: vi.fn().mockResolvedValue({ data: mockFeedbackRow, error: null }),
         }),
       }),
     })
@@ -218,6 +229,10 @@ describe('POST /api/feedback', () => {
     const body = await res.json()
 
     expect(res.status).toBe(201)
-    expect(body.data).toEqual(mockFeedback)
+    // feedbackFromRow mapea snake_case → camelCase — la respuesta API devuelve camelCase
+    expect(body.data).toMatchObject({
+      id: 'f1',
+      projectId: PROJECT_ID,
+    })
   })
 })

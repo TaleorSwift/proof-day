@@ -44,13 +44,13 @@ function makeCommunity(id: string, slug: string): Community {
     name: `Comunidad ${id}`,
     slug,
     description: null,
-    image_url: null,
-    created_by: 'user-001',
-    created_at: '2026-01-01T00:00:00Z',
-    updated_at: '2026-01-01T00:00:00Z',
-    member_count: 1,
+    imageUrl: null,
+    createdBy: 'user-001',
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
+    memberCount: 1,
     // Story 11.1 — reciprocidad
-    reciprocity_threshold: 3,
+    reciprocityThreshold: 3,
   }
 }
 

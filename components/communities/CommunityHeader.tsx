@@ -14,9 +14,9 @@ export function CommunityHeader({ community, isAdmin }: Props) {
     <div style={{ marginBottom: 'var(--space-6)' }}>
       {/* Fila superior: avatar + nombre + botón config */}
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)' }}>
-        {community.image_url ? (
+        {community.imageUrl ? (
           <Image
-            src={community.image_url}
+            src={community.imageUrl}
             alt={`Imagen de ${community.name}`}
             width={48}
             height={48}
@@ -101,7 +101,7 @@ export function CommunityHeader({ community, isAdmin }: Props) {
           margin: 'var(--space-2) 0 0',
         }}
       >
-        {community.member_count} {community.member_count === 1 ? 'miembro' : 'miembros'}
+        {community.memberCount} {community.memberCount === 1 ? 'miembro' : 'miembros'}
       </p>
     </div>
   )

@@ -18,13 +18,13 @@ const baseCommunity = {
   name: 'Startup Madrid',
   slug: 'startup-madrid',
   description: 'Espacio de validación de ideas para emprendedores.',
-  image_url: null,
-  created_by: 'user-001',
-  created_at: '2026-01-15T10:00:00Z',
-  updated_at: '2026-01-15T10:00:00Z',
-  member_count: 12,
+  imageUrl: null,
+  createdBy: 'user-001',
+  createdAt: '2026-01-15T10:00:00Z',
+  updatedAt: '2026-01-15T10:00:00Z',
+  memberCount: 12,
   // Story 11.1 — reciprocidad
-  reciprocity_threshold: 3,
+  reciprocityThreshold: 3,
 }
 
 // ---------------------------------------------------------------------------
@@ -42,10 +42,10 @@ describe('CommunityHeader — AC-1: nombre y member count visibles', () => {
     expect(screen.getByText('12 miembros')).toBeInTheDocument()
   })
 
-  it('muestra "miembro" en singular cuando member_count es 1', () => {
+  it('muestra "miembro" en singular cuando memberCount es 1', () => {
     render(
       <CommunityHeader
-        community={{ ...baseCommunity, member_count: 1 }}
+        community={{ ...baseCommunity, memberCount: 1 }}
         isAdmin={false}
       />
     )
@@ -95,19 +95,19 @@ describe('CommunityHeader — AC-2: descripción', () => {
 // ---------------------------------------------------------------------------
 
 describe('CommunityHeader — AC-3: avatar', () => {
-  it('muestra la inicial del nombre cuando no hay image_url', () => {
+  it('muestra la inicial del nombre cuando no hay imageUrl', () => {
     render(<CommunityHeader community={baseCommunity} isAdmin={false} />)
     // El div con aria-hidden="true" muestra la inicial
     const initial = screen.getByText('S')
     expect(initial).toBeInTheDocument()
   })
 
-  it('muestra un elemento img cuando hay image_url', () => {
+  it('muestra un elemento img cuando hay imageUrl', () => {
     render(
       <CommunityHeader
         community={{
           ...baseCommunity,
-          image_url: 'https://picsum.photos/seed/sm/200/200',
+          imageUrl: 'https://picsum.photos/seed/sm/200/200',
         }}
         isAdmin={false}
       />
