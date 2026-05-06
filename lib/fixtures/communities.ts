@@ -16,11 +16,13 @@ export const communityAlpha: Community = {
   name: 'Producto Alpha',
   slug: 'producto-alpha',
   description: 'Comunidad de validación del equipo de producto. Ideas en estado temprano, feedback rápido.',
-  image_url: IMG_COMMUNITY_ALPHA,
-  created_by: USER_ALEX,
-  created_at: '2026-01-10T10:00:00Z',
-  updated_at: '2026-01-10T10:00:00Z',
-  member_count: 5,
+  imageUrl: IMG_COMMUNITY_ALPHA,
+  createdBy: USER_ALEX,
+  createdAt: '2026-01-10T10:00:00Z',
+  updatedAt: '2026-01-10T10:00:00Z',
+  memberCount: 5,
+  // Story 11.1 — reciprocidad
+  reciprocityThreshold: 3,
 }
 
 export const communityStartupLab: Community = {
@@ -28,11 +30,13 @@ export const communityStartupLab: Community = {
   name: 'Startup Lab',
   slug: 'startup-lab',
   description: 'Ideas en validación temprana para fundadores en etapa pre-seed.',
-  image_url: IMG_COMMUNITY_STARTUP_LAB,
-  created_by: USER_SARA,
-  created_at: '2026-02-01T09:00:00Z',
-  updated_at: '2026-02-01T09:00:00Z',
-  member_count: 3,
+  imageUrl: IMG_COMMUNITY_STARTUP_LAB,
+  createdBy: USER_SARA,
+  createdAt: '2026-02-01T09:00:00Z',
+  updatedAt: '2026-02-01T09:00:00Z',
+  memberCount: 3,
+  // Story 11.1 — reciprocidad
+  reciprocityThreshold: 5,
 }
 
 /** Comunidad sin proyectos ni actividad. Útil para tests de empty state. */
@@ -41,11 +45,13 @@ export const communityEmpty: Community = {
   name: 'Empty Space',
   slug: 'empty-space',
   description: 'Comunidad recién creada, sin proyectos todavía.',
-  image_url: IMG_COMMUNITY_EMPTY,
-  created_by: USER_ALEX,
-  created_at: '2026-04-01T00:00:00Z',
-  updated_at: '2026-04-01T00:00:00Z',
-  member_count: 1,
+  imageUrl: IMG_COMMUNITY_EMPTY,
+  createdBy: USER_ALEX,
+  createdAt: '2026-04-01T00:00:00Z',
+  updatedAt: '2026-04-01T00:00:00Z',
+  memberCount: 1,
+  // Story 11.1 — reciprocidad
+  reciprocityThreshold: 3,
 }
 
 // ── Community Members ─────────────────────────────────────────────────────────

@@ -13,7 +13,7 @@ import {
 
 // ── Feedbacks — Pulse Check ────────────────────────────────────────────────────
 
-/** scores: 3,3,2 | contributorType: top-reviewer | 4 campos de texto */
+/** scores: 3,3,2 | contributorType: top-reviewer | 4 campos de texto | con custom_answer y quality_score */
 export const fbPulse1: Feedback = {
   id: FB_PULSE_1,
   projectId: PROJECT_PULSE_CHECK,
@@ -27,9 +27,12 @@ export const fbPulse1: Feedback = {
     p4: 'We already do informal check-ins — this would save time and be more honest.',
   },
   createdAt: '2026-03-20T14:00:00Z',
+  // Story 11.1 — feedback quality
+  customAnswer: 'Sí, lo usaría en mi equipo de ingeniería.',
+  qualityScore: 0.88,
 }
 
-/** scores: 3,2,3 | contributorType: insightful | p4 solo */
+/** scores: 3,2,3 | contributorType: insightful | p4 solo | sin respuesta custom */
 export const fbPulse2: Feedback = {
   id: FB_PULSE_2,
   projectId: PROJECT_PULSE_CHECK,
@@ -40,6 +43,9 @@ export const fbPulse2: Feedback = {
     p4: 'I worry people will not be honest even anonymously if the team is small.',
   },
   createdAt: '2026-03-21T09:00:00Z',
+  // Story 11.1 — feedback quality
+  customAnswer: null,
+  qualityScore: 0.55,
 }
 
 /** scores: 2,3,2 | contributorType: changed-thinking | p1+p4 */
@@ -54,11 +60,14 @@ export const fbPulse3: Feedback = {
     p4: 'Would love a comparison mode against existing team health tools.',
   },
   createdAt: '2026-03-21T11:00:00Z',
+  // Story 11.1 — feedback quality
+  customAnswer: null,
+  qualityScore: 0.72,
 }
 
 // ── Feedbacks — DocBridge ─────────────────────────────────────────────────────
 
-/** scores: 3,3,3 | sin contributorType | 4 campos de texto */
+/** scores: 3,3,3 | sin contributorType | 4 campos de texto | con custom_answer */
 export const fbDocBridge1: Feedback = {
   id: FB_DOC_1,
   projectId: PROJECT_DOC_BRIDGE,
@@ -72,6 +81,9 @@ export const fbDocBridge1: Feedback = {
     p4: 'Address privacy concerns and this becomes a must-have for teams over 20 people.',
   },
   createdAt: '2026-03-19T12:00:00Z',
+  // Story 11.1 — feedback quality
+  customAnswer: 'Lo implantaría de inmediato en mi empresa.',
+  qualityScore: 0.95,
 }
 
 // ── Feedbacks — Retro Replay ──────────────────────────────────────────────────
@@ -87,6 +99,9 @@ export const fbRetro1: Feedback = {
     p4: 'Our team already uses Miro + Notion — I am not sure this adds enough value.',
   },
   createdAt: '2026-03-16T14:00:00Z',
+  // Story 11.1 — feedback quality
+  customAnswer: null,
+  qualityScore: 0.30,
 }
 
 /** scores: 2,1,1 | sin contributorType | p3+p4 — combo de puntuación más baja */
@@ -101,11 +116,14 @@ export const fbRetro2: Feedback = {
     p4: 'Clarify what this does that Miro + Notion cannot do better.',
   },
   createdAt: '2026-03-16T16:00:00Z',
+  // Story 11.1 — feedback quality
+  customAnswer: null,
+  qualityScore: 0.40,
 }
 
 // ── Feedbacks — Iterate Labs ─────────────────────────────────────────────────
 
-/** scores: 2,2,2 | top-reviewer | 4 campos — punto medio exacto */
+/** scores: 2,2,2 | top-reviewer | 4 campos — punto medio exacto | con custom_answer */
 export const fbIterate1: Feedback = {
   id: FB_ITERATE_1,
   projectId: PROJECT_LIVE_ITERATE,
@@ -119,6 +137,9 @@ export const fbIterate1: Feedback = {
     p4: 'Solid concept but needs more polish before I would switch from my current tools.',
   },
   createdAt: '2026-03-15T10:00:00Z',
+  // Story 11.1 — feedback quality
+  customAnswer: 'Puede ser útil pero necesita simplificarse mucho.',
+  qualityScore: 0.62,
 }
 
 /** scores: 3,2,2 | sin contributorType | p4 solo */
@@ -132,6 +153,9 @@ export const fbIterate2: Feedback = {
     p4: 'The problem is real but the solution needs more differentiation from existing tools.',
   },
   createdAt: '2026-03-15T14:00:00Z',
+  // Story 11.1 — feedback quality
+  customAnswer: null,
+  qualityScore: 0.50,
 }
 
 /** scores: 2,3,2 | insightful | p2+p4 */
@@ -146,11 +170,14 @@ export const fbIterate3: Feedback = {
     p4: 'Focus on the time-saving angle — that is the strongest hook for this audience.',
   },
   createdAt: '2026-03-16T09:00:00Z',
+  // Story 11.1 — feedback quality
+  customAnswer: null,
+  qualityScore: 0.68,
 }
 
 // ── Feedbacks — Scale Engine ─────────────────────────────────────────────────
 
-/** scores: 3,3,3 | top-reviewer | 4 campos — puntuación perfecta */
+/** scores: 3,3,3 | top-reviewer | 4 campos — puntuación perfecta | con custom_answer */
 export const fbScale1: Feedback = {
   id: FB_SCALE_1,
   projectId: PROJECT_LIVE_SCALE,
@@ -164,6 +191,9 @@ export const fbScale1: Feedback = {
     p4: 'One of the strongest ideas I have reviewed. Ship it.',
   },
   createdAt: '2026-03-08T10:00:00Z',
+  // Story 11.1 — feedback quality
+  customAnswer: 'Lo compraría mañana mismo si lo lanzarais.',
+  qualityScore: 1.0,
 }
 
 /** scores: 3,3,2 | sin contributorType | p4 solo */
@@ -177,9 +207,12 @@ export const fbScale2: Feedback = {
     p4: 'Security and compliance will be the main objection — address that early.',
   },
   createdAt: '2026-03-08T14:00:00Z',
+  // Story 11.1 — feedback quality
+  customAnswer: null,
+  qualityScore: 0.75,
 }
 
-/** scores: 3,2,3 | changed-thinking | p1+p4 */
+/** scores: 3,2,3 | changed-thinking | p1+p4 | con custom_answer */
 export const fbScale3: Feedback = {
   id: FB_SCALE_3,
   projectId: PROJECT_LIVE_SCALE,
@@ -191,6 +224,9 @@ export const fbScale3: Feedback = {
     p4: 'Changed my perspective on how actionable infrastructure data can be.',
   },
   createdAt: '2026-03-09T10:00:00Z',
+  // Story 11.1 — feedback quality
+  customAnswer: 'Cambia la forma de pensar en infraestructura.',
+  qualityScore: 0.82,
 }
 
 // ── FeedbackEntryData — versión enriquecida para componentes ──────────────────

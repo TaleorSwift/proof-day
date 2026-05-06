@@ -32,4 +32,36 @@ export interface Feedback {
   scores: FeedbackScores
   textResponses: FeedbackTextResponses
   createdAt: string
+  // Story 11.1 — feedback quality
+  customAnswer: string | null
+  qualityScore: number | null
+}
+
+/** Forma del row tal como lo devuelve Supabase (snake_case) */
+export interface FeedbackRow {
+  id: string
+  project_id: string
+  reviewer_id: string
+  community_id: string
+  scores: FeedbackScores
+  text_responses: FeedbackTextResponses
+  created_at: string
+  // Story 11.1 — feedback quality
+  custom_answer: string | null
+  quality_score: number | null
+}
+
+export function feedbackFromRow(row: FeedbackRow): Feedback {
+  return {
+    id: row.id,
+    projectId: row.project_id,
+    reviewerId: row.reviewer_id,
+    communityId: row.community_id,
+    scores: row.scores,
+    textResponses: row.text_responses,
+    createdAt: row.created_at,
+    // Story 11.1 — feedback quality
+    customAnswer: row.custom_answer,
+    qualityScore: row.quality_score,
+  }
 }

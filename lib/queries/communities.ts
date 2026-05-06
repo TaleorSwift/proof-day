@@ -1,6 +1,7 @@
 import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
-import { Community } from '@/lib/types/communities'
+import { Community, communityFromRow } from '@/lib/types/communities'
+import type { CommunityRow } from '@/lib/types/communities'
 
 /**
  * Obtiene las comunidades del usuario autenticado con member_count.
@@ -23,6 +24,7 @@ export const getUserCommunities = cache(async (userId: string): Promise<Communit
       created_by,
       created_at,
       updated_at,
+      reciprocity_threshold,
       community_members!inner(user_id)
     `)
     .eq('community_members.user_id', userId)
@@ -53,15 +55,19 @@ export const getUserCommunities = cache(async (userId: string): Promise<Communit
     {},
   )
 
-  return communities.map((c: Record<string, unknown>) => ({
-    id: c.id as string,
-    name: c.name as string,
-    slug: c.slug as string,
-    description: c.description as string,
-    image_url: c.image_url as string | null,
-    created_by: c.created_by as string,
-    created_at: c.created_at as string,
-    updated_at: c.updated_at as string,
-    member_count: memberCounts[c.id as string] ?? 0,
-  }))
+  return communities.map((c: Record<string, unknown>) => {
+    const row: CommunityRow = {
+      id: c.id as string,
+      name: c.name as string,
+      slug: c.slug as string,
+      description: c.description as string | null,
+      image_url: c.image_url as string | null,
+      created_by: c.created_by as string,
+      created_at: c.created_at as string,
+      updated_at: c.updated_at as string,
+      member_count: memberCounts[c.id as string] ?? 0,
+      reciprocity_threshold: (c.reciprocity_threshold as number) ?? 3,
+    }
+    return communityFromRow(row)
+  })
 })

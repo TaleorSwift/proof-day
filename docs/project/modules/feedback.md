@@ -15,6 +15,7 @@ Permite a los miembros de una comunidad dar feedback estructurado a los proyecto
 - `FeedbackFormInline` en la sidebar de la página de detalle permite dar feedback con 2 preguntas (p1, p2) y un textarea. P3 se envía como 2 (valor neutral, no preguntado al usuario). (story 9.7)
 - Cada `FeedbackEntry` muestra pills de scores: "Problema: sí/parcialmente/no" y "Lo usaría: sí/no" cuando `scores` están disponibles. La paleta usa los tokens semáforo: weak/needs/promising. (story 9.7)
 - `FeedbackFormInline` acepta una prop `hypothesis?: string`. Si el proyecto tiene hipótesis, se muestra un banner read-only con estilo "En Juego" (`--color-hypothesis-bg`, `--color-hypothesis-border`, `--radius-xl`) antes del formulario. (story 10.5 — AC-5, AC-6)
+- Cada feedback puede almacenar una `customAnswer` (respuesta a la pregunta personalizada del builder) y un `qualityScore` (NUMERIC 0-1, calculado externamente). Ambos son opcionales y se inicializan a null. (story 11.1)
 
 ## Ficheros clave
 - `app/api/feedback/route.ts` — thin controller: POST (submit) + GET (list para builder)
@@ -25,4 +26,4 @@ Permite a los miembros de una comunidad dar feedback estructurado a los proyecto
 - `components/feedback/FeedbackDialog.tsx` — formulario de feedback completo (Dialog)
 
 ## Última actualización
-Story 10.5 — 2026-04-30
+Story 11.1 — 2026-05-06

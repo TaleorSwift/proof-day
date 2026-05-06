@@ -14,11 +14,13 @@ const makeCommunity = (id: string, name: string, slug: string) => ({
   name,
   slug,
   description: `Espacio de validación de ideas para ${name}.`,
-  image_url: `https://picsum.photos/seed/${slug}/200/200`,
-  created_by: 'user-001',
-  created_at: '2026-01-15T10:00:00Z',
-  updated_at: '2026-01-15T10:00:00Z',
-  member_count: 8,
+  imageUrl: `https://picsum.photos/seed/${slug}/200/200`,
+  createdBy: 'user-001',
+  createdAt: '2026-01-15T10:00:00Z',
+  updatedAt: '2026-01-15T10:00:00Z',
+  memberCount: 8,
+  // Story 11.1 — reciprocidad
+  reciprocityThreshold: 3,
 })
 
 const pageWrapper = (children: React.ReactNode) => (

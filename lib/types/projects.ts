@@ -25,6 +25,9 @@ export interface Project {
   wouldUseCount: number
   // Story 10.1 — template Phase 2
   templateId: string | null
+  // Story 11.1 — feedback quality
+  customQuestion: string | null
+  qualityThreshold: number
 }
 
 /** Forma del row tal como lo devuelve Supabase (snake_case) */
@@ -52,6 +55,9 @@ export interface ProjectRow {
   would_use_count: number
   // Story 10.1 — template Phase 2
   template_id: string | null
+  // Story 11.1 — feedback quality
+  custom_question: string | null
+  quality_threshold: number
 }
 
 export function projectFromRow(row: ProjectRow): Project {
@@ -79,6 +85,9 @@ export function projectFromRow(row: ProjectRow): Project {
     wouldUseCount: row.would_use_count,
     // Story 10.1 — template Phase 2
     templateId: row.template_id,
+    // Story 11.1 — feedback quality
+    customQuestion: row.custom_question,
+    qualityThreshold: row.quality_threshold,
   }
 }
 

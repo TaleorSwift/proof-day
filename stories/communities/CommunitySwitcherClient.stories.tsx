@@ -8,11 +8,13 @@ const makeCommunity = (id: string, name: string, slug: string) => ({
   name,
   slug,
   description: `Descripción de ${name}.`,
-  image_url: null,
-  created_by: 'user-001',
-  created_at: '2026-01-15T10:00:00Z',
-  updated_at: '2026-01-15T10:00:00Z',
-  member_count: 5,
+  imageUrl: null,
+  createdBy: 'user-001',
+  createdAt: '2026-01-15T10:00:00Z',
+  updatedAt: '2026-01-15T10:00:00Z',
+  memberCount: 5,
+  // Story 11.1 — reciprocidad
+  reciprocityThreshold: 3,
 })
 
 const comunidades = [

@@ -1,6 +1,6 @@
 # Módulo: Proyectos
 
-**Última actualización:** Story 10.4 — Preview del proyecto antes de publicar (2026-04-30)
+**Última actualización:** Story 11.1 — Migraciones DB feedback quality y reciprocidad (2026-05-06)
 
 ---
 
@@ -265,3 +265,12 @@ RLS: SELECT para `authenticated` (datos de config global, sin restricción de co
 **5 tipos seeded** (migration 023): `feature`, `internal_process`, `physical_product`, `saas`, `service`. (story 10.1)
 
 **API:** `GET /api/templates` retorna `{ data: ProjectTemplate[] }` ordenados por name. Requiere autenticación. (story 10.1)
+
+### Extensión feedback quality (Story 11.1)
+
+**Nuevas columnas en `projects`:**
+- `custom_question text null` — pregunta adicional del builder que aparece en el formulario de feedback. Opcional. (story 11.1)
+- `quality_threshold numeric(4,2) null DEFAULT 0.6` — puntuación mínima para considerar un feedback "completo" en los filtros de completitud (Epic 11). Retrocompatible: todos los proyectos existentes reciben el DEFAULT. (story 11.1)
+
+- Los builders podrán configurar `custom_question` desde Epic 11 (story 11.2). (story 11.1)
+- El `quality_threshold` es utilizado por el filtro de completitud (story 11.3). (story 11.1)

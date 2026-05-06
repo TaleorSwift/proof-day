@@ -27,9 +27,9 @@ export function CommunityCard({ community }: Props) {
       >
         {/* Imagen o avatar con inicial */}
         <div style={{ marginBottom: 'var(--space-4)' }}>
-          {community.image_url ? (
+          {community.imageUrl ? (
             <Image
-              src={community.image_url}
+              src={community.imageUrl}
               alt={`Imagen de ${community.name}`}
               width={48}
               height={48}
@@ -98,7 +98,7 @@ export function CommunityCard({ community }: Props) {
             color: 'var(--color-text-muted)',
           }}
         >
-          {community.member_count} {community.member_count === 1 ? 'miembro' : 'miembros'}
+          {community.memberCount} {community.memberCount === 1 ? 'miembro' : 'miembros'}
         </p>
       </div>
     </Link>

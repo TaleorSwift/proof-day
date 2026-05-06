@@ -126,29 +126,29 @@ describe('getUserCommunities', () => {
       name: 'Startup Madrid',
       slug: 'startup-madrid',
       description: 'Desc',
-      image_url: null,
-      created_by: USER_ID,
+      imageUrl: null,
+      createdBy: USER_ID,
     })
   })
 
-  it('calcula correctamente el member_count por comunidad', async () => {
+  it('calcula correctamente el memberCount por comunidad', async () => {
     mockFromChain(MOCK_COMMUNITIES_RAW, MOCK_MEMBER_DATA)
 
     const result = await getUserCommunities(USER_ID)
 
     const c1 = result.find((c) => c.id === 'c1')
     const c2 = result.find((c) => c.id === 'c2')
-    expect(c1?.member_count).toBe(2)
-    expect(c2?.member_count).toBe(1)
+    expect(c1?.memberCount).toBe(2)
+    expect(c2?.memberCount).toBe(1)
   })
 
-  it('asigna member_count 0 cuando no hay miembros registrados', async () => {
+  it('asigna memberCount 0 cuando no hay miembros registrados', async () => {
     mockFromChain(MOCK_COMMUNITIES_RAW, [])
 
     const result = await getUserCommunities(USER_ID)
 
-    expect(result[0].member_count).toBe(0)
-    expect(result[1].member_count).toBe(0)
+    expect(result[0].memberCount).toBe(0)
+    expect(result[1].memberCount).toBe(0)
   })
 
   it('llama a from("communities") con los parámetros correctos', async () => {

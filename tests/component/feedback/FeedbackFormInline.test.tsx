@@ -34,9 +34,12 @@ describe('FeedbackFormInline — estado inicial', () => {
       projectId: 'proj-uuid',
       reviewerId: 'user-1',
       communityId: 'comm-uuid',
-      scores: { p1: 3, p2: 3, p3: 2 },
+      scores: { p1: 3 as const, p2: 3 as const, p3: 2 as const },
       textResponses: { p4: 'Texto' },
       createdAt: '2026-04-11T00:00:00Z',
+      // Story 11.1 — feedback quality
+      customAnswer: null,
+      qualityScore: null,
     })
   })
 
@@ -74,9 +77,12 @@ describe('FeedbackFormInline — validación de habilitación', () => {
       projectId: 'proj-uuid',
       reviewerId: 'user-1',
       communityId: 'comm-uuid',
-      scores: { p1: 3, p2: 3, p3: 2 },
+      scores: { p1: 3 as const, p2: 3 as const, p3: 2 as const },
       textResponses: { p4: 'Texto' },
       createdAt: '2026-04-11T00:00:00Z',
+      // Story 11.1 — feedback quality
+      customAnswer: null,
+      qualityScore: null,
     })
   })
 
@@ -113,9 +119,12 @@ describe('FeedbackFormInline — envío exitoso', () => {
       projectId: 'proj-uuid',
       reviewerId: 'user-1',
       communityId: 'comm-uuid',
-      scores: { p1: 3, p2: 3, p3: 2 },
+      scores: { p1: 3 as const, p2: 3 as const, p3: 2 as const },
       textResponses: { p4: 'Texto' },
       createdAt: '2026-04-11T00:00:00Z',
+      // Story 11.1 — feedback quality
+      customAnswer: null,
+      qualityScore: null,
     })
   })
 
@@ -177,9 +186,12 @@ describe('FeedbackFormInline — estado de carga', () => {
         projectId: 'proj-uuid',
         reviewerId: 'user-1',
         communityId: 'comm-uuid',
-        scores: { p1: 3, p2: 3, p3: 2 },
+        scores: { p1: 3 as const, p2: 3 as const, p3: 2 as const },
         textResponses: { p4: 'Texto' },
         createdAt: '2026-04-11T00:00:00Z',
+        // Story 11.1 — feedback quality
+        customAnswer: null,
+        qualityScore: null,
       }), 500))
     )
     render(<FeedbackFormInline {...DEFAULT_PROPS} />)
