@@ -45,6 +45,9 @@ const defaultProject: ProjectRow = {
   tagline: 'Pulso semanal en 60 segundos',
   would_use_count: 0,
   template_id: null,
+  // Story 11.1 — feedback quality
+  custom_question: null,
+  quality_threshold: 0.6,
 }
 
 // ── Stories ────────────────────────────────────────────────────────────────────

@@ -16,6 +16,20 @@ export interface Community {
   created_at: string
   updated_at: string
   member_count: number  // número de miembros — añadido en story 2.3
+  // Story 11.1 — reciprocidad
+  reciprocity_threshold: number
+}
+
+/** Forma del row tal como lo devuelve Supabase (snake_case) — Story 11.1 */
+export type CommunityRow = Community
+
+/**
+ * Mapea un CommunityRow de Supabase a un objeto Community del dominio.
+ * Community ya usa snake_case, por lo que el mapper es una copia directa.
+ * Incluido para consistencia de patrón con el resto de entidades — Story 11.1.
+ */
+export function communityFromRow(row: CommunityRow): Community {
+  return { ...row }
 }
 
 export interface CommunityMember {

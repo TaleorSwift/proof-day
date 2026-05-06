@@ -1,4 +1,15 @@
 workflows:
+  - id: "20260506-homer-DS-11-1-started"
+    timestamp: "2026-05-06T13:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 11.1: Migraciones DB feedback quality y reciprocidad (feedbacks, projects, communities)"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "11-1-migraciones-db-feedback-responses-projects-communities"
+    branch: "feat/11-1-migraciones-db-feedback-quality-reciprocidad"
+    summary: "Generando story file, 3 migraciones SQL (024-026), tipos TS (feedback.ts, projects.ts, communities.ts), fixtures y tests TDD Outside-In."
+
   - id: "20260506-homer-CR-12-1-closing"
     timestamp: "2026-05-06T12:30:00"
     agent: "Homer (Dev)"

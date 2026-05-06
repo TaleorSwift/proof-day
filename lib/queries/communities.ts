@@ -23,6 +23,7 @@ export const getUserCommunities = cache(async (userId: string): Promise<Communit
       created_by,
       created_at,
       updated_at,
+      reciprocity_threshold,
       community_members!inner(user_id)
     `)
     .eq('community_members.user_id', userId)
@@ -63,5 +64,7 @@ export const getUserCommunities = cache(async (userId: string): Promise<Communit
     created_at: c.created_at as string,
     updated_at: c.updated_at as string,
     member_count: memberCounts[c.id as string] ?? 0,
+    // Story 11.1 — reciprocidad
+    reciprocity_threshold: (c.reciprocity_threshold as number) ?? 3,
   }))
 })

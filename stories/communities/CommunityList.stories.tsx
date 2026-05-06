@@ -11,6 +11,8 @@ const makeCommunity = (id: string, name: string, slug: string, memberCount: numb
   created_at: '2026-01-15T10:00:00Z',
   updated_at: '2026-01-15T10:00:00Z',
   member_count: memberCount,
+  // Story 11.1 — reciprocidad
+  reciprocity_threshold: 3,
 })
 
 const meta = {

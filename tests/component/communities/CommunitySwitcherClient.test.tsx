@@ -49,6 +49,8 @@ function makeCommunity(id: string, slug: string): Community {
     created_at: '2026-01-01T00:00:00Z',
     updated_at: '2026-01-01T00:00:00Z',
     member_count: 1,
+    // Story 11.1 — reciprocidad
+    reciprocity_threshold: 3,
   }
 }
 

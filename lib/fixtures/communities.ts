@@ -21,6 +21,8 @@ export const communityAlpha: Community = {
   created_at: '2026-01-10T10:00:00Z',
   updated_at: '2026-01-10T10:00:00Z',
   member_count: 5,
+  // Story 11.1 — reciprocidad
+  reciprocity_threshold: 3,
 }
 
 export const communityStartupLab: Community = {
@@ -33,6 +35,8 @@ export const communityStartupLab: Community = {
   created_at: '2026-02-01T09:00:00Z',
   updated_at: '2026-02-01T09:00:00Z',
   member_count: 3,
+  // Story 11.1 — reciprocidad
+  reciprocity_threshold: 5,
 }
 
 /** Comunidad sin proyectos ni actividad. Útil para tests de empty state. */
@@ -46,6 +50,8 @@ export const communityEmpty: Community = {
   created_at: '2026-04-01T00:00:00Z',
   updated_at: '2026-04-01T00:00:00Z',
   member_count: 1,
+  // Story 11.1 — reciprocidad
+  reciprocity_threshold: 3,
 }
 
 // ── Community Members ─────────────────────────────────────────────────────────

@@ -37,6 +37,9 @@ const pulseCheckRow: ProjectRow = {
   tagline: 'Anonymous weekly mood tracking for distributed teams',
   would_use_count: 2,
   template_id: null,
+  // Story 11.1 — feedback quality
+  custom_question: '¿Lo usarías para tu equipo distribuido?',
+  quality_threshold: 0.6,
 }
 
 const docBridgeRow: ProjectRow = {
@@ -60,6 +63,9 @@ const docBridgeRow: ProjectRow = {
   tagline: 'Auto-generate onboarding docs from Slack conversations',
   would_use_count: 1,
   template_id: null,
+  // Story 11.1 — feedback quality
+  custom_question: '¿Cuánto tiempo te ahorra al hacer onboarding?',
+  quality_threshold: 0.6,
 }
 
 const carbonLedgerRow: ProjectRow = {
@@ -83,6 +89,9 @@ const carbonLedgerRow: ProjectRow = {
   tagline: "Track your team's carbon footprint from cloud infrastructure",
   would_use_count: 0,
   template_id: null,
+  // Story 11.1 — feedback quality
+  custom_question: null,
+  quality_threshold: 0.6,
 }
 
 const retroReplayRow: ProjectRow = {
@@ -106,6 +115,9 @@ const retroReplayRow: ProjectRow = {
   tagline: 'AI-powered summaries of sprint retrospectives with action tracking',
   would_use_count: 2,
   template_id: null,
+  // Story 11.1 — feedback quality
+  custom_question: null,
+  quality_threshold: 0.6,
 }
 
 const draftNewRow: ProjectRow = {
@@ -129,6 +141,9 @@ const draftNewRow: ProjectRow = {
   tagline: null,
   would_use_count: 0,
   template_id: null,
+  // Story 11.1 — feedback quality
+  custom_question: null,
+  quality_threshold: 0.6,
 }
 
 const liveIterateRow: ProjectRow = {
@@ -152,6 +167,9 @@ const liveIterateRow: ProjectRow = {
   tagline: 'Rapid prototype testing for indie hackers',
   would_use_count: 4,
   template_id: null,
+  // Story 11.1 — feedback quality
+  custom_question: '¿Cambiaría tu flujo de validación de features?',
+  quality_threshold: 0.6,
 }
 
 const liveScaleRow: ProjectRow = {
@@ -175,6 +193,9 @@ const liveScaleRow: ProjectRow = {
   tagline: 'Auto-scaling infrastructure optimizer',
   would_use_count: 8,
   template_id: null,
+  // Story 11.1 — feedback quality
+  custom_question: '¿Tu equipo adoptaría esto en las próximas 2 semanas?',
+  quality_threshold: 0.7,
 }
 
 const inactiveIterateRow: ProjectRow = {
@@ -198,6 +219,9 @@ const inactiveIterateRow: ProjectRow = {
   tagline: 'Track strategic pivots across product teams',
   would_use_count: 1,
   template_id: null,
+  // Story 11.1 — feedback quality
+  custom_question: null,
+  quality_threshold: 0.6,
 }
 
 const inactiveScaleRow: ProjectRow = {
@@ -221,6 +245,9 @@ const inactiveScaleRow: ProjectRow = {
   tagline: 'Growth metrics dashboard for startups',
   would_use_count: 3,
   template_id: null,
+  // Story 11.1 — feedback quality
+  custom_question: null,
+  quality_threshold: 0.6,
 }
 
 // ── Projects (camelCase — forma interna de la app) ────────────────────────────

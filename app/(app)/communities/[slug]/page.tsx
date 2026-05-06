@@ -23,7 +23,7 @@ export default async function CommunityPage({ params }: Props) {
   // Si el usuario no es miembro (o la comunidad no existe), data será null.
   const { data: community } = await supabase
     .from('communities')
-    .select('id, name, slug, description, image_url, created_by, created_at, updated_at')
+    .select('id, name, slug, description, image_url, created_by, created_at, updated_at, reciprocity_threshold')
     .eq('slug', slug)
     .single()
 

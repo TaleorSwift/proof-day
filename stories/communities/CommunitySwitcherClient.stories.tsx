@@ -13,6 +13,8 @@ const makeCommunity = (id: string, name: string, slug: string) => ({
   created_at: '2026-01-15T10:00:00Z',
   updated_at: '2026-01-15T10:00:00Z',
   member_count: 5,
+  // Story 11.1 — reciprocidad
+  reciprocity_threshold: 3,
 })
 
 const comunidades = [
