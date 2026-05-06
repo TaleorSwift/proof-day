@@ -11,6 +11,43 @@ workflows:
     pr: "#95"
     summary: "Code review adversarial Story 11.2. Revisando: ACs 1-9, ficheros modificados vs declarados, calidad tests, contratos de tipos, queries SQL en page.tsx."
 
+  - id: "20260506-homer-CR-11-2-closing"
+    timestamp: "2026-05-06T00:10:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 11.2: Pregunta custom del Builder + microcontexto al Reviewer"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    verdict: "APPROVED"
+    story: "11-2-pregunta-custom-builder-microcontexto-reviewer"
+    branch: "feat/11-2-pregunta-custom-builder-microcontexto-reviewer"
+    pr: "#95"
+    commit_fix: "8ae4b77"
+    issues_found:
+      high: 1
+      medium: 2
+      low: 2
+    issues_fixed:
+      - "[HIGH-1] custom_question ausente en SELECT de page.tsx — AC-5 nunca funcionaba en producción"
+      - "[MEDIUM-1] Test T4.1 ahora verifica contrato con feedbackRepo.create (no solo output HTTP)"
+      - "[MEDIUM-2] SubmitFeedbackPayload simplificado a type alias — eliminada redeclaración redundante de customAnswer"
+    issues_pending:
+      - "[LOW-1] Story Storybook ConPreguntaCustom no muestra paso 3 del wizard — limitación de navegación"
+      - "[LOW-2] var(--color-weak-text) reutilizado para borde de textarea en error y texto del contador"
+    acs_status:
+      AC-1: IMPLEMENTED
+      AC-2: IMPLEMENTED
+      AC-3: IMPLEMENTED
+      AC-4: IMPLEMENTED
+      AC-5: "IMPLEMENTED — fixed (custom_question ahora en SELECT)"
+      AC-6: IMPLEMENTED
+      AC-7: IMPLEMENTED
+      AC-8: IMPLEMENTED
+      AC-9: IMPLEMENTED
+    tests_verified: 36
+    tests_passed: 36
+    summary: "CR APPROVED — 1 HIGH fix crítico (custom_question faltaba en SELECT de page.tsx → AC-5 nunca funcionaba en producción), 2 MEDIUM fixes (test contrato repo + type simplification). 36/36 tests en verde post-fixes. Story → done."
+
   - id: "20260506-homer-DS-11-2-started"
     timestamp: "2026-05-06T23:30:00"
     agent: "Homer (Dev)"

@@ -1,6 +1,6 @@
 # Story 11.2: Pregunta custom del Builder + microcontexto al Reviewer
 
-Status: review
+Status: done
 
 ## Metadata
 
