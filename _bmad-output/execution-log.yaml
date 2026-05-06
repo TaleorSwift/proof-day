@@ -3412,3 +3412,48 @@ workflows:
     ts_errors_introduced: 0
     summary: "CHANGES_REQUESTED — 4 HIGH, 3 MEDIUM, 2 LOW. Issues bloqueantes: CommunityRow=Community alias sin valor, quality_threshold nullable-SQL/non-nullable-TS, mappers no adoptados en producción. Suite 1458/1458 verde."
     next_recommended: "Homer DS — resolver HIGH-1/2/3/4 y MEDIUM-1/2 antes de volver a CR."
+
+  - id: "20260506-edna-QA-11-2-started"
+    timestamp: "2026-05-06T23:31:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 11.2: Pregunta custom del Builder + microcontexto al Reviewer"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "11-2-pregunta-custom-builder-microcontexto-reviewer"
+    branch: "feat/11-2-pregunta-custom-builder-microcontexto-reviewer"
+    pr: "#95"
+    summary: "VERIFY mode — 24 tests específicos de story + suite completa 1488 tests. Validando ACs 1-9."
+
+  - id: "20260506-edna-QA-11-2-closing"
+    timestamp: "2026-05-06T23:33:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 11.2: Pregunta custom del Builder + microcontexto al Reviewer"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    verdict: "PASS"
+    story: "11-2-pregunta-custom-builder-microcontexto-reviewer"
+    branch: "feat/11-2-pregunta-custom-builder-microcontexto-reviewer"
+    pr: "#95"
+    tests_story: 24
+    tests_passed_story: 24
+    tests_suite_total: 1488
+    tests_suite_passed: 1488
+    regressions: 0
+    acs_validated:
+      - "AC-1: PASS — campo wizard-field-custom-question, label, placeholder, contador 0/200"
+      - "AC-2: PASS — borde rojo y color error cuando length > 200, Zod rechaza en schema"
+      - "AC-3: PASS — customQuestion en WizardFormData + INITIAL_DATA, persistencia via props"
+      - "AC-4: PASS — launchProject insert custom_question o null si vacío"
+      - "AC-5: PASS — bloque condicional con label, itálica, textarea feedback-custom-answer"
+      - "AC-6: PASS — hasCustomQuestion excluye undefined y string vacío"
+      - "AC-7: PASS — feedback.repository insert custom_answer, route extrae del schema"
+      - "AC-8: PASS — isValid no depende de customAnswer, schema nullable optional"
+      - "AC-9: PASS — 24/24 nuevos + 1488/1488 suite sin regresiones"
+    artifacts:
+      - "tests/component/projects/WizardStepDetails.11-2.test.tsx"
+      - "tests/component/feedback/FeedbackFormInline.11-2.test.tsx"
+      - "tests/unit/projects/launchProject.11-2.test.ts"
+      - "tests/integration/api/feedback-custom-answer.test.ts"
+    summary: "QA PASS — Story 11.2 validada al 100%. Todos los ACs cubiertos, 24 tests nuevos + suite completa 1488/1488 sin regresiones. Implementación limpia con design tokens, SOLID, sin deuda técnica."
