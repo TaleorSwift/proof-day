@@ -1,4 +1,44 @@
 workflows:
+  - id: "20260506-homer-DS-12-1-closing"
+    timestamp: "2026-05-06T11:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 12.1: Migraciones DB ai_summaries, notifications, notification_preferences, ai_cost_tracking"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    story: "12-1-migraciones-db-ai-summaries-notifications-cost-tracking"
+    pr: 93
+    branch: "feat/12-1-migraciones-db-ai"
+    commit: "abfe6e6"
+    tests_story: 33
+    tests_total: 1440
+    tests_failed: 0
+    summary: "SUCCESS — 33 tests nuevos (aiTypes). Suite completa 1440/1440. Todos los ACs (1-7) implementados. TypeScript 0 errores nuevos. ESLint OK. PR #93 abierto."
+    artifacts_created:
+      - "supabase/migrations/027_create_ai_summaries.sql"
+      - "supabase/migrations/028_create_notifications.sql"
+      - "supabase/migrations/029_create_notification_preferences.sql"
+      - "supabase/migrations/030_create_ai_cost_tracking.sql"
+      - "supabase/migrations/031_rls_ai_tables.sql"
+      - "lib/types/ai.ts"
+      - "tests/unit/ai/aiTypes.test.ts"
+      - "docs/project/modules/ai-summaries.md"
+      - "_bmad-output/implementation-artifacts/stories/12-1-migraciones-db-ai-summaries-notifications-cost-tracking.md"
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "CR — Story 12.1: Code review del PR #93"
+
+  - id: "20260506-homer-DS-12-1-started"
+    timestamp: "2026-05-06T10:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 12.1: Migraciones DB ai_summaries, notifications, notification_preferences, ai_cost_tracking"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "12-1-migraciones-db-ai-summaries-notifications-cost-tracking"
+    summary: "Implementando Story 12.1 — 5 migraciones SQL (027-031), tipos TS en lib/types/ai.ts, tests TDD Outside-In para mappers y schema"
+
   - id: "20260430-homer-DS-10-4-closing"
     timestamp: "2026-04-30T14:00:00"
     agent: "Homer (Dev)"
