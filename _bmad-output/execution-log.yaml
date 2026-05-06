@@ -1,4 +1,14 @@
 workflows:
+  - id: "20260506-homer-DS-12-1-started"
+    timestamp: "2026-05-06T10:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 12.1: Migraciones DB ai_summaries, notifications, notification_preferences, ai_cost_tracking"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "12-1-migraciones-db-ai-summaries-notifications-cost-tracking"
+    summary: "Implementando Story 12.1 — 5 migraciones SQL (027-031), tipos TS en lib/types/ai.ts, tests TDD Outside-In para mappers y schema"
+
   - id: "20260430-homer-DS-10-4-closing"
     timestamp: "2026-04-30T14:00:00"
     agent: "Homer (Dev)"
