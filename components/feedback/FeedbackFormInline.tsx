@@ -13,6 +13,8 @@ export interface FeedbackFormInlineProps {
   communityId: string
   // Story 10.5 — hipótesis del proyecto como contexto para el reviewer (AC-5, AC-6)
   hypothesis?: string
+  // Story 11.2 — pregunta custom del Builder (AC-5, AC-6)
+  customQuestion?: string
 }
 
 // ---------------------------------------------------------------------------
@@ -67,12 +69,15 @@ function ScoreSelector({ options, selected, onSelect }: ScoreSelectorProps) {
 // FeedbackFormInline
 // ---------------------------------------------------------------------------
 
-export function FeedbackFormInline({ projectId, communityId, hypothesis }: FeedbackFormInlineProps) {
+export function FeedbackFormInline({ projectId, communityId, hypothesis, customQuestion }: FeedbackFormInlineProps) {
   const [p1Score, setP1Score] = useState<FeedbackScore | undefined>(undefined)
   const [p2Score, setP2Score] = useState<FeedbackScore | undefined>(undefined)
   const [improvement, setImprovement] = useState('')
+  const [customAnswer, setCustomAnswer] = useState('')
   const [formState, setFormState] = useState<FormState>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+
+  const hasCustomQuestion = Boolean(customQuestion && customQuestion.trim().length > 0)
 
   const isValid =
     p1Score !== undefined &&
@@ -95,6 +100,10 @@ export function FeedbackFormInline({ projectId, communityId, hypothesis }: Feedb
         textResponses: {
           p4: improvement,
         },
+        // Story 11.2 — respuesta custom opcional
+        customAnswer: hasCustomQuestion && customAnswer.trim().length > 0
+          ? customAnswer
+          : null,
       })
       setFormState('success')
     } catch (err) {
@@ -263,6 +272,63 @@ export function FeedbackFormInline({ projectId, communityId, hypothesis }: Feedb
           }}
         />
       </div>
+
+      {/* Story 11.2 — AC-5, AC-6: Bloque de pregunta custom del Builder — visible solo si hay customQuestion */}
+      {hasCustomQuestion && (
+        <div
+          style={{
+            backgroundColor: 'var(--color-hypothesis-bg)',
+            border: '1px solid var(--color-hypothesis-border)',
+            borderRadius: 'var(--radius-xl)',
+            padding: 'var(--space-3)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-2)',
+          }}
+        >
+          <span
+            style={{
+              fontSize: 'var(--text-xs)',
+              fontWeight: 'var(--font-medium)',
+              color: 'var(--color-text-secondary)',
+            }}
+          >
+            Pregunta del Builder:
+          </span>
+          <p
+            data-testid="feedback-custom-question-text"
+            style={{
+              fontSize: 'var(--text-sm)',
+              color: 'var(--color-text-primary)',
+              margin: 0,
+              lineHeight: 'var(--leading-base)',
+              fontStyle: 'italic',
+            }}
+          >
+            {customQuestion}
+          </p>
+          <textarea
+            data-testid="feedback-custom-answer"
+            value={customAnswer}
+            onChange={(e) => setCustomAnswer(e.target.value)}
+            placeholder="Tu respuesta..."
+            rows={2}
+            style={{
+              width: '100%',
+              padding: 'var(--space-2) var(--space-3)',
+              fontSize: 'var(--text-sm)',
+              color: 'var(--color-text-primary)',
+              backgroundColor: 'var(--color-background)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-lg)',
+              resize: 'vertical',
+              fontFamily: 'inherit',
+              lineHeight: 'var(--leading-base)',
+              boxSizing: 'border-box',
+            }}
+          />
+        </div>
+      )}
 
       {/* Mensaje de error */}
       {formState === 'error' && errorMessage && (

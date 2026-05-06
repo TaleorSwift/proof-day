@@ -16,6 +16,8 @@ export const submitFeedbackSchema = z.object({
     p3: z.string().max(2000).optional(),
     p4: z.string().min(10, 'Escribe al menos 10 caracteres en tu respuesta').max(2000),
   }),
+  // Story 11.2 — respuesta custom opcional del Reviewer
+  customAnswer: z.string().max(2000).nullable().optional(),
 })
 
 export type SubmitFeedbackInput = z.infer<typeof submitFeedbackSchema>

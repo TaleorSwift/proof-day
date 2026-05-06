@@ -1,4 +1,105 @@
 workflows:
+  - id: "20260506-homer-CR-11-2-started"
+    timestamp: "2026-05-06T23:55:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 11.2: Pregunta custom del Builder + microcontexto al Reviewer"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "11-2-pregunta-custom-builder-microcontexto-reviewer"
+    branch: "feat/11-2-pregunta-custom-builder-microcontexto-reviewer"
+    pr: "#95"
+    summary: "Code review adversarial Story 11.2. Revisando: ACs 1-9, ficheros modificados vs declarados, calidad tests, contratos de tipos, queries SQL en page.tsx."
+
+  - id: "20260506-homer-CR-11-2-closing"
+    timestamp: "2026-05-06T00:10:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 11.2: Pregunta custom del Builder + microcontexto al Reviewer"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    verdict: "APPROVED"
+    story: "11-2-pregunta-custom-builder-microcontexto-reviewer"
+    branch: "feat/11-2-pregunta-custom-builder-microcontexto-reviewer"
+    pr: "#95"
+    commit_fix: "8ae4b77"
+    issues_found:
+      high: 1
+      medium: 2
+      low: 2
+    issues_fixed:
+      - "[HIGH-1] custom_question ausente en SELECT de page.tsx — AC-5 nunca funcionaba en producción"
+      - "[MEDIUM-1] Test T4.1 ahora verifica contrato con feedbackRepo.create (no solo output HTTP)"
+      - "[MEDIUM-2] SubmitFeedbackPayload simplificado a type alias — eliminada redeclaración redundante de customAnswer"
+    issues_pending:
+      - "[LOW-1] Story Storybook ConPreguntaCustom no muestra paso 3 del wizard — limitación de navegación"
+      - "[LOW-2] var(--color-weak-text) reutilizado para borde de textarea en error y texto del contador"
+    acs_status:
+      AC-1: IMPLEMENTED
+      AC-2: IMPLEMENTED
+      AC-3: IMPLEMENTED
+      AC-4: IMPLEMENTED
+      AC-5: "IMPLEMENTED — fixed (custom_question ahora en SELECT)"
+      AC-6: IMPLEMENTED
+      AC-7: IMPLEMENTED
+      AC-8: IMPLEMENTED
+      AC-9: IMPLEMENTED
+    tests_verified: 36
+    tests_passed: 36
+    summary: "CR APPROVED — 1 HIGH fix crítico (custom_question faltaba en SELECT de page.tsx → AC-5 nunca funcionaba en producción), 2 MEDIUM fixes (test contrato repo + type simplification). 36/36 tests en verde post-fixes. Story → done."
+
+  - id: "20260506-homer-DS-11-2-started"
+    timestamp: "2026-05-06T23:30:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 11.2: Pregunta custom del Builder + microcontexto al Reviewer"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "11-2-pregunta-custom-builder-microcontexto-reviewer"
+    branch: "feat/11-2-pregunta-custom-builder-microcontexto-reviewer"
+    summary: "Implementando Story 11.2: campo customQuestion en WizardStepDetails, campo condicional customAnswer en FeedbackFormInline, launchProject y POST /api/feedback actualizados, schemas Zod extendidos. TDD Outside-In: tests primero."
+
+  - id: "20260506-homer-DS-11-2-started"
+    timestamp: "2026-05-06T23:50:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 11.2: Pregunta custom del Builder + microcontexto al Reviewer"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    story: "11-2-pregunta-custom-builder-microcontexto-reviewer"
+    branch: "feat/11-2-pregunta-custom-builder-microcontexto-reviewer"
+    pr: "#95"
+    commit: "3b9e2ce"
+    duration_estimate: "20 minutos"
+    tests_story: 24
+    tests_story_passed: 24
+    tests_total: 1488
+    tests_total_passed: 1488
+    summary: "SUCCESS — Story 11.2 implementada con TDD Outside-In. 24 tests nuevos (10 WizardStepDetails, 9 FeedbackFormInline, 3 launchProject, 2 feedback-route). 1488/1488 suite completa verde. 8/9 ACs cubiertos por tests unitarios (AC-4 cubierto por T3, AC-7 cubierto por T4). PR #95 contra main."
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/stories/11-2-pregunta-custom-builder-microcontexto-reviewer.md"
+      - "tests/component/projects/WizardStepDetails.11-2.test.tsx"
+      - "tests/component/feedback/FeedbackFormInline.11-2.test.tsx"
+      - "tests/unit/projects/launchProject.11-2.test.ts"
+      - "tests/integration/api/feedback-custom-answer.test.ts"
+    artifacts_modified:
+      - "components/projects/ProjectWizard.tsx"
+      - "components/projects/wizard/WizardStepDetails.tsx"
+      - "components/feedback/FeedbackFormInline.tsx"
+      - "components/projects/LaunchIdeaModal.tsx"
+      - "actions/projects/launchProject.ts"
+      - "app/api/feedback/route.ts"
+      - "lib/repositories/feedback.repository.ts"
+      - "lib/validations/feedback.ts"
+      - "lib/validations/projects.ts"
+      - "lib/api/feedback.ts"
+      - "app/(app)/communities/[slug]/projects/[projectSlug]/page.tsx"
+      - "stories/projects/ProjectWizard.stories.tsx"
+      - "stories/feedback/FeedbackFormInline.stories.tsx"
+      - "tests/component/feedback/FeedbackFormInline.test.tsx"
+    errors: []
+    next_recommended: "Homer, CR — code review de PR #95"
+
   - id: "20260506-homer-CR2-11-1-closing"
     timestamp: "2026-05-06T23:00:00"
     agent: "Homer (Dev)"
@@ -915,6 +1016,35 @@ workflows:
       - "_bmad-output/execution-log.yaml"
     errors: []
     next_recommended: "Homer, DS — Story 12.1 (migraciones) para habilitar las tablas en BD antes de implementar las stories siguientes"
+
+  - id: "20260506-ned-CS-11-2-to-11-6-batch"
+    timestamp: "2026-05-06T10:00:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Batch create stories 11.2 a 11.6 — Epic 11 Calidad del Feedback y Reciprocidad"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Creando 5 ficheros de story para Epic 11 (stories 11.2-11.6): pregunta custom del builder (11.2), filtro completitud y quality warning (11.3), cron job recordatorio (11.4), gate de reciprocidad (11.5) y admin configuración reciprocidad (11.6)"
+
+  - id: "20260506-ned-CS-11-2-to-11-6-batch"
+    timestamp: "2026-05-06T10:45:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Batch create stories 11.2 a 11.6 — Epic 11 Calidad del Feedback y Reciprocidad"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "45 minutos"
+    summary: "5 ficheros de story creados para Epic 11 (stories 11.2-11.6). Todos en status ready-for-dev. Ficheros revisados antes de crear: 11-1, WizardStepDetails, FeedbackFormInline, projects.md, feedback.md, validations/projects.ts, API routes, launchProject.ts, ProjectPreview.tsx, tipos TS, settings/page.tsx. ACs Given/When/Then, Tasks TDD Outside-In, Dev Notes con ficheros exactos y estrategia de implementación."
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/stories/11-2-pregunta-custom-builder-microcontexto-reviewer.md"
+      - "_bmad-output/implementation-artifacts/stories/11-3-filtro-completitud-feedback-quality-warning.md"
+      - "_bmad-output/implementation-artifacts/stories/11-4-recordatorio-automatico-feedback-cron-job.md"
+      - "_bmad-output/implementation-artifacts/stories/11-5-gate-reciprocidad-al-publicar.md"
+      - "_bmad-output/implementation-artifacts/stories/11-6-admin-configuracion-reciprocidad-comunidad.md"
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "VS (Ned) — validar cada story antes de DS (Homer). Orden recomendado: 11.2 → 11.3 → 11.5 → 11.6 → 11.4 (11.4 depende de Story 12.1 para tablas notifications)"
 
   - id: "20260430-ned-CS-11-batch-6-stories"
     timestamp: "2026-04-30T19:00:00"

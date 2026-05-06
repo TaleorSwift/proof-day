@@ -17,6 +17,8 @@ export interface LaunchProjectInput {
   feedbackTopics: string[]
   // Story 10.2 — template Phase 2
   templateId?: string | null
+  // Story 11.2 — pregunta custom del Builder
+  customQuestion?: string
 }
 
 export type LaunchProjectResult =
@@ -62,6 +64,10 @@ export async function launchProject(input: LaunchProjectInput): Promise<LaunchPr
       status: 'live',
       // Story 10.2 — template Phase 2 (undefined no se envía a Supabase)
       ...(input.templateId !== undefined && { template_id: input.templateId }),
+      // Story 11.2 — pregunta custom del Builder
+      custom_question: input.customQuestion && input.customQuestion.trim().length > 0
+        ? input.customQuestion
+        : null,
     })
     .select('id, slug')
     .single()

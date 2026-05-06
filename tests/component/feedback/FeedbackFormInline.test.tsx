@@ -150,11 +150,13 @@ describe('FeedbackFormInline — envío exitoso', () => {
     fireEvent.change(screen.getByRole('textbox'), { target: { value: 'Mejora propuesta detallada aquí' } })
     fireEvent.click(screen.getByTestId('feedback-form-inline-submit'))
     await waitFor(() => {
+      // Story 11.2: customAnswer:null incluido cuando no hay customQuestion
       expect(vi.mocked(submitFeedback)).toHaveBeenCalledWith({
         projectId: 'proj-uuid',
         communityId: 'comm-uuid',
         scores: { p1: 3, p2: 1, p3: 2 },
         textResponses: { p4: 'Mejora propuesta detallada aquí' },
+        customAnswer: null,
       })
     })
   })

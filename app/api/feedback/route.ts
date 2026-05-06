@@ -58,7 +58,7 @@ export async function POST(request: Request) {
   if (!result.success)
     return NextResponse.json({ error: result.error.issues[0].message, code: 'VALIDATION_ERROR' }, { status: 400 })
 
-  const { projectId, communityId, scores, textResponses } = result.data
+  const { projectId, communityId, scores, textResponses, customAnswer } = result.data
 
   const feedbackService = createFeedbackService(supabase)
   const eligibility = await feedbackService.validateEligibility({
@@ -77,6 +77,8 @@ export async function POST(request: Request) {
     communityId,
     scores,
     textResponses,
+    // Story 11.2 — respuesta custom opcional
+    customAnswer: customAnswer ?? null,
   })
 
   if (error || !feedback)
