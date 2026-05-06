@@ -1,4 +1,5 @@
 // Story 10.3 — T7.4: Storybook story para ProjectWizard
+// Story 11.2 — variante con customQuestion en paso 3
 
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 import { fn } from 'storybook/test'
@@ -52,5 +53,24 @@ export const Submitting: Story = {
     onSubmit: fn(),
     onCancel: fn(),
     isSubmitting: true,
+  },
+}
+
+// ── Story 11.2 — customQuestion en datos de ejemplo del paso 3 ─────────────
+
+/** Variante con pregunta custom del Builder — datos representativos para paso 3 */
+export const ConPreguntaCustom: Story = {
+  name: 'Con pregunta custom del Builder (paso 3)',
+  args: {
+    templates: ALL_TEMPLATES,
+    onSubmit: fn(),
+    onCancel: fn(),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Story 11.2 — El wizard en el paso 3 permite al Builder añadir una pregunta custom opcional para los Reviewers. Campo con contador de caracteres (máx 200).',
+      },
+    },
   },
 }

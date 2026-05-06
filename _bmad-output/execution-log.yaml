@@ -1,4 +1,15 @@
 workflows:
+  - id: "20260506-homer-DS-11-2-started"
+    timestamp: "2026-05-06T23:30:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 11.2: Pregunta custom del Builder + microcontexto al Reviewer"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "11-2-pregunta-custom-builder-microcontexto-reviewer"
+    branch: "feat/11-2-pregunta-custom-builder-microcontexto-reviewer"
+    summary: "Implementando Story 11.2: campo customQuestion en WizardStepDetails, campo condicional customAnswer en FeedbackFormInline, launchProject y POST /api/feedback actualizados, schemas Zod extendidos. TDD Outside-In: tests primero."
+
   - id: "20260506-homer-CR2-11-1-closing"
     timestamp: "2026-05-06T23:00:00"
     agent: "Homer (Dev)"
@@ -915,6 +926,35 @@ workflows:
       - "_bmad-output/execution-log.yaml"
     errors: []
     next_recommended: "Homer, DS — Story 12.1 (migraciones) para habilitar las tablas en BD antes de implementar las stories siguientes"
+
+  - id: "20260506-ned-CS-11-2-to-11-6-batch"
+    timestamp: "2026-05-06T10:00:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Batch create stories 11.2 a 11.6 — Epic 11 Calidad del Feedback y Reciprocidad"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Creando 5 ficheros de story para Epic 11 (stories 11.2-11.6): pregunta custom del builder (11.2), filtro completitud y quality warning (11.3), cron job recordatorio (11.4), gate de reciprocidad (11.5) y admin configuración reciprocidad (11.6)"
+
+  - id: "20260506-ned-CS-11-2-to-11-6-batch"
+    timestamp: "2026-05-06T10:45:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Batch create stories 11.2 a 11.6 — Epic 11 Calidad del Feedback y Reciprocidad"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "45 minutos"
+    summary: "5 ficheros de story creados para Epic 11 (stories 11.2-11.6). Todos en status ready-for-dev. Ficheros revisados antes de crear: 11-1, WizardStepDetails, FeedbackFormInline, projects.md, feedback.md, validations/projects.ts, API routes, launchProject.ts, ProjectPreview.tsx, tipos TS, settings/page.tsx. ACs Given/When/Then, Tasks TDD Outside-In, Dev Notes con ficheros exactos y estrategia de implementación."
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/stories/11-2-pregunta-custom-builder-microcontexto-reviewer.md"
+      - "_bmad-output/implementation-artifacts/stories/11-3-filtro-completitud-feedback-quality-warning.md"
+      - "_bmad-output/implementation-artifacts/stories/11-4-recordatorio-automatico-feedback-cron-job.md"
+      - "_bmad-output/implementation-artifacts/stories/11-5-gate-reciprocidad-al-publicar.md"
+      - "_bmad-output/implementation-artifacts/stories/11-6-admin-configuracion-reciprocidad-comunidad.md"
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "VS (Ned) — validar cada story antes de DS (Homer). Orden recomendado: 11.2 → 11.3 → 11.5 → 11.6 → 11.4 (11.4 depende de Story 12.1 para tablas notifications)"
 
   - id: "20260430-ned-CS-11-batch-6-stories"
     timestamp: "2026-04-30T19:00:00"

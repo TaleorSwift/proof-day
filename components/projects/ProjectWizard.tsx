@@ -28,8 +28,10 @@ export interface WizardFormData {
   demoLink: string
   feedbackTopics: string[]
   images: UploaderImage[]
-  // Pasos 4+ (Story 10.5, Story 11.2 — placeholder)
+  // Paso 4 (Story 10.5)
   hypothesis: string
+  // Paso 3 — Story 11.2: pregunta custom del Builder
+  customQuestion: string
 }
 
 // ── Estado del wizard ─────────────────────────────────────────────────────────
@@ -57,6 +59,8 @@ const INITIAL_DATA: WizardFormData = {
   feedbackTopics: [],
   images: [],
   hypothesis: '',
+  // Story 11.2
+  customQuestion: '',
 }
 
 function wizardReducer(state: WizardState, action: WizardAction): WizardState {

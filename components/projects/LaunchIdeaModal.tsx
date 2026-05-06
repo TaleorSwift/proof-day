@@ -74,6 +74,8 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
       imageUrls: data.images.map((img) => img.path),
       feedbackTopics: data.feedbackTopics,
       templateId: data.templateId,
+      // Story 11.2 — pregunta custom del Builder
+      customQuestion: data.customQuestion?.trim() || undefined,
     })
 
     setIsSubmitting(false)

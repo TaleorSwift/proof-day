@@ -8,7 +8,12 @@ export interface FeedbackWithReviewer {
   profiles: { id: string; name: string; avatar_url: string | null } | null
 }
 
-export async function submitFeedback(data: SubmitFeedbackInput): Promise<Feedback> {
+// Story 11.2 — payload extendido con customAnswer opcional
+export interface SubmitFeedbackPayload extends SubmitFeedbackInput {
+  customAnswer?: string | null
+}
+
+export async function submitFeedback(data: SubmitFeedbackPayload): Promise<Feedback> {
   const res = await fetch('/api/feedback', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

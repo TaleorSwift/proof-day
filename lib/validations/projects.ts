@@ -25,6 +25,11 @@ export const createProjectSchema = z.object({
   ).max(10, 'No puedes añadir más de 10 temas').optional(),
   // Story 10.2 — template Phase 2
   template_id: z.string().uuid().nullable().optional(),
+  // Story 11.2 — pregunta custom del Builder
+  customQuestion: z
+    .string()
+    .max(200, 'La pregunta custom no puede superar 200 caracteres')
+    .optional(),
 })
 
 export const updateProjectSchema = createProjectSchema.partial().omit({ communityId: true })
@@ -72,6 +77,11 @@ export const launchIdeaSchema = z.object({
     .url('La URL de demo no es válida')
     .optional()
     .or(z.literal('')),
+  // Story 11.2 — pregunta custom del Builder (opcional, máx 200 chars)
+  customQuestion: z
+    .string()
+    .max(200, 'La pregunta custom no puede superar 200 caracteres')
+    .optional(),
 })
 
 export type LaunchIdeaFormValues = z.infer<typeof launchIdeaSchema>

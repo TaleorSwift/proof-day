@@ -40,6 +40,8 @@ export function createFeedbackRepository(supabase: SupabaseClient) {
       communityId: string
       scores: Record<string, number>
       textResponses: Record<string, string>
+      // Story 11.2 — respuesta custom opcional del Reviewer
+      customAnswer?: string | null
     }): Promise<{ data: Feedback | null; error: unknown }> {
       const { data: row, error } = await supabase
         .from('feedbacks')
@@ -49,6 +51,8 @@ export function createFeedbackRepository(supabase: SupabaseClient) {
           community_id: data.communityId,
           scores: data.scores,
           text_responses: data.textResponses,
+          // Story 11.2 — columna custom_answer (null si no se proporciona)
+          custom_answer: data.customAnswer ?? null,
         })
         .select()
         .single()
