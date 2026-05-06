@@ -1,4 +1,42 @@
 workflows:
+  - id: "20260506-homer-CR-12-1-closing"
+    timestamp: "2026-05-06T12:30:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #93 Story 12.1: Migraciones DB ai_summaries, notifications, notification_preferences, ai_cost_tracking"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    story: "12-1-migraciones-db-ai-summaries-notifications-cost-tracking"
+    pr: 93
+    verdict: "APPROVED"
+    issues_critical: 0
+    issues_high: 0
+    issues_medium: 2
+    issues_low: 4
+    issues_fixed: 0
+    issues_action_items: 0
+    tests_story: 33
+    tests_story_passed: 33
+    summary: "APPROVED — 7 ACs implementados y verificados. 33/33 tests verdes (ejecución confirmada). 0 HIGH/CRITICAL. 2 MEDIUM (índices redundantes en UNIQUE constraints, ficheros clave incompletos en ai-summaries.md). 4 LOW (NotificationType sin doc inline, parseFloat sin NaN guard, Notification shadowing DOM global, AC6 spec incompleta). Sprint status → done."
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/stories/12-1-migraciones-db-ai-summaries-notifications-cost-tracking.md"
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "QA (Edna) — validar suite completa. Luego merge PR #93."
+
+  - id: "20260506-homer-CR-12-1-started"
+    timestamp: "2026-05-06T12:00:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #93 Story 12.1: Migraciones DB ai_summaries, notifications, notification_preferences, ai_cost_tracking"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "12-1-migraciones-db-ai-summaries-notifications-cost-tracking"
+    pr: 93
+    summary: "Code review de PR #93 — Story 12.1: 5 migraciones SQL (027-031), lib/types/ai.ts con tipos y mappers, tests TDD Outside-In. Verificando ACs 1-7, RLS, TDD compliance y calidad de código."
+
   - id: "20260506-homer-DS-12-1-closing"
     timestamp: "2026-05-06T11:00:00"
     agent: "Homer (Dev)"
@@ -3056,3 +3094,35 @@ workflows:
       - "_bmad-output/execution-log.yaml"
     errors: []
     next_recommended: "Merge PR #92 en main — story 10.4 completada."
+
+  - id: "20260506-120000-edna-QA-12-1"
+    timestamp: "2026-05-06T12:40:00"
+    agent: "Edna"
+    trigger: "QA"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "STARTED"
+    summary: "Verificando 33 tests unitarios de Story 12.1 — mappers aiSummaryFromRow, notificationFromRow, notificationPreferenceFromRow, aiCostTrackingFromRow en lib/types/ai.ts"
+
+  - id: "20260506-120000-edna-QA-12-1"
+    timestamp: "2026-05-06T12:45:00"
+    agent: "Edna"
+    trigger: "QA"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    duration_estimate: "5 minutos"
+    story: "12-1-migraciones-db-ai-summaries-notifications-cost-tracking"
+    verdict: "PASS"
+    tests_story: 33
+    tests_story_passed: 33
+    tests_story_failed: 0
+    tests_suite_total: 1440
+    tests_suite_passed: 1440
+    tests_suite_failed: 0
+    summary: "PASS — 33/33 tests de Story 12.1 verdes. Suite completa 1440/1440 sin regresiones. Todos los ACs verificables por tests (AC6, AC7) validados. Migraciones 027-031 presentes. Tipos TS compilados sin errores."
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Merge PR #93 en main — Story 12.1 completada."

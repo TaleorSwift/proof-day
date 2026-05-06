@@ -3,8 +3,8 @@
 ## Metadata
 - **Epic:** 12 — AI Summaries & Notifications
 - **Story key:** 12.1
-- **Phase:** Development
-- **Agent:** Homer
+- **Phase:** Done
+- **Agent:** —
 - **Flow:** Full Flow (Homer)
 
 ## User Story
@@ -129,3 +129,43 @@ Then todos los tests de mappers y schema pasan al 100%
 - `supabase/migrations/031_rls_ai_tables.sql`
 - `lib/types/ai.ts`
 - `tests/unit/ai/aiTypes.test.ts`
+
+## Senior Developer Review (AI)
+
+**Veredicto:** APPROVED
+**Fecha:** 2026-05-06
+**Reviewer:** Homer (CR)
+**PR:** #93
+
+**Resumen:** 7 findings — 0 CRITICAL, 0 HIGH, 2 MEDIUM, 4 LOW, 1 INFO.
+Todos los ACs (1-7) verificados contra implementación real. 33/33 tests en verde (confirmado en ejecución).
+
+### MEDIUM
+
+**[MEDIUM-1] Índices redundantes en tablas con UNIQUE constraint**
+- `027_create_ai_summaries.sql:19` — `ai_summaries_project_id_idx` duplica el índice del UNIQUE constraint en `project_id`
+- `030_create_ai_cost_tracking.sql:21` — `ai_cost_tracking_month_idx` duplica el índice del UNIQUE constraint en `month`
+- PostgreSQL crea automáticamente un índice B-tree cuando se declara UNIQUE. Los índices manuales añadidos generan overhead de storage y write-amplification sin beneficio de rendimiento.
+
+**[MEDIUM-2] `docs/project/modules/ai-summaries.md` — Ficheros clave incompletos**
+- La sección `## Ficheros clave` omite `029_create_notification_preferences.sql` y `030_create_ai_cost_tracking.sql`
+- Stories 12.2-12.7 que consulten este módulo tendrán una visión incompleta de la infraestructura de DB.
+
+### LOW
+
+**[LOW-1] `NotificationType = string` — Sin documentación inline de valores futuros**
+- `lib/types/ai.ts:12` — No hay comentario que apunte a qué story define los valores concretos.
+
+**[LOW-2] `parseFloat` sin guard NaN en `aiCostTrackingFromRow`**
+- `lib/types/ai.ts:148` — `parseFloat(row.estimated_cost_usd)` retorna NaN si recibe string inválido. La columna SQL tiene NOT NULL pero el tipo TS no refleja ese invariante. No hay test de cobertura de este edge case.
+
+**[LOW-3] `Notification` — Shadowing del DOM global**
+- `lib/types/ai.ts:57` — `tsconfig.json` incluye `"lib": ["dom"]`. El DOM define `interface Notification` (Web Notifications API). La exportación local sombrea el global en el scope del módulo. No genera error TS pero puede causar confusión DX. Recomendación: renombrar a `AppNotification` o `UserNotification`.
+
+**[LOW-4] AC6 no menciona `NotificationPreference`, `AICostTracking` ni sus mappers**
+- La especificación del AC6 queda desactualizada respecto a lo implementado (que es correcto y más completo).
+
+### INFO
+
+**[INFO-1] Gap 024-026 en migraciones** — Intencional. Documentado en Dev Agent Record. Supabase no requiere secuencias continuas.
+**[INFO-2] `notification_preferences` sin `created_at`** — Decisión de diseño válida para tabla de preferencias. Consistente entre SQL y tipo TS.
