@@ -4,6 +4,7 @@ import { requireAuth } from '@/lib/api/middleware/require-auth'
 import { createFeedbackService } from '@/lib/services/feedback.service'
 import { createFeedbackRepository } from '@/lib/repositories/feedback.repository'
 import { createProjectsRepository } from '@/lib/repositories/projects.repository'
+import { calculateQualityScore } from '@/lib/utils/feedbackQuality'
 
 export async function GET(request: Request) {
   const auth = await requireAuth()
@@ -70,6 +71,9 @@ export async function POST(request: Request) {
   if (!eligibility.eligible)
     return NextResponse.json({ error: eligibility.error, code: eligibility.code }, { status: eligibility.status })
 
+  // Story 11.3 — calcula quality score antes de persistir
+  const qualityScore = calculateQualityScore(textResponses)
+
   const feedbackRepo = createFeedbackRepository(supabase)
   const { data: feedback, error } = await feedbackRepo.create({
     projectId,
@@ -79,6 +83,8 @@ export async function POST(request: Request) {
     textResponses,
     // Story 11.2 — respuesta custom opcional
     customAnswer: customAnswer ?? null,
+    // Story 11.3 — quality score calculado
+    qualityScore,
   })
 
   if (error || !feedback)

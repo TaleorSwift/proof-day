@@ -10,7 +10,7 @@ export function createFeedbackRepository(supabase: SupabaseClient) {
       return supabase
         .from('feedbacks')
         .select(`
-          id, scores, text_responses, created_at,
+          id, scores, text_responses, quality_score, created_at,
           profiles:reviewer_id (id, name, avatar_url)
         `)
         .eq('project_id', projectId)
@@ -42,6 +42,8 @@ export function createFeedbackRepository(supabase: SupabaseClient) {
       textResponses: Record<string, string>
       // Story 11.2 — respuesta custom opcional del Reviewer
       customAnswer?: string | null
+      // Story 11.3 — quality score calculado antes de persistir
+      qualityScore?: number
     }): Promise<{ data: Feedback | null; error: unknown }> {
       const { data: row, error } = await supabase
         .from('feedbacks')
@@ -53,6 +55,8 @@ export function createFeedbackRepository(supabase: SupabaseClient) {
           text_responses: data.textResponses,
           // Story 11.2 — columna custom_answer (null si no se proporciona)
           custom_answer: data.customAnswer ?? null,
+          // Story 11.3 — columna quality_score (null si no se proporciona)
+          quality_score: data.qualityScore ?? null,
         })
         .select()
         .single()
