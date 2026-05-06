@@ -1,4 +1,16 @@
 workflows:
+  - id: "20260506-homer-CR-11-2-started"
+    timestamp: "2026-05-06T23:55:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 11.2: Pregunta custom del Builder + microcontexto al Reviewer"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "11-2-pregunta-custom-builder-microcontexto-reviewer"
+    branch: "feat/11-2-pregunta-custom-builder-microcontexto-reviewer"
+    pr: "#95"
+    summary: "Code review adversarial Story 11.2. Revisando: ACs 1-9, ficheros modificados vs declarados, calidad tests, contratos de tipos, queries SQL en page.tsx."
+
   - id: "20260506-homer-DS-11-2-started"
     timestamp: "2026-05-06T23:30:00"
     agent: "Homer (Dev)"

@@ -103,23 +103,22 @@ describe('POST /api/feedback (Story 11.2) — T4.1: customAnswer se pasa al repo
       custom_answer: 'Mi respuesta a la pregunta del Builder',
     }
 
-    // Preparar el mock antes de llamar (el módulo se mockea arriba)
-    createFeedbackRepositoryMock.mockReturnValueOnce({
-      create: vi.fn().mockResolvedValue({
-        data: {
-          id: mockFeedbackRowWithAnswer.id,
-          projectId: mockFeedbackRowWithAnswer.project_id,
-          reviewerId: mockFeedbackRowWithAnswer.reviewer_id,
-          communityId: mockFeedbackRowWithAnswer.community_id,
-          scores: mockFeedbackRowWithAnswer.scores,
-          textResponses: mockFeedbackRowWithAnswer.text_responses,
-          createdAt: mockFeedbackRowWithAnswer.created_at,
-          customAnswer: 'Mi respuesta a la pregunta del Builder',
-          qualityScore: null,
-        },
-        error: null,
-      }),
+    const createSpy = vi.fn().mockResolvedValue({
+      data: {
+        id: mockFeedbackRowWithAnswer.id,
+        projectId: mockFeedbackRowWithAnswer.project_id,
+        reviewerId: mockFeedbackRowWithAnswer.reviewer_id,
+        communityId: mockFeedbackRowWithAnswer.community_id,
+        scores: mockFeedbackRowWithAnswer.scores,
+        textResponses: mockFeedbackRowWithAnswer.text_responses,
+        createdAt: mockFeedbackRowWithAnswer.created_at,
+        customAnswer: 'Mi respuesta a la pregunta del Builder',
+        qualityScore: null,
+      },
+      error: null,
     })
+
+    createFeedbackRepositoryMock.mockReturnValueOnce({ create: createSpy })
 
     const res = await POST(
       buildPostRequest({
@@ -131,6 +130,12 @@ describe('POST /api/feedback (Story 11.2) — T4.1: customAnswer se pasa al repo
     const body = await res.json()
     expect(res.status).toBe(201)
     expect(body.data.customAnswer).toBe('Mi respuesta a la pregunta del Builder')
+    // Verifica el contrato con el repositorio (no solo el output del endpoint)
+    expect(createSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        customAnswer: 'Mi respuesta a la pregunta del Builder',
+      }),
+    )
   })
 })
 

@@ -52,7 +52,7 @@ export default async function ProjectPage({ params }: Props) {
 
   const { data: project } = await supabase
     .from('projects')
-    .select('id, slug, title, tagline, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at, decision, target_user, demo_url, feedback_topics')
+    .select('id, slug, title, tagline, problem, solution, hypothesis, image_urls, status, builder_id, community_id, created_at, updated_at, decision, target_user, demo_url, feedback_topics, custom_question')
     .eq('community_id', community.id)
     .eq('slug', projectSlug)
     .single()
