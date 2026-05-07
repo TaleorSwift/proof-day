@@ -310,7 +310,7 @@ describe('buildInterpretationPrompt', () => {
   const BASE_PARAMS = {
     title: 'Proyecto Test',
     problem: 'Los usuarios no encuentran lo que buscan.',
-    scoreLabel: 'PROMISING' as const,
+    scoreLabel: 'Promising' as const,
     average: 2.5,
     feedbackCount: 5,
   }
@@ -327,7 +327,7 @@ describe('buildInterpretationPrompt', () => {
 
   it('incluye el scoreLabel en el prompt', () => {
     const prompt = buildInterpretationPrompt(BASE_PARAMS)
-    expect(prompt).toContain('PROMISING')
+    expect(prompt).toContain('Promising')
   })
 
   it('calcula pct en rango 0-100: average=1.0 → pct=0', () => {
