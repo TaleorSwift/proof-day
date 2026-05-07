@@ -1,11 +1,14 @@
 // Story 13.2 — POST /api/projects/[id]/iterations
 // Publica una nueva iteración para el proyecto dado.
 // Patrón: igual que app/api/projects/[id]/decision/route.ts
+// Story 13.3 — Dispara notificaciones fire-and-forget a reviewers anteriores.
 
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { createProjectIterationsRepository } from '@/lib/repositories/project-iterations.repository'
+import { notifyPreviousReviewers } from '@/lib/notifications/notify-previous-reviewers'
 
 // ── Schema de validación del body ─────────────────────────────────────────────
 
@@ -37,7 +40,7 @@ export async function POST(
   // 2. Verificar que el proyecto existe
   const { data: project } = await supabase
     .from('projects')
-    .select('id, builder_id, status, title, problem, solution, hypothesis')
+    .select('id, builder_id, status, title, problem, solution, hypothesis, slug, community_id')
     .eq('id', id)
     .single()
 
@@ -122,6 +125,25 @@ export async function POST(
       { status: 500 }
     )
   }
+
+  // 9. Obtener el slug de la comunidad para el payload de notificación
+  const adminClient = createAdminClient()
+  const { data: community } = await adminClient
+    .from('communities')
+    .select('slug')
+    .eq('id', project.community_id)
+    .single()
+  const communitySlug = community?.slug ?? ''
+
+  // 10. Fire-and-forget: notificar a reviewers anteriores — no bloquea el 201
+  void notifyPreviousReviewers({
+    projectId: id,
+    builderId: project.builder_id,
+    projectSlug: (project.slug as string | null) ?? '',
+    projectTitle: (project.title as string | null) ?? '',
+    versionNumber,
+    communitySlug,
+  })
 
   return NextResponse.json({ data: { ...iteration, versionNumber } }, { status: 201 })
 }

@@ -4,16 +4,28 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 // Mock de Supabase server — debe ir ANTES de cualquier import del handler
 // ---------------------------------------------------------------------------
 
-const { supabaseMock } = vi.hoisted(() => {
+const { supabaseMock, adminClientMock, mockNotifyPreviousReviewers } = vi.hoisted(() => {
   const supabaseMock = {
     auth: { getUser: vi.fn() },
     from: vi.fn(),
   }
-  return { supabaseMock }
+  const adminClientMock = {
+    from: vi.fn(),
+  }
+  const mockNotifyPreviousReviewers = vi.fn().mockResolvedValue(undefined)
+  return { supabaseMock, adminClientMock, mockNotifyPreviousReviewers }
 })
 
 vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn().mockResolvedValue(supabaseMock),
+}))
+
+vi.mock('@/lib/supabase/admin', () => ({
+  createAdminClient: vi.fn(() => adminClientMock),
+}))
+
+vi.mock('@/lib/notifications/notify-previous-reviewers', () => ({
+  notifyPreviousReviewers: (...args: unknown[]) => mockNotifyPreviousReviewers(...args),
 }))
 
 // ---------------------------------------------------------------------------
@@ -37,6 +49,8 @@ const MOCK_PROJECT = {
   problem: 'Un problema real',
   solution: 'Una solución concreta',
   hypothesis: 'Hipótesis en juego',
+  slug: 'mi-proyecto',
+  community_id: 'community-uuid-001',
 }
 
 const MOCK_ITERATION_ROW = {
@@ -107,12 +121,29 @@ function mockIterationsInsert(returnRow: typeof MOCK_ITERATION_ROW | null, error
   }
 }
 
+// Mock para: adminClient.from('communities').select('slug').eq(...).single()
+function mockCommunitiesQuery(slug: string | null = 'startup-madrid') {
+  adminClientMock.from.mockReturnValue({
+    select: vi.fn().mockReturnValue({
+      eq: vi.fn().mockReturnValue({
+        single: vi.fn().mockResolvedValue({
+          data: slug ? { slug } : null,
+          error: null,
+        }),
+      }),
+    }),
+  })
+}
+
 // ---------------------------------------------------------------------------
 // Suite: POST /api/projects/[id]/iterations
 // ---------------------------------------------------------------------------
 
 describe('POST /api/projects/[id]/iterations', () => {
-  afterEach(() => vi.clearAllMocks())
+  afterEach(() => {
+    vi.clearAllMocks()
+    mockNotifyPreviousReviewers.mockResolvedValue(undefined)
+  })
 
   it('retorna 401 cuando el usuario no está autenticado', async () => {
     mockNoAuth()
@@ -163,6 +194,7 @@ describe('POST /api/projects/[id]/iterations', () => {
 
   it('retorna 201 con version_number = 1 en la primera iteración', async () => {
     mockAuth()
+    mockCommunitiesQuery()
 
     let callCount = 0
     supabaseMock.from.mockImplementation(() => {
@@ -181,6 +213,7 @@ describe('POST /api/projects/[id]/iterations', () => {
 
   it('retorna 201 con version_number = N + 1 cuando ya hay iteraciones previas', async () => {
     mockAuth()
+    mockCommunitiesQuery()
 
     const iterationRowV3 = { ...MOCK_ITERATION_ROW, version_number: 3 }
     let callCount = 0
@@ -200,6 +233,7 @@ describe('POST /api/projects/[id]/iterations', () => {
 
   it('retorna 201 con los valores del body si se pasan campos editados', async () => {
     mockAuth()
+    mockCommunitiesQuery()
 
     const customTitle = 'Título personalizado de la iteración'
     const customIterationRow = { ...MOCK_ITERATION_ROW, title: customTitle }
@@ -224,6 +258,7 @@ describe('POST /api/projects/[id]/iterations', () => {
 
   it('retorna 201 con valores del proyecto cuando no se pasan campos en el body', async () => {
     mockAuth()
+    mockCommunitiesQuery()
 
     let callCount = 0
     supabaseMock.from.mockImplementation(() => {
@@ -276,5 +311,33 @@ describe('POST /api/projects/[id]/iterations', () => {
 
     expect(res.status).toBe(409)
     expect(body.code).toBe('VERSION_CONFLICT')
+  })
+
+  // Story 13.3 — Verificar que notifyPreviousReviewers se dispara en el happy path 201
+  it('dispara notifyPreviousReviewers con los parámetros correctos en el happy path 201', async () => {
+    mockAuth()
+    mockCommunitiesQuery('startup-madrid')
+
+    let callCount = 0
+    supabaseMock.from.mockImplementation(() => {
+      callCount++
+      if (callCount === 1) return mockProjectQuery(MOCK_PROJECT)
+      if (callCount === 2) return mockIterationsCountQuery(null)
+      return mockIterationsInsert(MOCK_ITERATION_ROW)
+    })
+
+    const res = await POST(buildRequest({}), buildParams())
+
+    expect(res.status).toBe(201)
+    expect(mockNotifyPreviousReviewers).toHaveBeenCalledWith(
+      expect.objectContaining({
+        projectId: PROJECT_ID,
+        builderId: MOCK_USER.id,
+        projectSlug: MOCK_PROJECT.slug,
+        projectTitle: MOCK_PROJECT.title,
+        versionNumber: 1,
+        communitySlug: 'startup-madrid',
+      })
+    )
   })
 })

@@ -43,6 +43,28 @@ function BellIcon() {
 }
 
 // ---------------------------------------------------------------------------
+// Helpers de presentación
+// ---------------------------------------------------------------------------
+
+function getNotificationTitle(notification: AppNotification): string {
+  const payload = notification.payload as Record<string, unknown>
+  return (payload.projectTitle as string | undefined) ?? 'Proyecto'
+}
+
+function getNotificationSubtext(notification: AppNotification): string {
+  const payload = notification.payload as Record<string, unknown>
+  switch (notification.type) {
+    case 'new_iteration_ready': {
+      const version = payload.versionNumber as number | undefined
+      return version ? `Nueva versión disponible — v${version}` : 'Nueva versión disponible'
+    }
+    case 'ai_synthesis_ready':
+    default:
+      return 'Síntesis IA disponible'
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Componente principal
 // ---------------------------------------------------------------------------
 
@@ -185,40 +207,35 @@ export function NotificationBell() {
             No tienes notificaciones nuevas
           </div>
         ) : (
-          notifications.map((notification) => {
-            const payload = notification.payload as Record<string, unknown>
-            const projectTitle = (payload.projectTitle as string | undefined) ?? 'Proyecto'
-
-            return (
-              <DropdownMenuItem
-                key={notification.id}
-                data-testid={`notification-item-${notification.id}`}
-                onClick={() => { void handleNotificationClick(notification) }}
-                style={{
-                  cursor: 'pointer',
-                  padding: 'var(--space-3) var(--space-4)',
-                  fontSize: 'var(--text-sm)',
-                  color: 'var(--color-text-primary)',
-                  opacity: notification.read ? 0.6 : 1,
-                }}
-              >
-                <div>
-                  <div style={{ fontWeight: notification.read ? 'var(--font-regular)' : 'var(--font-medium)' }}>
-                    {projectTitle}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 'var(--text-xs)',
-                      color: 'var(--color-text-muted)',
-                      marginTop: 'var(--space-1)',
-                    }}
-                  >
-                    Síntesis IA disponible
-                  </div>
+          notifications.map((notification) => (
+            <DropdownMenuItem
+              key={notification.id}
+              data-testid={`notification-item-${notification.id}`}
+              onClick={() => { void handleNotificationClick(notification) }}
+              style={{
+                cursor: 'pointer',
+                padding: 'var(--space-3) var(--space-4)',
+                fontSize: 'var(--text-sm)',
+                color: 'var(--color-text-primary)',
+                opacity: notification.read ? 0.6 : 1,
+              }}
+            >
+              <div>
+                <div style={{ fontWeight: notification.read ? 'var(--font-regular)' : 'var(--font-medium)' }}>
+                  {getNotificationTitle(notification)}
                 </div>
-              </DropdownMenuItem>
-            )
-          })
+                <div
+                  style={{
+                    fontSize: 'var(--text-xs)',
+                    color: 'var(--color-text-muted)',
+                    marginTop: 'var(--space-1)',
+                  }}
+                >
+                  {getNotificationSubtext(notification)}
+                </div>
+              </div>
+            </DropdownMenuItem>
+          ))
         )}
       </DropdownMenuContent>
     </DropdownMenu>

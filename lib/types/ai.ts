@@ -9,8 +9,9 @@
  * Se usa string en lugar de enum para extensibilidad sin deploy de schema.
  *
  * Valores conocidos del sistema:
- *   - 'ai_synthesis_ready' — síntesis IA completada, notifica al Builder (Story 12.3)
- *   - 'budget_alert'       — presupuesto mensual de IA >= 80% del límite (Story 12.7)
+ *   - 'ai_synthesis_ready'    — síntesis IA completada, notifica al Builder (Story 12.3)
+ *   - 'budget_alert'          — presupuesto mensual de IA >= 80% del límite (Story 12.7)
+ *   - 'new_iteration_ready'   — nueva versión del proyecto publicada, notifica a reviewers (Story 13.3)
  */
 export type NotificationType = string
 
