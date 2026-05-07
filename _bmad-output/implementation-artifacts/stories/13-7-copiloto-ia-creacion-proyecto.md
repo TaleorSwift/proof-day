@@ -2,7 +2,7 @@
 
 **Epic:** 13 — Iteración, Cierre del Loop y Copiloto IA
 **Story key:** 13.7
-**Status:** dev-complete
+**Status:** done
 **Fase:** GROWTH 2.1
 **Prerequisito:** Stories 13.1–13.6 completadas; `lib/ai/` con `synthesizeFeedbacks` y Ollama client operativos (Story 12.2)
 
@@ -321,12 +321,34 @@ claude-sonnet-4-6
 Creados:
 - `app/api/ai/suggest-project-field/route.ts`
 - `components/projects/wizard/AISuggestButton.tsx`
+- `components/projects/wizard/AIGeneratedBadge.tsx`
 - `stories/projects/AISuggestButton.stories.tsx`
 - `tests/unit/api/ai-suggest.test.ts`
 - `tests/unit/components/AISuggestButton.test.tsx`
+- `tests/component/projects/wizard/WizardStepDescription.13-7.test.tsx`
 
 Modificados:
 - `components/projects/wizard/WizardStepDescription.tsx`
 - `components/projects/wizard/WizardStepHypothesis.tsx`
 - `_bmad-output/execution-log.yaml`
 - `_bmad-output/implementation-artifacts/stories/13-7-copiloto-ia-creacion-proyecto.md`
+
+### Senior Developer Review (AI)
+
+**Revisor:** Homer — Segunda ronda CR  
+**Fecha:** 2026-05-07  
+**Veredicto:** APPROVED
+
+**Issues HIGH (0):** Ninguno.
+
+**Issues MEDIUM (2):**
+- M1: `tests/component/projects/wizard/WizardStepDescription.13-7.test.tsx:18` — `EMPTY_FORM_DATA` no incluye `customQuestion: ''`. TS error `TS2741` en `tsc --noEmit`. Tests pasan en runtime. Mismo patrón pre-existente en otros tests del proyecto.
+- M2: `components/projects/wizard/AISuggestButton.tsx:113` — `<style>@keyframes spin</style>` inyectado inline en cada instancia. Con 3 botones renderizados simultáneamente, el keyframe se duplica 3 veces en el DOM.
+
+**Issues LOW (4):**
+- L1: `tests/unit/components/AISuggestButton.test.tsx:~105` — `resolveFetch!()` fuera de `act()` genera warning de consola. Fix: `await act(async () => { resolveFetch!(...) })`.
+- L2: `WizardStepHypothesis` no tiene tests de componente para AC7. AC7 no los exige explícitamente para hipótesis.
+- L3: `components/projects/wizard/WizardStepHypothesis.tsx:47-49` — `title ?? ''`, `problem ?? undefined`, `solution ?? undefined` innecesarios (tipos ya son `string`).
+- L4: `stories/projects/AISuggestButton.stories.tsx` — variante `Loading` no muestra loading en montaje inicial; requiere click manual. Documentar o añadir `play()`.
+
+**Todos los ACs implementados y verificados. 1869 tests verdes. Sin regressions.**

@@ -9,6 +9,7 @@ import { ValidationSignalCard } from './ValidationSignalCard'
 import { DecisionBadge } from '@/components/projects/DecisionBadge'
 import { DecisionDialog } from '@/components/projects/DecisionDialog'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface ProofScoreSidebarProps {
   projectId: string
@@ -40,7 +41,10 @@ export function ProofScoreSidebar({
   const [isLoading, setIsLoading] = useState(true)
   const [decision, setDecision] = useState<ProjectDecision | null>(initialDecision)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [interpretation, setInterpretation] = useState<string | null>(null)
+  const [isLoadingInterpretation, setIsLoadingInterpretation] = useState(false)
 
+  // Cargar proof score
   useEffect(() => {
     if (!isBuilder) return
     let cancelled = false
@@ -58,6 +62,28 @@ export function ProofScoreSidebar({
     return () => { cancelled = true }
   }, [projectId, isBuilder])
 
+  // Cargar interpretación cuando el score esté disponible (Story 13.8)
+  // Fire-after-score: se lanza DESPUÉS de obtener el score, sin bloquear la UI
+  useEffect(() => {
+    if (!score) return
+    let cancelled = false
+    setIsLoadingInterpretation(true)
+    fetch(`/api/projects/${projectId}/score-interpretation`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!cancelled && data?.interpretation) {
+          setInterpretation(data.interpretation)
+        }
+      })
+      .catch(() => {
+        // silencioso — la interpretación es enriquecimiento opcional
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoadingInterpretation(false)
+      })
+    return () => { cancelled = true }
+  }, [projectId, score])
+
   if (!isBuilder) return null
   if (isLoading) return <ProofScoreWaiting feedbackCount={feedbackCount} isLoading={true} />
   if (score === null) return <ProofScoreWaiting feedbackCount={feedbackCount} />
@@ -71,6 +97,28 @@ export function ProofScoreSidebar({
         wouldUsePercent={wouldUsePercent}
         feedbackCount={score.feedbackCount}
       />
+
+      {/* Interpretación contextual del Proof Score (Story 13.8) */}
+      {isLoadingInterpretation && (
+        <div data-testid="score-interpretation-loading">
+          <Skeleton style={{ height: '1rem', marginBottom: 'var(--space-2)' }} />
+          <Skeleton style={{ height: '1rem', width: '75%' }} />
+        </div>
+      )}
+      {!isLoadingInterpretation && interpretation && (
+        <p
+          data-testid="score-interpretation"
+          style={{
+            fontSize: 'var(--text-sm)',
+            color: 'var(--color-text-secondary)',
+            lineHeight: 'var(--leading-base)',
+            margin: 0,
+          }}
+        >
+          {interpretation}
+        </p>
+      )}
+
       {decision !== null ? (
         <DecisionBadge decision={decision} />
       ) : (
