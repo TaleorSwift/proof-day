@@ -9,6 +9,7 @@ import { ProjectStateActions } from '@/components/projects/ProjectStateActions'
 import { FeedbackList } from '@/components/feedback/FeedbackList'
 import { FeedbackCounter } from '@/components/feedback/FeedbackCounter'
 import { FeedbackQualityStats } from '@/components/feedback/FeedbackQualityStats'
+import { AISummaryCard } from '@/components/projects/AISummaryCard'
 import { TeamPerspectives } from '@/components/feedback/TeamPerspectives'
 import { FeedbackCTA } from '@/components/feedback/FeedbackCTA'
 import { FeedbackFormInline } from '@/components/feedback/FeedbackFormInline'
@@ -25,6 +26,7 @@ import {
 } from '@/components/projects/ProjectDetailSections'
 import Link from 'next/link'
 import { calculateValidationMetrics } from '@/lib/projects/calculateValidationMetrics'
+import { aiSummaryFromRow } from '@/lib/types/ai'
 
 interface Props {
   params: Promise<{ slug: string; projectSlug: string }>
@@ -89,6 +91,18 @@ export default async function ProjectPage({ params }: Props) {
 
   // Cálculo de métricas de validación desde feedbacks SSR (para sidebar universal)
   const { understandPercent, wouldUsePercent } = calculateValidationMetrics(feedbacks, feedbackCount)
+
+  // Story 12.4 — Query de ai_summaries (solo para el owner, RLS permite SELECT a autenticados)
+  let aiSummary = null
+  if (isOwner) {
+    const { data: aiSummaryRow } = await supabase
+      .from('ai_summaries')
+      .select('*')
+      .eq('project_id', project.id)
+      .maybeSingle()
+
+    aiSummary = aiSummaryRow ? aiSummaryFromRow(aiSummaryRow) : null
+  }
 
   // Regla de visibilidad de la sidebar (story 9.7):
   // - draft + owner: sidebar visible (ve sus controles de gestión)
@@ -367,6 +381,9 @@ export default async function ProjectPage({ params }: Props) {
                     }))}
                     qualityThreshold={project.quality_threshold ?? 0.6}
                   />
+
+                  {/* Story 12.4 — Resumen IA de feedbacks (solo owner) */}
+                  <AISummaryCard summary={aiSummary} isLoading={false} />
 
                   <FeedbackList projectId={project.id} isBuilder={isOwner} />
                 </div>

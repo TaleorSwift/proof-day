@@ -1,4 +1,13 @@
 workflows:
+  - id: "20260506-homer-DS-12-4-started"
+    timestamp: "2026-05-06T16:30:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 12.4: AISummaryCard: vista del proyecto"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    story: "12-4-aisummarycard-vista-proyecto"
+    branch: "feat/12-4-aisummarycard-vista-proyecto"
+
   - id: "20260506-homer-DS-12-3-closing"
     timestamp: "2026-05-06T15:45:00"
     agent: "Homer (Dev)"
