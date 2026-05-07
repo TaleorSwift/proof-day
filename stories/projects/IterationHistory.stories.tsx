@@ -14,7 +14,13 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const UnaIteracion: Story = {
+export const SinIteraciones: Story = {
+  args: {
+    iterations: [],
+  },
+}
+
+export const ConUnaIteracion: Story = {
   args: {
     iterations: [
       { id: 'iter-1', versionNumber: 1, publishedAt: '2026-03-15T10:00:00Z', feedbackCount: 8 },
@@ -22,20 +28,11 @@ export const UnaIteracion: Story = {
   },
 }
 
-export const VariasIteraciones: Story = {
+export const ConVariasIteraciones: Story = {
   args: {
     iterations: [
       { id: 'iter-3', versionNumber: 3, publishedAt: '2026-05-01T10:00:00Z', feedbackCount: 3 },
       { id: 'iter-2', versionNumber: 2, publishedAt: '2026-04-10T10:00:00Z', feedbackCount: 12 },
-      { id: 'iter-1', versionNumber: 1, publishedAt: '2026-03-15T10:00:00Z', feedbackCount: 8 },
-    ],
-  },
-}
-
-export const SinFeedbacksEnUltima: Story = {
-  args: {
-    iterations: [
-      { id: 'iter-2', versionNumber: 2, publishedAt: '2026-05-07T10:00:00Z', feedbackCount: 0 },
       { id: 'iter-1', versionNumber: 1, publishedAt: '2026-03-15T10:00:00Z', feedbackCount: 8 },
     ],
   },

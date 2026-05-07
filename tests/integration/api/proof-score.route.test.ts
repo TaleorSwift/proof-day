@@ -28,6 +28,7 @@ import { GET } from '@/app/api/proof-score/[projectId]/route'
 
 const MOCK_USER = { id: 'user-uuid-001' }
 const PROJECT_ID = 'project-uuid-001'
+const ITERATION_ID = 'iteration-uuid-001'
 
 function buildParams(projectId: string = PROJECT_ID) {
   return { params: Promise.resolve({ projectId }) }
@@ -43,6 +44,36 @@ function mockNoAuth() {
 
 function mockAuth() {
   supabaseMock.auth.getUser.mockResolvedValue({ data: { user: MOCK_USER } })
+}
+
+/**
+ * Construye el mock de project_iterations que devuelve una iteración concreta.
+ * Devuelve el builder completo (select → eq → order → limit → maybeSingle).
+ */
+function buildIterationMock(iterationData: { id: string } | null) {
+  const maybeSingleMock = vi.fn().mockResolvedValue({ data: iterationData, error: null })
+  const limitMock = vi.fn().mockReturnValue({ maybeSingle: maybeSingleMock })
+  const orderMock = vi.fn().mockReturnValue({ limit: limitMock })
+  const eqMock = vi.fn().mockReturnValue({ order: orderMock })
+  const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
+  return { select: selectMock }
+}
+
+/**
+ * Construye el mock de feedbacks sin filtro de iteración (solo eq project_id).
+ */
+function buildFeedbacksMockNoIteration(feedbackData: unknown[], error?: Error) {
+  const eqMock = vi.fn().mockResolvedValue({ data: error ? null : feedbackData, error: error ?? null })
+  return { select: vi.fn().mockReturnValue({ eq: eqMock }) }
+}
+
+/**
+ * Construye el mock de feedbacks con filtro de iteración (eq project_id + eq iteration_id).
+ */
+function buildFeedbacksMockWithIteration(feedbackData: unknown[], error?: Error) {
+  const eqIterationMock = vi.fn().mockResolvedValue({ data: error ? null : feedbackData, error: error ?? null })
+  const eqProjectMock = vi.fn().mockReturnValue({ eq: eqIterationMock })
+  return { select: vi.fn().mockReturnValue({ eq: eqProjectMock }) }
 }
 
 // ---------------------------------------------------------------------------
@@ -105,9 +136,9 @@ describe('GET /api/proof-score/[projectId]', () => {
     mockAuth()
 
     let callCount = 0
-    supabaseMock.from.mockImplementation(() => {
+    supabaseMock.from.mockImplementation((table: string) => {
       callCount++
-      if (callCount === 1) {
+      if (table === 'projects') {
         return {
           select: vi.fn().mockReturnValue({
             eq: vi.fn().mockReturnValue({
@@ -119,11 +150,11 @@ describe('GET /api/proof-score/[projectId]', () => {
           }),
         }
       }
-      return {
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockResolvedValue({ data: null, error: new Error('DB error') }),
-        }),
+      if (table === 'project_iterations') {
+        return buildIterationMock(null)
       }
+      // feedbacks — simula error de BD
+      return buildFeedbacksMockNoIteration([], new Error('DB error'))
     })
 
     const res = await GET(buildRequest(), buildParams())
@@ -133,7 +164,7 @@ describe('GET /api/proof-score/[projectId]', () => {
     expect(body.code).toBe('FEEDBACKS_FETCH_ERROR')
   })
 
-  it('retorna 200 con el proof score calculado cuando hay feedbacks', async () => {
+  it('retorna 200 con el proof score calculado usando feedbacks de la iteración más reciente cuando existe iteración', async () => {
     mockAuth()
 
     const mockFeedbacks = [
@@ -141,10 +172,8 @@ describe('GET /api/proof-score/[projectId]', () => {
       { scores: { p1: 2, p2: 3, p3: 2 } },
     ]
 
-    let callCount = 0
-    supabaseMock.from.mockImplementation(() => {
-      callCount++
-      if (callCount === 1) {
+    supabaseMock.from.mockImplementation((table: string) => {
+      if (table === 'projects') {
         return {
           select: vi.fn().mockReturnValue({
             eq: vi.fn().mockReturnValue({
@@ -156,11 +185,11 @@ describe('GET /api/proof-score/[projectId]', () => {
           }),
         }
       }
-      return {
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockResolvedValue({ data: mockFeedbacks, error: null }),
-        }),
+      if (table === 'project_iterations') {
+        return buildIterationMock({ id: ITERATION_ID })
       }
+      // feedbacks — con filtro de iteración
+      return buildFeedbacksMockWithIteration(mockFeedbacks)
     })
 
     const res = await GET(buildRequest(), buildParams())
@@ -170,13 +199,15 @@ describe('GET /api/proof-score/[projectId]', () => {
     expect(body.data).toBeDefined()
   })
 
-  it('retorna 200 con score calculado para proyecto sin feedbacks', async () => {
+  it('retorna 200 usando todos los feedbacks del proyecto cuando no hay iteraciones', async () => {
     mockAuth()
 
-    let callCount = 0
-    supabaseMock.from.mockImplementation(() => {
-      callCount++
-      if (callCount === 1) {
+    const mockFeedbacks = [
+      { scores: { p1: 3, p2: 2, p3: 3 } },
+    ]
+
+    supabaseMock.from.mockImplementation((table: string) => {
+      if (table === 'projects') {
         return {
           select: vi.fn().mockReturnValue({
             eq: vi.fn().mockReturnValue({
@@ -188,11 +219,70 @@ describe('GET /api/proof-score/[projectId]', () => {
           }),
         }
       }
-      return {
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockResolvedValue({ data: [], error: null }),
-        }),
+      if (table === 'project_iterations') {
+        return buildIterationMock(null)
       }
+      // feedbacks — sin filtro de iteración (fallback)
+      return buildFeedbacksMockNoIteration(mockFeedbacks)
+    })
+
+    const res = await GET(buildRequest(), buildParams())
+    const body = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(body.data).toBeDefined()
+  })
+
+  it('retorna 200 con score calculado para proyecto sin feedbacks y sin iteraciones', async () => {
+    mockAuth()
+
+    supabaseMock.from.mockImplementation((table: string) => {
+      if (table === 'projects') {
+        return {
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              single: vi.fn().mockResolvedValue({
+                data: { id: PROJECT_ID, builder_id: MOCK_USER.id },
+                error: null,
+              }),
+            }),
+          }),
+        }
+      }
+      if (table === 'project_iterations') {
+        return buildIterationMock(null)
+      }
+      return buildFeedbacksMockNoIteration([])
+    })
+
+    const res = await GET(buildRequest(), buildParams())
+    const body = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(body.data).toBeDefined()
+  })
+
+  it('retorna 200 con 0 feedbacks cuando la iteración más reciente no tiene feedbacks', async () => {
+    mockAuth()
+
+    supabaseMock.from.mockImplementation((table: string) => {
+      if (table === 'projects') {
+        return {
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              single: vi.fn().mockResolvedValue({
+                data: { id: PROJECT_ID, builder_id: MOCK_USER.id },
+                error: null,
+              }),
+            }),
+          }),
+        }
+      }
+      if (table === 'project_iterations') {
+        return buildIterationMock({ id: ITERATION_ID })
+      }
+      // Iteración más reciente sin feedbacks
+      return buildFeedbacksMockWithIteration([])
     })
 
     const res = await GET(buildRequest(), buildParams())

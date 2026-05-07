@@ -62,7 +62,7 @@ export function IterationHistory({ iterations }: IterationHistoryProps) {
           gap: 'var(--space-2)',
         }}
       >
-        {iterations.map((iteration) => (
+        {iterations.map((iteration, index) => (
           <li
             key={iteration.id}
             data-testid={`iteration-history-item-${iteration.versionNumber}`}
@@ -71,7 +71,9 @@ export function IterationHistory({ iterations }: IterationHistoryProps) {
               alignItems: 'center',
               gap: 'var(--space-3)',
               padding: 'var(--space-2) 0',
-              borderBottom: '1px solid var(--color-border)',
+              ...(index < iterations.length - 1
+                ? { borderBottom: '1px solid var(--color-border)' }
+                : {}),
             }}
           >
             <span
