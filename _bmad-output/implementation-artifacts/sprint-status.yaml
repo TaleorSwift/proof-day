@@ -130,7 +130,7 @@ development_status:
   11-1-migraciones-db-feedback-responses-projects-communities: done  # CR APPROVED + QA PASS 2026-05-06 — PR #94 merged
   11-2-pregunta-custom-builder-microcontexto-reviewer: done  # CR APPROVED 2026-05-06 — PR #95
   11-3-filtro-completitud-feedback-quality-warning: done  # CR APPROVED + QA PASS 2026-05-06 — PR #96 merged
-  11-4-recordatorio-automatico-feedback-cron-job: ready-for-dev
+  11-4-recordatorio-automatico-feedback-cron-job: done  # CR APPROVED + QA PASS 2026-05-06 — PR #97 merged
   11-5-gate-reciprocidad-al-publicar: ready-for-dev
   11-6-admin-configuracion-reciprocidad-comunidad: ready-for-dev
   epic-11-retrospective: optional
