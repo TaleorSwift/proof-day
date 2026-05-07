@@ -46,6 +46,7 @@ const MOCK_FEEDBACKS: Feedback[] = [
     createdAt: '2026-03-21T09:00:00Z',
     customAnswer: null,
     qualityScore: 0.75,
+    iterationId: null,
   },
   {
     id: 'fb-uuid-002',
@@ -60,6 +61,7 @@ const MOCK_FEEDBACKS: Feedback[] = [
     createdAt: '2026-03-21T11:00:00Z',
     customAnswer: null,
     qualityScore: 0.60,
+    iterationId: null,
   },
 ]
 

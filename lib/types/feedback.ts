@@ -35,6 +35,8 @@ export interface Feedback {
   // Story 11.1 — feedback quality
   customAnswer: string | null
   qualityScore: number | null
+  // Story 13.1 — iteraciones
+  iterationId: string | null
 }
 
 /** Forma del row tal como lo devuelve Supabase (snake_case) */
@@ -49,6 +51,8 @@ export interface FeedbackRow {
   // Story 11.1 — feedback quality
   custom_answer: string | null
   quality_score: number | null
+  // Story 13.1 — iteraciones
+  iteration_id: string | null
 }
 
 export function feedbackFromRow(row: FeedbackRow): Feedback {
@@ -63,5 +67,7 @@ export function feedbackFromRow(row: FeedbackRow): Feedback {
     // Story 11.1 — feedback quality
     customAnswer: row.custom_answer,
     qualityScore: row.quality_score,
+    // Story 13.1 — iteraciones
+    iterationId: row.iteration_id,
   }
 }

@@ -54,6 +54,8 @@ const MOCK_FEEDBACK_RESPONSE = {
   // Story 11.1 — feedback quality
   customAnswer: null,
   qualityScore: null,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 // ---------------------------------------------------------------------------

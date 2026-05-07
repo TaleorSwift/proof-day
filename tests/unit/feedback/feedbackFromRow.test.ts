@@ -1,6 +1,6 @@
 /**
- * Unit tests — feedbackFromRow (Story 11.1)
- * Verifica el mapeo correcto de custom_answer y quality_score desde DB row a dominio
+ * Unit tests — feedbackFromRow (Story 11.1 + Story 13.1)
+ * Verifica el mapeo correcto de custom_answer, quality_score e iteration_id desde DB row a dominio
  * TDD Outside-In: escritos antes de la implementación
  */
 
@@ -18,6 +18,8 @@ const BASE_ROW: FeedbackRow = {
   created_at: '2026-01-01T00:00:00Z',
   custom_answer: null,
   quality_score: null,
+  // Story 13.1 — iteraciones
+  iteration_id: null,
 }
 
 describe('feedbackFromRow — Story 11.1: custom_answer y quality_score', () => {
@@ -67,5 +69,33 @@ describe('feedbackFromRow — Story 11.1: custom_answer y quality_score', () => 
   it('mapea createdAt desde created_at (snake_case → camelCase)', () => {
     const feedback = feedbackFromRow({ ...BASE_ROW, created_at: '2026-03-15T10:00:00Z' })
     expect(feedback.createdAt).toBe('2026-03-15T10:00:00Z')
+  })
+})
+
+describe('feedbackFromRow — Story 13.1: iteration_id → iterationId', () => {
+  it('mapea iteration_id null → iterationId null', () => {
+    const feedback = feedbackFromRow({ ...BASE_ROW, iteration_id: null })
+    expect(feedback.iterationId).toBeNull()
+  })
+
+  it('mapea iteration_id con valor UUID → iterationId', () => {
+    const iterationId = '550e8400-e29b-41d4-a716-446655440000'
+    const feedback = feedbackFromRow({ ...BASE_ROW, iteration_id: iterationId })
+    expect(feedback.iterationId).toBe(iterationId)
+  })
+
+  it('preserva campos previos al añadir iterationId', () => {
+    const iterationId = '123e4567-e89b-12d3-a456-426614174000'
+    const feedback = feedbackFromRow({
+      ...BASE_ROW,
+      custom_answer: 'Muy útil',
+      quality_score: 0.75,
+      iteration_id: iterationId,
+    })
+    expect(feedback.customAnswer).toBe('Muy útil')
+    expect(feedback.qualityScore).toBe(0.75)
+    expect(feedback.iterationId).toBe(iterationId)
+    expect(feedback.id).toBe('fb-1')
+    expect(feedback.projectId).toBe('proj-1')
   })
 })
