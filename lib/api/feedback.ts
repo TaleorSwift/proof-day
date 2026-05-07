@@ -6,6 +6,9 @@ export interface FeedbackWithReviewer {
   text_responses: FeedbackTextResponses
   created_at: string
   profiles: { id: string; name: string; avatar_url: string | null } | null
+  // Story 13.4 — iteración vigente al momento del feedback
+  iteration_id: string | null
+  project_iterations: { version_number: number } | null
 }
 
 // Story 11.2 — customAnswer ya incluido en SubmitFeedbackInput (via submitFeedbackSchema)
