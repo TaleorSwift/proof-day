@@ -4230,3 +4230,46 @@ workflows:
       regressions: 0
     errors: []
     next_recommended: "Mergear PR #100 a main"
+
+  - id: "elp-qa-12.3-001"
+    agent: Edna
+    trigger: QA Story 12.3
+    workflow: bmm/workflows/qa/automate/workflow.yaml
+    mode: VERIFY
+    status: STARTED
+    started_at: "2026-05-06T00:00:00Z"
+    story: "Story 12.3 — Webhook síntesis IA"
+    branch: "feat/12-3-webhook-sintesis-ia-trigger-upsert-notificacion"
+    pr: "#101"
+
+  - id: "elp-qa-12.3-001-close"
+    agent: Edna
+    trigger: QA Story 12.3
+    workflow: bmm/workflows/qa/automate/workflow.yaml
+    mode: VERIFY
+    status: SUCCESS
+    completed_at: "2026-05-06T00:10:00Z"
+    story: "Story 12.3 — Webhook síntesis IA"
+    branch: "feat/12-3-webhook-sintesis-ia-trigger-upsert-notificacion"
+    pr: "#101"
+    result: PASS
+    artifacts:
+      - tests/unit/webhooks/ai-synthesis.test.ts
+    test_results:
+      ai_synthesis_suite: "13/13 passed"
+      total: "1639/1639 passed (162 files)"
+      failures: 0
+      regressions: 0
+    ac_results:
+      AC1_401_sin_secret: PASS
+      AC2_401_secret_incorrecto: PASS
+      AC3_400_feedbacks_insuficientes: PASS
+      AC4_200_skip_reciente: PASS
+      AC5_429_budget_exceeded: PASS
+      AC6_upsert_service_role: PASS
+      AC7_insert_notificacion_service_role: PASS
+      AC8_trackCost_tras_upsert: PASS
+      AC9_200_happy_path: PASS
+      AC10_1639_tests_verdes: PASS
+    errors: []
+    next_recommended: "Mergear PR #101 a main"
