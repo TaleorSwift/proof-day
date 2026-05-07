@@ -3529,3 +3529,14 @@ workflows:
       - "_bmad-output/execution-log.yaml"
     errors: []
     next_recommended: "Siguiente story del sprint (11.4 o siguiente en backlog)"
+
+  - id: "20260507-homer-DS-11-4"
+    timestamp: "2026-05-07T09:00:00"
+    agent: "Homer"
+    trigger: "DS"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "11-4-recordatorio-automatico-feedback-cron-job"
+    branch: "feat/11-4-recordatorio-automatico-feedback-cron-job"
+    summary: "Implementando Story 11.4 — cron job feedback-reminder: handler POST /api/cron/feedback-reminder, service feedbackReminder.service.ts, vercel.json crons, .env.example CRON_SECRET. TDD Outside-In (T1-T7)."
