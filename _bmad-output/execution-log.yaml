@@ -1,4 +1,73 @@
 workflows:
+  - id: "20260506-homer-CR-12-2-started"
+    timestamp: "2026-05-06T13:42:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #100 Story 12.2: lib/ai con Ollama"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "12-2-integracion-ollama-lib-ai-control-coste"
+    branch: "feat/12-2-integracion-ollama-lib-ai-control-coste"
+    pr: "#100"
+
+  - id: "20260506-homer-CR-12-2-closing"
+    timestamp: "2026-05-06T13:45:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #100 Story 12.2: lib/ai con Ollama"
+    workflow: "code-review"
+    result: "SUCCESS"
+    verdict: "APPROVED"
+    story: "12-2-integracion-ollama-lib-ai-control-coste"
+    branch: "feat/12-2-integracion-ollama-lib-ai-control-coste"
+    pr: "#100"
+    commit_fix: "10c1249"
+    issues_found:
+      - severity: MEDIUM
+        criterion: CR7
+        description: "communityId y costUsd en TrackCostInput sin documentar como campos silenciados — API engañosa"
+        resolution: "JSDoc añadido en ambos campos explicando propósito y comportamiento"
+      - severity: LOW
+        criterion: CR8
+        description: "Test error en ollamaClient solo verificaba toThrow() sin validar mensaje de error"
+        resolution: "Test reforzado para verificar 'Ollama error 500'"
+    tests: "60/60 verdes tras fix"
+    errors: []
+    notes: "Todos los criterios AC1-AC9 verificados. Sin errores TS nuevos en lib/ai/. Errores TSC pre-existentes (9) en stories anteriores fuera de scope."
+
+  - id: "20260506-homer-DS-12-2-started"
+    timestamp: "2026-05-06T14:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 12.2: Integración Ollama lib/ai + control de coste"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "12-2-integracion-claude-api-lib-ai-control-coste"
+    branch: "feat/12-2-integracion-ollama-lib-ai-control-coste"
+    summary: "Implementación TDD Outside-In de la capa lib/ai/: ollamaClient singleton, synthesizeFeedbacks, costTracker (service role Supabase), budgetChecker. Tests primero en rojo."
+
+  - id: "20260506-homer-DS-12-2-closing"
+    timestamp: "2026-05-06T14:45:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 12.2: Integración Ollama lib/ai + control de coste"
+    workflow: "dev-story"
+    result: "SUCCESS"
+    story: "12-2-integracion-claude-api-lib-ai-control-coste"
+    branch: "feat/12-2-integracion-ollama-lib-ai-control-coste"
+    pr: "#100"
+    artifacts_created:
+      - "lib/ai/ollamaClient.ts"
+      - "lib/ai/synthesizeFeedbacks.ts"
+      - "lib/ai/costTracker.ts"
+      - "lib/ai/budgetChecker.ts"
+      - "lib/ai/index.ts"
+      - "tests/unit/ai/ollamaClient.test.ts"
+      - "tests/unit/ai/synthesizeFeedbacks.test.ts"
+      - "tests/unit/ai/costTracker.test.ts"
+      - "tests/unit/ai/budgetChecker.test.ts"
+    tests: "161 ficheros / 1626 tests — todos verdes"
+    errors: []
+    notes: "TDD Outside-In completado. 60 tests nuevos. costUsd=0.0 hardcoded para Ollama local. Singleton reseteado via _resetOllamaClientSingleton para tests con vi.resetModules(). Errores TSC pre-existentes en WizardFormData y templates.route no son de esta story."
+
   - id: "20260506-ned-CS-epic12-stories-12-2-to-12-7"
     timestamp: "2026-05-06T12:00:00"
     agent: "Ned (SM)"
