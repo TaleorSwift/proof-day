@@ -8,11 +8,13 @@
 //   6. Upsert en ai_summaries
 //   7. Registra coste en ai_cost_tracking
 //   8. Inserta notificación in-app para el Builder
+//   9. Story 12.6: Envía email al Builder si email_enabled (fire-and-forget)
 
 import { timingSafeEqual } from 'crypto'
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { synthesizeFeedbacks, trackCost, checkDailyBudget } from '@/lib/ai'
+import { sendEmail, buildAiSynthesisReadyEmail } from '@/lib/email'
 import type { Feedback } from '@/lib/types/feedback'
 import type { Project } from '@/lib/types/projects'
 
@@ -302,6 +304,33 @@ export async function POST(request: Request): Promise<NextResponse> {
     },
     read: false,
   })
+
+  // ── Story 12.6: Envío de email fire-and-forget ────────────────────────────
+  // Consultar preferencias de notificación del builder (default: email habilitado)
+  const { data: pref } = await supabaseAdmin
+    .from('notification_preferences')
+    .select('email_enabled')
+    .eq('user_id', project.builderId)
+    .eq('type', 'ai_synthesis_ready')
+    .maybeSingle()
+
+  const emailEnabled = pref?.email_enabled ?? true
+
+  if (emailEnabled) {
+    const getUserResult = await supabaseAdmin.auth.admin.getUserById(project.builderId)
+    const builderEmail = getUserResult.data?.user?.email
+    if (builderEmail) {
+      const projectUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/communities/${community?.slug}/projects/${project.slug}`
+      const { subject, html } = buildAiSynthesisReadyEmail({
+        projectTitle: project.title,
+        projectUrl,
+        summaryText: synthesis.summaryText,
+      })
+      sendEmail({ to: builderEmail, subject, html }).catch((err: unknown) => {
+        console.error('[ai-synthesis webhook] Email send failed:', err)
+      })
+    }
+  }
 
   // ── AC9: Respuesta exitosa ────────────────────────────────────────────────
   return NextResponse.json(

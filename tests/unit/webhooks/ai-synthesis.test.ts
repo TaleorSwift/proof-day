@@ -5,6 +5,7 @@
 // AC3: 200 skip síntesis reciente
 // AC4: 429 budget excedido
 // AC9/AC5-AC8: 200 OK síntesis generada con upsert + tracking + notificación
+// Story 12.6: email enviado/omitido según notification_preferences
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NextRequest } from 'next/server'
@@ -13,18 +14,46 @@ import { NextRequest } from 'next/server'
 // Mocks — hoisted para que las variables estén disponibles en factory
 // ---------------------------------------------------------------------------
 
-const { mockFrom, mockCreateClient, mockSynthesizeFeedbacks, mockTrackCost, mockCheckDailyBudget } =
-  vi.hoisted(() => {
-    const mockFrom = vi.fn()
-    const mockCreateClient = vi.fn().mockReturnValue({ from: mockFrom })
-    const mockSynthesizeFeedbacks = vi.fn()
-    const mockTrackCost = vi.fn()
-    const mockCheckDailyBudget = vi.fn()
-    return { mockFrom, mockCreateClient, mockSynthesizeFeedbacks, mockTrackCost, mockCheckDailyBudget }
+const {
+  mockFrom,
+  mockCreateClient,
+  mockSynthesizeFeedbacks,
+  mockTrackCost,
+  mockCheckDailyBudget,
+  mockSendEmail,
+  mockGetUserById,
+} = vi.hoisted(() => {
+  const mockFrom = vi.fn()
+  const mockGetUserById = vi.fn()
+  const mockCreateClient = vi.fn().mockReturnValue({
+    from: mockFrom,
+    auth: { admin: { getUserById: mockGetUserById } },
   })
+  const mockSynthesizeFeedbacks = vi.fn()
+  const mockTrackCost = vi.fn()
+  const mockCheckDailyBudget = vi.fn()
+  const mockSendEmail = vi.fn().mockResolvedValue(undefined)
+  return {
+    mockFrom,
+    mockCreateClient,
+    mockSynthesizeFeedbacks,
+    mockTrackCost,
+    mockCheckDailyBudget,
+    mockSendEmail,
+    mockGetUserById,
+  }
+})
 
 vi.mock('@supabase/supabase-js', () => ({
   createClient: mockCreateClient,
+}))
+
+vi.mock('@/lib/email', () => ({
+  sendEmail: (...args: unknown[]) => mockSendEmail(...args),
+  buildAiSynthesisReadyEmail: vi.fn().mockReturnValue({
+    subject: 'Tu síntesis de IA está lista para Mi Proyecto',
+    html: '<html><body>test</body></html>',
+  }),
 }))
 
 vi.mock('@/lib/ai', () => ({
@@ -163,14 +192,26 @@ beforeEach(() => {
   vi.stubEnv('WEBHOOK_SECRET', VALID_SECRET)
   vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'http://localhost:54321')
   vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'service-role-key-test')
+  vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://proof-day.com')
 
   mockSynthesizeFeedbacks.mockReset()
   mockTrackCost.mockReset()
   mockCheckDailyBudget.mockReset()
   mockFrom.mockReset()
+  mockSendEmail.mockReset().mockResolvedValue(undefined)
+  mockGetUserById.mockReset()
 
-  // Restaurar createClient para que siempre devuelva el cliente con mockFrom
-  mockCreateClient.mockReturnValue({ from: mockFrom })
+  // Por defecto el builder tiene email
+  mockGetUserById.mockResolvedValue({
+    data: { user: { email: 'builder@example.com' } },
+    error: null,
+  })
+
+  // Restaurar createClient para que siempre devuelva el cliente con mockFrom + auth admin
+  mockCreateClient.mockReturnValue({
+    from: mockFrom,
+    auth: { admin: { getUserById: mockGetUserById } },
+  })
 })
 
 // ---------------------------------------------------------------------------
@@ -551,5 +592,116 @@ describe('POST /api/webhooks/ai-synthesis — AC7: notificación al builder', ()
     // Story 12.5: communitySlug ahora se incluye en el payload
     expect(notifData.payload.communitySlug).toBe('startup-madrid')
     expect(notifData.read).toBe(false)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Story 12.6 — Envío de email vía Resend
+// ---------------------------------------------------------------------------
+
+/**
+ * Helper: construye el mockFrom para el flujo exitoso completo (con comunidad).
+ * Reutilizado en los 2 nuevos tests de email.
+ */
+function buildSuccessfulFlowMockFrom(prefData: { email_enabled: boolean } | null) {
+  mockFrom.mockImplementation((table: string) => {
+    if (table === 'projects') {
+      return mockChain({ data: MOCK_PROJECT_ROW, error: null })
+    }
+    if (table === 'feedbacks') {
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        gte: vi.fn().mockReturnThis(),
+        order: vi.fn().mockResolvedValue({ data: MOCK_FEEDBACKS, error: null }),
+      }
+    }
+    if (table === 'ai_summaries') {
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+        upsert: vi.fn().mockResolvedValue({ data: [{ id: 'summary-uuid-001' }], error: null }),
+      }
+    }
+    if (table === 'communities') {
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: { slug: 'startup-madrid' }, error: null }),
+      }
+    }
+    if (table === 'notifications') {
+      return { insert: vi.fn().mockResolvedValue({ data: null, error: null }) }
+    }
+    if (table === 'notification_preferences') {
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        maybeSingle: vi.fn().mockResolvedValue({ data: prefData, error: null }),
+      }
+    }
+    return mockChain({ data: null, error: null })
+  })
+}
+
+describe('POST /api/webhooks/ai-synthesis — Story 12.6: envío de email', () => {
+  beforeEach(() => {
+    mockCheckDailyBudget.mockResolvedValue(true)
+    mockSynthesizeFeedbacks.mockResolvedValue(MOCK_SYNTHESIS_RESULT)
+    mockTrackCost.mockResolvedValue(undefined)
+    mockSendEmail.mockResolvedValue(undefined)
+    mockGetUserById.mockResolvedValue({
+      data: { user: { email: 'builder@example.com' } },
+      error: null,
+    })
+  })
+
+  it('envía email cuando email_enabled=true en notification_preferences', async () => {
+    buildSuccessfulFlowMockFrom({ email_enabled: true })
+
+    const req = buildRequest({ projectId: PROJECT_ID }, VALID_SECRET)
+    const response = await POST(req)
+
+    expect(response.status).toBe(200)
+    // Fire-and-forget: el test verifica que sendEmail fue llamado
+    // Puede haber un pequeño delay, pero en el mismo tick de event loop se llama
+    expect(mockSendEmail).toHaveBeenCalledOnce()
+    const [emailArgs] = mockSendEmail.mock.calls[0] as [
+      { to: string; subject: string; html: string }
+    ]
+    expect(emailArgs.to).toBe('builder@example.com')
+  })
+
+  it('envía email cuando no hay fila en notification_preferences (default email_enabled=true)', async () => {
+    buildSuccessfulFlowMockFrom(null) // sin fila → default true
+
+    const req = buildRequest({ projectId: PROJECT_ID }, VALID_SECRET)
+    const response = await POST(req)
+
+    expect(response.status).toBe(200)
+    expect(mockSendEmail).toHaveBeenCalledOnce()
+  })
+
+  it('NO envía email cuando email_enabled=false en notification_preferences', async () => {
+    buildSuccessfulFlowMockFrom({ email_enabled: false })
+
+    const req = buildRequest({ projectId: PROJECT_ID }, VALID_SECRET)
+    const response = await POST(req)
+
+    expect(response.status).toBe(200)
+    expect(mockSendEmail).not.toHaveBeenCalled()
+  })
+
+  it('retorna 200 cuando getUserById devuelve data:null (usuario no encontrado)', async () => {
+    buildSuccessfulFlowMockFrom({ email_enabled: true })
+    // Simular que Supabase devuelve data:null en lugar de lanzar excepción
+    mockGetUserById.mockResolvedValue({ data: null, error: { message: 'User not found' } })
+
+    const req = buildRequest({ projectId: PROJECT_ID }, VALID_SECRET)
+    const response = await POST(req)
+
+    expect(response.status).toBe(200)
+    expect(mockSendEmail).not.toHaveBeenCalled()
   })
 })
