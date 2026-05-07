@@ -3678,3 +3678,13 @@ workflows:
     tests_passed: 1522
     tests_failed: 0
     errors: []
+
+- id: "DS-11-5"
+  agent: "Homer"
+  trigger: "DS"
+  workflow: "dev-story"
+  story: "11.5"
+  mode: "GENERATE"
+  status: "STARTED"
+  started_at: "2026-05-06T00:00:00Z"
+  branch: "feat/11-5-gate-reciprocidad-al-publicar"

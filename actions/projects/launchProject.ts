@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { toSlug } from '@/lib/utils/slug'
+import { buildReciprocityMessage } from '@/lib/utils/reciprocity'
 
 export interface LaunchProjectInput {
   communitySlug: string
@@ -23,7 +24,7 @@ export interface LaunchProjectInput {
 
 export type LaunchProjectResult =
   | { success: true; projectId: string; projectSlug: string }
-  | { success: false; error: string }
+  | { success: false; error: string; code?: string }
 
 export async function launchProject(input: LaunchProjectInput): Promise<LaunchProjectResult> {
   const supabase = await createClient()
@@ -38,12 +39,33 @@ export async function launchProject(input: LaunchProjectInput): Promise<LaunchPr
 
   const { data: community } = await supabase
     .from('communities')
-    .select('id')
+    .select('id, reciprocity_threshold')
     .eq('slug', input.communitySlug)
     .single()
 
   if (!community) {
     return { success: false, error: 'Comunidad no encontrada' }
+  }
+
+  // Story 11.5 — Gate de reciprocidad: verificar feedbacks dados en los últimos 30 días
+  const threshold = (community as { id: string; reciprocity_threshold: number }).reciprocity_threshold ?? 0
+  if (threshold > 0) {
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+    const { count } = await supabase
+      .from('feedbacks')
+      .select('id', { count: 'exact', head: true })
+      .eq('community_id', (community as { id: string }).id)
+      .eq('reviewer_id', user.id)
+      .gte('created_at', thirtyDaysAgo)
+
+    const given = count ?? 0
+    if (given < threshold) {
+      return {
+        success: false,
+        error: buildReciprocityMessage(given, threshold),
+        code: 'RECIPROCITY_GATE_BLOCKED',
+      }
+    }
   }
 
   const { data, error } = await supabase
