@@ -692,4 +692,16 @@ describe('POST /api/webhooks/ai-synthesis — Story 12.6: envío de email', () =
     expect(response.status).toBe(200)
     expect(mockSendEmail).not.toHaveBeenCalled()
   })
+
+  it('retorna 200 cuando getUserById devuelve data:null (usuario no encontrado)', async () => {
+    buildSuccessfulFlowMockFrom({ email_enabled: true })
+    // Simular que Supabase devuelve data:null en lugar de lanzar excepción
+    mockGetUserById.mockResolvedValue({ data: null, error: { message: 'User not found' } })
+
+    const req = buildRequest({ projectId: PROJECT_ID }, VALID_SECRET)
+    const response = await POST(req)
+
+    expect(response.status).toBe(200)
+    expect(mockSendEmail).not.toHaveBeenCalled()
+  })
 })

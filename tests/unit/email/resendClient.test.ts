@@ -15,13 +15,6 @@ const { MockResend } = vi.hoisted(() => {
 vi.mock('resend', () => ({ Resend: MockResend }))
 
 // ---------------------------------------------------------------------------
-// Import DESPUÉS del mock
-// ---------------------------------------------------------------------------
-
-// Importamos el módulo tras el mock para garantizar que el singleton usa el mock
-import { getResendClient } from '@/lib/email/resendClient'
-
-// ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 

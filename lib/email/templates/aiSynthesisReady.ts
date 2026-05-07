@@ -13,6 +13,18 @@ interface EmailContent {
 }
 
 /**
+ * Escapa caracteres HTML peligrosos para prevenir XSS en plantillas de email.
+ * Solo se aplica a valores interpolados en contexto HTML — no a URLs.
+ */
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+/**
  * Construye el subject y HTML del email de notificación "síntesis de IA lista".
  * Los estilos son inline para máxima compatibilidad con clientes de email.
  */
@@ -29,7 +41,7 @@ export function buildAiSynthesisReadyEmail({
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${subject}</title>
+  <title>${escapeHtml(subject)}</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f4f4f4; font-family: sans-serif;">
   <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px 32px;">
@@ -39,11 +51,11 @@ export function buildAiSynthesisReadyEmail({
     </h1>
 
     <p style="font-size: 16px; color: #4B4B48; margin: 0 0 24px 0;">
-      La síntesis de inteligencia artificial de tu proyecto <strong>${projectTitle}</strong> ya está disponible.
+      La síntesis de inteligencia artificial de tu proyecto <strong>${escapeHtml(projectTitle)}</strong> ya está disponible.
     </p>
 
     <blockquote style="border-left: 4px solid #E5E5E0; margin: 0 0 24px 0; padding: 12px 16px; background-color: #F9F9F7; color: #4B4B48; font-style: italic;">
-      ${summaryText}
+      ${escapeHtml(summaryText)}
     </blockquote>
 
     <a

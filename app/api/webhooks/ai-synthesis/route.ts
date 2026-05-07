@@ -317,11 +317,8 @@ export async function POST(request: Request): Promise<NextResponse> {
   const emailEnabled = pref?.email_enabled ?? true
 
   if (emailEnabled) {
-    const {
-      data: { user: builderAuthUser },
-    } = await supabaseAdmin.auth.admin.getUserById(project.builderId)
-
-    const builderEmail = builderAuthUser?.email
+    const getUserResult = await supabaseAdmin.auth.admin.getUserById(project.builderId)
+    const builderEmail = getUserResult.data?.user?.email
     if (builderEmail) {
       const projectUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/communities/${community?.slug}/projects/${project.slug}`
       const { subject, html } = buildAiSynthesisReadyEmail({

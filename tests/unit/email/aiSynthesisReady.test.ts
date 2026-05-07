@@ -92,6 +92,12 @@ describe('buildAiSynthesisReadyEmail', () => {
     })
     // Subject contiene el título tal cual (sin escapar — es texto plano)
     expect(subject).toContain(specialTitle)
+    // HTML debe escapar los caracteres peligrosos para prevenir XSS
+    expect(html).toContain('&lt;Test&gt;')
+    expect(html).toContain('&amp;')
+    expect(html).toContain('&quot;Demo&quot;')
+    // El literal sin escapar NO debe aparecer en el HTML
+    expect(html).not.toContain('<Test>')
     // HTML debe contener la URL sin romper
     expect(html).toContain(BASE_INPUT.projectUrl)
   })
