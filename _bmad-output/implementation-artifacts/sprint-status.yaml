@@ -138,7 +138,7 @@ development_status:
   # ── EPIC 12: IA Sintetizadora y Notificaciones ───────────────────
   epic-12: in-progress
   12-1-migraciones-db-ai-summaries-notifications-cost-tracking: done
-  12-2-integracion-claude-api-lib-ai-control-coste: ready-for-dev
+  12-2-integracion-claude-api-lib-ai-control-coste: done  # CR APPROVED + QA PASS 2026-05-06 — PR #100 merged
   12-3-webhook-sintesis-ia-trigger-upsert-notificacion: ready-for-dev
   12-4-aisummarycard-vista-proyecto: ready-for-dev
   12-5-notificaciones-in-app-tabla-api-routes-notificationbell: ready-for-dev
