@@ -1,4 +1,28 @@
 workflows:
+  - id: "20260507-homer-DS-13-4-atribucion-feedback-iteracion-done"
+    timestamp: "2026-05-07T20:30:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 13.4: Atribución de feedback en iteración"
+    workflow: "dev-story"
+    mode: "REFINE"
+    story: "13-4-atribucion-feedback-en-iteracion"
+    result: "SUCCESS"
+    duration_estimate: "30 minutos"
+    summary: "Story 13.4 implementada con TDD Outside-In. getLatestIteration añadido al repositorio (maybeSingle para graceful null). POST /api/feedback obtiene iteración vigente con try/catch graceful. FeedbackList muestra badge v{N} cuando iteration_id != null. 1804 tests en verde (+10 nuevos). PR #112 abierto contra main."
+    artifacts_modified:
+      - "lib/repositories/project-iterations.repository.ts"
+      - "lib/repositories/feedback.repository.ts"
+      - "app/api/feedback/route.ts"
+      - "lib/api/feedback.ts"
+      - "components/feedback/FeedbackList.tsx"
+      - "tests/unit/project-iterations/projectIterationsRepository.test.ts"
+      - "tests/component/feedback/FeedbackList.test.tsx"
+      - "_bmad-output/implementation-artifacts/stories/13-4-atribucion-feedback-en-iteracion.md"
+    artifacts_created:
+      - "tests/integration/api/feedback-iteration-attribution.test.ts"
+    errors: []
+    next_recommended: "CR (Homer) — revisar PR #112 de Story 13.4"
+
   - id: "20260507-homer-DS-13-4-atribucion-feedback-iteracion-started"
     timestamp: "2026-05-07T20:00:00"
     agent: "Homer (Dev)"
