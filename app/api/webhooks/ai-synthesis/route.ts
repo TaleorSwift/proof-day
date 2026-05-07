@@ -284,6 +284,13 @@ export async function POST(request: Request): Promise<NextResponse> {
   })
 
   // ── AC8: Insertar notificación in-app al Builder ──────────────────────────
+  // Obtener el slug de la comunidad para poder navegar desde la notificación
+  const { data: community } = await supabaseAdmin
+    .from('communities')
+    .select('slug')
+    .eq('id', project.communityId)
+    .single()
+
   await supabaseAdmin.from('notifications').insert({
     user_id: project.builderId,
     type: 'ai_synthesis_ready',
@@ -291,6 +298,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       projectId,
       projectSlug: project.slug,
       projectTitle: project.title,
+      communitySlug: community?.slug,
     },
     read: false,
   })

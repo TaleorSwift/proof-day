@@ -4340,3 +4340,37 @@ workflows:
       AC10_1639_tests_verdes: PASS
     errors: []
     next_recommended: "Mergear PR #101 a main"
+
+  - id: "20260507-120000-homer-DS-12-5"
+    timestamp: "2026-05-07T12:00:00"
+    agent: "Homer"
+    trigger: "DS"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Implementando Story 12.5 — Notificaciones in-app: API routes GET/PATCH + NotificationBell component + stories + tests"
+
+  - id: "20260507-120000-homer-DS-12-5"
+    timestamp: "2026-05-07T13:00:00"
+    agent: "Homer"
+    trigger: "DS"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "60 minutos"
+    summary: "Story 12.5 completada. API routes GET/PATCH con auth+ownership, NotificationBell con badge+dropdown+navegación, Navbar slot prop, webhook communitySlug. 25 tests nuevos + 1686 suite completa en verde. PR #104 abierto."
+    artifacts_created:
+      - "app/api/notifications/route.ts"
+      - "app/api/notifications/[id]/route.ts"
+      - "components/shared/NotificationBell.tsx"
+      - "stories/shared/NotificationBell.stories.tsx"
+      - "tests/unit/api/notifications.test.ts"
+      - "tests/unit/components/NotificationBell.test.tsx"
+    artifacts_modified:
+      - "app/api/webhooks/ai-synthesis/route.ts"
+      - "components/layout/Navbar.tsx"
+      - "components/layout/NavbarClient.tsx"
+      - "tests/unit/webhooks/ai-synthesis.test.ts"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "CR (Homer) — code review del PR #104 en feat/12-5-notificaciones-in-app"

@@ -518,6 +518,14 @@ describe('POST /api/webhooks/ai-synthesis — AC7: notificación al builder', ()
           upsert: vi.fn().mockResolvedValue({ data: [{ id: 'summary-uuid-001' }], error: null }),
         }
       }
+      if (table === 'communities') {
+        // Mock para la consulta del communitySlug (Story 12.5)
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: { slug: 'startup-madrid' }, error: null }),
+        }
+      }
       if (table === 'notifications') {
         return { insert: mockNotifInsert }
       }
@@ -540,6 +548,8 @@ describe('POST /api/webhooks/ai-synthesis — AC7: notificación al builder', ()
     expect(notifData.payload.projectId).toBe(PROJECT_ID)
     expect(notifData.payload.projectSlug).toBe(MOCK_PROJECT_ROW.slug)
     expect(notifData.payload.projectTitle).toBe(MOCK_PROJECT_ROW.title)
+    // Story 12.5: communitySlug ahora se incluye en el payload
+    expect(notifData.payload.communitySlug).toBe('startup-madrid')
     expect(notifData.read).toBe(false)
   })
 })
