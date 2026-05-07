@@ -62,7 +62,8 @@ vi.mock('@/lib/ai', () => ({
 // Import del handler bajo test — DESPUÉS de los mocks
 // ---------------------------------------------------------------------------
 
-import { GET, buildInterpretationPrompt } from '@/app/api/projects/[id]/score-interpretation/route'
+import { GET } from '@/app/api/projects/[id]/score-interpretation/route'
+import { buildInterpretationPrompt } from '@/lib/ai/interpretationPrompt'
 
 // ---------------------------------------------------------------------------
 // Fixtures

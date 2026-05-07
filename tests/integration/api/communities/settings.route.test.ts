@@ -20,7 +20,7 @@ vi.mock('@/lib/supabase/server', () => ({
 // Imports tras mocks
 // ---------------------------------------------------------------------------
 
-import { PATCH } from '@/app/api/communities/[id]/settings/route'
+import { PATCH } from '@/app/api/communities/[communityId]/settings/route'
 
 // ---------------------------------------------------------------------------
 // Fixtures

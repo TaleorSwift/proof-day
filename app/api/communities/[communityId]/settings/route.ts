@@ -5,9 +5,9 @@ import { createCommunitiesRepository } from '@/lib/repositories/communities.repo
 
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ communityId: string }> }
 ) {
-  const { id } = await params
+  const { communityId } = await params
   const supabase = await createClient()
 
   // AC-4 — Auth check: 401 si no hay sesión
@@ -23,7 +23,7 @@ export async function PATCH(
   const { data: membership } = await supabase
     .from('community_members')
     .select('role')
-    .eq('community_id', id)
+    .eq('community_id', communityId)
     .eq('user_id', user.id)
     .single()
 
@@ -59,7 +59,7 @@ export async function PATCH(
 
   // AC-3 — Actualizar reciprocity_threshold en la BD
   const repository = createCommunitiesRepository(supabase)
-  const { data: updated, error } = await repository.updateSettings(id, {
+  const { data: updated, error } = await repository.updateSettings(communityId, {
     reciprocityThreshold: validation.data.reciprocityThreshold,
   })
 

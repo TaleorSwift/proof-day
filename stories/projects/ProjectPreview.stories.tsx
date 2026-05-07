@@ -19,6 +19,7 @@ const FULL_FORM_DATA: WizardFormData = {
   feedbackTopics: ['Claridad del problema', 'Disposición de uso'],
   images: [],
   hypothesis: 'Si los team leads ven las tendencias de bienestar semanalmente, intervendrán 2x más rápido ante caídas de moral.',
+  customQuestion: '',
 }
 
 const FORM_DATA_SIN_HIPOTESIS: WizardFormData = {

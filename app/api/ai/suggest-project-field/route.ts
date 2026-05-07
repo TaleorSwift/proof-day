@@ -8,50 +8,17 @@
 import { NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/api/middleware/require-auth'
 import { getOllamaClient, checkDailyBudget, trackCost } from '@/lib/ai'
+import { buildSuggestionPrompt } from '@/lib/ai/suggestionPrompt'
+import type { SuggestField, SuggestContext } from '@/lib/ai/suggestionPrompt'
 
 // ---------------------------------------------------------------------------
-// Types
+// Constants
 // ---------------------------------------------------------------------------
-
-type SuggestField = 'problem' | 'solution' | 'hypothesis'
-
-interface SuggestContext {
-  title: string
-  problem?: string
-  solution?: string
-  hypothesis?: string
-  templateId?: string
-}
 
 const VALID_FIELDS: SuggestField[] = ['problem', 'solution', 'hypothesis']
 
 // Centinela para presupuesto global — fuera del contexto de una comunidad específica
 const GLOBAL_BUDGET_SENTINEL = 'global'
-
-// ---------------------------------------------------------------------------
-// Prompt builder — puro, sin efectos secundarios
-// ---------------------------------------------------------------------------
-
-export function buildSuggestionPrompt(field: SuggestField, context: SuggestContext): string {
-  const base = `Eres un asistente que ayuda a emprendedores a describir sus proyectos de forma clara y concisa. El proyecto se llama "${context.title}".`
-
-  if (field === 'problem') {
-    return `${base} Escribe un párrafo breve (2-3 frases) describiendo el problema que este proyecto resuelve. Sé específico y orientado al usuario afectado. Responde SOLO con el párrafo, sin explicaciones adicionales.`
-  }
-
-  if (field === 'solution') {
-    const problemCtx = context.problem ? ` El problema que resuelve es: "${context.problem}".` : ''
-    return `${base}${problemCtx} Escribe un párrafo breve (2-3 frases) describiendo la solución propuesta. Sé concreto y describe el producto/servicio. Responde SOLO con el párrafo, sin explicaciones adicionales.`
-  }
-
-  // field === 'hypothesis'
-  const ctx = [
-    context.problem ? `Problema: "${context.problem}"` : '',
-    context.solution ? `Solución: "${context.solution}"` : '',
-  ].filter(Boolean).join('. ')
-
-  return `${base}${ctx ? ' ' + ctx : ''} Escribe una hipótesis de validación para este proyecto en formato "Creemos que [acción] logrará [resultado] para [usuario]. Lo validaremos cuando [métrica]." Una sola oración. Responde SOLO con la hipótesis, sin explicaciones adicionales.`
-}
 
 // ---------------------------------------------------------------------------
 // Estimación de tokens — aproximación simple
