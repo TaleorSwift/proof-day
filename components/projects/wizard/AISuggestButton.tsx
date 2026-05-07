@@ -21,6 +21,8 @@ export interface AISuggestButtonProps {
   }
   onSuggestion: (text: string) => void
   disabled?: boolean
+  /** data-testid para identificar el botón por campo en tests de integración */
+  'data-testid'?: string
 }
 
 // ---------------------------------------------------------------------------
@@ -49,20 +51,32 @@ function Spinner() {
 // AISuggestButton
 // ---------------------------------------------------------------------------
 
+const ERROR_DISPLAY_MS = 3000
+
 export function AISuggestButton({
   field,
   context,
   onSuggestion,
   disabled = false,
+  'data-testid': dataTestId,
 }: AISuggestButtonProps) {
   const [loading, setLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const isDisabled = disabled || !context.title || context.title.trim() === '' || loading
+
+  function showError(message: string) {
+    setErrorMessage(message)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, ERROR_DISPLAY_MS)
+  }
 
   async function handleClick() {
     if (isDisabled) return
 
     setLoading(true)
+    setErrorMessage(null)
     try {
       const response = await fetch('/api/ai/suggest-project-field', {
         method: 'POST',
@@ -77,14 +91,17 @@ export function AISuggestButton({
         }),
       })
 
-      if (!response.ok) return
+      if (!response.ok) {
+        showError('Error al generar sugerencia')
+        return
+      }
 
       const data = await response.json()
       if (data.suggestion) {
         onSuggestion(data.suggestion)
       }
     } catch {
-      // Silencioso — el botón vuelve a su estado inicial
+      showError('Error al generar sugerencia')
     } finally {
       setLoading(false)
     }
@@ -98,6 +115,7 @@ export function AISuggestButton({
         type="button"
         onClick={handleClick}
         disabled={isDisabled}
+        data-testid={dataTestId ?? `ai-suggest-${field}`}
         title={
           !context.title || context.title.trim() === ''
             ? 'Escribe el nombre del proyecto primero'
@@ -129,6 +147,18 @@ export function AISuggestButton({
         )}
         Sugerir con IA
       </button>
+      {errorMessage && (
+        <span
+          data-testid="ai-suggest-error"
+          role="alert"
+          style={{
+            fontSize: 'var(--text-xs)',
+            color: 'var(--color-error, #dc2626)',
+          }}
+        >
+          {errorMessage}
+        </span>
+      )}
     </>
   )
 }

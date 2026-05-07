@@ -150,4 +150,38 @@ describe('AISuggestButton', () => {
       expect(button).not.toBeDisabled()
     })
   })
+
+  it('muestra mensaje de error cuando la API retorna 503', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 503,
+      json: async () => ({ error: 'AI_UNAVAILABLE' }),
+    })
+
+    render(<AISuggestButton {...defaultProps} />)
+    const button = screen.getByRole('button')
+    await userEvent.click(button)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('ai-suggest-error')).toBeInTheDocument()
+      expect(screen.getByTestId('ai-suggest-error')).toHaveTextContent(
+        'Error al generar sugerencia'
+      )
+    })
+  })
+
+  it('muestra mensaje de error cuando la llamada a fetch lanza una excepción', async () => {
+    mockFetch.mockRejectedValueOnce(new Error('Network error'))
+
+    render(<AISuggestButton {...defaultProps} />)
+    const button = screen.getByRole('button')
+    await userEvent.click(button)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('ai-suggest-error')).toBeInTheDocument()
+      expect(screen.getByTestId('ai-suggest-error')).toHaveTextContent(
+        'Error al generar sugerencia'
+      )
+    })
+  })
 })

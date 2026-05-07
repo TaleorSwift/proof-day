@@ -1,4 +1,13 @@
 workflows:
+  - id: "20260507-homer-CR-fixes-13-7-copiloto-ia"
+    timestamp: "2026-05-07T23:00:00"
+    agent: "Homer (Dev)"
+    trigger: "CR fixes — Story 13.7: issues H1, M1, M2, M3, M4"
+    workflow: "cr-fixes"
+    mode: "REFINE"
+    story: "13-7-copiloto-ia-creacion-proyecto"
+    status: "STARTED"
+
   - id: "20260507-homer-DS-13-7-copiloto-ia-creacion-proyecto"
     timestamp: "2026-05-07T22:00:00"
     agent: "Homer (Dev)"
@@ -4882,3 +4891,33 @@ workflows:
     - "_bmad-output/implementation-artifacts/sprint-status.yaml"
   errors: []
   next_recommended: "/ds Story 13.7 (Homer)"
+
+- id: "cr-20260507-homer-CR-13-7-copiloto-ia-creacion-proyecto-started"
+  timestamp: "2026-05-07T23:00:00Z"
+  agent: "Homer (Dev)"
+  trigger: "CR — Story 13.7: Copiloto IA creacion de proyecto — PR #116"
+  workflow: "4-implementation/code-review"
+  mode: "VERIFY"
+  story: "13-7-copiloto-ia-creacion-proyecto"
+  status: STARTED
+
+- id: "cr-20260507-homer-CR-13-7-copiloto-ia-creacion-proyecto-closing"
+  timestamp: "2026-05-07T23:30:00Z"
+  agent: "Homer (Dev)"
+  trigger: "CR — Story 13.7: Copiloto IA creacion de proyecto — PR #116"
+  workflow: "4-implementation/code-review"
+  mode: "VERIFY"
+  story: "13-7-copiloto-ia-creacion-proyecto"
+  status: SUCCESS
+  result: "CHANGES_REQUESTED"
+  verdict: "CHANGES_REQUESTED"
+  pr_url: "https://github.com/TaleorSwift/proof-day/pull/116"
+  issues_found:
+    high: 2
+    medium: 4
+    low: 4
+    total: 10
+  critical_issues:
+    - "H1: AC7 incumplido — falta test de integracion WizardStepDescription con boton IA"
+    - "H2: sprint-status.yaml no actualizado — story sigue en ready-for-dev"
+  next_step: "DS — volver a Homer para corregir H1 y H2 (y recomendados M1-M4)"

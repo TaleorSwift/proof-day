@@ -7,33 +7,12 @@ import { useState } from 'react'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { AISuggestButton } from '@/components/projects/wizard/AISuggestButton'
+import { AIGeneratedBadge } from '@/components/projects/wizard/AIGeneratedBadge'
 import type { WizardFormData } from '@/components/projects/ProjectWizard'
 
 interface Props {
   data: WizardFormData
   onChange: (fields: Partial<WizardFormData>) => void
-}
-
-// ---------------------------------------------------------------------------
-// Indicador "Generado con IA" — Story 13.7 AC4
-// ---------------------------------------------------------------------------
-
-function AIGeneratedBadge() {
-  return (
-    <span
-      data-testid="ai-generated-badge"
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 'var(--space-1)',
-        fontSize: 'var(--text-xs)',
-        color: 'var(--color-text-muted)',
-        fontStyle: 'italic',
-      }}
-    >
-      <span aria-hidden="true">✦</span> Generado con IA
-    </span>
-  )
 }
 
 export function WizardStepHypothesis({ data, onChange }: Props) {

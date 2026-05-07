@@ -42,13 +42,26 @@ export const Loading: Story = {
     onSuggestion: fn(),
     disabled: false,
   },
-  render: (args) => {
-    // Simulamos el estado loading sobreescribiendo el fetch global para que nunca resuelva
-    if (typeof window !== 'undefined') {
-      window.fetch = () => new Promise(() => {})
-    }
-    return <AISuggestButton {...args} />
-  },
+  decorators: [
+    (Story) => {
+      // Inyectamos un mock de fetch que nunca resuelve para simular el estado loading.
+      // El decorator restaura el original al desmontar, sin contaminar el entorno global.
+      const originalFetch = window.fetch
+      const neverResolvesFetch = () => new Promise<Response>(() => {})
+      window.fetch = neverResolvesFetch
+      return (
+        <div
+          ref={() => {
+            return () => {
+              window.fetch = originalFetch
+            }
+          }}
+        >
+          <Story />
+        </div>
+      )
+    },
+  ],
 }
 
 /** Botón deshabilitado — el Builder no ha escrito el nombre del proyecto todavía */

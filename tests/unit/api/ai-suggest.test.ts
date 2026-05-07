@@ -103,6 +103,39 @@ describe('POST /api/ai/suggest-project-field', () => {
     expect(body.error).toBe('INVALID_FIELD')
   })
 
+  it('retorna 400 con TITLE_REQUIRED cuando title está ausente', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: MOCK_USER } })
+
+    const req = makeRequest({ field: 'problem' })
+    const res = await POST(req)
+    const body = await res.json()
+
+    expect(res.status).toBe(400)
+    expect(body.error).toBe('TITLE_REQUIRED')
+  })
+
+  it('retorna 400 con TITLE_REQUIRED cuando title es una cadena vacía', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: MOCK_USER } })
+
+    const req = makeRequest({ field: 'problem', title: '' })
+    const res = await POST(req)
+    const body = await res.json()
+
+    expect(res.status).toBe(400)
+    expect(body.error).toBe('TITLE_REQUIRED')
+  })
+
+  it('retorna 400 con TITLE_REQUIRED cuando title es solo espacios en blanco', async () => {
+    mockGetUser.mockResolvedValue({ data: { user: MOCK_USER } })
+
+    const req = makeRequest({ field: 'problem', title: '   ' })
+    const res = await POST(req)
+    const body = await res.json()
+
+    expect(res.status).toBe(400)
+    expect(body.error).toBe('TITLE_REQUIRED')
+  })
+
   it('retorna 429 con BUDGET_EXCEEDED cuando el presupuesto está agotado', async () => {
     mockGetUser.mockResolvedValue({ data: { user: MOCK_USER } })
     mockCheckDailyBudget.mockResolvedValue(false)
