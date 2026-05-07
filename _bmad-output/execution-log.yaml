@@ -6,7 +6,16 @@ workflows:
     workflow: "dev-story"
     mode: "GENERATE"
     story: "13-6-historial-versiones-proof-score-por-iteracion"
-    result: "STARTED"
+    result: "SUCCESS"
+    duration_estimate: "30 minutos"
+    summary: "Story 13.6 implementada con TDD Outside-In. Componente IterationHistory creado con estilos design-tokens. Query de project_iterations + conteo feedbacks por iteración en page.tsx. Proof Score filtrado a iteración más reciente. 21 tests nuevos (15 componente + 6 integración), 1839 tests en verde. Storybook con 3 variantes. PR #115 abierto contra main."
+    artifacts_modified:
+      - "components/projects/IterationHistory.tsx"
+      - "stories/projects/IterationHistory.stories.tsx"
+      - "tests/component/projects/IterationHistory.test.tsx"
+      - "tests/component/projects/ProjectDetailPage.13-6.test.tsx"
+      - "tests/component/projects/ProjectDetailPage.test.tsx"
+      - "app/(app)/communities/[slug]/projects/[projectSlug]/page.tsx"
 
   - id: "20260507-homer-DS-13-5-notificacion-atribucion-reviewer"
     timestamp: "2026-05-07T21:00:00"
