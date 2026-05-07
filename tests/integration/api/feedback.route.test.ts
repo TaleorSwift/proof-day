@@ -217,6 +217,12 @@ describe('POST /api/feedback', () => {
           single: vi.fn().mockResolvedValue({ data: mockFeedbackRow, error: null }),
         }),
       }),
+      // Story 12.7 — countCompleteByProject: select('id', { count: 'exact', head: true })
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          gte: vi.fn().mockResolvedValue({ count: 0, error: null }),
+        }),
+      }),
     })
 
     const validBody = {

@@ -92,5 +92,16 @@ export function createFeedbackRepository(supabase: SupabaseClient) {
         .eq('community_id', communityId)
         .gte('created_at', weekStart.toISOString())
     },
+
+    // Story 12.7 — cuenta feedbacks con quality_score >= qualityThreshold para un proyecto
+    async countCompleteByProject(projectId: string, qualityThreshold = 0.6): Promise<number> {
+      const { count, error } = await supabase
+        .from('feedbacks')
+        .select('id', { count: 'exact', head: true })
+        .eq('project_id', projectId)
+        .gte('quality_score', qualityThreshold)
+      if (error) return 0
+      return count ?? 0
+    },
   }
 }

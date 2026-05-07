@@ -112,7 +112,11 @@ describe('POST /api/feedback (Story 11.3) — T2.1: quality_score se calcula y p
       error: null,
     })
 
-    createFeedbackRepositoryMock.mockReturnValueOnce({ create: createSpy })
+    createFeedbackRepositoryMock.mockReturnValueOnce({
+      create: createSpy,
+      // Story 12.7 — countCompleteByProject requerido por la route tras el create
+      countCompleteByProject: vi.fn().mockResolvedValue(0),
+    })
 
     await POST(buildPostRequest(VALID_BODY))
 
@@ -148,7 +152,11 @@ describe('POST /api/feedback (Story 11.3) — T2.1: quality_score se calcula y p
       })
     })
 
-    createFeedbackRepositoryMock.mockReturnValueOnce({ create: createSpy })
+    createFeedbackRepositoryMock.mockReturnValueOnce({
+      create: createSpy,
+      // Story 12.7 — countCompleteByProject requerido por la route tras el create
+      countCompleteByProject: vi.fn().mockResolvedValue(0),
+    })
 
     await POST(buildPostRequest(VALID_BODY))
 

@@ -13,7 +13,7 @@
 import { timingSafeEqual } from 'crypto'
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { synthesizeFeedbacks, trackCost, checkDailyBudget } from '@/lib/ai'
+import { synthesizeFeedbacks, trackCost, checkDailyBudget, maybeSendBudgetAlert } from '@/lib/ai'
 import { sendEmail, buildAiSynthesisReadyEmail } from '@/lib/email'
 import type { Feedback } from '@/lib/types/feedback'
 import type { Project } from '@/lib/types/projects'
@@ -284,6 +284,17 @@ export async function POST(request: Request): Promise<NextResponse> {
     tokensOutput: synthesis.tokensOutput,
     costUsd: synthesis.costUsd,
   })
+
+  // ── Story 12.7: Budget alert — notificar a admins si >= 80% del presupuesto ──
+  const limitUsd = parseFloat(process.env.AI_DAILY_BUDGET_USD ?? '5.0')
+  const currentMonth = new Date().toISOString().slice(0, 7) // 'YYYY-MM'
+  const { data: costRow } = await supabaseAdmin
+    .from('ai_cost_tracking')
+    .select('estimated_cost_usd')
+    .eq('month', currentMonth)
+    .maybeSingle()
+  const totalMonthCost = costRow?.estimated_cost_usd ? parseFloat(String(costRow.estimated_cost_usd)) : 0
+  await maybeSendBudgetAlert(project.communityId, totalMonthCost, limitUsd)
 
   // ── AC8: Insertar notificación in-app al Builder ──────────────────────────
   // Obtener el slug de la comunidad para poder navegar desde la notificación

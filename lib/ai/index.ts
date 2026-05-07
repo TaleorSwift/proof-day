@@ -10,4 +10,4 @@ export type { AISynthesisResult, ParsedAIResponse } from './synthesizeFeedbacks'
 export { trackCost } from './costTracker'
 export type { TrackCostInput } from './costTracker'
 
-export { checkDailyBudget } from './budgetChecker'
+export { checkDailyBudget, maybeSendBudgetAlert } from './budgetChecker'
