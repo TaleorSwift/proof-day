@@ -1,4 +1,37 @@
 workflows:
+  - id: "20260506-ned-CS-epic12-stories-12-2-to-12-7"
+    timestamp: "2026-05-06T12:00:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Crear stories 12.2 a 12.7 del Epic 12: IA Sintetizadora y Notificaciones"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    stories:
+      - "12-2-integracion-claude-api-lib-ai-control-coste"
+      - "12-3-webhook-sintesis-ia-trigger-upsert-notificacion"
+      - "12-4-aisummarycard-vista-proyecto"
+      - "12-5-notificaciones-in-app-tabla-api-routes-notificationbell"
+      - "12-6-notificaciones-email-resend-sdk"
+      - "12-7-notificacion-builder-sintesis-lista-budget-alert"
+    summary: "Creación de 6 ficheros de story para Epic 12. Prerrequisito: Story 12.1 Done (migraciones DB + tipos TS). Contexto leído: lib/types/ai.ts, migraciones 027-031, app/api/feedback/route.ts, feedback.repository.ts, page.tsx del proyecto, FeedbackQualityStats, design-tokens.md, .env.example."
+
+  - id: "20260506-ned-CS-epic12-stories-12-2-to-12-7-closing"
+    timestamp: "2026-05-06T12:30:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Crear stories 12.2 a 12.7 del Epic 12: IA Sintetizadora y Notificaciones"
+    workflow: "create-story"
+    result: "SUCCESS"
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/stories/12-2-integracion-claude-api-lib-ai-control-coste.md"
+      - "_bmad-output/implementation-artifacts/stories/12-3-webhook-sintesis-ia-trigger-upsert-notificacion.md"
+      - "_bmad-output/implementation-artifacts/stories/12-4-aisummarycard-vista-proyecto.md"
+      - "_bmad-output/implementation-artifacts/stories/12-5-notificaciones-in-app-tabla-api-routes-notificationbell.md"
+      - "_bmad-output/implementation-artifacts/stories/12-6-notificaciones-email-resend-sdk.md"
+      - "_bmad-output/implementation-artifacts/stories/12-7-notificacion-builder-sintesis-lista-budget-alert.md"
+    errors: []
+    notes: "6 stories creadas con status ready-for-dev. Contexto completo leído antes de escribir. Service role Supabase destacado en 12.3 y 12.7. Decisión de schema ai_cost_tracking (mensual) documentada en 12.2 con nota sobre granularidad diaria."
+
+
   - id: "20260506-homer-CR-11-5-started"
     timestamp: "2026-05-06T09:35:00"
     agent: "Homer (Dev)"
@@ -4003,3 +4036,13 @@ workflows:
       AC-7: "PASS — data-testid='reciprocity-saved-feedback' presente y verificado en ReciprocitySettings.test.tsx"
       AC-8: "PASS — reciprocity_threshold incluido en SELECT de settings/page.tsx"
       AC-9: "PASS — 1599/1599 tests verdes, sin regresiones"
+    next_recommended: "Mergear PR #99 a main. Siguiente: Homer DS Story 12.2."
+
+  - id: "20260506-wiggum-DC-env-epic12"
+    timestamp: "2026-05-06T12:45:00"
+    agent: "Wiggum (Deploy)"
+    trigger: "DC"
+    workflow: "deploy-configure"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Actualizar artefactos de deployment para Epic 12 (IA Sintetizadora): añadir ANTHROPIC_API_KEY y AI_DAILY_BUDGET_USD a .env.example, actualizar deployment-setup.md y crear scripts/preflight-vercel.sh adaptado a la plataforma Vercel del proyecto."

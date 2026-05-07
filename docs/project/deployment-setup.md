@@ -58,8 +58,11 @@ Configurar en **Vercel Dashboard → proyecto → Settings → Environment Varia
 | `SUPABASE_SERVICE_ROLE_KEY` | Clave service role (solo servidor) — sensitive | Production |
 | `RESEND_API_KEY` | API key de Resend para emails — sensitive | Production |
 | `NEXT_PUBLIC_SITE_URL` | URL pública de la app en Vercel | Production |
+| `CRON_SECRET` | Secret para proteger `/api/cron/*` — generar con `openssl rand -base64 32` — sensitive | Production |
+| `ANTHROPIC_API_KEY` | API key de Anthropic para síntesis IA (Epic 12) — sensitive | Production |
+| `AI_DAILY_BUDGET_USD` | Presupuesto diario máximo en USD para Claude (default: 5.0) | Production |
 
-> ⚠️ `SUPABASE_SERVICE_ROLE_KEY` y `RESEND_API_KEY` marcados como sensitive (write-only en Vercel).
+> `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `CRON_SECRET` y `ANTHROPIC_API_KEY` se marcan como sensitive (write-only en Vercel).
 > `NODE_ENV` no hace falta — Vercel lo pone automáticamente en producción.
 
 ---
