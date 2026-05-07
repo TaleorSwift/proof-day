@@ -62,3 +62,7 @@ export const FB_SCALE_3    = 'e0000000-0000-4000-8000-000000000012'
 // ── Invitations ──────────────────────────────────────────────────────────────
 export const INVITATION_UNUSED = 'f0000000-0000-4000-8000-000000000001'
 export const INVITATION_USED   = 'f0000000-0000-4000-8000-000000000002'
+
+// ── AI Summaries (Story 12.4) — g0… ─────────────────────────────────────────
+export const AI_SUMMARY_PULSE_CHECK   = 'g0000000-0000-4000-8000-000000000001'
+export const AI_SUMMARY_DOC_BRIDGE    = 'g0000000-0000-4000-8000-000000000002'

@@ -130,6 +130,10 @@ vi.mock('@/components/projects/ProjectDetailSections', () => ({
   ProjectDetailFeedbackTopics: () => <div data-testid='project-detail-feedback-topics' />,
 }))
 
+vi.mock('@/components/projects/AISummaryCard', () => ({
+  AISummaryCard: () => <div data-testid='ai-summary-card-mock' />,
+}))
+
 vi.mock('@/components/shared/BackButton', () => ({
   BackButton: ({ href, label }: { href: string; label: string }) => (
     <a href={href} data-testid='back-button'>{label}</a>
@@ -159,9 +163,9 @@ import { calculateValidationMetrics } from '@/lib/projects/calculateValidationMe
 
 function makeChain(resolvedValue: unknown) {
   const chain: Record<string, unknown> = {}
-  const methods = ['select', 'eq', 'single']
+  const methods = ['select', 'eq', 'single', 'maybeSingle']
   for (const method of methods) {
-    if (method === 'single') {
+    if (method === 'single' || method === 'maybeSingle') {
       chain[method] = vi.fn().mockResolvedValue(resolvedValue)
     } else {
       chain[method] = vi.fn().mockReturnValue(chain)

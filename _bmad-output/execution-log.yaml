@@ -1,4 +1,36 @@
 workflows:
+  - id: "20260506-homer-DS-12-4-closing"
+    timestamp: "2026-05-06T17:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 12.4: AISummaryCard: vista del proyecto"
+    workflow: "dev-story"
+    result: "SUCCESS"
+    story: "12-4-aisummarycard-vista-proyecto"
+    branch: "feat/12-4-aisummarycard-vista-proyecto"
+    pr: "#102"
+    artifacts_created:
+      - "components/projects/AISummaryCard.tsx"
+      - "tests/component/projects/AISummaryCard.test.tsx"
+      - "stories/projects/AISummaryCard.stories.tsx"
+      - "lib/fixtures/ai-summaries.ts"
+    artifacts_modified:
+      - "app/(app)/communities/[slug]/projects/[projectSlug]/page.tsx"
+      - "lib/fixtures/_ids.ts"
+      - "lib/fixtures/index.ts"
+      - "tests/component/projects/ProjectDetailPage.test.tsx"
+    tests: "163 ficheros / 1661 tests — todos verdes"
+    errors: []
+    notes: "TDD Outside-In. 22 tests nuevos. Parseo de insights por regex (bullets - o •). AISummaryCard Server Component. maybeSingle() añadido a makeChain en ProjectDetailPage.test. TSC: sin errores nuevos. Errores pre-existentes (9) en stories anteriores fuera de scope."
+
+  - id: "20260506-homer-DS-12-4-started"
+    timestamp: "2026-05-06T16:30:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 12.4: AISummaryCard: vista del proyecto"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    story: "12-4-aisummarycard-vista-proyecto"
+    branch: "feat/12-4-aisummarycard-vista-proyecto"
+
   - id: "20260506-homer-DS-12-3-closing"
     timestamp: "2026-05-06T15:45:00"
     agent: "Homer (Dev)"
