@@ -34,6 +34,7 @@ interface ProjectRow {
 
 interface ReminderResult {
   processed: number
+  created: number
   skipped: number
 }
 
@@ -57,7 +58,7 @@ export function createFeedbackReminderService(supabase: SupabaseClient) {
      * Procesa todos los proyectos live y crea notificaciones de recordatorio
      * para builders con pocos feedbacks recientes.
      *
-     * @returns { processed, skipped } — número de notificaciones creadas y proyectos omitidos
+     * @returns { processed, created, skipped } — proyectos procesados, notificaciones creadas, proyectos omitidos
      */
     async processReminders(): Promise<ReminderResult> {
       const weekAgo = new Date(
@@ -71,10 +72,11 @@ export function createFeedbackReminderService(supabase: SupabaseClient) {
         .eq('status', 'live')
 
       if (projectsError || !projects) {
-        return { processed: 0, skipped: 0 }
+        return { processed: 0, created: 0, skipped: 0 }
       }
 
       let processed = 0
+      let created = 0
       let skipped = 0
 
       for (const project of projects as ProjectRow[]) {
@@ -90,7 +92,7 @@ export function createFeedbackReminderService(supabase: SupabaseClient) {
         }
 
         // 5. Insertar notificación in-app (AC-4)
-        const feedbackCount = await countRecentCompleteFeeedbacks(
+        const feedbackCount = await countRecentCompleteFeedbacks(
           supabase,
           project.id,
           weekAgo,
@@ -109,9 +111,10 @@ export function createFeedbackReminderService(supabase: SupabaseClient) {
         })
 
         processed++
+        created++
       }
 
-      return { processed, skipped }
+      return { processed, created, skipped }
     },
   }
 }
@@ -133,7 +136,7 @@ async function shouldSkipProject(
   weekAgo: string,
 ): Promise<boolean> {
   // AC-3 — Comprobar si el proyecto tiene suficientes feedbacks recientes
-  const feedbackCount = await countRecentCompleteFeeedbacks(
+  const feedbackCount = await countRecentCompleteFeedbacks(
     supabase,
     project.id,
     weekAgo,
@@ -177,7 +180,7 @@ async function shouldSkipProject(
  * Cuenta los feedbacks recientes completos (quality_score >= QUALITY_THRESHOLD)
  * de un proyecto en los últimos DAYS_LOOKBACK días.
  */
-async function countRecentCompleteFeeedbacks(
+async function countRecentCompleteFeedbacks(
   supabase: SupabaseClient,
   projectId: string,
   since: string,

@@ -156,16 +156,16 @@ function buildSuiteSupabase(options: {
 // ---------------------------------------------------------------------------
 
 describe('feedbackReminder.service — sin proyectos live', () => {
-  it('T2.1 — 0 proyectos → { processed: 0, skipped: 0 }', async () => {
+  it('T2.1 — 0 proyectos → { processed: 0, created: 0, skipped: 0 }', async () => {
     const { from } = buildSuiteSupabase({ liveProjects: [] })
     const service = createFeedbackReminderService({ from } as never)
 
     const result = await service.processReminders()
 
-    expect(result).toEqual({ processed: 0, skipped: 0 })
+    expect(result).toEqual({ processed: 0, created: 0, skipped: 0 })
   })
 
-  it('T2.1b — error al obtener proyectos → { processed: 0, skipped: 0 }', async () => {
+  it('T2.1b — error al obtener proyectos → { processed: 0, created: 0, skipped: 0 }', async () => {
     const from = vi.fn().mockReturnValue({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockResolvedValue({ data: null, error: new Error('DB error') }),
@@ -174,7 +174,7 @@ describe('feedbackReminder.service — sin proyectos live', () => {
 
     const result = await service.processReminders()
 
-    expect(result).toEqual({ processed: 0, skipped: 0 })
+    expect(result).toEqual({ processed: 0, created: 0, skipped: 0 })
   })
 })
 
@@ -183,7 +183,7 @@ describe('feedbackReminder.service — sin proyectos live', () => {
 // ---------------------------------------------------------------------------
 
 describe('feedbackReminder.service — proyectos con suficientes feedbacks recientes (AC-3)', () => {
-  it('T2.3 — 1 proyecto con 3+ feedbacks completos → { processed: 0, skipped: 1 }', async () => {
+  it('T2.3 — 1 proyecto con 3+ feedbacks completos → { processed: 0, created: 0, skipped: 1 }', async () => {
     const project = {
       id: 'proj-001',
       slug: 'mi-proyecto',
@@ -230,7 +230,7 @@ describe('feedbackReminder.service — proyectos con suficientes feedbacks recie
     const service = createFeedbackReminderService({ from } as never)
     const result = await service.processReminders()
 
-    expect(result).toEqual({ processed: 0, skipped: 1 })
+    expect(result).toEqual({ processed: 0, created: 0, skipped: 1 })
   })
 })
 
@@ -294,7 +294,7 @@ describe('feedbackReminder.service — notification_preferences opt-out (AC-5)',
     const service = createFeedbackReminderService({ from } as never)
     const result = await service.processReminders()
 
-    expect(result).toEqual({ processed: 0, skipped: 1 })
+    expect(result).toEqual({ processed: 0, created: 0, skipped: 1 })
   })
 
   it('T3.2 — sin fila en notification_preferences → opt-in → notif creada', async () => {
@@ -383,7 +383,7 @@ describe('feedbackReminder.service — notification_preferences opt-out (AC-5)',
     const service = createFeedbackReminderService({ from } as never)
     const result = await service.processReminders()
 
-    expect(result).toEqual({ processed: 1, skipped: 0 })
+    expect(result).toEqual({ processed: 1, created: 1, skipped: 0 })
     expect(insertMock).toHaveBeenCalledWith(
       expect.objectContaining({
         user_id: project.builder_id,
@@ -471,7 +471,7 @@ describe('feedbackReminder.service — sin duplicados (AC-6)', () => {
     const service = createFeedbackReminderService({ from } as never)
     const result = await service.processReminders()
 
-    expect(result).toEqual({ processed: 0, skipped: 1 })
+    expect(result).toEqual({ processed: 0, created: 0, skipped: 1 })
     expect(notificationsChain.insert).not.toHaveBeenCalled()
   })
 })

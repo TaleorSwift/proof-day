@@ -126,9 +126,10 @@ describe('POST /api/cron/feedback-reminder — detección proyectos', () => {
     vi.clearAllMocks()
   })
 
-  it('T2.1 — 0 proyectos live → { processed: 0, skipped: 0 } y 200 OK', async () => {
+  it('T2.1 — 0 proyectos live → { processed: 0, created: 0, skipped: 0 } y 200 OK', async () => {
     feedbackReminderServiceInstance.processReminders.mockResolvedValue({
       processed: 0,
+      created: 0,
       skipped: 0,
     })
 
@@ -137,12 +138,13 @@ describe('POST /api/cron/feedback-reminder — detección proyectos', () => {
     const body = await res.json()
 
     expect(res.status).toBe(200)
-    expect(body).toEqual({ processed: 0, skipped: 0 })
+    expect(body).toEqual({ processed: 0, created: 0, skipped: 0 })
   })
 
-  it('T2.2 — 1 proyecto live con 0 feedbacks en 7 días → { processed: 1, skipped: 0 }', async () => {
+  it('T2.2 — 1 proyecto live con 0 feedbacks en 7 días → { processed: 1, created: 1, skipped: 0 }', async () => {
     feedbackReminderServiceInstance.processReminders.mockResolvedValue({
       processed: 1,
+      created: 1,
       skipped: 0,
     })
 
@@ -151,12 +153,13 @@ describe('POST /api/cron/feedback-reminder — detección proyectos', () => {
     const body = await res.json()
 
     expect(res.status).toBe(200)
-    expect(body).toEqual({ processed: 1, skipped: 0 })
+    expect(body).toEqual({ processed: 1, created: 1, skipped: 0 })
   })
 
-  it('T2.3 — 1 proyecto con 3+ feedbacks completos en 7 días → { processed: 0, skipped: 1 }', async () => {
+  it('T2.3 — 1 proyecto con 3+ feedbacks completos en 7 días → { processed: 0, created: 0, skipped: 1 }', async () => {
     feedbackReminderServiceInstance.processReminders.mockResolvedValue({
       processed: 0,
+      created: 0,
       skipped: 1,
     })
 
@@ -165,12 +168,13 @@ describe('POST /api/cron/feedback-reminder — detección proyectos', () => {
     const body = await res.json()
 
     expect(res.status).toBe(200)
-    expect(body).toEqual({ processed: 0, skipped: 1 })
+    expect(body).toEqual({ processed: 0, created: 0, skipped: 1 })
   })
 
-  it('T2.4 — 1 proyecto con notif ya creada esta semana → { processed: 0, skipped: 1 }', async () => {
+  it('T2.4 — 1 proyecto con notif ya creada esta semana → { processed: 0, created: 0, skipped: 1 }', async () => {
     feedbackReminderServiceInstance.processReminders.mockResolvedValue({
       processed: 0,
+      created: 0,
       skipped: 1,
     })
 
@@ -179,12 +183,13 @@ describe('POST /api/cron/feedback-reminder — detección proyectos', () => {
     const body = await res.json()
 
     expect(res.status).toBe(200)
-    expect(body).toEqual({ processed: 0, skipped: 1 })
+    expect(body).toEqual({ processed: 0, created: 0, skipped: 1 })
   })
 
   it('T2 — invoca createFeedbackReminderService con el cliente Supabase', async () => {
     feedbackReminderServiceInstance.processReminders.mockResolvedValue({
       processed: 0,
+      created: 0,
       skipped: 0,
     })
 
@@ -213,6 +218,7 @@ describe('POST /api/cron/feedback-reminder — notification_preferences', () => 
   it('T3.1 — builder con pref feedback_reminder=false → notif NO creada, skipped', async () => {
     feedbackReminderServiceInstance.processReminders.mockResolvedValue({
       processed: 0,
+      created: 0,
       skipped: 1,
     })
 
@@ -223,11 +229,13 @@ describe('POST /api/cron/feedback-reminder — notification_preferences', () => 
     expect(res.status).toBe(200)
     expect(body.skipped).toBe(1)
     expect(body.processed).toBe(0)
+    expect(body.created).toBe(0)
   })
 
   it('T3.2 — builder sin fila en notification_preferences → notif creada (opt-in por defecto)', async () => {
     feedbackReminderServiceInstance.processReminders.mockResolvedValue({
       processed: 1,
+      created: 1,
       skipped: 0,
     })
 
@@ -237,6 +245,7 @@ describe('POST /api/cron/feedback-reminder — notification_preferences', () => 
 
     expect(res.status).toBe(200)
     expect(body.processed).toBe(1)
+    expect(body.created).toBe(1)
     expect(body.skipped).toBe(0)
   })
 })
@@ -258,6 +267,7 @@ describe('POST /api/cron/feedback-reminder — sin duplicados', () => {
   it('T4.1 — notif ya existe para ese proyecto en los últimos 7 días → skipped += 1, no inserta', async () => {
     feedbackReminderServiceInstance.processReminders.mockResolvedValue({
       processed: 0,
+      created: 0,
       skipped: 1,
     })
 
@@ -266,6 +276,6 @@ describe('POST /api/cron/feedback-reminder — sin duplicados', () => {
     const body = await res.json()
 
     expect(res.status).toBe(200)
-    expect(body).toEqual({ processed: 0, skipped: 1 })
+    expect(body).toEqual({ processed: 0, created: 0, skipped: 1 })
   })
 })

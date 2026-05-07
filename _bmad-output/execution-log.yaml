@@ -3569,3 +3569,14 @@ workflows:
       - "_bmad-output/execution-log.yaml"
     errors: []
     next_recommended: "Homer, CR — revisar PR #97 Story 11.4"
+
+  - id: "20260506-homer-CR-11-4-started"
+    timestamp: "2026-05-06T09:21:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 11.4: Recordatorio automático de feedback (cron job)"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "11-4-recordatorio-automatico-feedback-cron-job"
+    branch: "feat/11-4-recordatorio-automatico-feedback-cron-job"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/97"
