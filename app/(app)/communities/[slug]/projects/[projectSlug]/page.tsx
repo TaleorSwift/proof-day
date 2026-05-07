@@ -28,6 +28,7 @@ import Link from 'next/link'
 import { calculateValidationMetrics } from '@/lib/projects/calculateValidationMetrics'
 import { aiSummaryFromRow } from '@/lib/types/ai'
 import { NewVersionActions } from '@/components/projects/NewVersionActions'
+import { IterationHistory } from '@/components/projects/IterationHistory'
 
 interface Props {
   params: Promise<{ slug: string; projectSlug: string }>
@@ -80,6 +81,50 @@ export default async function ProjectPage({ params }: Props) {
   const { data: feedbacksRaw } = await feedbackRepo.findByProject(project.id)
   const feedbacks = feedbacksRaw ?? []
   const feedbackCount = feedbacks.length
+
+  // Story 13.6 — Query de iteraciones del proyecto (ordenadas por version_number DESC)
+  const { data: iterationRows } = await supabase
+    .from('project_iterations')
+    .select('id, version_number, published_at')
+    .eq('project_id', project.id)
+    .order('version_number', { ascending: false })
+
+  // Story 13.6 — Conteo de feedbacks por iteración (agrupado en memoria para evitar
+  // problemas con la sintaxis PostgREST feedbacks(count) y foreign keys)
+  const { data: feedbackIterationRows } = await supabase
+    .from('feedbacks')
+    .select('iteration_id')
+    .eq('project_id', project.id)
+    .not('iteration_id', 'is', null)
+
+  const countByIterationId = (feedbackIterationRows ?? []).reduce<Record<string, number>>(
+    (acc, f) => {
+      const id = (f as { iteration_id: string }).iteration_id
+      if (id) acc[id] = (acc[id] ?? 0) + 1
+      return acc
+    },
+    {}
+  )
+
+  // Story 13.6 — Mapeo de iteraciones a IterationSummary
+  const iterations = (iterationRows ?? []).map((row) => ({
+    id: row.id as string,
+    versionNumber: row.version_number as number,
+    publishedAt: row.published_at as string,
+    feedbackCount: countByIterationId[row.id as string] ?? 0,
+  }))
+
+  // Story 13.6 — Iteración más reciente (ya ordenado DESC por version_number)
+  const latestIteration = iterations[0] ?? null
+
+  // Story 13.6 — Filtrado de feedbacks para el Proof Score:
+  // Con iteraciones: solo feedbacks de la iteración más reciente.
+  // Sin iteraciones: todos los feedbacks (comportamiento original).
+  const feedbacksForScore = latestIteration
+    ? feedbacks.filter((f) => (f as unknown as { iteration_id: string | null }).iteration_id === latestIteration.id)
+    : feedbacks
+
+  const feedbackCountForScore = feedbacksForScore.length
 
   // Mapeo a FeedbackEntryData para TeamPerspectives (presentacional, con scores para pills)
   const feedbackEntries: FeedbackEntryData[] = feedbacks.map((f) => ({
@@ -343,6 +388,9 @@ export default async function ProjectPage({ params }: Props) {
               />
             )}
 
+            {/* Story 13.6 — Historial de versiones: visible para todos si hay iteraciones */}
+            <IterationHistory iterations={iterations} />
+
             {/* Story 8.9 — Perspectivas del equipo: visible para TODOS los miembros */}
             <TeamPerspectives feedbacks={feedbackEntries} />
           </div>
@@ -420,11 +468,13 @@ export default async function ProjectPage({ params }: Props) {
 
               {/* Contenido de la sidebar según rol y status */}
               {isOwner ? (
-                /* Owner: ProofScoreSidebar con DecisionDialog */
+                /* Owner: ProofScoreSidebar con DecisionDialog
+                   Story 13.6: feedbackCountForScore usa solo feedbacks de la iteración más reciente
+                   (o todos si no hay iteraciones) */
                 <ProofScoreSidebar
                   projectId={project.id}
                   isBuilder={isOwner}
-                  feedbackCount={feedbackCount}
+                  feedbackCount={feedbackCountForScore}
                   initialDecision={project.decision as import('@/lib/types/projects').ProjectDecision | null}
                 />
               ) : project.status === 'live' ? (

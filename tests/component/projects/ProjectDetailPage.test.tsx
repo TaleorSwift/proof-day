@@ -163,9 +163,12 @@ import { calculateValidationMetrics } from '@/lib/projects/calculateValidationMe
 
 function makeChain(resolvedValue: unknown) {
   const chain: Record<string, unknown> = {}
-  const methods = ['select', 'eq', 'single', 'maybeSingle']
+  const methods = ['select', 'eq', 'single', 'maybeSingle', 'order', 'not']
   for (const method of methods) {
     if (method === 'single' || method === 'maybeSingle') {
+      chain[method] = vi.fn().mockResolvedValue(resolvedValue)
+    } else if (method === 'order' || method === 'not') {
+      // order() y not() terminan la cadena y retornan una Promise directamente
       chain[method] = vi.fn().mockResolvedValue(resolvedValue)
     } else {
       chain[method] = vi.fn().mockReturnValue(chain)

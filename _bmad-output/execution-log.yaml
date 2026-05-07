@@ -1,4 +1,13 @@
 workflows:
+  - id: "20260507-homer-DS-13-6-historial-versiones-proof-score"
+    timestamp: "2026-05-07T22:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 13.6: Historial de versiones y Proof Score por iteración"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    story: "13-6-historial-versiones-proof-score-por-iteracion"
+    result: "STARTED"
+
   - id: "20260507-homer-DS-13-5-notificacion-atribucion-reviewer"
     timestamp: "2026-05-07T21:00:00"
     agent: "Homer (Dev)"
