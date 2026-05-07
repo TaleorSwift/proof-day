@@ -3,7 +3,7 @@
 ## Metadata
 - **Epic:** 12 — AI Summaries & Notifications
 - **Story key:** 12.6
-- **Phase:** ready-for-dev
+- **Phase:** review
 - **Agent:** Homer
 - **Flow:** Full Flow (Homer)
 - **Prerrequisito:** Story 12.5 Done (patrón de notificaciones establecido)
@@ -65,16 +65,16 @@ Then hay tests para:
 
 ## Tasks
 
-- [ ] Task 1: Crear `lib/email/resendClient.ts` — singleton de Resend con `RESEND_API_KEY`
-- [ ] Task 2: Crear `lib/email/templates/aiSynthesisReady.ts` — función `buildAiSynthesisReadyEmail()` que retorna `{subject, html}`
-- [ ] Task 3: Crear `lib/email/sendEmail.ts` — función `sendEmail({to, subject, html}): Promise<void>`
-- [ ] Task 4: Crear `lib/email/index.ts` — barrel export
-- [ ] Task 5: Modificar `app/api/webhooks/ai-synthesis/route.ts` — añadir consulta de notification_preferences y llamada a sendEmail (fire-and-forget)
-- [ ] Task 6: Verificar/añadir `EMAIL_FROM` en `.env.example`
-- [ ] Task 7: Crear `tests/unit/email/resendClient.test.ts`
-- [ ] Task 8: Crear `tests/unit/email/aiSynthesisReady.test.ts`
-- [ ] Task 9: Crear `tests/unit/email/sendEmail.test.ts`
-- [ ] Task 10: Añadir casos de test de integración en `tests/unit/webhooks/ai-synthesis.test.ts` (email enviado/no enviado según preferencia)
+- [x] Task 1: Crear `lib/email/resendClient.ts` — singleton de Resend con `RESEND_API_KEY`
+- [x] Task 2: Crear `lib/email/templates/aiSynthesisReady.ts` — función `buildAiSynthesisReadyEmail()` que retorna `{subject, html}`
+- [x] Task 3: Crear `lib/email/sendEmail.ts` — función `sendEmail({to, subject, html}): Promise<void>`
+- [x] Task 4: Crear `lib/email/index.ts` — barrel export
+- [x] Task 5: Modificar `app/api/webhooks/ai-synthesis/route.ts` — añadir consulta de notification_preferences y llamada a sendEmail (fire-and-forget)
+- [x] Task 6: Verificar/añadir `EMAIL_FROM` en `.env.example`
+- [x] Task 7: Crear `tests/unit/email/resendClient.test.ts`
+- [x] Task 8: Crear `tests/unit/email/aiSynthesisReady.test.ts`
+- [x] Task 9: Crear `tests/unit/email/sendEmail.test.ts`
+- [x] Task 10: Añadir casos de test de integración en `tests/unit/webhooks/ai-synthesis.test.ts` (email enviado/no enviado según preferencia)
 
 ## Dev Notes
 
@@ -157,3 +157,43 @@ return NextResponse.json({ success: true, projectId, summaryId })
 1. Test del template: verificar asunto y contenido HTML
 2. Test del sendEmail: mock de Resend, verificar llamada
 3. Test de integración en webhook: mock de sendEmail, verificar que se llama o no según preferencia
+
+## Dev Agent Record
+
+### Implementation Plan
+- VERIFY mode: todos los artefactos existían al iniciar el workflow
+- Modo de ejecución: revisión y validación de implementación previa
+
+### Completion Notes
+- AC1: `getResendClient()` singleton implementado con módulo-level variable. 4 tests verdes.
+- AC2: `buildAiSynthesisReadyEmail()` retorna `{subject, html}` con estilos inline, escapeHtml para XSS. 11 tests verdes.
+- AC3: `sendEmail()` delega a Resend, usa `EMAIL_FROM` del entorno con fallback. Propaga errores. 6 tests verdes.
+- AC4: Webhook ai-synthesis integra consulta `notification_preferences`, lógica email_enabled (default true), fire-and-forget con `.catch()`. 4 tests de email en webhook verdes.
+- AC5: `.env.example` tiene `RESEND_API_KEY=re_dummy_local` y `EMAIL_FROM=no-reply@proof-day.com`.
+- AC6: 22 tests nuevos en `tests/unit/email/` + 4 casos en webhook test. Suite completa: 1712/1712 verdes.
+- Paquete `resend@^6.12.3` presente en `package.json`.
+
+### Debug Log
+- Sin bloqueos. Todos los tests pasaron en primera ejecución en modo VERIFY.
+
+## File List
+
+### Created
+- `lib/email/resendClient.ts`
+- `lib/email/templates/aiSynthesisReady.ts`
+- `lib/email/sendEmail.ts`
+- `lib/email/index.ts`
+- `tests/unit/email/resendClient.test.ts`
+- `tests/unit/email/aiSynthesisReady.test.ts`
+- `tests/unit/email/sendEmail.test.ts`
+
+### Modified
+- `app/api/webhooks/ai-synthesis/route.ts`
+- `.env.example`
+- `tests/unit/webhooks/ai-synthesis.test.ts`
+- `_bmad-output/implementation-artifacts/stories/12-6-notificaciones-email-resend-sdk.md`
+- `_bmad-output/execution-log.yaml`
+
+## Change Log
+
+- 2026-05-07: Story 12.6 implementada — capa `lib/email/` (resendClient, sendEmail, template aiSynthesisReady), integración fire-and-forget en webhook ai-synthesis, 22 tests unitarios + 4 casos de integración. Suite: 1712/1712 verdes.
