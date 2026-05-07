@@ -149,9 +149,9 @@ development_status:
   # ── PHASE 2 — GROWTH 2.1 (backlog — no implementar hasta validación con usuarios) ──
 
   # ── EPIC 13: Iteración, Cierre del Loop y Copiloto IA ────────────
-  epic-13: backlog
+  epic-13: in-progress
   13-1-db-extensiones-iteraciones-project-iterations: backlog
-  13-2-publicar-nueva-version-proyecto-iteracion: backlog
+  13-2-publicar-nueva-version-proyecto-iteracion: ready-for-dev
   13-3-notificacion-reviewers-anteriores-nueva-version: backlog
   13-4-atribucion-feedback-en-iteracion: backlog
   13-5-notificacion-atribucion-reviewer-etiquetado: backlog

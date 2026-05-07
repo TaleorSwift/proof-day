@@ -1,4 +1,32 @@
 workflows:
+  - id: "20260507-homer-CR-13-2-publicar-nueva-version"
+    timestamp: "2026-05-07T18:00:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 13.2: Publicar nueva versión de proyecto (iteración)"
+    workflow: "code-review"
+    mode: "VERIFY"
+    story: "13-2-publicar-nueva-version-proyecto-iteracion"
+    result: "SUCCESS"
+    duration_estimate: "15 minutos"
+    summary: "CR Story 13.2 — APPROVED con recomendación no bloqueante. Seguridad correcta (auth/ownership/status en servidor, cookie-based). getLatestVersionNumber usa ORDER BY DESC LIMIT 1 equivalente a MAX. Modal accesible (role=dialog, aria-modal, aria-labelledby). 42 tests nuevos en verde. Recomendación: distinguir error 23505 (UNIQUE) para retornar 409 en lugar de 500."
+    artifacts_reviewed:
+      - "lib/repositories/project-iterations.repository.ts"
+      - "app/api/projects/[id]/iterations/route.ts"
+      - "lib/api/project-iterations.ts"
+      - "components/projects/NewVersionModal.tsx"
+      - "components/projects/NewVersionActions.tsx"
+      - "app/(app)/communities/[slug]/projects/[projectSlug]/page.tsx"
+      - "tests/unit/project-iterations/projectIterationsRepository.test.ts"
+      - "tests/integration/api/iterations.route.test.ts"
+      - "tests/unit/api/publishIteration.test.ts"
+      - "tests/component/projects/NewVersionModal.test.tsx"
+    verdict: "APPROVED"
+    findings:
+      - severity: "MEDIUM"
+        description: "Race condition: error UNIQUE (23505) cae en handler genérico y retorna 500 en lugar de 409 VERSION_CONFLICT. No bloqueante."
+    errors: []
+    next_recommended: "Merge PR #110 — story 13.2 completa"
+
   - id: "20260507-homer-DS-13-2-started"
     timestamp: "2026-05-07T15:00:00"
     agent: "Homer (Dev)"
