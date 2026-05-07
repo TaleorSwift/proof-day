@@ -1,4 +1,37 @@
 workflows:
+  - id: "20260507-homer-DS-fix-13-6-historial-versiones-proof-score"
+    timestamp: "2026-05-07T21:09:00"
+    agent: "Homer (Dev)"
+    trigger: "DS fix — Story 13.6: corrección issues CR (CRITICAL-1, HIGH-1, HIGH-2, MEDIUM-2)"
+    workflow: "dev-story"
+    mode: "REFINE"
+    story: "13-6-historial-versiones-proof-score-por-iteracion"
+    result: "SUCCESS"
+    summary: "Corregidos 4 issues del CR: CRITICAL-1 (API proof-score filtra por iteración más reciente con maybeSingle), HIGH-2 (exports Storybook renombrados a SinIteraciones/ConUnaIteracion/ConVariasIteraciones), MEDIUM-2 (borde eliminado del último li), HIGH-1 (story file actualizada a review + tasks [x] + Dev Agent Record). 1841 tests PASS (0 regresiones). Commit dc27687. Push a origin."
+    artifacts:
+      - "app/api/proof-score/[projectId]/route.ts"
+      - "components/projects/IterationHistory.tsx"
+      - "stories/projects/IterationHistory.stories.tsx"
+      - "tests/integration/api/proof-score.route.test.ts"
+      - "_bmad-output/implementation-artifacts/stories/13-6-historial-versiones-proof-score-por-iteracion.md"
+    errors: []
+
+  - id: "20260507-homer-CR-13-6-historial-versiones-proof-score"
+    timestamp: "2026-05-07T23:00:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 13.6: PR #115 feat/13-6-historial-versiones-proof-score"
+    workflow: "code-review"
+    mode: "VERIFY"
+    story: "13-6-historial-versiones-proof-score-por-iteracion"
+    result: "SUCCESS"
+    verdict: "CHANGES_REQUESTED"
+    summary: "1839 tests PASS. Componente IterationHistory correcto. Issue CRITICAL: API /api/proof-score/[projectId]/route.ts no filtra feedbacks por iteración más reciente — AC3 incompleto en backend. Issue HIGH-1: Dev Agent Record vacío + Done criteria sin marcar. Issue HIGH-2: Storybook exports UnaIteracion/VariasIteraciones no coinciden con AC4 (requiere ConUnaIteracion/ConVariasIteraciones). 3 issues MEDIUM (type casting, last-item border, test coverage AC3 0-feedbacks). 3 issues LOW. Requiere vuelta a DS para resolver CRITICAL + HIGH antes de aprobar."
+    issues:
+      critical: 1
+      high: 2
+      medium: 3
+      low: 3
+
   - id: "20260507-homer-DS-13-6-historial-versiones-proof-score"
     timestamp: "2026-05-07T22:00:00"
     agent: "Homer (Dev)"
