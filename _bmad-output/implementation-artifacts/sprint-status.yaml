@@ -136,14 +136,14 @@ development_status:
   epic-11-retrospective: optional
 
   # ── EPIC 12: IA Sintetizadora y Notificaciones ───────────────────
-  epic-12: in-progress
+  epic-12: done  # todas las stories completadas 2026-05-07
   12-1-migraciones-db-ai-summaries-notifications-cost-tracking: done  # CR APPROVED + QA PASS 2026-05-06 — PR #93 merged
   12-2-integracion-claude-api-lib-ai-control-coste: done  # CR APPROVED + QA PASS 2026-05-07 — PR #100 merged
   12-3-webhook-sintesis-ia-trigger-upsert-notificacion: done  # CR APPROVED + QA PASS 2026-05-07 — PR #101 merged
   12-4-aisummarycard-vista-proyecto: done  # CR APPROVED + QA PASS 2026-05-07 — PR #102 merged
-  12-5-notificaciones-in-app-tabla-api-routes-notificationbell: done # CR APPROVED + QA PASS 2026-05-07 — PR #104
-  12-6-notificaciones-email-resend-sdk: ready-for-dev
-  12-7-notificacion-builder-sintesis-lista-budget-alert: ready-for-dev
+  12-5-notificaciones-in-app-tabla-api-routes-notificationbell: done  # CR APPROVED + QA PASS 2026-05-07 — PR #104 merged
+  12-6-notificaciones-email-resend-sdk: done  # CR APPROVED + QA PASS 2026-05-07 — PR #105 merged
+  12-7-notificacion-builder-sintesis-lista-budget-alert: done  # CR APPROVED + QA PASS 2026-05-07 — PR #107 merged
   epic-12-retrospective: optional
 
   # ── PHASE 2 — GROWTH 2.1 (backlog — no implementar hasta validación con usuarios) ──
