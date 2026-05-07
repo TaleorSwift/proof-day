@@ -6,8 +6,17 @@ workflows:
     workflow: "dev-story"
     mode: "GENERATE+REFINE"
     story: "13-5-notificacion-atribucion-reviewer-etiquetado"
-    result: "IN_PROGRESS"
-    artifacts_modified: []
+    result: "SUCCESS"
+    duration_estimate: "45 minutos"
+    summary: "Story 13.5 implementada con TDD Outside-In. Helper notifyFeedbackAttributed creado (service role, fire-and-forget). POST /api/feedback dispara notificación lazy cuando iterationId !== null. NotificationBell añade case feedback_attributed con subtexto v{N}. 14 tests nuevos, 1818 tests en verde. PR #113 abierto contra feat/13-4."
+    artifacts_modified:
+      - "lib/notifications/notify-feedback-attributed.ts"
+      - "app/api/feedback/route.ts"
+      - "components/shared/NotificationBell.tsx"
+      - "lib/types/ai.ts"
+      - "tests/unit/notifications/notifyFeedbackAttributed.test.ts"
+      - "tests/integration/api/feedback-iteration-attribution.test.ts"
+      - "tests/unit/components/NotificationBell.test.tsx"
 
   - id: "20260507-homer-DS-13-4-atribucion-feedback-iteracion-done"
     timestamp: "2026-05-07T20:30:00"
