@@ -3678,3 +3678,69 @@ workflows:
     tests_passed: 1522
     tests_failed: 0
     errors: []
+
+- id: "DS-11-5"
+  agent: "Homer"
+  trigger: "DS"
+  workflow: "dev-story"
+  story: "11.5"
+  mode: "GENERATE"
+  status: "STARTED"
+  started_at: "2026-05-06T00:00:00Z"
+  branch: "feat/11-5-gate-reciprocidad-al-publicar"
+
+- id: "DS-11-5-closing"
+  agent: "Homer"
+  trigger: "DS"
+  workflow: "dev-story"
+  story: "11.5"
+  status: "SUCCESS"
+  completed_at: "2026-05-06T00:00:00Z"
+  branch: "feat/11-5-gate-reciprocidad-al-publicar"
+  pr: "https://github.com/TaleorSwift/proof-day/pull/98"
+  artifacts:
+    created:
+      - "lib/utils/reciprocity.ts"
+      - "tests/unit/utils/reciprocity.test.ts"
+      - "tests/unit/projects/launchProject-reciprocity.test.ts"
+      - "tests/unit/repositories/feedbackRepository.11-5.test.ts"
+      - "tests/component/projects/ProjectPreview.11-5.test.tsx"
+    modified:
+      - "actions/projects/launchProject.ts"
+      - "lib/repositories/feedback.repository.ts"
+      - "components/projects/ProjectPreview.tsx"
+      - "components/projects/LaunchIdeaModal.tsx"
+      - "components/projects/ProjectWizard.tsx"
+  acceptance_criteria:
+    - id: "AC-1"
+      status: "PASS"
+      evidence: "launchProject.ts: if (threshold > 0) — si threshold=0 no ejecuta la consulta de feedbacks. Test: threshold=0 → success:true."
+    - id: "AC-2"
+      status: "PASS"
+      evidence: "launchProject.ts devuelve { success: false, error: mensaje, code: 'RECIPROCITY_GATE_BLOCKED' } cuando given < threshold. Test: threshold=3, given=2 → RECIPROCITY_GATE_BLOCKED."
+    - id: "AC-3"
+      status: "PASS"
+      evidence: "launchProject.ts continúa al insert cuando given >= threshold. Tests: given=3 y given=5 con threshold=3 → success:true."
+    - id: "AC-4"
+      status: "PASS"
+      evidence: "buildReciprocityMessage en lib/utils/reciprocity.ts: missing===1 → 'feedback', missing>1 → 'feedbacks'. 5 tests de pluralización verdes."
+    - id: "AC-5"
+      status: "PASS"
+      evidence: "ProjectPreview.tsx: disabled={isPublishing || isGateBlocked} + banner data-testid='reciprocity-gate-message' con tokens needs. Tests: blocked=true → disabled + banner visible."
+    - id: "AC-6"
+      status: "PASS"
+      evidence: "ProjectPreview.tsx: sin prop o blocked=false → botón habilitado, sin banner. Tests: 4 tests de flujo normal verdes."
+    - id: "AC-7"
+      status: "PASS"
+      evidence: "LaunchIdeaModal.tsx: extrae given/required del error RECIPROCITY_GATE_BLOCKED y propaga reciprocityGate al ProjectWizard → ProjectPreview."
+    - id: "AC-8"
+      status: "PASS"
+      evidence: "launchProject.ts: thirtyDaysAgo = Date.now() - 30*24*60*60*1000. feedbackRepository.countByReviewerInCommunityRecent aplica gte('created_at', since)."
+    - id: "AC-9"
+      status: "PASS"
+      evidence: "1554/1554 tests verdes. 35 tests nuevos. 0 regresiones. tsc --noEmit sin errores nuevos."
+  tests_story: 35
+  tests_total: 1554
+  tests_passed: 1554
+  tests_failed: 0
+  errors: []

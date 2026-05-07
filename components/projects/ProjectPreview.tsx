@@ -1,8 +1,11 @@
 'use client'
 
 // Story 10.4 — Paso 5 del wizard: vista previa read-only antes de publicar
+// Story 11.5 — Gate de reciprocidad: banner bloqueante
 
 import type { WizardFormData } from '@/components/projects/ProjectWizard'
+import type { ReciprocityGate } from '@/lib/utils/reciprocity'
+import { buildReciprocityMessage } from '@/lib/utils/reciprocity'
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -12,6 +15,8 @@ interface Props {
   onEdit: () => void
   onPublish: () => void
   isPublishing?: boolean
+  // Story 11.5 — gate de reciprocidad (opcional)
+  reciprocityGate?: ReciprocityGate
 }
 
 // ── ProjectPreview ────────────────────────────────────────────────────────────
@@ -22,8 +27,10 @@ export function ProjectPreview({
   onEdit,
   onPublish,
   isPublishing = false,
+  reciprocityGate,
 }: Props) {
   const { title, tagline, problem, solution, hypothesis } = data
+  const isGateBlocked = reciprocityGate?.blocked === true
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
@@ -229,6 +236,30 @@ export function ProjectPreview({
         )}
       </div>
 
+      {/* Story 11.5 — Banner gate de reciprocidad bloqueado */}
+      {isGateBlocked && reciprocityGate && (
+        <div
+          data-testid="reciprocity-gate-message"
+          style={{
+            backgroundColor: 'var(--color-needs-bg)',
+            border: '1px solid var(--color-needs-text)',
+            borderRadius: 'var(--radius-lg)',
+            padding: 'var(--space-3) var(--space-4)',
+          }}
+        >
+          <p
+            style={{
+              fontSize: 'var(--text-sm)',
+              color: 'var(--color-needs-text)',
+              margin: 0,
+              lineHeight: 'var(--leading-base)',
+            }}
+          >
+            {buildReciprocityMessage(reciprocityGate.given, reciprocityGate.required)}
+          </p>
+        </div>
+      )}
+
       {/* Botones de acción */}
       <div
         style={{
@@ -259,18 +290,28 @@ export function ProjectPreview({
           type="button"
           data-testid="preview-publish-btn"
           onClick={onPublish}
-          disabled={isPublishing}
+          disabled={isPublishing || isGateBlocked}
           style={{
             padding: 'var(--space-2) var(--space-6)',
             borderRadius: 'var(--radius-md)',
             border: 'none',
-            background: isPublishing ? 'var(--color-border)' : 'var(--color-accent)',
-            color: isPublishing ? 'var(--color-text-muted)' : 'white',
+            background:
+              isGateBlocked
+                ? 'var(--color-needs-bg)'
+                : isPublishing
+                  ? 'var(--color-border)'
+                  : 'var(--color-accent)',
+            color:
+              isGateBlocked
+                ? 'var(--color-needs-text)'
+                : isPublishing
+                  ? 'var(--color-text-muted)'
+                  : 'white',
             fontSize: 'var(--text-sm)',
             fontWeight: 'var(--font-medium)',
-            cursor: isPublishing ? 'not-allowed' : 'pointer',
+            cursor: isGateBlocked || isPublishing ? 'not-allowed' : 'pointer',
             height: '40px',
-            opacity: isPublishing ? 0.7 : 1,
+            opacity: isGateBlocked || isPublishing ? 0.7 : 1,
           }}
         >
           {isPublishing ? 'Publicando...' : 'Publicar'}

@@ -16,6 +16,7 @@ import { launchProject } from '@/actions/projects/launchProject'
 import { ProjectWizard } from './ProjectWizard'
 import type { WizardFormData } from './ProjectWizard'
 import type { ProjectTemplate } from '@/lib/types/templates'
+import type { ReciprocityGate } from '@/lib/utils/reciprocity'
 
 interface Props {
   open: boolean
@@ -29,6 +30,8 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
   const [templates, setTemplates] = useState<ProjectTemplate[]>([])
   const [serverError, setServerError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  // Story 11.5 — gate de reciprocidad: se activa cuando launchProject devuelve RECIPROCITY_GATE_BLOCKED
+  const [reciprocityGate, setReciprocityGate] = useState<ReciprocityGate | undefined>(undefined)
 
   // Story 10.2 — fetch templates al montar (conservado desde Story 10.2)
   useEffect(() => {
@@ -54,11 +57,13 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
 
   function handleClose() {
     setServerError(null)
+    setReciprocityGate(undefined)
     onOpenChange(false)
   }
 
   async function handleWizardSubmit(data: WizardFormData) {
     setServerError(null)
+    setReciprocityGate(undefined)
     setIsSubmitting(true)
 
     // Story 10.4 — submit desde paso 5 (ProjectPreview) vía onSubmit del wizard
@@ -81,6 +86,17 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
     setIsSubmitting(false)
 
     if (!result.success) {
+      // Story 11.5 — si el gate de reciprocidad bloquea, actualizar el estado del gate
+      if (!result.success && result.code === 'RECIPROCITY_GATE_BLOCKED') {
+        // Extraer given/required del mensaje de error para pasar a ProjectPreview
+        // El formato es: "Necesitas dar N feedbacks más... Has dado X de Y requeridos."
+        const match = result.error.match(/Has dado (\d+) de (\d+) requeridos/)
+        if (match) {
+          const given = parseInt(match[1], 10)
+          const required = parseInt(match[2], 10)
+          setReciprocityGate({ blocked: true, given, required })
+        }
+      }
       setServerError(result.error)
       return
     }
@@ -115,6 +131,7 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
           onCancel={handleClose}
           isSubmitting={isSubmitting}
           serverError={serverError}
+          reciprocityGate={reciprocityGate}
         />
       </DialogContent>
     </Dialog>

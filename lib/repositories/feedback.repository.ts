@@ -74,6 +74,17 @@ export function createFeedbackRepository(supabase: SupabaseClient) {
         .eq('reviewer_id', reviewerId)
     },
 
+    // Story 11.5 — conteo de feedbacks en los últimos N días (para gate de reciprocidad)
+    async countByReviewerInCommunityRecent(reviewerId: string, communityId: string, days: number) {
+      const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
+      return supabase
+        .from('feedbacks')
+        .select('id', { count: 'exact', head: true })
+        .eq('community_id', communityId)
+        .eq('reviewer_id', reviewerId)
+        .gte('created_at', since)
+    },
+
     async findWeeklyByCommunity(communityId: string, weekStart: Date) {
       return supabase
         .from('feedbacks')
