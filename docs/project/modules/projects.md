@@ -146,6 +146,20 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 
 ---
 
+### Copiloto IA en el wizard — reglas (Story 13.7)
+
+- En el paso 2 (Descripción), los campos "Problema" y "Solución" tienen un botón "Sugerir con IA" junto al label. (story 13.7)
+- En el paso 4 (Hipótesis), el campo "Hipótesis" tiene un botón "Sugerir con IA" junto al label. (story 13.7)
+- El botón está deshabilitado si el Builder no ha escrito el nombre del proyecto. (story 13.7)
+- Al recibir una sugerencia, el campo se rellena automáticamente con el texto generado por Ollama. (story 13.7)
+- El Builder puede editar el texto sugerido libremente antes de continuar. (story 13.7)
+- Si el campo ya tenía contenido, la sugerencia lo reemplaza. (story 13.7)
+- Un badge "✦ Generado con IA" aparece junto al label cuando el campo fue rellenado por IA. (story 13.7)
+- El badge desaparece cuando el Builder modifica manualmente el texto. (story 13.7)
+- Si la API de IA no está disponible, el botón vuelve a su estado inicial sin bloquear el wizard. (story 13.7)
+
+---
+
 ### Wizard multi-paso — reglas (Story 10.3, Story 10.5, Story 10.4)
 
 - El wizard tiene 5 pasos definidos en `WIZARD_STEPS`. (story 10.4)

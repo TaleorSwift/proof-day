@@ -1,4 +1,90 @@
 workflows:
+  - id: "20260507-homer-DS-13-7-copiloto-ia-creacion-proyecto"
+    timestamp: "2026-05-07T22:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 13.7: Copiloto IA creacion de proyecto"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    story: "13-7-copiloto-ia-creacion-proyecto"
+    result: "STARTED"
+    summary: "Implementacion TDD Outside-In. API route POST /api/ai/suggest-project-field, componente AISuggestButton, indicador 'Generado con IA', integracion en WizardStepDescription y WizardStepHypothesis, Storybook, tests unitarios."
+
+  - id: "20260507-homer-CR3-13-6-historial-versiones-proof-score"
+    timestamp: "2026-05-07T21:18:00"
+    agent: "Homer (Dev)"
+    trigger: "CR tercera ronda — Story 13.6: PR #115 feat/13-6-historial-versiones-proof-score"
+    workflow: "code-review"
+    mode: "VERIFY"
+    story: "13-6-historial-versiones-proof-score-por-iteracion"
+    result: "STARTED"
+    summary: "Tercera ronda de CR para Story 13.6. Verificar que todos los issues de CR2 (HIGH-1: SinFeedbacksEnUltima, MEDIUM-1: dead render, MEDIUM-2: test reviewer AC1) y los LOWs fueron resueltos correctamente. 30 tests específicos de la story en verde."
+
+  - id: "20260507-homer-CR3-13-6-historial-versiones-proof-score"
+    timestamp: "2026-05-07T21:22:00"
+    agent: "Homer (Dev)"
+    trigger: "CR tercera ronda — Story 13.6: PR #115 feat/13-6-historial-versiones-proof-score"
+    workflow: "code-review"
+    mode: "VERIFY"
+    story: "13-6-historial-versiones-proof-score-por-iteracion"
+    result: "SUCCESS"
+    verdict: "APPROVED"
+    duration_estimate: "4 minutos"
+    summary: "Todos los issues de CR1 y CR2 resueltos correctamente. AC1-AC4 implementados y verificados. HIGH-1 (SinFeedbacksEnUltima) RESUELTO. MEDIUM-1 (dead render) RESUELTO. MEDIUM-2 (test reviewer AC1) RESUELTO. LOWs (type casts, last-item border) resueltos o aceptados como patrón del codebase. 1842 tests PASS (0 regresiones). Storybook con 3 variantes correctas. API proof-score filtra por iteración más reciente. Veredicto: APPROVED."
+    artifacts_reviewed:
+      - "components/projects/IterationHistory.tsx"
+      - "app/(app)/communities/[slug]/projects/[projectSlug]/page.tsx"
+      - "app/api/proof-score/[projectId]/route.ts"
+      - "stories/projects/IterationHistory.stories.tsx"
+      - "tests/component/projects/IterationHistory.test.tsx"
+      - "tests/component/projects/ProjectDetailPage.13-6.test.tsx"
+      - "tests/integration/api/proof-score.route.test.ts"
+      - "tests/component/projects/ProjectDetailPage.test.tsx"
+    errors: []
+    next_recommended: "Edna, QA — ejecutar suite completa y validar Story 13.6"
+
+  - id: "20260507-homer-CR2-13-6-historial-versiones-proof-score"
+    timestamp: "2026-05-07T21:11:00"
+    agent: "Homer (Dev)"
+    trigger: "CR segunda ronda — Story 13.6: PR #115 feat/13-6-historial-versiones-proof-score"
+    workflow: "code-review"
+    mode: "VERIFY"
+    story: "13-6-historial-versiones-proof-score-por-iteracion"
+    result: "STARTED"
+    summary: "Segunda ronda de CR para Story 13.6 tras fixes del primer CR. Verificando que CRITICAL-1, HIGH-1, HIGH-2 y MEDIUM issues fueron correctamente resueltos."
+
+  - id: "20260507-homer-CR2-13-6-historial-versiones-proof-score"
+    timestamp: "2026-05-07T21:14:00"
+    agent: "Homer (Dev)"
+    trigger: "CR segunda ronda — Story 13.6: PR #115 feat/13-6-historial-versiones-proof-score"
+    workflow: "code-review"
+    mode: "VERIFY"
+    story: "13-6-historial-versiones-proof-score-por-iteracion"
+    result: "PARTIAL"
+    verdict: "CHANGES_REQUESTED"
+    duration_estimate: "3 minutos"
+    summary: "Issues del primer CR resueltos correctamente (CRITICAL, HIGH, MEDIUM anteriores). Issue nuevo HIGH: AC4 Storybook incompleto — 'SinIteraciones' no es 'SinFeedbacksEnUltima'. 2 MEDIUM (dead render test + AC1 reviewer sin testear). 3 LOW (type casts + guard fecha). 1841 tests en verde. Veredicto: CHANGES_REQUESTED por HIGH-1 bloqueante."
+    issues:
+      high: 1
+      medium: 2
+      low: 3
+    artifacts_reviewed:
+      - "components/projects/IterationHistory.tsx"
+      - "app/(app)/communities/[slug]/projects/[projectSlug]/page.tsx"
+      - "app/api/proof-score/[projectId]/route.ts"
+      - "stories/projects/IterationHistory.stories.tsx"
+      - "tests/component/projects/IterationHistory.test.tsx"
+      - "tests/component/projects/ProjectDetailPage.13-6.test.tsx"
+      - "tests/integration/api/proof-score.route.test.ts"
+      - "tests/component/projects/ProjectDetailPage.test.tsx"
+    errors:
+      - step: "AC4-storybook-variants"
+        action: "Verificar variantes Storybook contra AC4"
+        error: "stories/projects/IterationHistory.stories.tsx exporta SinIteraciones (iterations=[]) en lugar de SinFeedbacksEnUltima (iteración reciente con 0 feedbacks). El AC4 especifica explícitamente 'SinFeedbacksEnUltima'."
+        context: "SinIteraciones renderiza null (componente no visible). SinFeedbacksEnUltima muestra el historial con 0 feedbacks en la versión más reciente."
+        recovery: "Renombrar SinIteraciones → SinFeedbacksEnUltima y cambiar args a [{id:'iter-2',versionNumber:2,publishedAt:'2026-05-07T10:00:00Z',feedbackCount:0},{id:'iter-1',versionNumber:1,publishedAt:'2026-03-15T10:00:00Z',feedbackCount:8}]"
+        severity: "blocking"
+    next_recommended: "Homer, DS fix — resolver HIGH-1 (SinFeedbacksEnUltima en Storybook), MEDIUM-1 (dead render), MEDIUM-2 (test reviewer AC1)"
+
   - id: "20260507-homer-DS-fix-13-6-historial-versiones-proof-score"
     timestamp: "2026-05-07T21:09:00"
     agent: "Homer (Dev)"
@@ -4731,3 +4817,55 @@ workflows:
       - "_bmad-output/execution-log.yaml"
     errors: []
     next_recommended: "VS (Ned) — validar story 13.2 antes de DS (Homer)"
+
+  - id: "20260507-212500-edna-QA-13-6"
+    timestamp: "2026-05-07T21:25:00"
+    agent: "Edna (QA)"
+    trigger: "QA"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    story: "13-6-historial-versiones-proof-score-por-iteracion"
+    result: "STARTED"
+    summary: "Validación QA Story 13.6 — Historial de versiones y Proof Score por iteración. PR #115 feat/13-6-historial-versiones-proof-score. Verificar cobertura de tests existentes contra ACs 1-4."
+
+  - id: "20260507-212500-edna-QA-13-6"
+    timestamp: "2026-05-07T21:32:00"
+    agent: "Edna (QA)"
+    trigger: "QA"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    story: "13-6-historial-versiones-proof-score-por-iteracion"
+    result: "SUCCESS"
+    duration_estimate: "7 minutos"
+    summary: "QA PASS Story 13.6. 30 tests de la story en verde (15 componente IterationHistory + 7 integración page.tsx + 8 API route proof-score). Suite completa 1842/1842 tests pasan, 0 regresiones. 0 errores TypeScript nuevos. Todos los ACs 1-4 cubiertos."
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Merge PR #115 a main"
+
+- id: "cs-20260507-137"
+  timestamp: "2026-05-07T00:00:00Z"
+  agent: Ned
+  trigger: CS
+  workflow: "4-implementation/create-story"
+  mode: GENERATE
+  status: STARTED
+  stories:
+    - "13-7-copiloto-ia-creacion-proyecto"
+    - "13-8-interpretacion-contextual-proof-score"
+  notes: "Creación de story files para completar Epic 13"
+
+- id: "cs-20260507-137-closing"
+  timestamp: "2026-05-07T00:00:00Z"
+  agent: Ned
+  trigger: CS
+  workflow: "4-implementation/create-story"
+  status: SUCCESS
+  artifacts_created:
+    - "_bmad-output/implementation-artifacts/stories/13-7-copiloto-ia-creacion-proyecto.md"
+    - "_bmad-output/implementation-artifacts/stories/13-8-interpretacion-contextual-proof-score.md"
+  artifacts_modified:
+    - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+  errors: []
+  next_recommended: "/ds Story 13.7 (Homer)"
