@@ -1,4 +1,20 @@
 workflows:
+  - id: "20260506-homer-DS-12-3-closing"
+    timestamp: "2026-05-06T15:45:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 12.3: Webhook síntesis IA: trigger + upsert + notificación"
+    workflow: "dev-story"
+    result: "SUCCESS"
+    story: "12-3-webhook-sintesis-ia-trigger-upsert-notificacion"
+    branch: "feat/12-3-webhook-sintesis-ia"
+    pr: "#101"
+    artifacts_created:
+      - "app/api/webhooks/ai-synthesis/route.ts"
+      - "tests/unit/webhooks/ai-synthesis.test.ts"
+    tests: "162 ficheros / 1639 tests — todos verdes"
+    errors: []
+    notes: "TDD Outside-In completado. 13 tests nuevos. vi.hoisted() para mock de @supabase/supabase-js. Mappers internos en route para hexagonal clean. maybeSingle() en check de síntesis previa. WEBHOOK_SECRET ya existía en .env.example. Errores TSC pre-existentes (9) en stories anteriores fuera de scope."
+
   - id: "20260506-homer-DS-12-3-started"
     timestamp: "2026-05-06T15:00:00"
     agent: "Homer (Dev)"
