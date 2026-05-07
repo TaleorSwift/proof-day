@@ -2,7 +2,8 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 
 // ---------------------------------------------------------------------------
 // Story 13.4 — Atribución de feedback en iteración
-// Tests de integración: POST /api/feedback atribuye iteration_id correctamente
+// Story 13.5 — Trigger de notificación feedback_attributed
+// Tests de integración: POST /api/feedback atribuye iteration_id y dispara notificación
 // ---------------------------------------------------------------------------
 
 const {
@@ -10,6 +11,8 @@ const {
   requireAuthMock,
   createFeedbackRepositoryMock,
   createProjectIterationsRepositoryMock,
+  createProjectsRepositoryMock,
+  mockAdminFrom,
 } = vi.hoisted(() => {
   const supabaseMock = {
     auth: { getUser: vi.fn() },
@@ -39,16 +42,30 @@ const {
 
   const createProjectIterationsRepositoryMock = vi.fn().mockReturnValue(iterationsRepoInstance)
 
+  const projectsRepoInstance = {
+    findById: vi.fn().mockResolvedValue({ data: null }),
+  }
+  const createProjectsRepositoryMock = vi.fn().mockReturnValue(projectsRepoInstance)
+
+  // Admin client mock para el lookup de communitySlug
+  const mockAdminFrom = vi.fn()
+
   return {
     supabaseMock,
     requireAuthMock,
     createFeedbackRepositoryMock,
     createProjectIterationsRepositoryMock,
+    createProjectsRepositoryMock,
+    mockAdminFrom,
   }
 })
 
 vi.mock('@/lib/supabase/server', () => ({
   createClient: vi.fn().mockResolvedValue(supabaseMock),
+}))
+
+vi.mock('@/lib/supabase/admin', () => ({
+  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
 }))
 
 vi.mock('@/lib/api/middleware/require-auth', () => ({
@@ -69,12 +86,22 @@ vi.mock('@/lib/repositories/project-iterations.repository', () => ({
   createProjectIterationsRepository: createProjectIterationsRepositoryMock,
 }))
 
+vi.mock('@/lib/repositories/projects.repository', () => ({
+  createProjectsRepository: createProjectsRepositoryMock,
+}))
+
 // Story 12.7 — mock fire-and-forget
 vi.mock('@/lib/ai/triggerSynthesisWebhook', () => ({
   triggerSynthesisWebhook: vi.fn(),
 }))
 
+// Story 13.5 — mock notifyFeedbackAttributed para tests de trigger
+vi.mock('@/lib/notifications/notify-feedback-attributed', () => ({
+  notifyFeedbackAttributed: vi.fn().mockResolvedValue(undefined),
+}))
+
 import { POST } from '@/app/api/feedback/route'
+import { notifyFeedbackAttributed } from '@/lib/notifications/notify-feedback-attributed'
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -103,6 +130,19 @@ const MOCK_ITERATION = {
   createdAt: '2026-05-07T10:00:00Z',
 }
 
+const COMMUNITY_UUID = 'c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a33'
+
+const MOCK_PROJECT = {
+  id: PROJECT_ID,
+  slug: 'proyecto-test',
+  title: 'Proyecto Test',
+  community_id: COMMUNITY_UUID,
+}
+
+const MOCK_COMMUNITY = {
+  slug: 'startup-madrid',
+}
+
 const MOCK_FEEDBACK = {
   id: 'fb-001',
   projectId: PROJECT_ID,
@@ -126,6 +166,24 @@ function buildPostRequest(body: unknown) {
 
 function mockAuthOk() {
   requireAuthMock.mockResolvedValue({ user: MOCK_USER, supabase: supabaseMock, error: null })
+}
+
+/** Mock para la query admin: from('communities').select('slug').eq('id', ...).single() */
+function mockAdminCommunityQuery(slug: string | null = 'startup-madrid') {
+  mockAdminFrom.mockReturnValueOnce({
+    select: vi.fn().mockReturnValue({
+      eq: vi.fn().mockReturnValue({
+        single: vi.fn().mockResolvedValue({ data: slug ? { slug } : null, error: null }),
+      }),
+    }),
+  })
+}
+
+/** Mock para la query admin: from('notifications').insert(...) */
+function mockAdminNotificationsInsert() {
+  mockAdminFrom.mockReturnValueOnce({
+    insert: vi.fn().mockResolvedValue({ data: null, error: null }),
+  })
 }
 
 // ---------------------------------------------------------------------------
@@ -200,5 +258,94 @@ describe('POST /api/feedback (Story 13.4) — atribución de iteration_id', () =
         iterationId: null,
       })
     )
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Tests Story 13.5 — trigger de notificación feedback_attributed
+// ---------------------------------------------------------------------------
+
+describe('POST /api/feedback (Story 13.5) — trigger notificación feedback_attributed', () => {
+  afterEach(() => vi.clearAllMocks())
+
+  // AC1 — Con iteración activa: notifyFeedbackAttributed es llamada con params correctos
+  it('llama a notifyFeedbackAttributed con parámetros correctos cuando hay iteración activa', async () => {
+    mockAuthOk()
+
+    const iterationsRepo = createProjectIterationsRepositoryMock()
+    iterationsRepo.getLatestIteration.mockResolvedValue(MOCK_ITERATION)
+
+    createProjectsRepositoryMock.mockReturnValueOnce({
+      findById: vi.fn().mockResolvedValue({ data: MOCK_PROJECT }),
+    })
+
+    // Admin client: primero para communitySlug, después para insert de notificación
+    mockAdminCommunityQuery('startup-madrid')
+    mockAdminNotificationsInsert()
+
+    createFeedbackRepositoryMock.mockReturnValueOnce({
+      create: vi.fn().mockResolvedValue({ data: MOCK_FEEDBACK, error: null }),
+      countCompleteByProject: vi.fn().mockResolvedValue(0),
+    })
+
+    await POST(buildPostRequest(VALID_BODY))
+
+    // Esperar a que la promise fire-and-forget se resuelva
+    await new Promise((resolve) => setTimeout(resolve, 10))
+
+    expect(notifyFeedbackAttributed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        reviewerId: MOCK_USER.id,
+        projectId: PROJECT_ID,
+        projectSlug: MOCK_PROJECT.slug,
+        projectTitle: MOCK_PROJECT.title,
+        versionNumber: MOCK_ITERATION.versionNumber,
+        communitySlug: MOCK_COMMUNITY.slug,
+      })
+    )
+  })
+
+  // AC3 — Sin iteración activa: notifyFeedbackAttributed NO es llamada
+  it('NO llama a notifyFeedbackAttributed cuando iteration_id es null', async () => {
+    mockAuthOk()
+
+    const iterationsRepo = createProjectIterationsRepositoryMock()
+    iterationsRepo.getLatestIteration.mockResolvedValue(null)
+
+    createFeedbackRepositoryMock.mockReturnValueOnce({
+      create: vi.fn().mockResolvedValue({ data: { ...MOCK_FEEDBACK, iterationId: null }, error: null }),
+      countCompleteByProject: vi.fn().mockResolvedValue(0),
+    })
+
+    const response = await POST(buildPostRequest(VALID_BODY))
+
+    await new Promise((resolve) => setTimeout(resolve, 10))
+
+    expect(response.status).toBe(201)
+    expect(notifyFeedbackAttributed).not.toHaveBeenCalled()
+  })
+
+  // AC2 — Fire-and-forget: la respuesta 201 se devuelve sin esperar la notificación
+  it('devuelve 201 sin esperar a que se complete la notificación', async () => {
+    mockAuthOk()
+
+    const iterationsRepo = createProjectIterationsRepositoryMock()
+    iterationsRepo.getLatestIteration.mockResolvedValue(MOCK_ITERATION)
+
+    createProjectsRepositoryMock.mockReturnValueOnce({
+      findById: vi.fn().mockResolvedValue({ data: MOCK_PROJECT }),
+    })
+
+    mockAdminCommunityQuery('startup-madrid')
+    mockAdminNotificationsInsert()
+
+    createFeedbackRepositoryMock.mockReturnValueOnce({
+      create: vi.fn().mockResolvedValue({ data: MOCK_FEEDBACK, error: null }),
+      countCompleteByProject: vi.fn().mockResolvedValue(0),
+    })
+
+    const response = await POST(buildPostRequest(VALID_BODY))
+
+    expect(response.status).toBe(201)
   })
 })

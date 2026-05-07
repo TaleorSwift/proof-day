@@ -8,6 +8,9 @@ import { createProjectIterationsRepository } from '@/lib/repositories/project-it
 import { calculateQualityScore } from '@/lib/utils/feedbackQuality'
 // Story 12.7 — trigger fire-and-forget de síntesis IA
 import { triggerSynthesisWebhook } from '@/lib/ai/triggerSynthesisWebhook'
+// Story 13.5 — notificación fire-and-forget al reviewer cuando el feedback queda atribuido
+import { notifyFeedbackAttributed } from '@/lib/notifications/notify-feedback-attributed'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(request: Request) {
   const auth = await requireAuth()
@@ -80,12 +83,26 @@ export async function POST(request: Request) {
   // Story 13.4 — obtiene la iteración vigente para atribuirla al feedback (graceful: null si falla)
   const iterationsRepo = createProjectIterationsRepository(supabase)
   let iterationId: string | null = null
+  let latestIteration: { id: string; versionNumber: number } | null = null
   try {
-    const latestIteration = await iterationsRepo.getLatestIteration(projectId)
+    latestIteration = await iterationsRepo.getLatestIteration(projectId)
     iterationId = latestIteration?.id ?? null
   } catch {
     // No bloquea la creación del feedback si falla la consulta de iteración
     iterationId = null
+    latestIteration = null
+  }
+
+  // Story 13.5 — obtener datos del proyecto para la notificación (solo si hay iteración activa)
+  let projectSlug = ''
+  let projectTitle = ''
+  let projectCommunityId = ''
+  if (iterationId !== null) {
+    const projectsRepo = createProjectsRepository(supabase)
+    const { data: project } = await projectsRepo.findById(projectId, 'id, slug, title, community_id')
+    projectSlug = (project as Record<string, unknown> | null)?.slug as string ?? ''
+    projectTitle = (project as Record<string, unknown> | null)?.title as string ?? ''
+    projectCommunityId = (project as Record<string, unknown> | null)?.community_id as string ?? ''
   }
 
   const feedbackRepo = createFeedbackRepository(supabase)
@@ -110,6 +127,31 @@ export async function POST(request: Request) {
   const completeCount = await feedbackRepo.countCompleteByProject(projectId)
   if (completeCount === 3) {
     triggerSynthesisWebhook(projectId) // fire-and-forget — NO await
+  }
+
+  // Story 13.5 — notificar al Reviewer cuando el feedback queda atribuido a una iteración
+  if (iterationId !== null && latestIteration !== null && projectSlug) {
+    void (async () => {
+      try {
+        const adminClient = createAdminClient()
+        const { data: community } = await adminClient
+          .from('communities')
+          .select('slug')
+          .eq('id', projectCommunityId)
+          .single()
+        const communitySlug = community?.slug ?? ''
+        await notifyFeedbackAttributed({
+          reviewerId: user.id,
+          projectId,
+          projectSlug,
+          projectTitle,
+          versionNumber: latestIteration!.versionNumber,
+          communitySlug,
+        })
+      } catch (err) {
+        console.error('[feedback/route] Error en notifyFeedbackAttributed:', err)
+      }
+    })()
   }
 
   return NextResponse.json({ data: feedback }, { status: 201 })

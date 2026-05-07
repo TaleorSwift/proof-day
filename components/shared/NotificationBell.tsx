@@ -58,6 +58,12 @@ function getNotificationSubtext(notification: AppNotification): string {
       const version = payload.versionNumber as number | undefined
       return version ? `Nueva versión disponible — v${version}` : 'Nueva versión disponible'
     }
+    case 'feedback_attributed': {
+      const version = payload.versionNumber as number | undefined
+      return version
+        ? `Tu feedback fue registrado en v${version}`
+        : 'Tu feedback fue registrado en esta versión'
+    }
     case 'ai_synthesis_ready':
     default:
       return 'Síntesis IA disponible'
