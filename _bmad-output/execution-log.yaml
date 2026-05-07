@@ -4046,3 +4046,22 @@ workflows:
     mode: "GENERATE"
     result: "STARTED"
     summary: "Actualizar artefactos de deployment para Epic 12 (IA Sintetizadora): añadir ANTHROPIC_API_KEY y AI_DAILY_BUDGET_USD a .env.example, actualizar deployment-setup.md y crear scripts/preflight-vercel.sh adaptado a la plataforma Vercel del proyecto."
+
+  - id: "20260506-wiggum-DC-env-epic12"
+    timestamp: "2026-05-06T13:00:00"
+    agent: "Wiggum (Deploy)"
+    trigger: "DC"
+    workflow: "deploy-configure"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "15 minutos"
+    summary: "Artefactos de deployment actualizados para Epic 12. ANTHROPIC_API_KEY y AI_DAILY_BUDGET_USD documentadas en .env.example y deployment-setup.md. Script preflight-vercel.sh creado con 29 checks (config, env vars, secrets, GitHub secrets, alineación arquitectónica, build). Preflight: 29/29 PASS. Commit 6ae652e pusheado a main."
+    artifacts_created:
+      - "scripts/preflight-vercel.sh"
+    artifacts_modified:
+      - ".env.example"
+      - "docs/project/deployment-setup.md"
+    errors: []
+    commit: "6ae652e — chore(deploy): DC GENERATE — preflight Vercel + vars Epic 12"
+    preflight_result: "29/29 PASS — LISTO PARA DEPLOY"
+    next_recommended: "Homer DS Story 12.2 — implementar lib/ai/ con ANTHROPIC_API_KEY ya documentada en .env.example"
