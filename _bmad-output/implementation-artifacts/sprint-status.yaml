@@ -142,7 +142,7 @@ development_status:
   12-3-webhook-sintesis-ia-trigger-upsert-notificacion: done  # CR APPROVED + QA PASS 2026-05-07 — PR #101 merged
   12-4-aisummarycard-vista-proyecto: done  # CR APPROVED + QA PASS 2026-05-07 — PR #102 merged
   12-5-notificaciones-in-app-tabla-api-routes-notificationbell: done # CR APPROVED + QA PASS 2026-05-07 — PR #104
-  12-6-notificaciones-email-resend-sdk: ready-for-dev
+  12-6-notificaciones-email-resend-sdk: review  # DS COMPLETE 2026-05-07 — PR #106
   12-7-notificacion-builder-sintesis-lista-budget-alert: ready-for-dev
   epic-12-retrospective: optional
 
