@@ -1,4 +1,39 @@
 workflows:
+  - id: "20260506-edna-QA-12-4-started"
+    timestamp: "2026-05-06T17:30:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 12.4: AISummaryCard: vista del proyecto"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    story: "12-4-aisummarycard-vista-proyecto"
+    branch: "feat/12-4-aisummarycard-vista-proyecto"
+    pr: "#102"
+    result: "STARTED"
+  - id: "20260506-edna-QA-12-4-closing"
+    timestamp: "2026-05-06T17:35:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 12.4: AISummaryCard: vista del proyecto"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    story: "12-4-aisummarycard-vista-proyecto"
+    branch: "feat/12-4-aisummarycard-vista-proyecto"
+    pr: "#102"
+    result: "SUCCESS"
+    qa_result: "PASS"
+    tests_total: 1661
+    tests_passed: 1661
+    tests_failed: 0
+    ac_results:
+      AC1_loading_skeleton: PASS
+      AC2_empty_state: PASS
+      AC3_summary_card_text_insights: PASS
+      AC4_no_hardcoded_colors: PASS
+      AC5_insights_ul_li: PASS
+      AC6_footer_model_date: PASS
+      AC7_ai_summaries_query_only_owner: PASS
+      AC8_AISummaryCard_only_owner: PASS
+      AC9_1661_tests_verdes: PASS
+    errors: []
   - id: "20260506-homer-DS-12-4-closing"
     timestamp: "2026-05-06T17:00:00"
     agent: "Homer (Dev)"
