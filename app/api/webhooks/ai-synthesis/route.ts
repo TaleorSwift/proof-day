@@ -12,7 +12,7 @@
 
 import { timingSafeEqual } from 'crypto'
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { synthesizeFeedbacks, trackCost, checkDailyBudget, maybeSendBudgetAlert } from '@/lib/ai'
 import { sendEmail, buildAiSynthesisReadyEmail } from '@/lib/email'
 import type { Feedback } from '@/lib/types/feedback'
@@ -99,10 +99,7 @@ function verifyWebhookSecret(provided: string | null, expected: string | null): 
 
 /** Crea el service role client de Supabase — bypasea RLS. */
 function createServiceRoleClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
+  return createAdminClient()
 }
 
 /** Mapea un ProjectRow (snake_case) a Project (camelCase) del dominio. */

@@ -40,7 +40,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   // AC-2, AC-3, AC-4, AC-5, AC-6 — Delegar toda la lógica al service
   const result = await service.processReminders()
 
-  console.log('[cron/feedback-reminder]', result)
+  console.error('[cron/feedback-reminder]', result)
 
   return NextResponse.json(result)
 }

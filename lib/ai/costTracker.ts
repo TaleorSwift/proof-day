@@ -2,7 +2,7 @@
 // AC5: read-modify-write mensual; UPDATE si fila existe, INSERT si no
 // Usa service role Supabase (bypasea RLS)
 
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -23,9 +23,7 @@ export interface TrackCostInput {
 // ---------------------------------------------------------------------------
 
 function createServiceRoleClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY!
-  return createClient(url, key)
+  return createAdminClient()
 }
 
 // ---------------------------------------------------------------------------
