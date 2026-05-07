@@ -19,14 +19,6 @@ export interface TrackCostInput {
 }
 
 // ---------------------------------------------------------------------------
-// createServiceRoleClient — factory privada
-// ---------------------------------------------------------------------------
-
-function createServiceRoleClient() {
-  return createAdminClient()
-}
-
-// ---------------------------------------------------------------------------
 // getCurrentMonth — función pura auxiliar
 // ---------------------------------------------------------------------------
 
@@ -46,7 +38,7 @@ function getCurrentMonth(): string {
  * - total_cost_usd siempre 0.0 para Ollama local
  */
 export async function trackCost(input: TrackCostInput): Promise<void> {
-  const supabase = createServiceRoleClient()
+  const supabase = createAdminClient()
   const month = getCurrentMonth()
 
   const { data: existing, error: selectError } = await supabase
