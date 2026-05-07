@@ -1,4 +1,15 @@
 workflows:
+  - id: "20260506-homer-DS-12-2-started"
+    timestamp: "2026-05-06T14:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 12.2: Integración Ollama lib/ai + control de coste"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "12-2-integracion-claude-api-lib-ai-control-coste"
+    branch: "feat/12-2-integracion-ollama-lib-ai-control-coste"
+    summary: "Implementación TDD Outside-In de la capa lib/ai/: ollamaClient singleton, synthesizeFeedbacks, costTracker (service role Supabase), budgetChecker. Tests primero en rojo."
+
   - id: "20260506-ned-CS-epic12-stories-12-2-to-12-7"
     timestamp: "2026-05-06T12:00:00"
     agent: "Ned (SM)"
