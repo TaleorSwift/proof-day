@@ -102,7 +102,21 @@ export async function POST(
     hypothesis,
   })
 
-  if (insertError || !iteration) {
+  if (insertError) {
+    const pgError = insertError as { code?: string }
+    if (pgError.code === '23505') {
+      return NextResponse.json(
+        { error: 'Conflicto de versión', code: 'VERSION_CONFLICT' },
+        { status: 409 }
+      )
+    }
+    return NextResponse.json(
+      { error: 'Error al crear la iteración', code: 'ITERATION_CREATE_ERROR' },
+      { status: 500 }
+    )
+  }
+
+  if (!iteration) {
     return NextResponse.json(
       { error: 'Error al crear la iteración', code: 'ITERATION_CREATE_ERROR' },
       { status: 500 }

@@ -257,4 +257,24 @@ describe('POST /api/projects/[id]/iterations', () => {
     expect(res.status).toBe(500)
     expect(body.code).toBe('ITERATION_CREATE_ERROR')
   })
+
+  it('retorna 409 cuando la inserción falla por conflicto UNIQUE en version_number (code 23505)', async () => {
+    mockAuth()
+
+    const uniqueConstraintError = { code: '23505', message: 'duplicate key value violates unique constraint' }
+
+    let callCount = 0
+    supabaseMock.from.mockImplementation(() => {
+      callCount++
+      if (callCount === 1) return mockProjectQuery(MOCK_PROJECT)
+      if (callCount === 2) return mockIterationsCountQuery(null)
+      return mockIterationsInsert(null, uniqueConstraintError)
+    })
+
+    const res = await POST(buildRequest({}), buildParams())
+    const body = await res.json()
+
+    expect(res.status).toBe(409)
+    expect(body.code).toBe('VERSION_CONFLICT')
+  })
 })
