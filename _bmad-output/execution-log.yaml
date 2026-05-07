@@ -1,4 +1,43 @@
 workflows:
+  - id: "20260506-homer-DS-11-5-closing"
+    timestamp: "2026-05-06T14:45:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 11.5: Gate de reciprocidad al publicar"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    story: "11-5-gate-reciprocidad-al-publicar"
+    branch: "feat/11-5-gate-reciprocidad-al-publicar"
+    tests_story: 27
+    tests_story_passed: 27
+    tests_total: 1554
+    tests_total_passed: 1554
+    artifacts_created:
+      - "lib/utils/reciprocity.ts"
+      - "tests/unit/projects/launchProject-reciprocity.test.ts"
+      - "tests/component/projects/ProjectPreview.11-5.test.tsx"
+      - "tests/unit/repositories/feedbackRepository.11-5.test.ts"
+      - "tests/unit/utils/reciprocity.test.ts"
+    artifacts_modified:
+      - "actions/projects/launchProject.ts"
+      - "components/projects/ProjectPreview.tsx"
+      - "components/projects/LaunchIdeaModal.tsx"
+      - "components/projects/ProjectWizard.tsx"
+      - "lib/repositories/feedback.repository.ts"
+      - "_bmad-output/implementation-artifacts/stories/11-5-gate-reciprocidad-al-publicar.md"
+    acs_status:
+      AC-1: IMPLEMENTED
+      AC-2: IMPLEMENTED
+      AC-3: IMPLEMENTED
+      AC-4: IMPLEMENTED
+      AC-5: IMPLEMENTED
+      AC-6: IMPLEMENTED
+      AC-7: "IMPLEMENTED — variante: gate verificado solo en server action, error propagado vía serverError del wizard"
+      AC-8: IMPLEMENTED
+      AC-9: IMPLEMENTED
+    errors: []
+    summary: "DS SUCCESS — TDD Outside-In completo. 27 tests nuevos, 1554/1554 en verde. Gate de reciprocidad implementado en launchProject() con buildReciprocityMessage(), countByReviewerInCommunityRecent() en repo, prop reciprocityGate en ProjectPreview. PR pendiente de apertura."
+
   - id: "20260506-homer-DS-11-3-started"
     timestamp: "2026-05-06T10:00:00"
     agent: "Homer (Dev)"

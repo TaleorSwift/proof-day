@@ -1,6 +1,6 @@
 # Story 11.5: Gate de reciprocidad al publicar
 
-Status: ready-for-dev
+Status: done
 
 ## Metadata
 
@@ -78,48 +78,46 @@ entonces todos los tests nuevos pasan al 100% y los tests existentes no se rompe
 
 ## Tasks / Subtasks
 
-- [ ] **T1** — TDD: `launchProject` — gate de reciprocidad (RED → GREEN → REFACTOR)
-  - [ ] T1.1 Crear `tests/unit/projects/launchProject-reciprocity.test.ts`
-  - [ ] T1.2 Escribir test: comunidad con `reciprocity_threshold = 0` → siempre pasa (sin consulta de feedbacks)
-  - [ ] T1.3 Escribir test: threshold = 3, builder tiene 3 feedbacks → publica OK
-  - [ ] T1.4 Escribir test: threshold = 3, builder tiene 2 feedbacks → devuelve error con `code: "RECIPROCITY_GATE_BLOCKED"` y mensaje correcto
-  - [ ] T1.5 Escribir test: threshold = 3, builder tiene 0 feedbacks → mensaje "Necesitas dar 3 feedbacks más..."
-  - [ ] T1.6 Escribir test: threshold = 3, builder tiene 1 feedback → mensaje "Necesitas dar 2 feedbacks más..."
-  - [ ] T1.7 Escribir test: threshold = 1, builder tiene 0 feedbacks → mensaje "Necesitas dar 1 feedback más..." (singular)
-  - [ ] T1.8 Actualizar `LaunchProjectResult` — añadir `{ success: false; error: string; code?: string }` al tipo (si no ya existe)
-  - [ ] T1.9 Implementar la verificación en `actions/projects/launchProject.ts`
-  - [ ] T1.10 Reutilizar `feedbackRepo.countByReviewerInCommunity` o crear consulta con filtro de fecha
-  - [ ] T1.11 Verificar todos los tests en verde
+- [x] **T1** — TDD: `launchProject` — gate de reciprocidad (RED → GREEN → REFACTOR)
+  - [x] T1.1 Crear `tests/unit/projects/launchProject-reciprocity.test.ts`
+  - [x] T1.2 Escribir test: comunidad con `reciprocity_threshold = 0` → siempre pasa (sin consulta de feedbacks)
+  - [x] T1.3 Escribir test: threshold = 3, builder tiene 3 feedbacks → publica OK
+  - [x] T1.4 Escribir test: threshold = 3, builder tiene 2 feedbacks → devuelve error con `code: "RECIPROCITY_GATE_BLOCKED"` y mensaje correcto
+  - [x] T1.5 Escribir test: threshold = 3, builder tiene 0 feedbacks → mensaje "Necesitas dar 3 feedbacks más..."
+  - [x] T1.6 Escribir test: threshold = 3, builder tiene 1 feedback → mensaje "Necesitas dar 2 feedbacks más..."
+  - [x] T1.7 Escribir test: threshold = 1, builder tiene 0 feedbacks → mensaje "Necesitas dar 1 feedback más..." (singular)
+  - [x] T1.8 Actualizar `LaunchProjectResult` — añadir `{ success: false; error: string; code?: string }` al tipo (si no ya existe)
+  - [x] T1.9 Implementar la verificación en `actions/projects/launchProject.ts`
+  - [x] T1.10 Reutilizar `feedbackRepo.countByReviewerInCommunity` o crear consulta con filtro de fecha
+  - [x] T1.11 Verificar todos los tests en verde
 
-- [ ] **T2** — TDD: componente `ProjectPreview` — gate bloqueado (RED → GREEN)
-  - [ ] T2.1 Crear/ampliar `tests/unit/projects/ProjectPreview.test.tsx`
-  - [ ] T2.2 Escribir test: sin prop `reciprocityGate` → botón "Publicar" habilitado, sin mensaje gate
-  - [ ] T2.3 Escribir test: `reciprocityGate = { blocked: false, given: 5, required: 3 }` → botón habilitado, sin mensaje
-  - [ ] T2.4 Escribir test: `reciprocityGate = { blocked: true, given: 2, required: 3 }` → botón deshabilitado
-  - [ ] T2.5 Escribir test: `reciprocityGate = { blocked: true, given: 2, required: 3 }` → bloque `reciprocity-gate-message` visible con texto "Necesitas dar 1 feedback más..."
-  - [ ] T2.6 Escribir test: `reciprocityGate = { blocked: true, given: 0, required: 3 }` → mensaje "Necesitas dar 3 feedbacks más..." (plural)
-  - [ ] T2.7 Añadir prop `reciprocityGate?: ReciprocityGate` a `ProjectPreview`
-  - [ ] T2.8 Añadir bloque condicional en el JSX de `ProjectPreview`
-  - [ ] T2.9 Verificar todos los tests en verde
+- [x] **T2** — TDD: componente `ProjectPreview` — gate bloqueado (RED → GREEN)
+  - [x] T2.1 Crear/ampliar `tests/component/projects/ProjectPreview.11-5.test.tsx`
+  - [x] T2.2 Escribir test: sin prop `reciprocityGate` → botón "Publicar" habilitado, sin mensaje gate
+  - [x] T2.3 Escribir test: `reciprocityGate = { blocked: false, given: 5, required: 3 }` → botón habilitado, sin mensaje
+  - [x] T2.4 Escribir test: `reciprocityGate = { blocked: true, given: 2, required: 3 }` → botón deshabilitado
+  - [x] T2.5 Escribir test: `reciprocityGate = { blocked: true, given: 2, required: 3 }` → bloque `reciprocity-gate-message` visible con texto "Necesitas dar 1 feedback más..."
+  - [x] T2.6 Escribir test: `reciprocityGate = { blocked: true, given: 0, required: 3 }` → mensaje "Necesitas dar 3 feedbacks más..." (plural)
+  - [x] T2.7 Añadir prop `reciprocityGate?: ReciprocityGate` a `ProjectPreview`
+  - [x] T2.8 Añadir bloque condicional en el JSX de `ProjectPreview`
+  - [x] T2.9 Verificar todos los tests en verde
 
-- [ ] **T3** — Crear helper de mensaje de pluralización
-  - [ ] T3.1 Crear (o añadir a `lib/utils/reciprocity.ts`) función `buildReciprocityMessage(given: number, required: number): string`
-  - [ ] T3.2 Tests unitarios para la función
+- [x] **T3** — Crear helper de mensaje de pluralización
+  - [x] T3.1 Crear `lib/utils/reciprocity.ts` con `buildReciprocityMessage` y `checkReciprocityGate`
+  - [x] T3.2 Tests unitarios en `tests/unit/utils/reciprocity.test.ts`
 
-- [ ] **T4** — `countByReviewerInCommunityInDays` — consulta con filtro de fecha
-  - [ ] T4.1 Verificar si `countByReviewerInCommunity` en `feedback.repository.ts` acepta parámetro de fecha
-  - [ ] T4.2 Si no, añadir `countByReviewerInCommunityInDays(reviewerId, communityId, days: number)` que filtra por `created_at >= now() - days`
-  - [ ] T4.3 Test unitario del nuevo método del repositorio
+- [x] **T4** — `countByReviewerInCommunityRecent` — consulta con filtro de fecha
+  - [x] T4.1 Verificar si `countByReviewerInCommunity` en `feedback.repository.ts` acepta parámetro de fecha
+  - [x] T4.2 Añadir `countByReviewerInCommunityRecent(reviewerId, communityId, days: number)` con filtro `gte('created_at', ...)`
+  - [x] T4.3 Tests unitarios en `tests/unit/repositories/feedbackRepository.11-5.test.ts`
 
-- [ ] **T5** — (Opcional, pero recomendado) `GET /api/communities/[slug]/reciprocity-status`
-  - [ ] T5.1 Crear ruta que devuelve `{ given: number, required: number, blocked: boolean }` para el usuario autenticado
-  - [ ] T5.2 Protegida con `requireAuth`
-  - [ ] T5.3 Test de integración: devuelve 200 con datos correctos, 401 sin auth
+- [ ] **T5** — (Opcional) `GET /api/communities/[slug]/reciprocity-status`
+  - [ ] T5.1 No implementado — gate verificado solo en server action `launchProject()` (variante aceptada en AC-7)
 
-- [ ] **T6** — Integrar gate en `LaunchIdeaModal` / `ProjectWizard`
-  - [ ] T6.1 En el paso 5 (`LaunchIdeaModal`), hacer fetch al endpoint de reciprocity status o leer el error del `serverError`
-  - [ ] T6.2 Pasar `reciprocityGate` a `ProjectPreview` desde el wizard
-  - [ ] T6.3 Si se implementa solo con `serverError`, verificar que el mensaje de error del servidor se muestra correctamente en el wizard
+- [x] **T6** — Integrar gate en `LaunchIdeaModal` / `ProjectWizard`
+  - [x] T6.1 El error del gate se muestra a través del `serverError` del wizard
+  - [x] T6.2 `ProjectPreview` recibe `reciprocityGate` desde `LaunchIdeaModal` para UX proactiva
+  - [x] T6.3 El mensaje de error del servidor se muestra correctamente en el paso 5 del wizard
 
 ## Dev Notes
 
@@ -212,3 +210,36 @@ tests/unit/projects/ProjectPreview-reciprocity.test.tsx  (nuevo o ampliar existe
 tests/unit/utils/reciprocity.test.ts  (nuevo)
 tests/integration/communities/reciprocity-status.test.ts  (nuevo, si se crea el endpoint)
 ```
+
+## Dev Agent Record
+
+### Implementación
+
+- **Rama:** `feat/11-5-gate-reciprocidad-al-publicar`
+- **Tests creados:** 27 (9 launchProject-reciprocity, 9 ProjectPreview.11-5, 4 feedbackRepository.11-5, 5 reciprocity utils)
+- **Suite completa:** 1554/1554 tests en verde
+- **Estrategia TDD:** Outside-In — tests escritos en RED antes de implementar, luego GREEN
+
+### Decisiones técnicas
+
+1. Gate implementado íntegramente en `launchProject()` server action — se evita el endpoint `/api/communities/[slug]/reciprocity-status` (AC-7 variante aceptada)
+2. `countByReviewerInCommunityRecent(reviewerId, communityId, days)` creado en `feedback.repository.ts` como método separado (no se modificó el existente `countByReviewerInCommunity`) para preservar retrocompatibilidad
+3. `lib/utils/reciprocity.ts` centraliza `buildReciprocityMessage`, `checkReciprocityGate` y el tipo `ReciprocityGate` — reutilizados en `launchProject.ts` y `ProjectPreview.tsx`
+4. Integración UI: `LaunchIdeaModal` pasa `reciprocityGate` a `ProjectPreview` para UX proactiva; si el usuario sortea el componente y el server action bloquea, el `serverError` del wizard muestra el mensaje igualmente
+5. El bloque de gate en `ProjectPreview` usa tokens semáforo `var(--color-needs-bg)` / `var(--color-needs-text)` según especificación de la story
+
+### Ficheros modificados
+
+- `actions/projects/launchProject.ts` — gate de reciprocidad con `buildReciprocityMessage`
+- `components/projects/ProjectPreview.tsx` — prop `reciprocityGate?` + bloque condicional con `data-testid="reciprocity-gate-message"`
+- `components/projects/LaunchIdeaModal.tsx` — pasa `reciprocityGate` a `ProjectPreview`
+- `components/projects/ProjectWizard.tsx` — `WizardFormData` ajustado si necesario
+- `lib/repositories/feedback.repository.ts` — nuevo método `countByReviewerInCommunityRecent`
+
+### Ficheros creados
+
+- `lib/utils/reciprocity.ts` — helpers + tipo `ReciprocityGate`
+- `tests/unit/projects/launchProject-reciprocity.test.ts`
+- `tests/component/projects/ProjectPreview.11-5.test.tsx`
+- `tests/unit/repositories/feedbackRepository.11-5.test.ts`
+- `tests/unit/utils/reciprocity.test.ts`
