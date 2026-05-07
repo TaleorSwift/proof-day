@@ -1,4 +1,55 @@
 workflows:
+  - id: "20260506-homer-CR-11-5-started"
+    timestamp: "2026-05-06T09:35:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 11.5: Gate de reciprocidad al publicar"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "11-5-gate-reciprocidad-al-publicar"
+    branch: "feat/11-5-gate-reciprocidad-al-publicar"
+    pr: "#98"
+    summary: "Code review adversarial Story 11.5. Revisando: gate threshold=0, bloqueo RECIPROCITY_GATE_BLOCKED, paso cuando given>=threshold, banner UI, botón disabled, tokens CSS, propagación reciprocityGate en modal, método countByReviewerInCommunityRecent, cobertura de tests."
+
+  - id: "20260506-homer-CR-11-5-started"
+    timestamp: "2026-05-06T09:50:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 11.5: Gate de reciprocidad al publicar"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    verdict: "APPROVED"
+    story: "11-5-gate-reciprocidad-al-publicar"
+    branch: "feat/11-5-gate-reciprocidad-al-publicar"
+    pr: "#98"
+    duration_estimate: "15 minutos"
+    issues_found:
+      high: 0
+      medium: 1
+      low: 2
+    issues_fixed: 0
+    issues_pending:
+      - "[MEDIUM-1] LaunchIdeaModal reconstruye reciprocityGate parseando regex del error string — tech debt frágil"
+      - "[LOW-1] Condición !result.success redundante en LaunchIdeaModal línea 90"
+      - "[LOW-2] launchProject.ts duplica query Supabase en lugar de usar feedbackRepository.countByReviewerInCommunityRecent"
+    acs_status:
+      AC-1: VERIFIED
+      AC-2: VERIFIED
+      AC-3: VERIFIED
+      AC-4: VERIFIED
+      AC-5: VERIFIED
+      AC-6: VERIFIED
+      AC-7: "OPTIONAL — no implementado (aceptable per story)"
+      AC-8: VERIFIED
+      AC-9: VERIFIED
+    tests_verified: 32
+    tests_passed: 32
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "QA (Edna) — validar suite completa. Luego merge PR #98."
+
   - id: "20260506-homer-DS-11-3-started"
     timestamp: "2026-05-06T10:00:00"
     agent: "Homer (Dev)"
@@ -3744,3 +3795,52 @@ workflows:
   tests_passed: 1554
   tests_failed: 0
   errors: []
+
+  - id: "20260506-120000-edna-QA-11.5"
+    timestamp: "2026-05-06T12:00:00"
+    agent: "Edna"
+    trigger: "QA"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "STARTED"
+    summary: "Validando Story 11.5 — Gate de reciprocidad al publicar. Tests existentes para launchProject, ProjectPreview, reciprocity utils y feedbackRepository."
+
+  - id: "20260506-120000-edna-QA-11.5"
+    timestamp: "2026-05-06T12:05:00"
+    agent: "Edna"
+    trigger: "QA"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    duration_estimate: "5 minutes"
+    summary: "Story 11.5 — Gate de reciprocidad al publicar. QA PASS. 32 tests de story verdes, 1554/1554 tests totales sin regresiones."
+    artifacts_created: []
+    artifacts_modified:
+      - "_bmad-output/execution-log.yaml"
+    acceptance_criteria:
+      - id: "AC-1"
+        status: "PASS"
+        evidence: "launchProject-reciprocity.test.ts: 2 tests threshold=0 → siempre pasa. Código: threshold>0 guarda el gate."
+      - id: "AC-2"
+        status: "PASS"
+        evidence: "launchProject-reciprocity.test.ts: threshold=3, given=2 → success:false, code RECIPROCITY_GATE_BLOCKED, mensaje correcto, NO insert."
+      - id: "AC-3"
+        status: "PASS"
+        evidence: "launchProject-reciprocity.test.ts: threshold=3, given=3 y given=5 → success:true."
+      - id: "AC-4"
+        status: "PASS"
+        evidence: "ProjectPreview.11-5.test.tsx: botón disabled + data-testid=reciprocity-gate-message visible con mensaje correcto."
+      - id: "AC-5"
+        status: "PASS"
+        evidence: "ProjectPreview.11-5.test.tsx: sin reciprocityGate y blocked=false → botón habilitado, sin banner."
+      - id: "AC-6"
+        status: "PASS"
+        evidence: "ProjectPreview.tsx líneas 244-253, 300-306: únicamente var(--color-needs-bg) y var(--color-needs-text), sin valores hardcodeados."
+      - id: "AC-7"
+        status: "PASS"
+        evidence: "1554/1554 tests verdes. 0 regresiones. 32 tests nuevos story 11.5."
+    tests_story: 32
+    tests_total: 1554
+    tests_passed: 1554
+    tests_failed: 0
+    errors: []
