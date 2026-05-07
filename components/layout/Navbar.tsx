@@ -5,9 +5,10 @@ interface NavbarProps {
   isAuthenticated: boolean
   userName?: string
   onLogout?: () => void
+  notificationBell?: React.ReactNode
 }
 
-export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
+export function Navbar({ isAuthenticated, userName, onLogout, notificationBell }: NavbarProps) {
   return (
     <nav
       style={{
@@ -65,6 +66,7 @@ export function Navbar({ isAuthenticated, userName, onLogout }: NavbarProps) {
         {/* Acción de autenticación */}
         {isAuthenticated ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+            {notificationBell}
             {userName && (
               <>
                 <div

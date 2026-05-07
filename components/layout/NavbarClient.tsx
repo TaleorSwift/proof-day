@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Navbar } from './Navbar'
+import { NotificationBell } from '@/components/shared/NotificationBell'
 
 interface NavbarClientProps {
   isAuthenticated: boolean
@@ -18,5 +19,12 @@ export function NavbarClient({ isAuthenticated, userName }: NavbarClientProps) {
     router.push('/login')
   }
 
-  return <Navbar isAuthenticated={isAuthenticated} userName={userName} onLogout={handleLogout} />
+  return (
+    <Navbar
+      isAuthenticated={isAuthenticated}
+      userName={userName}
+      onLogout={handleLogout}
+      notificationBell={<NotificationBell />}
+    />
+  )
 }
