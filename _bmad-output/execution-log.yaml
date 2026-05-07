@@ -3844,3 +3844,14 @@ workflows:
     tests_passed: 1554
     tests_failed: 0
     errors: []
+
+  - id: "20260506-homer-DS-11-6-started"
+    timestamp: "2026-05-06T10:30:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 11.6: Admin — configuración de reciprocidad por comunidad"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "11-6-admin-configuracion-reciprocidad-comunidad"
+    branch: "feat/11-6-admin-configuracion-reciprocidad-comunidad"
+    summary: "Implementación TDD Outside-In: PATCH /api/communities/[id]/settings, componente ReciprocitySettings, schema Zod, método updateSettings en repositorio, integración en settings/page.tsx."
