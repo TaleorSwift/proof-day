@@ -3,10 +3,33 @@
 ## Metadata
 - **Epic:** 12 — AI Summaries & Notifications
 - **Story key:** 12.3
-- **Phase:** ready-for-dev
+- **Phase:** review
 - **Agent:** Homer
 - **Flow:** Full Flow (Homer)
 - **Prerrequisito:** Story 12.2 Done (lib/ai disponible)
+
+## Dev Agent Record
+
+### Implementación — Homer (2026-05-06)
+
+**TDD Outside-In aplicado:**
+- Tests escritos primero en rojo (módulo inexistente)
+- Implementación hasta verde: 13 tests, 0 fallos
+- Suite completa: 162 ficheros / 1639 tests — todos verdes
+
+**Decisiones técnicas:**
+- `vi.hoisted()` usado para el mock de `@supabase/supabase-js` — necesario porque `createClient` se ejecuta en el cuerpo del módulo, no en una función, y las variables de mock deben estar disponibles antes de la inicialización del módulo
+- Mappers internos (`projectFromRow`, `feedbackFromRow`) en la route para no acoplar el adaptador a los mappers del dominio
+- `maybeSingle()` en lugar de `single()` para el check de síntesis previa — evita error PGRST116 en el flujo principal; el check de "sin síntesis" se hace via `data === null`
+- `WEBHOOK_SECRET` ya existía en `.env.example` — no se modifica
+
+**Archivos creados:**
+- `app/api/webhooks/ai-synthesis/route.ts`
+- `tests/unit/webhooks/ai-synthesis.test.ts`
+
+**Archivos modificados:**
+- `_bmad-output/implementation-artifacts/stories/12-3-webhook-sintesis-ia-trigger-upsert-notificacion.md`
+- `_bmad-output/execution-log.yaml`
 
 ## User Story
 
@@ -81,16 +104,16 @@ And los tests mockean `lib/ai` y el cliente Supabase service role
 
 ## Tasks
 
-- [ ] Task 1: Crear `app/api/webhooks/ai-synthesis/route.ts` — route handler con validación WEBHOOK_SECRET via timingSafeEqual
-- [ ] Task 2: Implementar lógica de verificación: >= 3 feedbacks con quality_score >= 0.6 para el projectId recibido
-- [ ] Task 3: Implementar lógica de skip: consultar `ai_summaries` por project_id, comparar `updated_at` con now() - 24h
-- [ ] Task 4: Implementar llamada a `checkDailyBudget()` y retorno 429 si excedido
-- [ ] Task 5: Implementar llamada a `synthesizeFeedbacks()` con los feedbacks y datos del proyecto
-- [ ] Task 6: Implementar upsert en `ai_summaries` via service role client
-- [ ] Task 7: Implementar llamada a `trackCost()` post-síntesis
-- [ ] Task 8: Implementar insert en `notifications` via service role client con payload `{projectId, projectSlug, projectTitle}`
-- [ ] Task 9: Añadir `WEBHOOK_SECRET` a `.env.example` con comentario
-- [ ] Task 10: Crear `tests/unit/webhooks/ai-synthesis.test.ts` con los 5 casos del AC10
+- [x] Task 1: Crear `app/api/webhooks/ai-synthesis/route.ts` — route handler con validación WEBHOOK_SECRET via timingSafeEqual
+- [x] Task 2: Implementar lógica de verificación: >= 3 feedbacks con quality_score >= 0.6 para el projectId recibido
+- [x] Task 3: Implementar lógica de skip: consultar `ai_summaries` por project_id, comparar `updated_at` con now() - 24h
+- [x] Task 4: Implementar llamada a `checkDailyBudget()` y retorno 429 si excedido
+- [x] Task 5: Implementar llamada a `synthesizeFeedbacks()` con los feedbacks y datos del proyecto
+- [x] Task 6: Implementar upsert en `ai_summaries` via service role client
+- [x] Task 7: Implementar llamada a `trackCost()` post-síntesis
+- [x] Task 8: Implementar insert en `notifications` via service role client con payload `{projectId, projectSlug, projectTitle}`
+- [x] Task 9: `WEBHOOK_SECRET` ya existía en `.env.example` (pre-existente) — verificado
+- [x] Task 10: Crear `tests/unit/webhooks/ai-synthesis.test.ts` con los 5 casos del AC10
 
 ## Dev Notes
 
