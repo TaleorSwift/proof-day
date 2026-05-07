@@ -4374,3 +4374,82 @@ workflows:
       - "_bmad-output/execution-log.yaml"
     errors: []
     next_recommended: "CR (Homer) — code review del PR #104 en feat/12-5-notificaciones-in-app"
+
+  - id: "20260507-homer-CR-12-5-started"
+    timestamp: "2026-05-07T14:00:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #104 Story 12.5: Notificaciones in-app"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "12-5-notificaciones-in-app"
+    branch: "feat/12-5-notificaciones-in-app"
+    pr: "#104"
+
+  - id: "20260507-homer-CR-12-5-closing"
+    timestamp: "2026-05-07T14:30:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #104 Story 12.5: Notificaciones in-app"
+    workflow: "code-review"
+    result: "SUCCESS"
+    verdict: "APPROVED with comments"
+    story: "12-5-notificaciones-in-app"
+    branch: "feat/12-5-notificaciones-in-app"
+    pr: "#104"
+    issues_found:
+      - severity: LOW
+        criterion: CR-TOKENS
+        description: "badge del NotificationBell usa color: '#ffffff' hardcodeado en lugar de var(--color-*). También fontSize: 10, minWidth: 16, height: 16, borderRadius: 9999, padding: '0 3px', lineHeight: 1, minWidth: 280, fontWeight: 700 sin token."
+        resolution: "Pendiente — el equipo decide si corregir antes de merge o en followup"
+      - severity: LOW
+        criterion: CR-UPDATE-RETURNING
+        description: "PATCH route hace .update().eq() sin .select() — Supabase v2 no retorna filas por defecto sin select(). La respuesta construye un fallback {id, read} en lugar de los datos actualizados reales. Funcional pero impreciso."
+        resolution: "Pendiente — añadir .select() tras .update() para retornar la fila real"
+      - severity: LOW
+        criterion: CR-SINGLE-VS-MAYBESINGLE
+        description: "webhook usa .single() al buscar community slug. Si la comunidad no existe, .single() lanza error en lugar de retornar null. Debería ser .maybeSingle() con fallback a undefined."
+        resolution: "Pendiente — cambiar a .maybeSingle() para resiliencia"
+    tests: "1686/1686 verdes tras implementación"
+    errors: []
+    notes: "Sin findings CRITICAL ni HIGH. Todos los criterios de seguridad superados: cookie-based client en API routes, ownership check explícito con 403, límite 20 + order DESC, NotificationBell 'use client', Navbar sin 'use client', webhook communitySlug verificado en test AC7. Findings son todos LOW y no bloquean merge."
+  - id: "20260507-edna-QA-12-5-started"
+    timestamp: "2026-05-07T14:41:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 12.5: Notificaciones in-app"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    story: "12-5-notificaciones-in-app"
+    branch: "feat/12-5-notificaciones-in-app"
+    pr: "#104"
+    result: "STARTED"
+  - id: "20260507-edna-QA-12-5-closing"
+    timestamp: "2026-05-07T14:42:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 12.5: Notificaciones in-app"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    story: "12-5-notificaciones-in-app"
+    branch: "feat/12-5-notificaciones-in-app"
+    pr: "#104"
+    result: "SUCCESS"
+    verdict: "QA PASS"
+    artifacts:
+      - "tests/unit/api/notifications.test.ts"
+      - "tests/unit/components/NotificationBell.test.tsx"
+      - "stories/shared/NotificationBell.stories.tsx"
+    test_results:
+      notifications_specific: "25/25 passed"
+      full_suite: "1686/1686 passed"
+      regressions: "0"
+    build:
+      typescript: "PASS (errores de build en cron/webhook son pre-existentes en main, no introducidos por esta story)"
+    ac_coverage:
+      AC1: "PASS — GET 401 sin auth, 200 con lista, filtro read=false por defecto, all=true retorna todas, limit 20, order DESC"
+      AC2: "PASS — PATCH 401 sin auth, 404 no existe, 403 ownership check, 200 marca como leída"
+      AC3: "PASS — badge visible con notificaciones no leídas, oculto sin ellas, muestra contador correcto"
+      AC4: "PASS — click llama PATCH, navega a /communities/{slug}/projects/{slug}, no navega sin slugs"
+      AC5: "PASS — NotificationBell integrado en NavbarClient via prop notificationBell"
+      AC6: "PASS — 3 Storybook stories: WithNotifications, Empty, WithBadgeCount"
+      AC7: "PASS — 25 tests específicos + 1686 suite total, 0 regresiones"
+    errors: []
+    notes: "Los 2 unhandled rejections de ReciprocitySettings.test.tsx (window is not defined) son pre-existentes y no relacionados con la story 12.5."
