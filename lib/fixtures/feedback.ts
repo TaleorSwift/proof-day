@@ -30,6 +30,8 @@ export const fbPulse1: Feedback = {
   // Story 11.1 — feedback quality
   customAnswer: 'Sí, lo usaría en mi equipo de ingeniería.',
   qualityScore: 0.88,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 /** scores: 3,2,3 | contributorType: insightful | p4 solo | sin respuesta custom */
@@ -46,6 +48,8 @@ export const fbPulse2: Feedback = {
   // Story 11.1 — feedback quality
   customAnswer: null,
   qualityScore: 0.55,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 /** scores: 2,3,2 | contributorType: changed-thinking | p1+p4 */
@@ -63,6 +67,8 @@ export const fbPulse3: Feedback = {
   // Story 11.1 — feedback quality
   customAnswer: null,
   qualityScore: 0.72,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 // ── Feedbacks — DocBridge ─────────────────────────────────────────────────────
@@ -84,6 +90,8 @@ export const fbDocBridge1: Feedback = {
   // Story 11.1 — feedback quality
   customAnswer: 'Lo implantaría de inmediato en mi empresa.',
   qualityScore: 0.95,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 // ── Feedbacks — Retro Replay ──────────────────────────────────────────────────
@@ -102,6 +110,8 @@ export const fbRetro1: Feedback = {
   // Story 11.1 — feedback quality
   customAnswer: null,
   qualityScore: 0.30,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 /** scores: 2,1,1 | sin contributorType | p3+p4 — combo de puntuación más baja */
@@ -119,6 +129,8 @@ export const fbRetro2: Feedback = {
   // Story 11.1 — feedback quality
   customAnswer: null,
   qualityScore: 0.40,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 // ── Feedbacks — Iterate Labs ─────────────────────────────────────────────────
@@ -140,6 +152,8 @@ export const fbIterate1: Feedback = {
   // Story 11.1 — feedback quality
   customAnswer: 'Puede ser útil pero necesita simplificarse mucho.',
   qualityScore: 0.62,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 /** scores: 3,2,2 | sin contributorType | p4 solo */
@@ -156,6 +170,8 @@ export const fbIterate2: Feedback = {
   // Story 11.1 — feedback quality
   customAnswer: null,
   qualityScore: 0.50,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 /** scores: 2,3,2 | insightful | p2+p4 */
@@ -173,6 +189,8 @@ export const fbIterate3: Feedback = {
   // Story 11.1 — feedback quality
   customAnswer: null,
   qualityScore: 0.68,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 // ── Feedbacks — Scale Engine ─────────────────────────────────────────────────
@@ -194,6 +212,8 @@ export const fbScale1: Feedback = {
   // Story 11.1 — feedback quality
   customAnswer: 'Lo compraría mañana mismo si lo lanzarais.',
   qualityScore: 1.0,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 /** scores: 3,3,2 | sin contributorType | p4 solo */
@@ -210,6 +230,8 @@ export const fbScale2: Feedback = {
   // Story 11.1 — feedback quality
   customAnswer: null,
   qualityScore: 0.75,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 /** scores: 3,2,3 | changed-thinking | p1+p4 | con custom_answer */
@@ -227,6 +249,8 @@ export const fbScale3: Feedback = {
   // Story 11.1 — feedback quality
   customAnswer: 'Cambia la forma de pensar en infraestructura.',
   qualityScore: 0.82,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 // ── FeedbackEntryData — versión enriquecida para componentes ──────────────────

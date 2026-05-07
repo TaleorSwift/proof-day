@@ -33,6 +33,8 @@ const MOCK_FEEDBACK = {
   createdAt: '2026-04-11T00:00:00Z',
   customAnswer: null,
   qualityScore: null,
+  // Story 13.1 — iteraciones
+  iterationId: null,
 }
 
 // ── T2.1: sin customQuestion → campo NO existe en DOM ─────────────────────────

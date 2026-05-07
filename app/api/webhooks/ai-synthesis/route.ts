@@ -69,6 +69,8 @@ interface FeedbackRow {
   created_at: string
   custom_answer: string | null
   quality_score: number | null
+  // Story 13.1 — iteraciones
+  iteration_id: string | null
 }
 
 interface AISummaryRow {
@@ -137,6 +139,8 @@ function feedbackFromRow(row: FeedbackRow): Feedback {
     createdAt: row.created_at,
     customAnswer: row.custom_answer,
     qualityScore: row.quality_score,
+    // Story 13.1 — iteraciones
+    iterationId: row.iteration_id,
   }
 }
 

@@ -40,6 +40,8 @@ describe('FeedbackFormInline — estado inicial', () => {
       // Story 11.1 — feedback quality
       customAnswer: null,
       qualityScore: null,
+      // Story 13.1 — iteraciones
+      iterationId: null,
     })
   })
 
@@ -83,6 +85,8 @@ describe('FeedbackFormInline — validación de habilitación', () => {
       // Story 11.1 — feedback quality
       customAnswer: null,
       qualityScore: null,
+      // Story 13.1 — iteraciones
+      iterationId: null,
     })
   })
 
@@ -125,6 +129,8 @@ describe('FeedbackFormInline — envío exitoso', () => {
       // Story 11.1 — feedback quality
       customAnswer: null,
       qualityScore: null,
+      // Story 13.1 — iteraciones
+      iterationId: null,
     })
   })
 
@@ -194,6 +200,8 @@ describe('FeedbackFormInline — estado de carga', () => {
         // Story 11.1 — feedback quality
         customAnswer: null,
         qualityScore: null,
+        // Story 13.1 — iteraciones
+        iterationId: null,
       }), 500))
     )
     render(<FeedbackFormInline {...DEFAULT_PROPS} />)
