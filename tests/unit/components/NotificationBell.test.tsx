@@ -377,6 +377,127 @@ describe('NotificationBell — new_iteration_ready', () => {
 })
 
 // ---------------------------------------------------------------------------
+// Suite: feedback_attributed — subtexto y navegación
+// ---------------------------------------------------------------------------
+
+const MOCK_NOTIF_FEEDBACK_ATTRIBUTED = {
+  id: 'notif-004',
+  userId: 'user-001',
+  type: 'feedback_attributed',
+  payload: {
+    projectId: 'project-004',
+    projectSlug: 'proyecto-atribuido',
+    projectTitle: 'Proyecto Atribuido',
+    versionNumber: 1,
+    communitySlug: 'startup-madrid',
+  },
+  read: false,
+  createdAt: '2026-05-07T12:00:00Z',
+}
+
+const MOCK_NOTIF_FEEDBACK_ATTRIBUTED_NO_VERSION = {
+  id: 'notif-005',
+  userId: 'user-001',
+  type: 'feedback_attributed',
+  payload: {
+    projectId: 'project-005',
+    projectSlug: 'proyecto-atribuido-sin-version',
+    projectTitle: 'Proyecto Sin Versión',
+    communitySlug: 'startup-madrid',
+  },
+  read: false,
+  createdAt: '2026-05-07T12:00:00Z',
+}
+
+describe('NotificationBell — feedback_attributed', () => {
+  it('muestra "Tu feedback fue registrado en v1" para notificaciones feedback_attributed', async () => {
+    mockFetchSuccess([MOCK_NOTIF_FEEDBACK_ATTRIBUTED])
+
+    const user = userEvent.setup()
+    render(<NotificationBell />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('notification-bell')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTestId('notification-bell'))
+
+    await waitFor(() => {
+      expect(screen.getByText('Tu feedback fue registrado en v1')).toBeInTheDocument()
+    })
+  })
+
+  it('muestra texto fallback cuando feedback_attributed no tiene versionNumber', async () => {
+    mockFetchSuccess([MOCK_NOTIF_FEEDBACK_ATTRIBUTED_NO_VERSION])
+
+    const user = userEvent.setup()
+    render(<NotificationBell />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('notification-bell')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTestId('notification-bell'))
+
+    await waitFor(() => {
+      expect(screen.getByText('Tu feedback fue registrado en esta versión')).toBeInTheDocument()
+    })
+  })
+
+  it('muestra el projectTitle del payload como título en feedback_attributed', async () => {
+    mockFetchSuccess([MOCK_NOTIF_FEEDBACK_ATTRIBUTED])
+
+    const user = userEvent.setup()
+    render(<NotificationBell />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('notification-bell')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTestId('notification-bell'))
+
+    await waitFor(() => {
+      expect(screen.getByText('Proyecto Atribuido')).toBeInTheDocument()
+    })
+  })
+
+  it('navega a la ruta correcta al hacer click en notificación feedback_attributed', async () => {
+    vi.spyOn(global, 'fetch')
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: [MOCK_NOTIF_FEEDBACK_ATTRIBUTED] }),
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: { ...MOCK_NOTIF_FEEDBACK_ATTRIBUTED, read: true } }),
+      } as Response)
+
+    const user = userEvent.setup()
+    render(<NotificationBell />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('notification-bell')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTestId('notification-bell'))
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`notification-item-${MOCK_NOTIF_FEEDBACK_ATTRIBUTED.id}`)
+      ).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTestId(`notification-item-${MOCK_NOTIF_FEEDBACK_ATTRIBUTED.id}`))
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith(
+        '/communities/startup-madrid/projects/proyecto-atribuido'
+      )
+    })
+  })
+})
+
+// ---------------------------------------------------------------------------
 // Suite: click en notificación sin slugs — no navega
 // ---------------------------------------------------------------------------
 

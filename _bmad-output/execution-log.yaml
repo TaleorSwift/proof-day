@@ -1,4 +1,14 @@
 workflows:
+  - id: "20260507-homer-DS-13-5-notificacion-atribucion-reviewer"
+    timestamp: "2026-05-07T21:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 13.5: Notificación de atribución al Reviewer etiquetado"
+    workflow: "dev-story"
+    mode: "GENERATE+REFINE"
+    story: "13-5-notificacion-atribucion-reviewer-etiquetado"
+    result: "IN_PROGRESS"
+    artifacts_modified: []
+
   - id: "20260507-homer-DS-13-4-atribucion-feedback-iteracion-done"
     timestamp: "2026-05-07T20:30:00"
     agent: "Homer (Dev)"
