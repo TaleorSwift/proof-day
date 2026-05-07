@@ -40,6 +40,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.72.0",
+    "resend": "^6.12.3",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.0",
     "zod": "^4.3.6"
@@ -49,6 +50,7 @@
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.58.2",
+    "@storybook/addon-docs": "9.1.20",
     "@storybook/addon-links": "9.1.20",
     "@storybook/nextjs-vite": "9.1.20",
     "@testing-library/jest-dom": "^6.9.1",
@@ -63,6 +65,7 @@
     "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
+    "eslint-plugin-storybook": "9.1.20",
     "husky": "^9.1.7",
     "jsdom": "^29.0.1",
     "lint-staged": "^16.4.0",
@@ -73,9 +76,7 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5",
     "vercel": "^50.37.3",
-    "vitest": "^2.1.9",
-    "eslint-plugin-storybook": "9.1.20",
-    "@storybook/addon-docs": "9.1.20"
+    "vitest": "^2.1.9"
   },
   "eslintConfig": {
     "extends": [
