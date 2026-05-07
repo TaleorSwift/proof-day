@@ -117,30 +117,30 @@ development_status:
   # ── PHASE 2 — MVP 2.0 ────────────────────────────────────────────
 
   # ── EPIC 10: Templates & Onboarding del Builder ──────────────────
-  epic-10: in-progress
-  10-1-migraciones-db-project-templates-y-extensiones-projects: done  # CR APPROVED 2026-04-30 — HIGH-1 y HIGH-2 resueltos. 1277 tests verdes. PR #88
+  epic-10: done
+  10-1-migraciones-db-project-templates-y-extensiones-projects: done  # CR APPROVED 2026-04-30 — PR #88 merged
   10-2-selector-tipo-proyecto-project-template-selector: done  # QA PASS 2026-04-30 — PR #89 merged
-  10-3-projectwizard-con-ejemplos-contextuales: done  # QA PASS 2026-04-30 — PR #90 pending merge
-  10-4-preview-proyecto-antes-de-publicar: done  # CR APPROVED 2026-04-30 — APPROVED, 0 HIGH/CRITICAL, 3 MEDIUM (naming/docs), PR #92
-  10-5-campo-hipotesis-en-wizard: done  # CR APPROVED 2026-04-30 — APPROVED, 0 HIGH/CRITICAL, PR #91 pending merge
+  10-3-projectwizard-con-ejemplos-contextuales: done  # QA PASS 2026-04-30 — PR #90 merged
+  10-4-preview-proyecto-antes-de-publicar: done  # CR APPROVED + QA PASS 2026-05-04 — PR #92 merged
+  10-5-campo-hipotesis-en-wizard: done  # CR APPROVED 2026-05-04 — PR #91 merged
   epic-10-retrospective: optional
 
   # ── EPIC 11: Calidad del Feedback y Reciprocidad ─────────────────
-  epic-11: done  # todas las stories completadas 2026-05-06
+  epic-11: done  # todas las stories completadas 2026-05-07
   11-1-migraciones-db-feedback-responses-projects-communities: done  # CR APPROVED + QA PASS 2026-05-06 — PR #94 merged
-  11-2-pregunta-custom-builder-microcontexto-reviewer: done  # CR APPROVED 2026-05-06 — PR #95
+  11-2-pregunta-custom-builder-microcontexto-reviewer: done  # CR APPROVED + QA PASS 2026-05-06 — PR #95 merged
   11-3-filtro-completitud-feedback-quality-warning: done  # CR APPROVED + QA PASS 2026-05-06 — PR #96 merged
   11-4-recordatorio-automatico-feedback-cron-job: done  # CR APPROVED + QA PASS 2026-05-06 — PR #97 merged
-  11-5-gate-reciprocidad-al-publicar: done  # CR APPROVED + QA PASS 2026-05-06 — PR #98 merged
-  11-6-admin-configuracion-reciprocidad-comunidad: done  # CR APPROVED + QA PASS 2026-05-06 — PR #99 merged
+  11-5-gate-reciprocidad-al-publicar: done  # CR APPROVED + QA PASS 2026-05-07 — PR #98 merged
+  11-6-admin-configuracion-reciprocidad-comunidad: done  # CR APPROVED + QA PASS 2026-05-07 — PR #99 merged
   epic-11-retrospective: optional
 
   # ── EPIC 12: IA Sintetizadora y Notificaciones ───────────────────
   epic-12: in-progress
-  12-1-migraciones-db-ai-summaries-notifications-cost-tracking: done
-  12-2-integracion-claude-api-lib-ai-control-coste: done  # CR APPROVED + QA PASS 2026-05-06 — PR #100 merged
-  12-3-webhook-sintesis-ia-trigger-upsert-notificacion: done  # CR APPROVED + QA PASS 2026-05-06 — PR #101 merged
-  12-4-aisummarycard-vista-proyecto: done  # CR APPROVED + QA PASS 2026-05-06 — PR #102 merged
+  12-1-migraciones-db-ai-summaries-notifications-cost-tracking: done  # CR APPROVED + QA PASS 2026-05-06 — PR #93 merged
+  12-2-integracion-claude-api-lib-ai-control-coste: done  # CR APPROVED + QA PASS 2026-05-07 — PR #100 merged
+  12-3-webhook-sintesis-ia-trigger-upsert-notificacion: done  # CR APPROVED + QA PASS 2026-05-07 — PR #101 merged
+  12-4-aisummarycard-vista-proyecto: done  # CR APPROVED + QA PASS 2026-05-07 — PR #102 merged
   12-5-notificaciones-in-app-tabla-api-routes-notificationbell: ready-for-dev
   12-6-notificaciones-email-resend-sdk: ready-for-dev
   12-7-notificacion-builder-sintesis-lista-budget-alert: ready-for-dev
