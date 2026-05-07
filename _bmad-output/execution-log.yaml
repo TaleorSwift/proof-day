@@ -1,4 +1,39 @@
 workflows:
+  - id: "20260506-homer-CR-12-2-started"
+    timestamp: "2026-05-06T13:42:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #100 Story 12.2: lib/ai con Ollama"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "12-2-integracion-ollama-lib-ai-control-coste"
+    branch: "feat/12-2-integracion-ollama-lib-ai-control-coste"
+    pr: "#100"
+
+  - id: "20260506-homer-CR-12-2-closing"
+    timestamp: "2026-05-06T13:45:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — PR #100 Story 12.2: lib/ai con Ollama"
+    workflow: "code-review"
+    result: "SUCCESS"
+    verdict: "APPROVED"
+    story: "12-2-integracion-ollama-lib-ai-control-coste"
+    branch: "feat/12-2-integracion-ollama-lib-ai-control-coste"
+    pr: "#100"
+    commit_fix: "10c1249"
+    issues_found:
+      - severity: MEDIUM
+        criterion: CR7
+        description: "communityId y costUsd en TrackCostInput sin documentar como campos silenciados — API engañosa"
+        resolution: "JSDoc añadido en ambos campos explicando propósito y comportamiento"
+      - severity: LOW
+        criterion: CR8
+        description: "Test error en ollamaClient solo verificaba toThrow() sin validar mensaje de error"
+        resolution: "Test reforzado para verificar 'Ollama error 500'"
+    tests: "60/60 verdes tras fix"
+    errors: []
+    notes: "Todos los criterios AC1-AC9 verificados. Sin errores TS nuevos en lib/ai/. Errores TSC pre-existentes (9) en stories anteriores fuera de scope."
+
   - id: "20260506-homer-DS-12-2-started"
     timestamp: "2026-05-06T14:00:00"
     agent: "Homer (Dev)"
