@@ -62,7 +62,7 @@ vi.mock('@/lib/ai', () => ({
 // Import del handler bajo test — DESPUÉS de los mocks
 // ---------------------------------------------------------------------------
 
-import { GET } from '@/app/api/projects/[id]/score-interpretation/route'
+import { GET, buildInterpretationPrompt } from '@/app/api/projects/[id]/score-interpretation/route'
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -299,5 +299,54 @@ describe('GET /api/projects/[id]/score-interpretation', () => {
     expect(callArg).toHaveProperty('tokensInput', OLLAMA_RESPONSE.prompt_eval_count)
     expect(callArg).toHaveProperty('tokensOutput', OLLAMA_RESPONSE.eval_count)
     expect(callArg).toHaveProperty('costUsd', 0)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// buildInterpretationPrompt — función pura
+// ---------------------------------------------------------------------------
+
+describe('buildInterpretationPrompt', () => {
+  const BASE_PARAMS = {
+    title: 'Proyecto Test',
+    problem: 'Los usuarios no encuentran lo que buscan.',
+    scoreLabel: 'PROMISING' as const,
+    average: 2.5,
+    feedbackCount: 5,
+  }
+
+  it('incluye el título del proyecto en el prompt', () => {
+    const prompt = buildInterpretationPrompt(BASE_PARAMS)
+    expect(prompt).toContain('Proyecto Test')
+  })
+
+  it('incluye el problem del proyecto en el prompt', () => {
+    const prompt = buildInterpretationPrompt(BASE_PARAMS)
+    expect(prompt).toContain('Los usuarios no encuentran lo que buscan.')
+  })
+
+  it('incluye el scoreLabel en el prompt', () => {
+    const prompt = buildInterpretationPrompt(BASE_PARAMS)
+    expect(prompt).toContain('PROMISING')
+  })
+
+  it('calcula pct en rango 0-100: average=1.0 → pct=0', () => {
+    const prompt = buildInterpretationPrompt({ ...BASE_PARAMS, average: 1.0 })
+    expect(prompt).toContain('0/100')
+  })
+
+  it('calcula pct en rango 0-100: average=2.0 → pct=50', () => {
+    const prompt = buildInterpretationPrompt({ ...BASE_PARAMS, average: 2.0 })
+    expect(prompt).toContain('50/100')
+  })
+
+  it('calcula pct en rango 0-100: average=3.0 → pct=100', () => {
+    const prompt = buildInterpretationPrompt({ ...BASE_PARAMS, average: 3.0 })
+    expect(prompt).toContain('100/100')
+  })
+
+  it('el prompt no empieza con bullet points', () => {
+    const prompt = buildInterpretationPrompt(BASE_PARAMS)
+    expect(prompt.trimStart()).not.toMatch(/^[-•*]/)
   })
 })

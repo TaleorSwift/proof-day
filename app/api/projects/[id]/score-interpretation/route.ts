@@ -32,7 +32,7 @@ interface InterpretationPromptParams {
 
 export function buildInterpretationPrompt(params: InterpretationPromptParams): string {
   const { title, problem, scoreLabel, average, feedbackCount } = params
-  const pct = Math.round(average * 100)
+  const pct = Math.round(((average - 1) / 2) * 100)
 
   return `Eres un analista de producto que ayuda a emprendedores a interpretar los resultados de validación de su proyecto.
 
