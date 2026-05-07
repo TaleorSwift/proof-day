@@ -2,7 +2,7 @@
 // AC5: read-modify-write mensual; UPDATE si fila existe, INSERT si no
 // Usa service role Supabase (bypasea RLS)
 
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -16,16 +16,6 @@ export interface TrackCostInput {
   tokensOutput: number
   /** Ignorado intencionalmente — Ollama local no tiene coste económico (siempre 0.0) */
   costUsd: number
-}
-
-// ---------------------------------------------------------------------------
-// createServiceRoleClient — factory privada
-// ---------------------------------------------------------------------------
-
-function createServiceRoleClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY!
-  return createClient(url, key)
 }
 
 // ---------------------------------------------------------------------------
@@ -48,7 +38,7 @@ function getCurrentMonth(): string {
  * - total_cost_usd siempre 0.0 para Ollama local
  */
 export async function trackCost(input: TrackCostInput): Promise<void> {
-  const supabase = createServiceRoleClient()
+  const supabase = createAdminClient()
   const month = getCurrentMonth()
 
   const { data: existing, error: selectError } = await supabase

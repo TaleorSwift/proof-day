@@ -3,7 +3,7 @@
 // AI_DAILY_BUDGET_USD se mantiene en config para compatibilidad futura con APIs de pago
 // Story 12.7 — maybeSendBudgetAlert: alerta a admins cuando >= 80% del presupuesto usado
 
-import { createClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 /**
  * Verifica si el presupuesto diario de IA permite ejecutar una síntesis.
@@ -35,10 +35,7 @@ export async function maybeSendBudgetAlert(
   const percentUsed = currentCostUsd / limitUsd
   if (percentUsed < 0.8) return
 
-  const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
+  const supabaseAdmin = createAdminClient()
 
   // Deduplicación diaria: no enviar más de una alerta por día
   const today = new Date().toISOString().split('T')[0]
