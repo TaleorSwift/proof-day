@@ -4,6 +4,7 @@ import { requireAuth } from '@/lib/api/middleware/require-auth'
 import { createFeedbackService } from '@/lib/services/feedback.service'
 import { createFeedbackRepository } from '@/lib/repositories/feedback.repository'
 import { createProjectsRepository } from '@/lib/repositories/projects.repository'
+import { createProjectIterationsRepository } from '@/lib/repositories/project-iterations.repository'
 import { calculateQualityScore } from '@/lib/utils/feedbackQuality'
 // Story 12.7 — trigger fire-and-forget de síntesis IA
 import { triggerSynthesisWebhook } from '@/lib/ai/triggerSynthesisWebhook'
@@ -76,6 +77,17 @@ export async function POST(request: Request) {
   // Story 11.3 — calcula quality score antes de persistir
   const qualityScore = calculateQualityScore(textResponses)
 
+  // Story 13.4 — obtiene la iteración vigente para atribuirla al feedback (graceful: null si falla)
+  const iterationsRepo = createProjectIterationsRepository(supabase)
+  let iterationId: string | null = null
+  try {
+    const latestIteration = await iterationsRepo.getLatestIteration(projectId)
+    iterationId = latestIteration?.id ?? null
+  } catch {
+    // No bloquea la creación del feedback si falla la consulta de iteración
+    iterationId = null
+  }
+
   const feedbackRepo = createFeedbackRepository(supabase)
   const { data: feedback, error } = await feedbackRepo.create({
     projectId,
@@ -87,6 +99,8 @@ export async function POST(request: Request) {
     customAnswer: customAnswer ?? null,
     // Story 11.3 — quality score calculado
     qualityScore,
+    // Story 13.4 — iteración vigente al momento de recibir el feedback
+    iterationId,
   })
 
   if (error || !feedback)

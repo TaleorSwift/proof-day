@@ -73,6 +73,76 @@ describe('projectIterationsRepository.getLatestVersionNumber', () => {
   })
 })
 
+// ── Suite: getLatestIteration ─────────────────────────────────────────────────
+
+function buildGetLatestIterationMock(returnValue: { data: ProjectIterationRow | null; error: unknown }) {
+  const maybeSingleMock = vi.fn().mockResolvedValue(returnValue)
+  const limitMock = vi.fn().mockReturnValue({ maybeSingle: maybeSingleMock })
+  const orderMock = vi.fn().mockReturnValue({ limit: limitMock })
+  const eqMock = vi.fn().mockReturnValue({ order: orderMock })
+  const selectMock = vi.fn().mockReturnValue({ eq: eqMock })
+  const fromMock = vi.fn().mockReturnValue({ select: selectMock })
+
+  return { from: fromMock, _spies: { maybeSingleMock, limitMock, orderMock, eqMock, selectMock } }
+}
+
+describe('projectIterationsRepository.getLatestIteration', () => {
+  it('retorna null cuando no hay iteraciones para el proyecto', async () => {
+    const supabaseMock = buildGetLatestIterationMock({ data: null, error: null })
+    const repo = createProjectIterationsRepository(supabaseMock as never)
+
+    const result = await repo.getLatestIteration(PROJECT_ID)
+
+    expect(result).toBeNull()
+  })
+
+  it('retorna la iteración con el mayor version_number cuando hay múltiples', async () => {
+    const latestRow: ProjectIterationRow = { ...MOCK_ROW, id: 'iteration-uuid-003', version_number: 3 }
+    const supabaseMock = buildGetLatestIterationMock({ data: latestRow, error: null })
+    const repo = createProjectIterationsRepository(supabaseMock as never)
+
+    const result = await repo.getLatestIteration(PROJECT_ID)
+
+    expect(result).not.toBeNull()
+    expect(result?.id).toBe('iteration-uuid-003')
+    expect(result?.versionNumber).toBe(3)
+    expect(result?.projectId).toBe(PROJECT_ID)
+  })
+
+  it('retorna la única iteración cuando solo hay una', async () => {
+    const supabaseMock = buildGetLatestIterationMock({ data: MOCK_ROW, error: null })
+    const repo = createProjectIterationsRepository(supabaseMock as never)
+
+    const result = await repo.getLatestIteration(PROJECT_ID)
+
+    expect(result).not.toBeNull()
+    expect(result?.id).toBe(MOCK_ROW.id)
+    expect(result?.versionNumber).toBe(1)
+  })
+
+  it('retorna null si hay error de BD', async () => {
+    const dbError = new Error('database error')
+    const supabaseMock = buildGetLatestIterationMock({ data: null, error: dbError })
+    const repo = createProjectIterationsRepository(supabaseMock as never)
+
+    const result = await repo.getLatestIteration(PROJECT_ID)
+
+    expect(result).toBeNull()
+  })
+
+  it('llama a .order("version_number", { ascending: false }) y .limit(1)', async () => {
+    const supabaseMock = buildGetLatestIterationMock({ data: MOCK_ROW, error: null })
+    const repo = createProjectIterationsRepository(supabaseMock as never)
+
+    await repo.getLatestIteration(PROJECT_ID)
+
+    expect(supabaseMock.from).toHaveBeenCalledWith('project_iterations')
+    expect(supabaseMock._spies.eqMock).toHaveBeenCalledWith('project_id', PROJECT_ID)
+    expect(supabaseMock._spies.orderMock).toHaveBeenCalledWith('version_number', { ascending: false })
+    expect(supabaseMock._spies.limitMock).toHaveBeenCalledWith(1)
+  })
+})
+
 // ── Suite: create ─────────────────────────────────────────────────────────────
 
 describe('projectIterationsRepository.create', () => {

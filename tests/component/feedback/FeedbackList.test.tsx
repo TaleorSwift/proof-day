@@ -27,6 +27,9 @@ const FEEDBACK_SIN_AVATAR: FeedbackWithReviewer = {
   text_responses: { p4: 'Mejoraría el onboarding del producto.' },
   created_at: '2026-04-10T10:00:00Z',
   profiles: { id: 'user-1', name: 'Ana García', avatar_url: null },
+  // Story 13.4 — sin iteración asignada
+  iteration_id: null,
+  project_iterations: null,
 }
 
 const FEEDBACK_CON_AVATAR: FeedbackWithReviewer = {
@@ -43,6 +46,9 @@ const FEEDBACK_CON_AVATAR: FeedbackWithReviewer = {
     name: 'Carlos López',
     avatar_url: 'https://picsum.photos/seed/carlos/32/32',
   },
+  // Story 13.4 — sin iteración asignada
+  iteration_id: null,
+  project_iterations: null,
 }
 
 const FEEDBACK_SIN_PERFIL: FeedbackWithReviewer = {
@@ -50,6 +56,9 @@ const FEEDBACK_SIN_PERFIL: FeedbackWithReviewer = {
   text_responses: { p4: 'Feedback sin perfil.' },
   created_at: '2026-04-08T09:00:00Z',
   profiles: null,
+  // Story 13.4 — sin iteración asignada
+  iteration_id: null,
+  project_iterations: null,
 }
 
 // ---------------------------------------------------------------------------
@@ -203,6 +212,35 @@ describe('FeedbackList — perfil nulo', () => {
     render(<FeedbackList projectId="proj-123" isBuilder={true} />)
     await waitFor(() => {
       expect(screen.getByText('Usuario')).toBeInTheDocument()
+    })
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Suite: FeedbackList — badge de versión (Story 13.4, AC4)
+// ---------------------------------------------------------------------------
+
+describe('FeedbackList — badge de versión (Story 13.4)', () => {
+  it('muestra el badge "v2" cuando el feedback tiene iteration_id y project_iterations con version_number=2', async () => {
+    const feedbackConVersion: FeedbackWithReviewer = {
+      ...FEEDBACK_SIN_AVATAR,
+      id: 'fb-v2',
+      iteration_id: 'iter-uuid-001',
+      project_iterations: { version_number: 2 },
+    }
+    vi.mocked(getFeedbacks).mockResolvedValueOnce([feedbackConVersion])
+    render(<FeedbackList projectId="proj-123" isBuilder={true} />)
+    await waitFor(() => {
+      expect(screen.getByTestId('feedback-version-badge')).toBeInTheDocument()
+      expect(screen.getByTestId('feedback-version-badge')).toHaveTextContent('v2')
+    })
+  })
+
+  it('no muestra el badge cuando iteration_id es null', async () => {
+    vi.mocked(getFeedbacks).mockResolvedValueOnce([FEEDBACK_SIN_AVATAR])
+    render(<FeedbackList projectId="proj-123" isBuilder={true} />)
+    await waitFor(() => {
+      expect(screen.queryByTestId('feedback-version-badge')).not.toBeInTheDocument()
     })
   })
 })

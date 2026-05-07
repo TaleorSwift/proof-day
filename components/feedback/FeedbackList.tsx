@@ -157,6 +157,10 @@ export function FeedbackList({ projectId, isBuilder }: FeedbackListProps) {
         const avatarUrl = feedback.profiles?.avatar_url ?? null
         const textResponses = (feedback.text_responses as unknown as Record<string, string | undefined>) ?? {}
 
+        // Story 13.4 — versión del feedback: usar version_number del join si está disponible
+        const versionNumber = (feedback.project_iterations as { version_number: number } | null)?.version_number ?? null
+        const hasIteration = feedback.iteration_id !== null
+
         return (
           <article
             key={feedback.id}
@@ -170,7 +174,7 @@ export function FeedbackList({ projectId, isBuilder }: FeedbackListProps) {
               gap: 'var(--space-3)',
             }}
           >
-            {/* Cabecera: avatar + nombre + fecha */}
+            {/* Cabecera: avatar + nombre + badge versión + fecha */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
                 {avatarUrl ? (
@@ -198,6 +202,24 @@ export function FeedbackList({ projectId, isBuilder }: FeedbackListProps) {
                 >
                   {reviewerName}
                 </span>
+                {/* Story 13.4 — badge de versión: solo si el feedback tiene iteration_id (AC4) */}
+                {hasIteration && (
+                  <span
+                    data-testid="feedback-version-badge"
+                    style={{
+                      fontSize: 'var(--text-xs)',
+                      fontWeight: 'var(--font-medium)',
+                      color: 'var(--color-accent)',
+                      backgroundColor: 'var(--color-accent-subtle, rgba(99, 102, 241, 0.1))',
+                      border: '1px solid var(--color-accent)',
+                      borderRadius: 'var(--radius-full, 9999px)',
+                      padding: '1px var(--space-2)',
+                      lineHeight: '1.4',
+                    }}
+                  >
+                    {versionNumber !== null ? `v${versionNumber}` : 'v?'}
+                  </span>
+                )}
               </div>
               <time
                 dateTime={feedback.created_at}

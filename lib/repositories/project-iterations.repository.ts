@@ -34,6 +34,23 @@ export function createProjectIterationsRepository(supabase: SupabaseClient) {
     },
 
     /**
+     * Retorna la iteración con el mayor version_number del proyecto,
+     * o null si el proyecto no tiene ninguna iteración o hay error de BD.
+     */
+    async getLatestIteration(projectId: string): Promise<ProjectIteration | null> {
+      const { data, error } = await supabase
+        .from('project_iterations')
+        .select('*')
+        .eq('project_id', projectId)
+        .order('version_number', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      if (error || !data) return null
+      return projectIterationFromRow(data as ProjectIterationRow)
+    },
+
+    /**
      * Inserta una nueva iteración en project_iterations.
      * Retorna el objeto mapeado a camelCase o error.
      */

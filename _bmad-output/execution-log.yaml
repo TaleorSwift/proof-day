@@ -1,4 +1,42 @@
 workflows:
+  - id: "20260507-homer-DS-13-4-atribucion-feedback-iteracion-started"
+    timestamp: "2026-05-07T20:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 13.4: Atribución de feedback en iteración"
+    workflow: "dev-story"
+    mode: "REFINE"
+    story: "13-4-atribucion-feedback-en-iteracion"
+    result: "STARTED"
+    summary: "Implementar atribución automática de iteration_id al crear feedback: getLatestIteration en repo project-iterations, extender CreateFeedbackData con iterationId, modificar POST /api/feedback, tests unitarios y de integración, badge UI. TDD Outside-In."
+
+  - id: "20260507-ned-CS-13-4-13-5-13-6-stories"
+    timestamp: "2026-05-07T19:00:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Crear stories 13.4, 13.5 y 13.6 del Epic 13"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Crear los 3 story files para Epic 13 GROWTH 2.1: 13.4 Atribución de feedback en iteración, 13.5 Notificación de atribución al Reviewer, 13.6 Historial de versiones y Proof Score por iteración."
+
+  - id: "20260507-ned-CS-13-4-13-5-13-6-stories"
+    timestamp: "2026-05-07T19:15:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Crear stories 13.4, 13.5 y 13.6 del Epic 13"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "15 minutos"
+    summary: "3 story files creados en estado ready-for-dev para Epic 13 GROWTH 2.1. 13.4: atribución automática iteration_id en feedbacks via getLatestIteration + modificación repo feedback + tests integración. 13.5: helper notifyFeedbackAttributed fire-and-forget, guard iterationId !== null, NotificationBell case nuevo. 13.6: componente IterationHistory, filtro Proof Score por iteración más reciente, Storybook 3 variantes. Sprint-status actualizado: 13.4, 13.5, 13.6 → ready-for-dev."
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/stories/13-4-atribucion-feedback-en-iteracion.md"
+      - "_bmad-output/implementation-artifacts/stories/13-5-notificacion-atribucion-reviewer-etiquetado.md"
+      - "_bmad-output/implementation-artifacts/stories/13-6-historial-versiones-proof-score-por-iteracion.md"
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "VS (Ned) — validar stories 13.4, 13.5 y 13.6 antes de DS (Homer)"
+
   - id: "20260507-homer-CR-13-2-publicar-nueva-version"
     timestamp: "2026-05-07T18:00:00"
     agent: "Homer (Dev)"
