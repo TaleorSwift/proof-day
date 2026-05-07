@@ -35,8 +35,9 @@ workflows:
       AC-7: "IMPLEMENTED — variante: gate verificado solo en server action, error propagado vía serverError del wizard"
       AC-8: IMPLEMENTED
       AC-9: IMPLEMENTED
+    pr: "#103"
     errors: []
-    summary: "DS SUCCESS — TDD Outside-In completo. 27 tests nuevos, 1554/1554 en verde. Gate de reciprocidad implementado en launchProject() con buildReciprocityMessage(), countByReviewerInCommunityRecent() en repo, prop reciprocityGate en ProjectPreview. PR pendiente de apertura."
+    summary: "DS SUCCESS — TDD Outside-In completo. 27 tests nuevos, 1554/1554 en verde. Gate de reciprocidad implementado en launchProject() con buildReciprocityMessage(), countByReviewerInCommunityRecent() en repo, prop reciprocityGate en ProjectPreview. PR #103 abierto contra main."
 
   - id: "20260506-homer-DS-11-3-started"
     timestamp: "2026-05-06T10:00:00"
