@@ -3529,3 +3529,95 @@ workflows:
       - "_bmad-output/execution-log.yaml"
     errors: []
     next_recommended: "Siguiente story del sprint (11.4 o siguiente en backlog)"
+
+  - id: "20260507-homer-DS-11-4"
+    timestamp: "2026-05-07T09:00:00"
+    agent: "Homer"
+    trigger: "DS"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "11-4-recordatorio-automatico-feedback-cron-job"
+    branch: "feat/11-4-recordatorio-automatico-feedback-cron-job"
+    summary: "Implementando Story 11.4 — cron job feedback-reminder: handler POST /api/cron/feedback-reminder, service feedbackReminder.service.ts, vercel.json crons, .env.example CRON_SECRET. TDD Outside-In (T1-T7)."
+
+  - id: "20260507-homer-DS-11-4"
+    timestamp: "2026-05-07T09:25:00"
+    agent: "Homer"
+    trigger: "DS"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "25 minutes"
+    story: "11-4-recordatorio-automatico-feedback-cron-job"
+    branch: "feat/11-4-recordatorio-automatico-feedback-cron-job"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/97"
+    summary: "Story 11.4 completada. Cron job POST /api/cron/feedback-reminder con protección CRON_SECRET, service feedbackReminder.service.ts con lógica TDD (proyectos live, feedbacks recientes, notification_preferences, anti-duplicados), vercel.json crons entry, .env.example documentada. 18 tests nuevos + suite 1522/1522 sin regresiones."
+    tests_story: 18
+    tests_total: 1522
+    tests_passed: 1522
+    tests_failed: 0
+    artifacts_created:
+      - "app/api/cron/feedback-reminder/route.ts"
+      - "lib/services/feedbackReminder.service.ts"
+      - "tests/integration/cron/feedback-reminder.test.ts"
+      - "tests/unit/cron/feedbackReminder.service.test.ts"
+    artifacts_modified:
+      - "vercel.json"
+      - ".env.example"
+      - "_bmad-output/implementation-artifacts/stories/11-4-recordatorio-automatico-feedback-cron-job.md"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "Homer, CR — revisar PR #97 Story 11.4"
+
+  - id: "20260506-homer-CR-11-4-started"
+    timestamp: "2026-05-06T09:21:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 11.4: Recordatorio automático de feedback (cron job)"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "11-4-recordatorio-automatico-feedback-cron-job"
+    branch: "feat/11-4-recordatorio-automatico-feedback-cron-job"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/97"
+
+  - id: "20260506-homer-CR-11-4-complete"
+    timestamp: "2026-05-06T09:24:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 11.4: Recordatorio automático de feedback (cron job)"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    verdict: "APPROVED"
+    story: "11-4-recordatorio-automatico-feedback-cron-job"
+    branch: "feat/11-4-recordatorio-automatico-feedback-cron-job"
+    pr: "https://github.com/TaleorSwift/proof-day/pull/97"
+    commit_fix: "735f0c0"
+    issues_found:
+      - id: "HIGH-1"
+        severity: "HIGH"
+        description: "Timing attack en comparación CRON_SECRET — string inequality reemplazada por timingSafeEqual"
+        status: "FIXED"
+      - id: "HIGH-2"
+        severity: "HIGH"
+        description: "ReminderResult no incluía `created` — faltaba campo en interface y respuesta JSON"
+        status: "FIXED"
+      - id: "MEDIUM-1"
+        severity: "MEDIUM"
+        description: "Typo countRecentCompleteFeeedbacks → countRecentCompleteFeedbacks"
+        status: "FIXED"
+      - id: "INFO-1"
+        severity: "INFO"
+        description: "countRecentCompleteFeedbacks llamado dos veces por proyecto (dentro de shouldSkipProject y antes del insert) — ineficiencia menor, no bloqueante"
+        status: "NOTED"
+    tests_story: 18
+    tests_total: 1522
+    tests_passed: 1522
+    tests_failed: 0
+    artifacts_modified:
+      - "app/api/cron/feedback-reminder/route.ts"
+      - "lib/services/feedbackReminder.service.ts"
+      - "tests/integration/cron/feedback-reminder.test.ts"
+      - "tests/unit/cron/feedbackReminder.service.test.ts"
+    errors: []
+    next_recommended: "QA Edna — validar Story 11.4 si se requiere"

@@ -1,6 +1,6 @@
 # Story 11.4: Recordatorio automático de feedback — cron job
 
-Status: ready-for-dev
+Status: done
 
 ## Metadata
 
@@ -85,44 +85,44 @@ entonces todos los tests nuevos pasan al 100% y los tests existentes no se rompe
 
 ## Tasks / Subtasks
 
-- [ ] **T1** — TDD: handler `POST /api/cron/feedback-reminder` — protección (RED → GREEN)
-  - [ ] T1.1 Crear `tests/integration/cron/feedback-reminder.test.ts`
-  - [ ] T1.2 Escribir test: petición sin header → 401 con `code: "CRON_UNAUTHORIZED"`
-  - [ ] T1.3 Escribir test: petición con header incorrecto → 401
-  - [ ] T1.4 Crear `app/api/cron/feedback-reminder/route.ts` con verificación del secret
-  - [ ] T1.5 Verificar tests en verde
+- [x] **T1** — TDD: handler `POST /api/cron/feedback-reminder` — protección (RED → GREEN)
+  - [x] T1.1 Crear `tests/integration/cron/feedback-reminder.test.ts`
+  - [x] T1.2 Escribir test: petición sin header → 401 con `code: "CRON_UNAUTHORIZED"`
+  - [x] T1.3 Escribir test: petición con header incorrecto → 401
+  - [x] T1.4 Crear `app/api/cron/feedback-reminder/route.ts` con verificación del secret
+  - [x] T1.5 Verificar tests en verde
 
-- [ ] **T2** — TDD: lógica de detección de proyectos con pocos feedbacks (RED → GREEN)
-  - [ ] T2.1 Escribir test: 0 proyectos live → `{ processed: 0, skipped: 0 }`
-  - [ ] T2.2 Escribir test: 1 proyecto live con 0 feedbacks en 7 días → `{ processed: 1, skipped: 0 }`
-  - [ ] T2.3 Escribir test: 1 proyecto live con 3+ feedbacks completos en 7 días → `{ processed: 0, skipped: 1 }` (tiene suficiente, se omite)
-  - [ ] T2.4 Escribir test: 1 proyecto con notif ya creada esta semana → `{ processed: 0, skipped: 1 }`
-  - [ ] T2.5 Implementar consulta Supabase para obtener proyectos live + conteo de feedbacks recientes
-  - [ ] T2.6 Verificar tests en verde
+- [x] **T2** — TDD: lógica de detección de proyectos con pocos feedbacks (RED → GREEN)
+  - [x] T2.1 Escribir test: 0 proyectos live → `{ processed: 0, skipped: 0 }`
+  - [x] T2.2 Escribir test: 1 proyecto live con 0 feedbacks en 7 días → `{ processed: 1, skipped: 0 }`
+  - [x] T2.3 Escribir test: 1 proyecto live con 3+ feedbacks completos en 7 días → `{ processed: 0, skipped: 1 }` (tiene suficiente, se omite)
+  - [x] T2.4 Escribir test: 1 proyecto con notif ya creada esta semana → `{ processed: 0, skipped: 1 }`
+  - [x] T2.5 Implementar consulta Supabase para obtener proyectos live + conteo de feedbacks recientes
+  - [x] T2.6 Verificar tests en verde
 
-- [ ] **T3** — TDD: respeto de `notification_preferences` (RED → GREEN)
-  - [ ] T3.1 Escribir test: builder con `notification_preferences.feedback_reminder = false` → notificación NO creada, proyecto skipped
-  - [ ] T3.2 Escribir test: builder sin fila en `notification_preferences` → notificación creada (opt-in por defecto)
-  - [ ] T3.3 Implementar consulta de preferences en el handler
-  - [ ] T3.4 Verificar tests en verde
+- [x] **T3** — TDD: respeto de `notification_preferences` (RED → GREEN)
+  - [x] T3.1 Escribir test: builder con `notification_preferences.feedback_reminder = false` → notificación NO creada, proyecto skipped
+  - [x] T3.2 Escribir test: builder sin fila en `notification_preferences` → notificación creada (opt-in por defecto)
+  - [x] T3.3 Implementar consulta de preferences en el handler
+  - [x] T3.4 Verificar tests en verde
 
-- [ ] **T4** — TDD: sin duplicados en la misma semana (RED → GREEN)
-  - [ ] T4.1 Escribir test: notificación ya existe para ese proyecto en los últimos 7 días → `skipped += 1`, no inserta
-  - [ ] T4.2 Implementar consulta de notificaciones recientes antes del insert
-  - [ ] T4.3 Verificar tests en verde
+- [x] **T4** — TDD: sin duplicados en la misma semana (RED → GREEN)
+  - [x] T4.1 Escribir test: notificación ya existe para ese proyecto en los últimos 7 días → `skipped += 1`, no inserta
+  - [x] T4.2 Implementar consulta de notificaciones recientes antes del insert
+  - [x] T4.3 Verificar tests en verde
 
-- [ ] **T5** — Crear handler completo con respuesta `{ processed, skipped }`
-  - [ ] T5.1 Extraer lógica de negocio a `lib/services/feedbackReminder.service.ts` para testability
-  - [ ] T5.2 Handler llama al service, retorna JSON
-  - [ ] T5.3 Añadir logging básico (console.log del resultado) para trazabilidad en Vercel
+- [x] **T5** — Crear handler completo con respuesta `{ processed, skipped }`
+  - [x] T5.1 Extraer lógica de negocio a `lib/services/feedbackReminder.service.ts` para testability
+  - [x] T5.2 Handler llama al service, retorna JSON
+  - [x] T5.3 Añadir logging básico (console.log del resultado) para trazabilidad en Vercel
 
-- [ ] **T6** — `vercel.json` — añadir cron entry
-  - [ ] T6.1 Verificar si `vercel.json` ya existe en la raíz
-  - [ ] T6.2 Añadir (o crear) la entrada `crons` con el schedule `"0 9 * * 1"`
+- [x] **T6** — `vercel.json` — añadir cron entry
+  - [x] T6.1 Verificar si `vercel.json` ya existe en la raíz
+  - [x] T6.2 Añadir (o crear) la entrada `crons` con el schedule `"0 9 * * 1"`
 
-- [ ] **T7** — Documentación de variable de entorno
-  - [ ] T7.1 Añadir `CRON_SECRET` al `.env.example` con comentario explicativo
-  - [ ] T7.2 Documentar en `docs/project/modules/` o fichero de env vars del proyecto
+- [x] **T7** — Documentación de variable de entorno
+  - [x] T7.1 Añadir `CRON_SECRET` al `.env.example` con comentario explicativo
+  - [x] T7.2 Documentar en `docs/project/modules/` o fichero de env vars del proyecto
 
 ## Dev Notes
 
@@ -237,3 +237,32 @@ type         text NOT NULL  -- 'feedback_reminder'
 email_enabled bool NOT NULL DEFAULT true
 UNIQUE (user_id, type)
 ```
+
+## Dev Agent Record
+
+### Implementación — 2026-05-07
+
+**Branch:** `feat/11-4-recordatorio-automatico-feedback-cron-job`
+
+**ACs completados:** AC-1, AC-2, AC-3, AC-4, AC-5, AC-6, AC-7, AC-8, AC-9
+
+**Tests:** 18 nuevos (11 integración + 7 unit). Suite completa: 1522/1522 sin regresiones.
+
+**Decisiones técnicas:**
+- Lógica extraída al service `feedbackReminder.service.ts` siguiendo patrón factory del proyecto (SOLID, Single Responsibility). El handler es thin: solo verifica secret, invoca service, retorna JSON.
+- `shouldSkipProject()` como helper privado encapsula las tres condiciones de skip (suficiente feedback, opt-out, duplicado).
+- `countRecentCompleteFeeedbacks()` reutilizable tanto en la verificación de skip como en el payload del insert (se llama dos veces por diseño — podría cachearse en una refactor futura).
+- `email_enabled` de `notification_preferences` actúa como opt-out global (in-app + email) tal como especifica la story.
+- Schedule `"0 9 * * 1"` = lunes 9:00 UTC configurado en `vercel.json`.
+- `CRON_SECRET` documentado en `.env.example` con instrucción `openssl rand -base64 32`.
+
+**Ficheros creados:**
+- `app/api/cron/feedback-reminder/route.ts`
+- `lib/services/feedbackReminder.service.ts`
+- `tests/integration/cron/feedback-reminder.test.ts`
+- `tests/unit/cron/feedbackReminder.service.test.ts`
+
+**Ficheros modificados:**
+- `vercel.json` — añadida sección `crons`
+- `.env.example` — añadida variable `CRON_SECRET`
+- `_bmad-output/implementation-artifacts/stories/11-4-recordatorio-automatico-feedback-cron-job.md` — tasks marcadas, status → done
