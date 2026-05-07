@@ -186,7 +186,6 @@ describe('PATCH /api/communities/[id]/settings', () => {
       reciprocity_threshold: 5,
     }
 
-    let callCount = 0
     supabaseMock.from.mockImplementation((table: string) => {
       if (table === 'community_members') {
         return mockMembershipAdmin()
@@ -278,5 +277,26 @@ describe('PATCH /api/communities/[id]/settings', () => {
 
     expect(res.status).toBe(404)
     expect(body.code).toBe('COMMUNITY_NOT_FOUND')
+  })
+
+  // Error genérico de BD (no PGRST116) → 500
+  it('retorna 500 cuando la BD devuelve un error inesperado al actualizar', async () => {
+    supabaseMock.auth.getUser.mockResolvedValue({ data: { user: MOCK_USER } })
+
+    supabaseMock.from.mockImplementation((table: string) => {
+      if (table === 'community_members') {
+        return mockMembershipAdmin()
+      }
+      if (table === 'communities') {
+        return mockCommunitiesUpdate(null, { message: 'Internal error', code: 'PGRST500' })
+      }
+      return {}
+    })
+
+    const res = await PATCH(buildRequest({ reciprocityThreshold: 5 }), buildParams())
+    const body = await res.json()
+
+    expect(res.status).toBe(500)
+    expect(body.code).toBe('UPDATE_ERROR')
   })
 })

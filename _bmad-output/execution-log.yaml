@@ -3910,3 +3910,15 @@ workflows:
     tests_passed: 1596
     tests_failed: 0
     errors: []
+
+  - id: "20260506-homer-CR-11-6-started"
+    timestamp: "2026-05-06T09:55:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 11.6: Admin configuración reciprocidad por comunidad"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "11-6-admin-configuracion-reciprocidad-comunidad"
+    branch: "feat/11-6-admin-configuracion-reciprocidad-comunidad"
+    pr: "#99"
+    summary: "Code review adversarial Story 11.6. Revisando: auth/authz (401/403/404/400/200), validación Zod backend, validación frontend parseThreshold, data-testids, feedback éxito/error, reciprocity_threshold en SELECT + currentThreshold passado al componente, tokens CSS, separación repo/handler/UI, cobertura de tests 42 casos."
