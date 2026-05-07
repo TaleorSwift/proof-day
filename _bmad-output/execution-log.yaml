@@ -1,4 +1,42 @@
 workflows:
+  - id: "20260507-homer-CR-13-2-publicar-nueva-version"
+    timestamp: "2026-05-07T18:00:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 13.2: Publicar nueva versión de proyecto (iteración)"
+    workflow: "code-review"
+    mode: "VERIFY"
+    story: "13-2-publicar-nueva-version-proyecto-iteracion"
+    result: "SUCCESS"
+    duration_estimate: "15 minutos"
+    summary: "CR Story 13.2 — APPROVED con recomendación no bloqueante. Seguridad correcta (auth/ownership/status en servidor, cookie-based). getLatestVersionNumber usa ORDER BY DESC LIMIT 1 equivalente a MAX. Modal accesible (role=dialog, aria-modal, aria-labelledby). 42 tests nuevos en verde. Recomendación: distinguir error 23505 (UNIQUE) para retornar 409 en lugar de 500."
+    artifacts_reviewed:
+      - "lib/repositories/project-iterations.repository.ts"
+      - "app/api/projects/[id]/iterations/route.ts"
+      - "lib/api/project-iterations.ts"
+      - "components/projects/NewVersionModal.tsx"
+      - "components/projects/NewVersionActions.tsx"
+      - "app/(app)/communities/[slug]/projects/[projectSlug]/page.tsx"
+      - "tests/unit/project-iterations/projectIterationsRepository.test.ts"
+      - "tests/integration/api/iterations.route.test.ts"
+      - "tests/unit/api/publishIteration.test.ts"
+      - "tests/component/projects/NewVersionModal.test.tsx"
+    verdict: "APPROVED"
+    findings:
+      - severity: "MEDIUM"
+        description: "Race condition: error UNIQUE (23505) cae en handler genérico y retorna 500 en lugar de 409 VERSION_CONFLICT. No bloqueante."
+    errors: []
+    next_recommended: "Merge PR #110 — story 13.2 completa"
+
+  - id: "20260507-homer-DS-13-2-started"
+    timestamp: "2026-05-07T15:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 13.2: Publicar nueva versión de proyecto (iteración)"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    story: "13-2-publicar-nueva-version-proyecto-iteracion"
+    result: "STARTED"
+    summary: "Implementar publicación de nueva versión/iteración: repositorio project-iterations, API route POST /api/projects/[id]/iterations, cliente HTTP publishIteration, componente NewVersionModal + NewVersionActions, integración en page.tsx, Storybook. TDD Outside-In."
+
   - id: "20260507-ned-CS-13-1-db-extensiones-iteraciones"
     timestamp: "2026-05-07T14:00:00"
     agent: "Ned (SM)"
@@ -4535,3 +4573,29 @@ workflows:
       - "_bmad-output/implementation-artifacts/stories/13-1-db-extensiones-iteraciones-project-iterations.md"
     errors: []
     next_recommended: "Homer, CR — code review PR #109"
+
+  - id: "20260507-ned-CS-13-2-publicar-nueva-version"
+    timestamp: "2026-05-07T17:30:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Story 13.2: Publicar nueva versión de proyecto (iteración)"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    summary: "Crear story file 13.2 para Epic 13 GROWTH 2.1. Botón 'Nueva versión' para el Builder en página de detalle, modal/form pre-rellenado, creación de registro en project_iterations con version_number = anterior + 1, feedback visual, reset visual del proof score."
+
+  - id: "20260507-ned-CS-13-2-publicar-nueva-version"
+    timestamp: "2026-05-07T17:45:00"
+    agent: "Ned (SM)"
+    trigger: "CS — Story 13.2: Publicar nueva versión de proyecto (iteración)"
+    workflow: "create-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    duration_estimate: "15 minutos"
+    summary: "Story 13.2 creada en estado ready-for-dev. Incluye 7 ACs Given/When/Then (visibilidad botón por rol/estado, modal pre-rellenado, edición de contenido, version_number auto-incremental, feedback visual, reset visual proof score, a11y modal), 10 tasks TDD Outside-In (repositorio, API route POST /api/projects/[id]/iterations, cliente HTTP, NewVersionModal component, integración en page.tsx, Storybook). Sprint-status actualizado: epic-13 in-progress, 13-2 ready-for-dev."
+    artifacts_created:
+      - "_bmad-output/implementation-artifacts/stories/13-2-publicar-nueva-version-proyecto-iteracion.md"
+    artifacts_modified:
+      - "_bmad-output/implementation-artifacts/sprint-status.yaml"
+      - "_bmad-output/execution-log.yaml"
+    errors: []
+    next_recommended: "VS (Ned) — validar story 13.2 antes de DS (Homer)"

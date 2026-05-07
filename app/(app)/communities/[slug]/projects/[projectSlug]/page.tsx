@@ -27,6 +27,7 @@ import {
 import Link from 'next/link'
 import { calculateValidationMetrics } from '@/lib/projects/calculateValidationMetrics'
 import { aiSummaryFromRow } from '@/lib/types/ai'
+import { NewVersionActions } from '@/components/projects/NewVersionActions'
 
 interface Props {
   params: Promise<{ slug: string; projectSlug: string }>
@@ -221,6 +222,16 @@ export default async function ProjectPage({ params }: Props) {
                   </Link>
                 )}
                 {/* AC-1: FeedbackButton delegado a FeedbackCTA (Story 8.10) — eliminado aquí */}
+
+                {/* Story 13.2 — Botón "Nueva versión": visible solo para el Builder en proyecto live */}
+                {isOwner && project.status === 'live' && (
+                  <NewVersionActions
+                    projectId={project.id}
+                    initialTitle={project.title ?? ''}
+                    initialDescription={[project.problem, project.solution].filter(Boolean).join('\n\n')}
+                    initialHypothesis={project.hypothesis ?? ''}
+                  />
+                )}
               </div>
             </div>
 
