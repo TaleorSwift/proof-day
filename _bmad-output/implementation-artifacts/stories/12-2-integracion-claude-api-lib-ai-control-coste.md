@@ -67,37 +67,59 @@ And contiene `AI_DAILY_BUDGET_USD=5.0`
 
 ## Tasks / Subtasks
 
-- [ ] **T1** — Tests TDD (RED) para lib/ai/
-  - [ ] T1.1 Test: `ollamaClient` retorna singleton (misma referencia en dos imports)
-  - [ ] T1.2 Test: `synthesizeFeedbacks` construye el prompt correcto y parsea la respuesta
-  - [ ] T1.3 Test: `synthesizeFeedbacks` maneja error de red (Ollama no disponible)
-  - [ ] T1.4 Test: `checkDailyBudget` retorna true siempre para Ollama local
-  - [ ] T1.5 Test: `trackCost` hace UPDATE si la fila del mes existe
-  - [ ] T1.6 Test: `trackCost` hace INSERT si la fila del mes NO existe
+- [x] **T1** — Tests TDD (RED) para lib/ai/
+  - [x] T1.1 Test: `ollamaClient` retorna singleton (misma referencia en dos imports)
+  - [x] T1.2 Test: `synthesizeFeedbacks` construye el prompt correcto y parsea la respuesta
+  - [x] T1.3 Test: `synthesizeFeedbacks` maneja error de red (Ollama no disponible)
+  - [x] T1.4 Test: `checkDailyBudget` retorna true siempre para Ollama local
+  - [x] T1.5 Test: `trackCost` hace UPDATE si la fila del mes existe
+  - [x] T1.6 Test: `trackCost` hace INSERT si la fila del mes NO existe
 
-- [ ] **T2** — Implementar `lib/ai/ollamaClient.ts`
-  - [ ] T2.1 Singleton con `baseUrl` y `model` de env vars
-  - [ ] T2.2 Método `generate(prompt: string): Promise<OllamaResponse>` — POST a `/api/generate`
-  - [ ] T2.3 Type `OllamaResponse` con `response`, `eval_count`, `prompt_eval_count`
+- [x] **T2** — Implementar `lib/ai/ollamaClient.ts`
+  - [x] T2.1 Singleton con `baseUrl` y `model` de env vars
+  - [x] T2.2 Método `generate(prompt: string): Promise<OllamaResponse>` — POST a `/api/generate`
+  - [x] T2.3 Type `OllamaResponse` con `response`, `eval_count`, `prompt_eval_count`
 
-- [ ] **T3** — Implementar `lib/ai/synthesizeFeedbacks.ts`
-  - [ ] T3.1 `buildPrompt(feedbacks, project)` — función pura, testable
-  - [ ] T3.2 `synthesizeFeedbacks(feedbacks, project)` — llama al cliente, parsea respuesta
-  - [ ] T3.3 `parseAIResponse(text)` — extrae summaryText y keyInsights del texto libre
-  - [ ] T3.4 Type `AISynthesisResult`
+- [x] **T3** — Implementar `lib/ai/synthesizeFeedbacks.ts`
+  - [x] T3.1 `buildPrompt(feedbacks, project)` — función pura, testable
+  - [x] T3.2 `synthesizeFeedbacks(feedbacks, project)` — llama al cliente, parsea respuesta
+  - [x] T3.3 `parseAIResponse(text)` — extrae summaryText y keyInsights del texto libre
+  - [x] T3.4 Type `AISynthesisResult`
 
-- [ ] **T4** — Implementar `lib/ai/costTracker.ts`
-  - [ ] T4.1 `trackCost(input: TrackCostInput)` con read-modify-write en `ai_cost_tracking`
-  - [ ] T4.2 Usar service role client de Supabase (no cookie client)
+- [x] **T4** — Implementar `lib/ai/costTracker.ts`
+  - [x] T4.1 `trackCost(input: TrackCostInput)` con read-modify-write en `ai_cost_tracking`
+  - [x] T4.2 Usar service role client de Supabase (no cookie client)
 
-- [ ] **T5** — Implementar `lib/ai/budgetChecker.ts`
-  - [ ] T5.1 `checkDailyBudget(communityId)` — retorna true para Ollama local
+- [x] **T5** — Implementar `lib/ai/budgetChecker.ts`
+  - [x] T5.1 `checkDailyBudget(communityId)` — retorna true para Ollama local
 
-- [ ] **T6** — `lib/ai/index.ts` barrel export
+- [x] **T6** — `lib/ai/index.ts` barrel export
 
-- [ ] **T7** — Lint, types y tests verdes
-  - [ ] T7.1 `npm test --no-coverage` — suite completa verde
-  - [ ] T7.2 `npx tsc --noEmit` — sin errores nuevos
+- [x] **T7** — Lint, types y tests verdes
+  - [x] T7.1 `npm test --no-coverage` — 161 ficheros / 1626 tests — verdes
+  - [x] T7.2 `npx tsc --noEmit` — sin errores nuevos en lib/ai/ ni tests/unit/ai/
+
+## Dev Agent Record
+
+### Implementation Summary (Homer, 2026-05-06)
+
+**Files created:**
+- `lib/ai/ollamaClient.ts` — Singleton OllamaHttpClient. `getOllamaClient()` retorna misma instancia. `_resetOllamaClientSingleton()` para tests con `vi.resetModules()`.
+- `lib/ai/synthesizeFeedbacks.ts` — `buildPrompt` (función pura), `parseAIResponse` (extrae summaryText + keyInsights de texto libre), `synthesizeFeedbacks` (orquesta). `costUsd` hardcoded a 0.0.
+- `lib/ai/costTracker.ts` — `trackCost` con read-modify-write. Distingue UPDATE/INSERT por código de error `PGRST116` de Supabase. `estimated_cost_usd` siempre 0.0.
+- `lib/ai/budgetChecker.ts` — `checkDailyBudget` retorna `true` siempre. Parámetro renombrado a `_communityId` para claridad semántica.
+- `lib/ai/index.ts` — Barrel export.
+
+**Tests:**
+- `tests/unit/ai/ollamaClient.test.ts` — 6 tests
+- `tests/unit/ai/synthesizeFeedbacks.test.ts` — 14 tests
+- `tests/unit/ai/costTracker.test.ts` — 4 tests
+- `tests/unit/ai/budgetChecker.test.ts` — 3 tests
+
+**Decision log:**
+- `_resetOllamaClientSingleton` exportada para tests — permite resetear la instancia global entre suites sin exponer la implementación interna.
+- `parseAIResponse` busca secciones "1)" / "Resumen ejecutivo" y extrae bullets con `-`, `•`, `*` del texto completo.
+- `PGRST116` es el código de error de Supabase para "no rows found" con `.single()`.
 
 ## Dev Notes
 
