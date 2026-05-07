@@ -6,8 +6,11 @@
 
 /**
  * Tipo nominal para los tipos de notificación.
- * Las stories de Epic 12 añadirán los valores concretos como constantes.
  * Se usa string en lugar de enum para extensibilidad sin deploy de schema.
+ *
+ * Valores conocidos del sistema:
+ *   - 'ai_synthesis_ready' — síntesis IA completada, notifica al Builder (Story 12.3)
+ *   - 'budget_alert'       — presupuesto mensual de IA >= 80% del límite (Story 12.7)
  */
 export type NotificationType = string
 

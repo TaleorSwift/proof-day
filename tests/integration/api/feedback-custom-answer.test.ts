@@ -118,7 +118,11 @@ describe('POST /api/feedback (Story 11.2) — T4.1: customAnswer se pasa al repo
       error: null,
     })
 
-    createFeedbackRepositoryMock.mockReturnValueOnce({ create: createSpy })
+    createFeedbackRepositoryMock.mockReturnValueOnce({
+      create: createSpy,
+      // Story 12.7 — countCompleteByProject requerido por la route tras el create
+      countCompleteByProject: vi.fn().mockResolvedValue(0),
+    })
 
     const res = await POST(
       buildPostRequest({
@@ -164,6 +168,8 @@ describe('POST /api/feedback (Story 11.2) — T4.2: sin customAnswer → null', 
         },
         error: null,
       }),
+      // Story 12.7 — countCompleteByProject requerido por la route tras el create
+      countCompleteByProject: vi.fn().mockResolvedValue(0),
     })
 
     const res = await POST(buildPostRequest(VALID_BODY_BASE))

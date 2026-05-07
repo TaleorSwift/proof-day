@@ -60,6 +60,8 @@ vi.mock('@/lib/ai', () => ({
   synthesizeFeedbacks: (...args: unknown[]) => mockSynthesizeFeedbacks(...args),
   trackCost: (...args: unknown[]) => mockTrackCost(...args),
   checkDailyBudget: (...args: unknown[]) => mockCheckDailyBudget(...args),
+  // Story 12.7 — budget alert (mockeada para no interferir con los tests existentes)
+  maybeSendBudgetAlert: vi.fn().mockResolvedValue(undefined),
 }))
 
 // ---------------------------------------------------------------------------

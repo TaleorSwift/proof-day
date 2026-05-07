@@ -5,6 +5,8 @@ import { createFeedbackService } from '@/lib/services/feedback.service'
 import { createFeedbackRepository } from '@/lib/repositories/feedback.repository'
 import { createProjectsRepository } from '@/lib/repositories/projects.repository'
 import { calculateQualityScore } from '@/lib/utils/feedbackQuality'
+// Story 12.7 — trigger fire-and-forget de síntesis IA
+import { triggerSynthesisWebhook } from '@/lib/ai/triggerSynthesisWebhook'
 
 export async function GET(request: Request) {
   const auth = await requireAuth()
@@ -89,6 +91,12 @@ export async function POST(request: Request) {
 
   if (error || !feedback)
     return NextResponse.json({ error: 'Error al enviar feedback', code: 'FEEDBACK_INSERT_ERROR' }, { status: 500 })
+
+  // Story 12.7 — trigger automático de síntesis IA cuando se alcanzan 3 feedbacks completos
+  const completeCount = await feedbackRepo.countCompleteByProject(projectId)
+  if (completeCount === 3) {
+    triggerSynthesisWebhook(projectId) // fire-and-forget — NO await
+  }
 
   return NextResponse.json({ data: feedback }, { status: 201 })
 }
