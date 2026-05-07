@@ -58,6 +58,21 @@ const MOCK_NOTIF_WITHOUT_SLUGS = {
   createdAt: '2026-05-07T09:00:00Z',
 }
 
+const MOCK_NOTIF_NEW_ITERATION = {
+  id: 'notif-003',
+  userId: 'user-001',
+  type: 'new_iteration_ready',
+  payload: {
+    projectId: 'project-003',
+    projectSlug: 'proyecto-iteracion',
+    projectTitle: 'Proyecto con Iteración',
+    versionNumber: 2,
+    communitySlug: 'startup-madrid',
+  },
+  read: false,
+  createdAt: '2026-05-07T11:00:00Z',
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -264,6 +279,98 @@ describe('NotificationBell — click en notificación', () => {
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith(
         '/communities/startup-madrid/projects/my-project'
+      )
+    })
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Suite: new_iteration_ready — subtexto y navegación
+// ---------------------------------------------------------------------------
+
+describe('NotificationBell — new_iteration_ready', () => {
+  it('muestra "Nueva versión disponible — vN" para notificaciones new_iteration_ready', async () => {
+    mockFetchSuccess([MOCK_NOTIF_NEW_ITERATION])
+
+    const user = userEvent.setup()
+    render(<NotificationBell />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('notification-bell')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTestId('notification-bell'))
+
+    await waitFor(() => {
+      expect(screen.getByText('Nueva versión disponible — v2')).toBeInTheDocument()
+    })
+  })
+
+  it('muestra el projectTitle del payload como título en new_iteration_ready', async () => {
+    mockFetchSuccess([MOCK_NOTIF_NEW_ITERATION])
+
+    const user = userEvent.setup()
+    render(<NotificationBell />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('notification-bell')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTestId('notification-bell'))
+
+    await waitFor(() => {
+      expect(screen.getByText('Proyecto con Iteración')).toBeInTheDocument()
+    })
+  })
+
+  it('sigue mostrando "Síntesis IA disponible" para notificaciones ai_synthesis_ready', async () => {
+    mockFetchSuccess([MOCK_NOTIF_UNREAD])
+
+    const user = userEvent.setup()
+    render(<NotificationBell />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('notification-bell')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTestId('notification-bell'))
+
+    await waitFor(() => {
+      expect(screen.getByText('Síntesis IA disponible')).toBeInTheDocument()
+    })
+  })
+
+  it('navega a la ruta correcta al hacer click en notificación new_iteration_ready', async () => {
+    vi.spyOn(global, 'fetch')
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: [MOCK_NOTIF_NEW_ITERATION] }),
+      } as Response)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ data: { ...MOCK_NOTIF_NEW_ITERATION, read: true } }),
+      } as Response)
+
+    const user = userEvent.setup()
+    render(<NotificationBell />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('notification-bell')).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTestId('notification-bell'))
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId(`notification-item-${MOCK_NOTIF_NEW_ITERATION.id}`)
+      ).toBeInTheDocument()
+    })
+
+    await user.click(screen.getByTestId(`notification-item-${MOCK_NOTIF_NEW_ITERATION.id}`))
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith(
+        '/communities/startup-madrid/projects/proyecto-iteracion'
       )
     })
   })
