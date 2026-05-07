@@ -3844,3 +3844,116 @@ workflows:
     tests_passed: 1554
     tests_failed: 0
     errors: []
+
+  - id: "20260506-homer-DS-11-6-started"
+    timestamp: "2026-05-06T10:30:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 11.6: Admin — configuración de reciprocidad por comunidad"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "STARTED"
+    story: "11-6-admin-configuracion-reciprocidad-comunidad"
+    branch: "feat/11-6-admin-configuracion-reciprocidad-comunidad"
+    summary: "Implementación TDD Outside-In: PATCH /api/communities/[id]/settings, componente ReciprocitySettings, schema Zod, método updateSettings en repositorio, integración en settings/page.tsx."
+
+  - id: "20260506-homer-DS-11-6-closing"
+    timestamp: "2026-05-06T11:00:00"
+    agent: "Homer (Dev)"
+    trigger: "DS — Story 11.6: Admin — configuración de reciprocidad por comunidad"
+    workflow: "dev-story"
+    mode: "GENERATE"
+    result: "SUCCESS"
+    story: "11-6-admin-configuracion-reciprocidad-comunidad"
+    branch: "feat/11-6-admin-configuracion-reciprocidad-comunidad"
+    pr: "#99"
+    duration_estimate: "30 minutos"
+    artifacts:
+      created:
+        - "app/api/communities/[id]/settings/route.ts"
+        - "components/communities/ReciprocitySettings.tsx"
+        - "stories/communities/ReciprocitySettings.stories.tsx"
+        - "tests/integration/api/communities/settings.route.test.ts"
+        - "tests/unit/communities/ReciprocitySettings.test.tsx"
+        - "tests/unit/validations/communities.test.ts"
+      modified:
+        - "app/(app)/communities/[slug]/settings/page.tsx"
+        - "lib/repositories/communities.repository.ts"
+        - "lib/validations/communities.ts"
+        - "_bmad-output/execution-log.yaml"
+    acceptance_criteria:
+      - id: "AC-1"
+        status: "PASS"
+        evidence: "ReciprocitySettings renderiza sección 'Reciprocidad' con input data-testid y texto de ayuda. settings/page.tsx incluye el componente."
+      - id: "AC-2"
+        status: "PASS"
+        evidence: "parseThreshold() + disabled={!isValid}: botón deshabilitado para -1, 11, no-enteros. 5 tests verdes."
+      - id: "AC-3"
+        status: "PASS"
+        evidence: "PATCH handler: updateSettings en repositorio, responde 200 con {id, reciprocityThreshold}. 3 tests verdes (5, 0, 10)."
+      - id: "AC-4"
+        status: "PASS"
+        evidence: "401 sin auth: settings.route.test.ts test 'retorna 401 cuando el usuario no está autenticado'."
+      - id: "AC-5"
+        status: "PASS"
+        evidence: "403 si no admin o no miembro: 2 tests verdes en settings.route.test.ts."
+      - id: "AC-6"
+        status: "PASS"
+        evidence: "reciprocityThreshold=0 → 200, columna queda en 0. Test 'retorna 200 cuando reciprocityThreshold es 0'."
+      - id: "AC-7"
+        status: "PASS"
+        evidence: "data-testid='reciprocity-saved-feedback' aparece tras 200 OK. Test 'muestra feedback visual' verde."
+      - id: "AC-8"
+        status: "PASS"
+        evidence: "1596/1596 tests verdes. 42 tests nuevos story 11.6. 0 regresiones."
+    tests_story: 42
+    tests_total: 1596
+    tests_passed: 1596
+    tests_failed: 0
+    errors: []
+
+  - id: "20260506-homer-CR-11-6-started"
+    timestamp: "2026-05-06T09:55:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 11.6: Admin configuración reciprocidad por comunidad"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "11-6-admin-configuracion-reciprocidad-comunidad"
+    branch: "feat/11-6-admin-configuracion-reciprocidad-comunidad"
+    pr: "#99"
+    summary: "Code review adversarial Story 11.6. Revisando: auth/authz (401/403/404/400/200), validación Zod backend, validación frontend parseThreshold, data-testids, feedback éxito/error, reciprocity_threshold en SELECT + currentThreshold passado al componente, tokens CSS, separación repo/handler/UI, cobertura de tests 42 casos."
+
+  - id: "20260506-homer-CR-11-6-started"
+    timestamp: "2026-05-06T10:05:00"
+    agent: "Homer (Dev)"
+    trigger: "CR — Story 11.6: Admin configuración reciprocidad por comunidad"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    verdict: "APPROVED"
+    story: "11-6-admin-configuracion-reciprocidad-comunidad"
+    branch: "feat/11-6-admin-configuracion-reciprocidad-comunidad"
+    pr: "#99"
+    duration_estimate: "10 minutos"
+    issues_found:
+      high: 0
+      medium: 3
+      low: 2
+    issues_fixed: 3
+    issues_fixed_detail:
+      - "M1: Variable callCount declarada sin usar eliminada en settings.route.test.ts"
+      - "M2: Test de error genérico BD → 500 (UPDATE_ERROR) añadido a settings.route.test.ts"
+      - "M3: Tests unitarios de updateSettings añadidos a repositories.test.ts (T3.4 de story)"
+    issues_not_fixed:
+      - "L1: width=80px hardcoded en ReciprocitySettings (sin token CSS equivalente en design-tokens)"
+      - "L2: transition=0.15s hardcoded en ReciprocitySettings (sin token --transition-* en design-tokens)"
+    artifacts_modified:
+      - "tests/integration/api/communities/settings.route.test.ts"
+      - "tests/unit/shared/repositories.test.ts"
+    commit: "1d0241a — test(communities): CR fixes story 11.6 — cobertura tests y dead code"
+    tests_story: 45
+    tests_total: 1599
+    tests_passed: 1599
+    tests_failed: 0
+    errors: []
+    next_recommended: "Mergear PR #99 a main cuando el usuario lo apruebe. Siguiente story: Ned, CS para story 11.7 si aplica."

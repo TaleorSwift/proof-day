@@ -119,6 +119,25 @@ describe('CommunitiesRepository', () => {
     expect(fluent.eq).toHaveBeenCalledWith('community_id', 'c1')
     expect(fluent.eq).toHaveBeenCalledWith('user_id', 'u1')
   })
+
+  // Story 11.6 — updateSettings
+  it('updateSettings — llama a from("communities").update() con reciprocity_threshold', async () => {
+    const repo = createCommunitiesRepository(supabase as never)
+
+    await repo.updateSettings('c1', { reciprocityThreshold: 5 })
+
+    expect(fromMock).toHaveBeenCalledWith('communities')
+    expect(fluent.update).toHaveBeenCalledWith({ reciprocity_threshold: 5 })
+    expect(fluent.eq).toHaveBeenCalledWith('id', 'c1')
+  })
+
+  it('updateSettings — llama a select con id y reciprocity_threshold tras el update', async () => {
+    const repo = createCommunitiesRepository(supabase as never)
+
+    await repo.updateSettings('c1', { reciprocityThreshold: 0 })
+
+    expect(fluent.select).toHaveBeenCalledWith('id, reciprocity_threshold')
+  })
 })
 
 // ---------------------------------------------------------------------------

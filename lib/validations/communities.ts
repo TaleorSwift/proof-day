@@ -11,3 +11,14 @@ export const createCommunitySchema = z.object({
 })
 
 export type CreateCommunityInput = z.infer<typeof createCommunitySchema>
+
+// Story 11.6 — Configuración de reciprocidad por comunidad
+export const updateCommunitySettingsSchema = z.object({
+  reciprocityThreshold: z
+    .number()
+    .int('El umbral debe ser un número entero')
+    .min(0, 'El umbral mínimo es 0')
+    .max(10, 'El umbral máximo es 10'),
+})
+
+export type UpdateCommunitySettingsInput = z.infer<typeof updateCommunitySettingsSchema>

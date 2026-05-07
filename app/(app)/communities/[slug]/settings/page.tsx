@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { BackButton } from '@/components/shared/BackButton'
 import InvitationSection from '@/components/communities/InvitationSection'
+import ReciprocitySettings from '@/components/communities/ReciprocitySettings'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -16,10 +17,10 @@ export default async function CommunitySettingsPage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Obtener comunidad por slug
+  // Obtener comunidad por slug (Story 11.6: añadido reciprocity_threshold)
   const { data: community } = await supabase
     .from('communities')
-    .select('id, name, slug')
+    .select('id, name, slug, reciprocity_threshold')
     .eq('slug', slug)
     .single()
 
@@ -68,6 +69,12 @@ export default async function CommunitySettingsPage({ params }: Props) {
 
         {/* Invitation Links Section */}
         <InvitationSection communityId={community.id} />
+
+        {/* Reciprocity Settings Section — Story 11.6 */}
+        <ReciprocitySettings
+          communityId={community.id}
+          currentThreshold={community.reciprocity_threshold ?? 3}
+        />
       </div>
     </div>
   )
