@@ -71,7 +71,7 @@ describe('OllamaClient', () => {
     expect(result).toEqual(MOCK_OLLAMA_RESPONSE)
   })
 
-  it('lanza error cuando la respuesta HTTP no es ok', async () => {
+  it('lanza error con status code cuando la respuesta HTTP no es ok', async () => {
     vi.spyOn(global, 'fetch').mockResolvedValueOnce({
       ok: false,
       status: 500,
@@ -81,7 +81,7 @@ describe('OllamaClient', () => {
     const { getOllamaClient } = await import('@/lib/ai/ollamaClient')
     const client = getOllamaClient()
 
-    await expect(client.generate('prompt')).rejects.toThrow()
+    await expect(client.generate('prompt')).rejects.toThrow('Ollama error 500')
   })
 
   it('retorna el singleton — misma referencia en dos llamadas a getOllamaClient', async () => {

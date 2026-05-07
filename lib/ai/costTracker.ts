@@ -10,9 +10,11 @@ import { createClient } from '@supabase/supabase-js'
 
 /** Input para registrar el coste de una síntesis */
 export interface TrackCostInput {
+  /** Reservado para futura segmentación por comunidad — no persiste en v12.2 */
   communityId: string
   tokensInput: number
   tokensOutput: number
+  /** Ignorado intencionalmente — Ollama local no tiene coste económico (siempre 0.0) */
   costUsd: number
 }
 
