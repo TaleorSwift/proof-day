@@ -1,21 +1,26 @@
 import { test, expect, type Page } from '@playwright/test'
 
 // Épica 13 — AISuggestButton en el wizard (paso 2)
+// El wizard vive dentro del LaunchIdeaModal — acceso vía btn-launch-idea en el feed.
 // Auth setup: tests/e2e/auth.setup.ts (storageState configurado en playwright.config.ts)
 // Los tests que hacen click y esperan respuesta de Ollama se marcan con test.skip
 // ya que requieren Ollama corriendo localmente.
 
 test.describe('WizardAISuggest — botón de sugerencia IA en paso 2', () => {
-  const NEW_URL = '/communities/producto-alpha/projects/new'
+  const COMMUNITY_URL = '/communities/startup-madrid'
 
-  // Navega desde paso 1 al paso 2 del wizard seleccionando el primer template
+  // Navega desde el feed, abre el wizard y avanza al paso 2
   async function navegarAlPaso2(page: Page) {
-    await page.goto(NEW_URL)
+    await page.goto(COMMUNITY_URL)
+    await page.getByTestId('btn-launch-idea').click()
+    await expect(page.getByRole('dialog')).toBeVisible()
+
+    // Paso 1 (templates): seleccionar primer template → click "Siguiente"
     const templateGrid = page.getByTestId('template-grid')
     await expect(templateGrid).toBeVisible()
-    // Cada template se renderiza como button dentro del grid
     await templateGrid.getByRole('button').first().click()
-    await page.getByRole('button', { name: /siguiente/i }).click()
+    await page.getByRole('button', { name: /continuar/i }).click()
+
     await expect(page.getByTestId('wizard-step-2')).toBeVisible()
   }
 
