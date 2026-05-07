@@ -113,7 +113,7 @@ describe('GET /api/templates', () => {
   it('retorna 401 cuando el usuario no está autenticado (AC-5)', async () => {
     mockAuthFail()
 
-    const res = await GET(buildGetRequest())
+    const res = await GET()
     const body = await res.json()
 
     expect(res.status).toBe(401)
@@ -129,7 +129,7 @@ describe('GET /api/templates', () => {
       }),
     })
 
-    const res = await GET(buildGetRequest())
+    const res = await GET()
     const body = await res.json()
 
     expect(res.status).toBe(200)
@@ -154,7 +154,7 @@ describe('GET /api/templates', () => {
       }),
     })
 
-    const res = await GET(buildGetRequest())
+    const res = await GET()
     const body = await res.json()
 
     expect(res.status).toBe(500)

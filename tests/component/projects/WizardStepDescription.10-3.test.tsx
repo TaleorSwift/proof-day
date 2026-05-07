@@ -28,6 +28,7 @@ const EMPTY_FORM_DATA: WizardFormData = {
   feedbackTopics: [],
   images: [],
   hypothesis: '',
+  customQuestion: '',
 }
 
 const DEFAULT_PROPS = {

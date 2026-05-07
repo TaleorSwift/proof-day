@@ -24,6 +24,7 @@ const FULL_FORM_DATA: WizardFormData = {
   feedbackTopics: [],
   images: [],
   hypothesis: 'Si el builder ve el preview, publica mejor',
+  customQuestion: '',
 }
 
 const FORM_DATA_NO_HYPOTHESIS: WizardFormData = {

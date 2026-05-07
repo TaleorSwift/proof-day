@@ -30,8 +30,8 @@ const MOCK_USER = { id: 'user-uuid-001' }
 const COMMUNITY_ID = 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'
 const OTHER_USER_ID = 'user-uuid-002'
 
-function buildParams(id: string = COMMUNITY_ID) {
-  return { params: Promise.resolve({ id }) }
+function buildParams(communityId: string = COMMUNITY_ID) {
+  return { params: Promise.resolve({ communityId }) }
 }
 
 function buildRequest(body: unknown): Request {
