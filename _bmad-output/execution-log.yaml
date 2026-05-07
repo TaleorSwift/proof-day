@@ -3957,3 +3957,49 @@ workflows:
     tests_failed: 0
     errors: []
     next_recommended: "Mergear PR #99 a main cuando el usuario lo apruebe. Siguiente story: Ned, CS para story 11.7 si aplica."
+
+  - id: "20260506-edna-QA-11-6-started"
+    timestamp: "2026-05-06T10:10:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 11.6: Admin configuración de reciprocidad por comunidad"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "11-6-admin-configuracion-reciprocidad-comunidad"
+    branch: "feat/11-6-admin-configuracion-reciprocidad-comunidad"
+    pr: "#99"
+    summary: "Validación QA Story 11.6. ACs: 401 sin auth, 403 no admin, 400 rango, 404 comunidad, 200 actualizada, data-testid input+btn, feedback visual, SELECT reciprocity_threshold, regresiones totales."
+
+  - id: "20260506-edna-QA-11-6-closing"
+    timestamp: "2026-05-06T10:15:00"
+    agent: "Edna (QA)"
+    trigger: "QA — Story 11.6: Admin configuración de reciprocidad por comunidad"
+    workflow: "qa-automate"
+    mode: "VERIFY"
+    result: "SUCCESS"
+    story: "11-6-admin-configuracion-reciprocidad-comunidad"
+    branch: "feat/11-6-admin-configuracion-reciprocidad-comunidad"
+    pr: "#99"
+    artifacts_verified:
+      - "tests/integration/api/communities/settings.route.test.ts"
+      - "tests/unit/communities/ReciprocitySettings.test.tsx"
+      - "tests/component/communities/CommunitySettingsPage.test.tsx"
+      - "app/api/communities/[id]/settings/route.ts"
+      - "components/communities/ReciprocitySettings.tsx"
+      - "app/(app)/communities/[slug]/settings/page.tsx"
+    qa_result: "PASS"
+    tests_story: 39
+    tests_total: 1599
+    tests_passed: 1599
+    tests_failed: 0
+    errors: []
+    ac_results:
+      AC-1: "PASS — 401 sin auth verificado en settings.route.test.ts"
+      AC-2: "PASS — 403 no admin verificado en settings.route.test.ts"
+      AC-3: "PASS — 400 rango -1/11/2.5 verificado en settings.route.test.ts"
+      AC-4: "PASS — 404 PGRST116 verificado en settings.route.test.ts"
+      AC-5: "PASS — 200 con community actualizada verificado en settings.route.test.ts"
+      AC-6: "PASS — data-testid='reciprocity-threshold-input' y 'save-reciprocity-btn' presentes en ReciprocitySettings.tsx, verificados en ReciprocitySettings.test.tsx"
+      AC-7: "PASS — data-testid='reciprocity-saved-feedback' presente y verificado en ReciprocitySettings.test.tsx"
+      AC-8: "PASS — reciprocity_threshold incluido en SELECT de settings/page.tsx"
+      AC-9: "PASS — 1599/1599 tests verdes, sin regresiones"
