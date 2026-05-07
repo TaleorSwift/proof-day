@@ -14,9 +14,12 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const SinIteraciones: Story = {
+export const SinFeedbacksEnUltima: Story = {
   args: {
-    iterations: [],
+    iterations: [
+      { id: 'iter-2', versionNumber: 2, publishedAt: '2026-05-07T10:00:00Z', feedbackCount: 0 },
+      { id: 'iter-1', versionNumber: 1, publishedAt: '2026-03-15T10:00:00Z', feedbackCount: 8 },
+    ],
   },
 }
 

@@ -328,6 +328,19 @@ describe('ProjectDetailPage 13.6 — AC1: historial visible con iteraciones', ()
       })
     )
   })
+
+  it('historial es visible para un reviewer (non-owner)', async () => {
+    createClientMock.mockResolvedValue(
+      makeSupabaseMock({
+        userId: OTHER_USER_ID,
+        iterations: iterationRows,
+        feedbackCounts: feedbackCountRows,
+      })
+    )
+    const jsx = await ProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(screen.getByTestId('iteration-history-mock')).toBeInTheDocument()
+  })
 })
 
 // ---------------------------------------------------------------------------

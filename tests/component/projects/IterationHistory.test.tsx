@@ -78,7 +78,6 @@ describe('IterationHistory — pluralización de feedbacks', () => {
   })
 
   it('muestra "1 feedback" (singular) cuando feedbackCount es 1', () => {
-    render(<IterationHistory iterations={singleIteration} />)
     // singleIteration tiene feedbackCount: 8, pero necesitamos 1
     const singleFeedback = [
       { id: 'iter-1', versionNumber: 1, publishedAt: '2026-03-15T10:00:00Z', feedbackCount: 1 },
