@@ -38,11 +38,26 @@ export async function GET(
       { status: 403 }
     )
 
-  // Leer feedbacks del proyecto (solo scores — calculado on-demand, no almacenado)
-  const { data: feedbacks, error } = await supabase
+  // Obtener la iteración más reciente del proyecto (si existe)
+  const { data: latestIteration } = await supabase
+    .from('project_iterations')
+    .select('id')
+    .eq('project_id', projectId)
+    .order('version_number', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+
+  // Construir query de feedbacks — filtrar por iteración más reciente si existe
+  let feedbackQuery = supabase
     .from('feedbacks')
     .select('scores')
     .eq('project_id', projectId)
+
+  if (latestIteration) {
+    feedbackQuery = feedbackQuery.eq('iteration_id', latestIteration.id)
+  }
+
+  const { data: feedbacks, error } = await feedbackQuery
 
   if (error)
     return NextResponse.json(
