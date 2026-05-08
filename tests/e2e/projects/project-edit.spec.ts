@@ -57,12 +57,13 @@ test.describe('ProjectEdit — /edit page (flujo de edición)', () => {
     async ({ page }) => {
       await page.goto(EDIT_URL)
 
-      // Añadimos un espacio al campo targetUser (campo opcional — no altera datos core del proyecto)
-      // para tener algo que guardar sin modificar el título ni campos requeridos
+      // Esperar hidratación del formulario antes de interactuar
       const targetUserInput = page.getByLabel(/usuario objetivo/i)
-      const originalValue = await targetUserInput.inputValue()
-      const expectedValue = originalValue.trim() + ' v2'
-      await targetUserInput.fill(expectedValue)
+      await expect(targetUserInput).toBeVisible()
+
+      // Valor fijo — independiente del estado previo en DB para evitar test flaky
+      const newValue = 'Engineering managers E2E'
+      await targetUserInput.fill(newValue)
 
       await page.getByRole('button', { name: /guardar cambios/i }).click()
 
@@ -73,7 +74,7 @@ test.describe('ProjectEdit — /edit page (flujo de edición)', () => {
 
       // Recargar para confirmar persistencia real (evita falsos positivos con cache stale de router.refresh)
       await page.reload()
-      await expect(page.getByLabel(/usuario objetivo/i)).toHaveValue(expectedValue)
+      await expect(page.getByLabel(/usuario objetivo/i)).toHaveValue(newValue)
     }
   )
 
