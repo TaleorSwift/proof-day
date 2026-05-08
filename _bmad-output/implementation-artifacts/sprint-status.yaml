@@ -149,7 +149,7 @@ development_status:
   # ── PHASE 2 — GROWTH 2.1 (backlog — no implementar hasta validación con usuarios) ──
 
   # ── EPIC 13: Iteración, Cierre del Loop y Copiloto IA ────────────
-  epic-13: in-progress
+  epic-13: done  # todas las stories completadas 2026-05-07
   13-1-db-extensiones-iteraciones-project-iterations: done  # CR APPROVED + QA PASS 2026-05-07 — PR #109 merged
   13-2-publicar-nueva-version-proyecto-iteracion: done  # CR APPROVED + QA PASS 2026-05-07 — PR #110 merged
   13-3-notificacion-reviewers-anteriores-nueva-version: done  # CR APPROVED + QA PASS 2026-05-07 — PR #111 merged
@@ -157,7 +157,7 @@ development_status:
   13-5-notificacion-atribucion-reviewer-etiquetado: done  # CR APPROVED + QA PASS 2026-05-07 — PR #114 merged
   13-6-historial-versiones-proof-score-por-iteracion: done  # CR APPROVED + QA PASS 2026-05-07 — PR #115 merged
   13-7-copiloto-ia-creacion-proyecto: done  # CR APPROVED 2026-05-07 — PR #116 segunda ronda — 1869 tests verdes
-  13-8-interpretacion-contextual-proof-score: ready-for-dev
+  13-8-interpretacion-contextual-proof-score: done  # CR APPROVED 2026-05-07 — PR #117 tercera ronda — 26 tests verdes
   epic-13-retrospective: optional
 
   # ── EPIC 14: Dashboard Admin y Gestión de Comunidad ──────────────

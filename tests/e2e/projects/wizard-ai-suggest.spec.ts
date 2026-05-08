@@ -3,8 +3,11 @@ import { test, expect, type Page } from '@playwright/test'
 // Épica 13 — AISuggestButton en el wizard (paso 2)
 // El wizard vive dentro del LaunchIdeaModal — acceso vía btn-launch-idea en el feed.
 // Auth setup: tests/e2e/auth.setup.ts (storageState configurado en playwright.config.ts)
-// Los tests que hacen click y esperan respuesta de Ollama se marcan con test.skip
-// ya que requieren Ollama corriendo localmente.
+// Nota: el test del badge intercepta la petición con page.route() porque Playwright Chromium
+// no entrega el Promise de fetch para requests que tardan >5s sin bytes iniciales (interacción
+// entre el Keep-Alive: timeout=5 del servidor y el comportamiento del browser controlado por CDP).
+// El spinner test valida que el fetch se inicia con Ollama real; el badge test valida la lógica
+// del componente ante una respuesta exitosa.
 
 test.describe('WizardAISuggest — botón de sugerencia IA en paso 2', () => {
   const COMMUNITY_URL = '/communities/startup-madrid'
@@ -36,19 +39,25 @@ test.describe('WizardAISuggest — botón de sugerencia IA en paso 2', () => {
     await expect(page.getByTestId('ai-suggest-problem')).toBeEnabled()
   })
 
-  test.skip('click en botón IA muestra el spinner mientras genera la sugerencia', async ({ page }) => {
-    // Requiere Ollama corriendo localmente en el entorno de test
+  test('click en botón IA muestra el spinner mientras genera la sugerencia', async ({ page }) => {
     await navegarAlPaso2(page)
     await page.getByTestId('wizard-field-title').fill('Mi proyecto de validación')
     await page.getByTestId('ai-suggest-problem').click()
     await expect(page.getByTestId('ai-suggest-spinner')).toBeVisible()
   })
 
-  test.skip('sugerencia IA muestra el badge ai-generated tras recibir respuesta', async ({ page }) => {
-    // Requiere Ollama corriendo localmente en el entorno de test
+  test('sugerencia IA muestra el badge ai-generated tras recibir respuesta', async ({ page }) => {
+    // Intercepta la petición para evitar el problema de CDP+keep-alive en Playwright Chromium
+    await page.route('**/api/ai/suggest-project-field', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ suggestion: 'Sugerencia de IA generada por mock en E2E.' }),
+      })
+    )
     await navegarAlPaso2(page)
     await page.getByTestId('wizard-field-title').fill('Mi proyecto de validación')
     await page.getByTestId('ai-suggest-problem').click()
-    await expect(page.getByTestId('ai-generated-badge')).toBeVisible({ timeout: 30_000 })
+    await expect(page.getByTestId('ai-generated-badge')).toBeVisible({ timeout: 10_000 })
   })
 })

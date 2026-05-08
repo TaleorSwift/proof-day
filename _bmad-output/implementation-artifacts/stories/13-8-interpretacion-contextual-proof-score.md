@@ -2,7 +2,7 @@
 
 **Epic:** 13 — Iteración, Cierre del Loop y Copiloto IA
 **Story key:** 13.8
-**Status:** dev-complete
+**Status:** done
 **Fase:** GROWTH 2.1
 **Prerequisito:** Story 12.2 completada (Ollama + lib/ai), Story 13.6 completada (Proof Score por iteración)
 
