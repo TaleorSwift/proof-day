@@ -12,6 +12,7 @@
 
 import { timingSafeEqual } from 'crypto'
 import { NextResponse } from 'next/server'
+import { isAIEnabled } from '@/lib/ai/featureFlag'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { synthesizeFeedbacks, trackCost, checkDailyBudget, maybeSendBudgetAlert } from '@/lib/ai'
 import { sendEmail, buildAiSynthesisReadyEmail } from '@/lib/email'
@@ -156,6 +157,10 @@ function feedbackFromRow(row: FeedbackRow): Feedback {
  * Usa service role Supabase para bypasear RLS en todas las operaciones de escritura.
  */
 export async function POST(request: Request): Promise<NextResponse> {
+  if (!isAIEnabled()) {
+    return NextResponse.json({ error: 'AI_DISABLED' }, { status: 503 })
+  }
+
   // ── AC1: Verificación del secret ──────────────────────────────────────────
   const providedSecret = (request.headers as Headers).get('x-webhook-secret')
   const expectedSecret = process.env.WEBHOOK_SECRET ?? null

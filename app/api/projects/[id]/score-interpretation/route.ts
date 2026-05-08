@@ -13,6 +13,7 @@
 //   9. Retornar { interpretation: string }
 
 import { NextResponse } from 'next/server'
+import { isAIEnabled } from '@/lib/ai/featureFlag'
 import { createClient } from '@/lib/supabase/server'
 import { calculateProofScore } from '@/lib/utils/proof-score'
 import { getOllamaClient, checkDailyBudget, trackCost } from '@/lib/ai'
@@ -26,6 +27,10 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!isAIEnabled()) {
+    return NextResponse.json({ error: 'AI_DISABLED' }, { status: 503 })
+  }
+
   const supabase = await createClient()
   const {
     data: { user },

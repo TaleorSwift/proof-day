@@ -191,6 +191,7 @@ function mockChain<T>(result: SupabaseQueryResult<T>) {
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
+  vi.stubEnv('NEXT_PUBLIC_AI_ENABLED', 'true')
   vi.stubEnv('WEBHOOK_SECRET', VALID_SECRET)
   vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', 'http://localhost:54321')
   vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'service-role-key-test')

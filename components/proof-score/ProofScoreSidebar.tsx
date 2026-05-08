@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { isAIEnabled } from '@/lib/ai/featureFlag'
 import type { ProofScoreResult } from '@/lib/types/proof-score'
 import type { ProjectDecision } from '@/lib/types/projects'
 import { getProofScore } from '@/lib/api/proof-score'
@@ -66,6 +67,7 @@ export function ProofScoreSidebar({
   // Fire-after-score: se lanza DESPUÉS de obtener el score, sin bloquear la UI
   useEffect(() => {
     if (!score) return
+    if (!isAIEnabled()) return
     let cancelled = false
     setIsLoadingInterpretation(true)
     fetch(`/api/projects/${projectId}/score-interpretation`)
@@ -99,13 +101,13 @@ export function ProofScoreSidebar({
       />
 
       {/* Interpretación contextual del Proof Score (Story 13.8) */}
-      {isLoadingInterpretation && (
+      {isAIEnabled() && isLoadingInterpretation && (
         <div data-testid="score-interpretation-loading">
           <Skeleton style={{ height: '1rem', marginBottom: 'var(--space-2)' }} />
           <Skeleton style={{ height: '1rem', width: '75%' }} />
         </div>
       )}
-      {!isLoadingInterpretation && interpretation && (
+      {isAIEnabled() && !isLoadingInterpretation && interpretation && (
         <p
           data-testid="score-interpretation"
           style={{

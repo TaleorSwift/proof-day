@@ -6,6 +6,7 @@
 // AC5: tracking de coste en ai_cost_tracking
 
 import { NextResponse } from 'next/server'
+import { isAIEnabled } from '@/lib/ai/featureFlag'
 import { requireAuth } from '@/lib/api/middleware/require-auth'
 import { getOllamaClient, checkDailyBudget, trackCost } from '@/lib/ai'
 import { buildSuggestionPrompt } from '@/lib/ai/suggestionPrompt'
@@ -33,6 +34,10 @@ function estimateTokens(text: string): number {
 // ---------------------------------------------------------------------------
 
 export async function POST(request: Request): Promise<NextResponse> {
+  if (!isAIEnabled()) {
+    return NextResponse.json({ error: 'AI_DISABLED' }, { status: 503 })
+  }
+
   // AC2 — Auth
   const auth = await requireAuth()
   if (auth.error) return auth.error

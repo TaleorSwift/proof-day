@@ -61,6 +61,7 @@ Configurar en **Vercel Dashboard → proyecto → Settings → Environment Varia
 | `CRON_SECRET` | Secret para proteger `/api/cron/*` — generar con `openssl rand -base64 32` — sensitive | Production |
 | `ANTHROPIC_API_KEY` | API key de Anthropic para síntesis IA (Epic 12) — sensitive | Production |
 | `AI_DAILY_BUDGET_USD` | Presupuesto diario máximo en USD para Claude (default: 5.0) | Production |
+| `NEXT_PUBLIC_AI_ENABLED` | Feature flag que activa toda la IA del producto (`true`/`false`). Default OFF — requiere valor explícito `true` para habilitar. Se inlina en build-time en el cliente; cambiar requiere redeploy. | Production |
 
 > `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `CRON_SECRET` y `ANTHROPIC_API_KEY` se marcan como sensitive (write-only en Vercel).
 > `NODE_ENV` no hace falta — Vercel lo pone automáticamente en producción.

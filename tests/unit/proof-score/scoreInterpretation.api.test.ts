@@ -153,6 +153,7 @@ function setupDefaultMocks() {
 
 describe('GET /api/projects/[id]/score-interpretation', () => {
   beforeEach(() => {
+    vi.stubEnv('NEXT_PUBLIC_AI_ENABLED', 'true')
     vi.clearAllMocks()
 
     // Defaults

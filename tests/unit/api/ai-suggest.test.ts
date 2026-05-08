@@ -8,7 +8,7 @@
 //   - 503 Ollama falla → AI_UNAVAILABLE
 //   - 200 mock Ollama retorna texto → { suggestion: "..." }
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { NextRequest } from 'next/server'
 
 // ---------------------------------------------------------------------------
@@ -79,7 +79,12 @@ function makeRequest(body: unknown): NextRequest {
 
 describe('POST /api/ai/suggest-project-field', () => {
   beforeEach(() => {
+    vi.stubEnv('NEXT_PUBLIC_AI_ENABLED', 'true')
     vi.clearAllMocks()
+  })
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
   })
 
   it('retorna 401 cuando el usuario no está autenticado', async () => {

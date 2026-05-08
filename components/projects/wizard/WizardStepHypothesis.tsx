@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { AISuggestButton } from '@/components/projects/wizard/AISuggestButton'
+import { isAIEnabled } from '@/lib/ai/featureFlag'
 import { AIGeneratedBadge } from '@/components/projects/wizard/AIGeneratedBadge'
 import type { WizardFormData } from '@/components/projects/ProjectWizard'
 
@@ -41,18 +42,20 @@ export function WizardStepHypothesis({ data, onChange }: Props) {
           <Label htmlFor="wizard-hypothesis">
             🚀 Hipótesis a validar
           </Label>
-          <AISuggestButton
-            field="hypothesis"
-            context={{
-              title: title ?? '',
-              problem: problem ?? undefined,
-              solution: solution ?? undefined,
-            }}
-            onSuggestion={(text) => {
-              onChange({ hypothesis: text })
-              setHypothesisAiGenerated(true)
-            }}
-          />
+          {isAIEnabled() && (
+            <AISuggestButton
+              field="hypothesis"
+              context={{
+                title: title ?? '',
+                problem: problem ?? undefined,
+                solution: solution ?? undefined,
+              }}
+              onSuggestion={(text) => {
+                onChange({ hypothesis: text })
+                setHypothesisAiGenerated(true)
+              }}
+            />
+          )}
           {hypothesisAiGenerated && <AIGeneratedBadge />}
         </div>
         <Textarea

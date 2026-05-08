@@ -77,10 +77,12 @@ function mockFetchSequence(responses: Array<{ ok: boolean; data?: unknown; error
 
 describe('ProofScoreSidebar — interpretación contextual (Story 13.8)', () => {
   beforeEach(() => {
+    vi.stubEnv('NEXT_PUBLIC_AI_ENABLED', 'true')
     vi.clearAllMocks()
   })
 
   afterEach(() => {
+    vi.unstubAllEnvs()
     vi.restoreAllMocks()
   })
 

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { AISuggestButton } from '@/components/projects/wizard/AISuggestButton'
+import { isAIEnabled } from '@/lib/ai/featureFlag'
 import { AIGeneratedBadge } from '@/components/projects/wizard/AIGeneratedBadge'
 import type { WizardFormData } from '@/components/projects/ProjectWizard'
 
@@ -91,14 +92,16 @@ export function WizardStepDescription({ data, onChange }: Props) {
             Problema que resuelve{' '}
             <span aria-hidden="true" style={{ color: 'var(--color-accent)' }}>*</span>
           </Label>
-          <AISuggestButton
-            field="problem"
-            context={aiContext}
-            onSuggestion={(text) => {
-              onChange({ problem: text })
-              markAsAiGenerated('problem')
-            }}
-          />
+          {isAIEnabled() && (
+            <AISuggestButton
+              field="problem"
+              context={aiContext}
+              onSuggestion={(text) => {
+                onChange({ problem: text })
+                markAsAiGenerated('problem')
+              }}
+            />
+          )}
           {aiGeneratedFields.has('problem') && <AIGeneratedBadge />}
         </div>
         <Textarea
@@ -139,14 +142,16 @@ export function WizardStepDescription({ data, onChange }: Props) {
             Solución propuesta{' '}
             <span aria-hidden="true" style={{ color: 'var(--color-accent)' }}>*</span>
           </Label>
-          <AISuggestButton
-            field="solution"
-            context={aiContext}
-            onSuggestion={(text) => {
-              onChange({ solution: text })
-              markAsAiGenerated('solution')
-            }}
-          />
+          {isAIEnabled() && (
+            <AISuggestButton
+              field="solution"
+              context={aiContext}
+              onSuggestion={(text) => {
+                onChange({ solution: text })
+                markAsAiGenerated('solution')
+              }}
+            />
+          )}
           {aiGeneratedFields.has('solution') && <AIGeneratedBadge />}
         </div>
         <Textarea

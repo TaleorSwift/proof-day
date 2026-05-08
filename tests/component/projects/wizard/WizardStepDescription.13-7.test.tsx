@@ -4,7 +4,7 @@
  * AC7: WizardStepDescription muestra botón "Sugerir con IA" junto a problema/solución
  *      cuando hay título; botón deshabilitado cuando título está vacío.
  */
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import React from 'react'
@@ -34,6 +34,18 @@ const DATA_WITH_TITLE: WizardFormData = {
   ...EMPTY_FORM_DATA,
   title: 'Mi proyecto',
 }
+
+// ---------------------------------------------------------------------------
+// Setup — flag AI activo para todos los tests de esta suite
+// ---------------------------------------------------------------------------
+
+beforeEach(() => {
+  vi.stubEnv('NEXT_PUBLIC_AI_ENABLED', 'true')
+})
+
+afterEach(() => {
+  vi.unstubAllEnvs()
+})
 
 // ---------------------------------------------------------------------------
 // Suite — AC7: botones "Sugerir con IA" en campo problema
