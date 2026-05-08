@@ -20,9 +20,8 @@ test.describe('AISummaryCard — tarjeta de resumen IA en sidebar del owner', ()
     await expect(card.or(skeleton).or(empty)).toBeVisible()
   })
 
-  test.skip('el estado vacío del resumen IA es visible cuando no hay feedbacks', async ({ page }) => {
-    // Requiere que el seed garantice e2e-own-project sin feedbacks asociados al test user.
-    // El seed actual no tiene feedbacks para e2e-own-project — marcar como skip hasta confirmar.
+  test('el estado vacío del resumen IA es visible cuando no hay feedbacks', async ({ page }) => {
+    // e2e-own-project no tiene ai_summaries en el seed → AISummaryCard renderiza AISummaryEmpty
     await page.goto(PROJECT_URL)
 
     await expect(page.getByTestId('ai-summary-empty')).toBeVisible()
