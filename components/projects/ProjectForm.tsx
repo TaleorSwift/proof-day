@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -97,29 +98,34 @@ export function ProjectForm({
   }
 
   const onSubmit = async (data: FormValues) => {
-    try {
-      // Normalizar campos opcionales: string vacío → undefined para no enviar valores vacíos
-      const normalizedData = {
-        ...data,
-        targetUser: data.targetUser?.trim() || undefined,
-        demoUrl: data.demoUrl?.trim() || undefined,
-        feedbackTopics,
-      }
+    // Normalizar campos opcionales: string vacío → undefined para no enviar valores vacíos
+    const normalizedData = {
+      ...data,
+      targetUser: data.targetUser?.trim() || undefined,
+      demoUrl: data.demoUrl?.trim() || undefined,
+      feedbackTopics,
+    }
 
-      if (isEdit && projectId) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { communityId: _cid, ...updateData } = normalizedData
+    if (isEdit && projectId) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { communityId: _cid, ...updateData } = normalizedData
+      try {
         await updateProject(projectId, updateData)
-        router.refresh()
-      } else {
+        toast.success('Cambios guardados.')
+        router.push(`/communities/${communitySlug}/projects/${defaultValues!.slug}`)
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Error al guardar los cambios.')
+      }
+    } else {
+      try {
         // Crear proyecto con imageUrls vacío — las imágenes se suben tras la creación (Story 3.2)
         const fullData: CreateProjectInput = { ...normalizedData, imageUrls: [] }
         const project = await createProject(fullData)
         // Redirigir a edición para que el builder pueda subir imágenes de inmediato
         router.push(`/communities/${communitySlug}/projects/${project.slug}/edit`)
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Error al crear el proyecto.')
       }
-    } catch (err) {
-      console.error(err)
     }
   }
 
