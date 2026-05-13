@@ -76,7 +76,7 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
       targetUser: data.targetUser?.trim() || undefined,
       hypothesis: data.hypothesis || '',
       demoLink: data.demoLink?.trim() || undefined,
-      imageUrls: data.images.map((img) => img.path),
+      imageUrls: data.images.map((img) => img.url),
       feedbackTopics: data.feedbackTopics,
       templateId: data.templateId,
       // Story 11.2 — pregunta custom del Builder
