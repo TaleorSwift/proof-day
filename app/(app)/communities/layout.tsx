@@ -22,10 +22,10 @@ export default async function CommunitiesLayout({ children }: Props) {
 
   return (
     <>
-      {/* Skip navigation — WCAG 2.4.1 */}
+      {/* Skip navigation — WCAG 2.4.1: solo visible al recibir foco (teclado/lector de pantalla) */}
       <a
         href="#main-content"
-        className="skip-link"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50"
         style={{
           padding: 'var(--space-2) var(--space-4)',
           backgroundColor: 'var(--color-primary)',
