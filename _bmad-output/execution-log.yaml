@@ -1,4 +1,29 @@
 workflows:
+  - id: "20260513-bart-QD-reciprocity-first-project-bypass"
+    timestamp: "2026-05-13T01:30:00"
+    agent: "Bart (Quick Flow Solo Dev)"
+    trigger: "QD"
+    workflow: "quick-dev"
+    mode: "direct"
+    result: "STARTED"
+    summary: "Fix gate de reciprocidad: el primer proyecto de un usuario en una comunidad siempre puede publicarse sin importar el threshold."
+
+  - id: "20260513-bart-QD-reciprocity-first-project-bypass"
+    timestamp: "2026-05-13T22:50:00"
+    agent: "Bart (Quick Flow Solo Dev)"
+    trigger: "QD"
+    workflow: "quick-dev"
+    mode: "direct"
+    result: "SUCCESS"
+    duration_estimate: "20 minutos"
+    summary: "Gate de reciprocidad corregido. El primer proyecto de un usuario en una comunidad siempre puede publicarse. A partir del segundo aplica el check normal de feedbacks. TDD Outside-In: 3 tests nuevos (RED→GREEN), 13 tests totales en verde. Suite completa 1931/1931 verde."
+    artifacts_modified:
+      - "actions/projects/launchProject.ts"
+      - "tests/unit/projects/launchProject-reciprocity.test.ts"
+      - "docs/project/modules/projects.md"
+    errors: []
+    next_recommended: "/cr para code review del cambio, luego /qa para validación E2E si procede."
+
   - id: "20260513-bart-QD-community-image-upload-url"
     timestamp: "2026-05-13T00:00:00"
     agent: "Bart (Quick Flow Solo Dev)"

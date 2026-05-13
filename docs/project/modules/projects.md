@@ -1,6 +1,6 @@
 # Módulo: Proyectos
 
-**Última actualización:** Story 11.1 — Migraciones DB feedback quality y reciprocidad (2026-05-06)
+**Última actualización:** QD reciprocity-first-project-bypass — 2026-05-13
 
 ---
 
@@ -58,6 +58,13 @@ Derivadas de las Acceptance Criteria de Stories 3.1–3.4:
 - Empty state si no hay proyectos `live`: "Esta comunidad no tiene proyectos aún" + CTA "Crear el primero"
 - Skeleton loading durante el fetch (6 cards esqueleto)
 - `feedbackCount` y `proofScore` se añadirán en Stories 4 y 5
+
+### Gate de reciprocidad al publicar (Story 11.5, QD-reciprocity-first-project-bypass)
+- Al publicar desde el wizard, `launchProject` verifica que el builder haya dado ≥ `reciprocity_threshold` feedbacks en la comunidad en los últimos 30 días. (story 11.5)
+- **El primer proyecto de un usuario en una comunidad siempre puede publicarse**, sin importar el threshold configurado. (QD-reciprocity-first-project-bypass)
+- A partir del segundo proyecto, el gate aplica con normalidad. (QD-reciprocity-first-project-bypass)
+- Si el gate bloquea: se devuelve `RECIPROCITY_GATE_BLOCKED` con mensaje pluralizado. (story 11.5)
+- Si `reciprocity_threshold = 0`, el gate está desactivado — no se consulta ni feedbacks ni proyectos existentes. (story 11.5)
 
 ### Feed del proyecto — secciones (Story 9.6)
 - El feed se divide en dos secciones: `"🔴 Live — aceptando feedback"` y `"Cerrados"` (story 9.6)

@@ -55,14 +55,24 @@ function mockAuth() {
 }
 
 /**
- * Construye el mock de supabase con un threshold dado y un conteo de feedbacks dado.
- * El mock encadena: from('communities').select().eq().single()
- * y from('feedbacks').select().eq().eq().gte() → count
+ * Construye el mock de supabase con threshold, feedbackCount y existingProjectCount.
+ * existingProjectCount (default=1): proyectos ya publicados por el builder en la comunidad.
+ * Con 0 el gate se bypasea (primer proyecto); con ≥1 aplica el check normal de feedbacks.
  */
-function mockWithThresholdAndFeedbacks(threshold: number, feedbackCount: number) {
-  const insertSpy = vi.fn().mockReturnThis()
-  const selectProjectSpy = vi.fn().mockReturnThis()
+function mockWithThresholdAndFeedbacks(
+  threshold: number,
+  feedbackCount: number,
+  existingProjectCount = 1,
+) {
+  // projects: cadena insert → .insert(...).select(...).single()
   const singleProjectSpy = vi.fn().mockResolvedValue({ data: MOCK_PROJECT, error: null })
+  const selectInsertSpy = vi.fn().mockReturnValue({ single: singleProjectSpy })
+  const insertSpy = vi.fn().mockReturnValue({ select: selectInsertSpy })
+
+  // projects: cadena count → .select(...).eq(...).eq(...)
+  const countEq2 = vi.fn().mockResolvedValue({ count: existingProjectCount, error: null })
+  const countEq1 = vi.fn().mockReturnValue({ eq: countEq2 })
+  const countSelectSpy = vi.fn().mockReturnValue({ eq: countEq1 })
 
   supabaseMock.from.mockImplementation((table: string) => {
     if (table === 'communities') {
@@ -76,7 +86,6 @@ function mockWithThresholdAndFeedbacks(threshold: number, feedbackCount: number)
       }
     }
     if (table === 'feedbacks') {
-      // Encadena: .select().eq().eq().gte()
       const gteMock = vi.fn().mockResolvedValue({ count: feedbackCount, error: null })
       const eqMock2 = vi.fn().mockReturnValue({ gte: gteMock })
       const eqMock1 = vi.fn().mockReturnValue({ eq: eqMock2 })
@@ -84,7 +93,7 @@ function mockWithThresholdAndFeedbacks(threshold: number, feedbackCount: number)
       return { select: selectMock }
     }
     if (table === 'projects') {
-      return { insert: insertSpy, select: selectProjectSpy, single: singleProjectSpy }
+      return { insert: insertSpy, select: countSelectSpy }
     }
     return {}
   })
@@ -232,5 +241,41 @@ describe('launchProject (Story 11.5) — AC-3: threshold=3, given≥3 → public
     const result = await launchProject(VALID_INPUT)
 
     expect(result.success).toBe(true)
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Primer proyecto: siempre puede publicarse sin cumplir el gate de reciprocidad
+// ---------------------------------------------------------------------------
+
+describe('launchProject — primer proyecto siempre puede publicarse', () => {
+  beforeEach(mockAuth)
+  afterEach(() => vi.clearAllMocks())
+
+  it('threshold=3, feedbacks=0, existingProjects=0 → publica OK (bypass del gate)', async () => {
+    mockWithThresholdAndFeedbacks(3, 0, 0)
+
+    const result = await launchProject(VALID_INPUT)
+
+    expect(result.success).toBe(true)
+  })
+
+  it('threshold=3, feedbacks=0, existingProjects=1 → RECIPROCITY_GATE_BLOCKED', async () => {
+    mockWithThresholdAndFeedbacks(3, 0, 1)
+
+    const result = await launchProject(VALID_INPUT)
+
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.code).toBe('RECIPROCITY_GATE_BLOCKED')
+    }
+  })
+
+  it('threshold=5, feedbacks=0, existingProjects=0 → inserta el proyecto', async () => {
+    const { insertSpy } = mockWithThresholdAndFeedbacks(5, 0, 0)
+
+    await launchProject(VALID_INPUT)
+
+    expect(insertSpy).toHaveBeenCalled()
   })
 })
