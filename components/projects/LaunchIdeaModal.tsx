@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { launchProject } from '@/actions/projects/launchProject'
+import { saveDraftProject } from '@/actions/projects/saveDraftProject'
 import { ProjectWizard } from './ProjectWizard'
 import type { WizardFormData } from './ProjectWizard'
 import type { ProjectTemplate } from '@/lib/types/templates'
@@ -30,6 +31,7 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
   const [templates, setTemplates] = useState<ProjectTemplate[]>([])
   const [serverError, setServerError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSavingDraft, setIsSavingDraft] = useState(false)
   // Story 11.5 — gate de reciprocidad: se activa cuando launchProject devuelve RECIPROCITY_GATE_BLOCKED
   const [reciprocityGate, setReciprocityGate] = useState<ReciprocityGate | undefined>(undefined)
 
@@ -59,6 +61,38 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
     setServerError(null)
     setReciprocityGate(undefined)
     onOpenChange(false)
+  }
+
+  async function handleSaveAsDraft(data: WizardFormData) {
+    setServerError(null)
+    setIsSavingDraft(true)
+
+    const result = await saveDraftProject({
+      communitySlug,
+      title: data.title,
+      tagline: data.tagline,
+      problem: data.problem,
+      solution: data.solution,
+      targetUser: data.targetUser?.trim() || undefined,
+      hypothesis: data.hypothesis || '',
+      demoLink: data.demoLink?.trim() || undefined,
+      imageUrls: data.images.map((img) => img.url),
+      feedbackTopics: data.feedbackTopics,
+      templateId: data.templateId,
+      customQuestion: data.customQuestion?.trim() || undefined,
+    })
+
+    setIsSavingDraft(false)
+
+    if (!result.success) {
+      setServerError(result.error)
+      return
+    }
+
+    toast.success('Borrador guardado.')
+    onSuccess?.()
+    router.push(`/communities/${communitySlug}/projects/${result.projectSlug}`)
+    handleClose()
   }
 
   async function handleWizardSubmit(data: WizardFormData) {
@@ -131,6 +165,8 @@ export function LaunchIdeaModal({ open, onOpenChange, communitySlug, onSuccess }
           onCancel={handleClose}
           isSubmitting={isSubmitting}
           serverError={serverError}
+          onSaveAsDraft={handleSaveAsDraft}
+          isSavingDraft={isSavingDraft}
           reciprocityGate={reciprocityGate}
         />
       </DialogContent>

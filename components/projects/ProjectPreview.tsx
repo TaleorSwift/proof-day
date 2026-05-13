@@ -15,6 +15,8 @@ interface Props {
   onEdit: () => void
   onPublish: () => void
   isPublishing?: boolean
+  onSaveAsDraft?: () => void
+  isSavingDraft?: boolean
   // Story 11.5 — gate de reciprocidad (opcional)
   reciprocityGate?: ReciprocityGate
 }
@@ -27,6 +29,8 @@ export function ProjectPreview({
   onEdit,
   onPublish,
   isPublishing = false,
+  onSaveAsDraft,
+  isSavingDraft = false,
   reciprocityGate,
 }: Props) {
   const { title, tagline, problem, solution, hypothesis } = data
@@ -285,6 +289,27 @@ export function ProjectPreview({
         >
           Editar
         </button>
+
+        {onSaveAsDraft && (
+          <button
+            type="button"
+            data-testid="preview-save-draft-btn"
+            onClick={onSaveAsDraft}
+            disabled={isSavingDraft || isPublishing}
+            style={{
+              padding: 'var(--space-2) var(--space-4)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--color-border)',
+              background: 'transparent',
+              fontSize: 'var(--text-sm)',
+              color: 'var(--color-text-secondary)',
+              cursor: isSavingDraft || isPublishing ? 'not-allowed' : 'pointer',
+              opacity: isSavingDraft || isPublishing ? 0.6 : 1,
+            }}
+          >
+            {isSavingDraft ? 'Guardando...' : 'Guardar como borrador'}
+          </button>
+        )}
 
         <button
           type="button"

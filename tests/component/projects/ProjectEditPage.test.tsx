@@ -2,7 +2,7 @@
 /**
  * Tests — EditProjectPage (app/(app)/communities/[slug]/projects/[projectSlug]/edit/page.tsx)
  * Server Component — sin interactividad de cliente
- * Verifica: redirect no-auth, redirect non-owner, notFound non-draft, happy path.
+ * Verifica: redirect no-auth, redirect non-owner, notFound si no existe, happy path (draft/live/inactive).
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
@@ -179,7 +179,7 @@ describe('EditProjectPage — AC-2: non-owner → redirect a la página del proy
 // AC-3: Proyecto no-draft → redirect al detalle del proyecto
 // ---------------------------------------------------------------------------
 
-describe('EditProjectPage — AC-3: proyecto live → redirect al detalle', () => {
+describe('EditProjectPage — AC-3: proyecto live → editable', () => {
   beforeEach(() => {
     createClientMock.mockResolvedValue(
       makeSupabaseMock({ project: { ...defaultProject, status: 'live' } })
@@ -190,15 +190,14 @@ describe('EditProjectPage — AC-3: proyecto live → redirect al detalle', () =
     vi.clearAllMocks()
   })
 
-  it('redirige al detalle cuando el proyecto tiene status live', async () => {
-    await expect(EditProjectPage({ params: defaultParams })).rejects.toThrow('NEXT_REDIRECT')
-    expect(mockRedirect).toHaveBeenCalledWith(
-      `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_SLUG}?error=not-editable`
-    )
+  it('renderiza ProjectForm cuando el proyecto tiene status live', async () => {
+    const jsx = await EditProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(screen.getByTestId('project-form')).toBeInTheDocument()
   })
 })
 
-describe('EditProjectPage — AC-3b: proyecto inactive → redirect al detalle', () => {
+describe('EditProjectPage — AC-3b: proyecto inactive → editable', () => {
   beforeEach(() => {
     createClientMock.mockResolvedValue(
       makeSupabaseMock({ project: { ...defaultProject, status: 'inactive' } })
@@ -209,11 +208,10 @@ describe('EditProjectPage — AC-3b: proyecto inactive → redirect al detalle',
     vi.clearAllMocks()
   })
 
-  it('redirige al detalle cuando el proyecto tiene status inactive', async () => {
-    await expect(EditProjectPage({ params: defaultParams })).rejects.toThrow('NEXT_REDIRECT')
-    expect(mockRedirect).toHaveBeenCalledWith(
-      `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_SLUG}?error=not-editable`
-    )
+  it('renderiza ProjectForm cuando el proyecto tiene status inactive', async () => {
+    const jsx = await EditProjectPage({ params: defaultParams })
+    render(jsx as React.ReactElement)
+    expect(screen.getByTestId('project-form')).toBeInTheDocument()
   })
 })
 

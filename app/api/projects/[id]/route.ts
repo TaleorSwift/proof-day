@@ -50,9 +50,6 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   if (existing.builder_id !== user.id) return NextResponse.json(
     { error: 'No tienes permiso para editar este proyecto', code: 'PROJECT_FORBIDDEN' }, { status: 403 }
   )
-  if (existing.status !== 'draft') return NextResponse.json(
-    { error: 'Solo puedes editar proyectos en borrador', code: 'PROJECT_NOT_DRAFT' }, { status: 422 }
-  )
 
   // Construir objeto de update con snake_case para Supabase
   const updateFields: {

@@ -131,6 +131,8 @@ interface Props {
   onCancel: () => void
   isSubmitting?: boolean
   serverError?: string | null
+  onSaveAsDraft?: (data: WizardFormData) => void
+  isSavingDraft?: boolean
   // Story 11.5 — gate de reciprocidad
   reciprocityGate?: ReciprocityGate
 }
@@ -208,7 +210,7 @@ function WizardProgress({
 
 // ── ProjectWizard ─────────────────────────────────────────────────────────────
 
-export function ProjectWizard({ templates, onSubmit, onCancel, isSubmitting = false, serverError = null, reciprocityGate }: Props) {
+export function ProjectWizard({ templates, onSubmit, onCancel, isSubmitting = false, serverError = null, onSaveAsDraft, isSavingDraft = false, reciprocityGate }: Props) {
   const [state, dispatch] = useReducer(wizardReducer, {
     currentStep: 1,
     data: INITIAL_DATA,
@@ -307,6 +309,8 @@ export function ProjectWizard({ templates, onSubmit, onCancel, isSubmitting = fa
             onEdit={handlePrev}
             onPublish={handleSubmit}
             isPublishing={isSubmitting}
+            onSaveAsDraft={onSaveAsDraft ? () => onSaveAsDraft(data) : undefined}
+            isSavingDraft={isSavingDraft}
             reciprocityGate={reciprocityGate}
           />
         </div>
