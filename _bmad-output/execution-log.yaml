@@ -1,4 +1,13 @@
 workflows:
+  - id: "20260513-bart-QD-community-image-upload-url"
+    timestamp: "2026-05-13T00:00:00"
+    agent: "Bart (Quick Flow Solo Dev)"
+    trigger: "QD"
+    workflow: "quick-dev"
+    mode: "tech-spec"
+    result: "STARTED"
+    summary: "Implementar feature: imagen de comunidad con upload de archivo y descarga desde URL externa a Supabase Storage. Nuevo bucket community-images, SSRF protection, componente CommunityImageInput, endpoints POST/PATCH actualizados, UI en CommunityForm + settings."
+
   - id: "20260507-222200-edna-QA-13-8-interpretacion-contextual-proof-score"
     timestamp: "2026-05-07T22:22:00"
     agent: "Edna (QA)"

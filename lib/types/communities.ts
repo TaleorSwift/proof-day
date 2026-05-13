@@ -61,3 +61,26 @@ export interface CommunityMember {
   role: CommunityRole
   joined_at: string
 }
+
+// ── Community Image Storage ──────────────────────────────────────────────────
+
+export const COMMUNITY_IMAGES_BUCKET = 'community-images'
+
+export const COMMUNITY_IMAGE_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const
+
+export const COMMUNITY_IMAGE_MAX_SIZE = 5 * 1024 * 1024
+
+export interface CommunityImageValidationResult {
+  valid: boolean
+  error?: string
+}
+
+export function validateCommunityImageFile(file: File): CommunityImageValidationResult {
+  if (!COMMUNITY_IMAGE_ALLOWED_TYPES.includes(file.type as typeof COMMUNITY_IMAGE_ALLOWED_TYPES[number])) {
+    return { valid: false, error: 'Formato no válido. Usa JPG, PNG o WebP' }
+  }
+  if (file.size > COMMUNITY_IMAGE_MAX_SIZE) {
+    return { valid: false, error: 'La imagen no puede superar 5MB' }
+  }
+  return { valid: true }
+}

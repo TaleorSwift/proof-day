@@ -32,6 +32,30 @@ export async function createCommunity(data: CreateCommunityInput): Promise<Commu
   return (await res.json()).data
 }
 
+export async function updateCommunityImage(
+  communityId: string,
+  imageUrl: string | null,
+): Promise<{ id: string; imageUrl: string | null }> {
+  const res = await fetch(`/api/communities/${communityId}/image`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ imageUrl }),
+  })
+  if (!res.ok) {
+    let message = 'Error al actualizar la imagen'
+    let code = 'UNKNOWN_ERROR'
+    try {
+      const body = await res.json()
+      if (body?.error) message = body.error
+      if (body?.code) code = body.code
+    } catch {
+      // La respuesta de error no es JSON válido — usar mensaje genérico
+    }
+    throw new ApiError(message, code)
+  }
+  return (await res.json()).data
+}
+
 export async function getCommunities(): Promise<Community[]> {
   const res = await fetch('/api/communities')
   if (!res.ok) {

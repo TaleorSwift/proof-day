@@ -22,3 +22,10 @@ export const updateCommunitySettingsSchema = z.object({
 })
 
 export type UpdateCommunitySettingsInput = z.infer<typeof updateCommunitySettingsSchema>
+
+// Community image — acepta URL pública (Supabase o externa) o null para borrar
+export const updateCommunityImageSchema = z.object({
+  imageUrl: z.string().url('URL de imagen inválida').nullable(),
+})
+
+export type UpdateCommunityImageInput = z.infer<typeof updateCommunityImageSchema>

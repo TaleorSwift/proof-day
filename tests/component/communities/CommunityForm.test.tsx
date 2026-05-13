@@ -31,6 +31,17 @@ vi.mock('@/lib/api/communities', () => ({
   },
 }))
 
+vi.mock('@/lib/utils/communityImageUpload', () => ({
+  uploadCommunityImageToStorage: vi.fn(),
+}))
+
+vi.mock('@/lib/supabase/client', () => ({
+  createClient: vi.fn(() => ({
+    auth: { getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'user-001' } } }) },
+    storage: { from: vi.fn() },
+  })),
+}))
+
 import { CommunityForm } from '@/components/communities/CommunityForm'
 import { ApiError } from '@/lib/api/communities'
 
@@ -73,7 +84,9 @@ describe('CommunityForm — render', () => {
 
     expect(screen.getByLabelText(/Nombre/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/Descripción/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Imagen/i)).toBeInTheDocument()
+    // El campo de imagen ahora es CommunityImageInput con tabs "Subir archivo" y "Desde URL"
+    expect(screen.getByText('Subir archivo')).toBeInTheDocument()
+    expect(screen.getByText('Desde URL')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Crear comunidad/i })).toBeInTheDocument()
   })
 })

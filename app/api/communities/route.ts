@@ -3,6 +3,20 @@ import { createCommunitySchema } from '@/lib/validations/communities'
 import { requireAuth } from '@/lib/api/middleware/require-auth'
 import { createCommunitiesRepository } from '@/lib/repositories/communities.repository'
 import { createCommunitiesService } from '@/lib/services/communities.service'
+import { saveExternalImageToBucket } from '@/lib/utils/saveExternalImageToBucket'
+import { ImageFetchError } from '@/lib/utils/fetchExternalImage'
+
+function isOwnStorageUrl(url: string): boolean {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
+  if (!supabaseUrl) return false
+  try {
+    const parsed = new URL(url)
+    const base = new URL(supabaseUrl)
+    return parsed.origin === base.origin && parsed.pathname.startsWith('/storage/')
+  } catch {
+    return false
+  }
+}
 
 export async function GET() {
   const auth = await requireAuth()
@@ -74,7 +88,23 @@ export async function POST(request: Request) {
       { status: 400 }
     )
 
-  const { name, description, imageUrl } = parsed.data
+  const { name, description } = parsed.data
+  let { imageUrl } = parsed.data
+
+  // Si imageUrl es una URL externa (no de nuestro Storage), descargamos y guardamos
+  if (imageUrl && !isOwnStorageUrl(imageUrl)) {
+    try {
+      imageUrl = await saveExternalImageToBucket(imageUrl, user.id)
+    } catch (err) {
+      if (err instanceof ImageFetchError) {
+        return NextResponse.json({ error: err.message, code: err.code }, { status: 400 })
+      }
+      return NextResponse.json(
+        { error: 'Error al procesar la imagen', code: 'IMAGE_FETCH_FAILED' },
+        { status: 400 }
+      )
+    }
+  }
 
   const communitiesService = createCommunitiesService(supabase)
   const slugResult = await communitiesService.generateUniqueSlug(name)

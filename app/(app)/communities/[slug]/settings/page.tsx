@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { BackButton } from '@/components/shared/BackButton'
 import InvitationSection from '@/components/communities/InvitationSection'
 import ReciprocitySettings from '@/components/communities/ReciprocitySettings'
+import { CommunityImageSettings } from '@/components/communities/CommunityImageSettings'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -17,10 +18,9 @@ export default async function CommunitySettingsPage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Obtener comunidad por slug (Story 11.6: añadido reciprocity_threshold)
   const { data: community } = await supabase
     .from('communities')
-    .select('id, name, slug, reciprocity_threshold')
+    .select('id, name, slug, image_url, reciprocity_threshold')
     .eq('slug', slug)
     .single()
 
@@ -66,6 +66,12 @@ export default async function CommunitySettingsPage({ params }: Props) {
             Gestiona las opciones de tu comunidad
           </p>
         </div>
+
+        {/* Community Image Section */}
+        <CommunityImageSettings
+          communityId={community.id}
+          currentImageUrl={community.image_url ?? null}
+        />
 
         {/* Invitation Links Section */}
         <InvitationSection communityId={community.id} />

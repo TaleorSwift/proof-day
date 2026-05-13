@@ -90,13 +90,21 @@ export function createCommunitiesRepository(supabase: SupabaseClient) {
         .limit(1)
     },
 
-    // Story 11.6 — Actualiza la configuración de reciprocidad de una comunidad
     async updateSettings(communityId: string, data: { reciprocityThreshold: number }) {
       return supabase
         .from('communities')
         .update({ reciprocity_threshold: data.reciprocityThreshold })
         .eq('id', communityId)
         .select('id, reciprocity_threshold')
+        .single()
+    },
+
+    async updateImage(communityId: string, imageUrl: string | null) {
+      return supabase
+        .from('communities')
+        .update({ image_url: imageUrl })
+        .eq('id', communityId)
+        .select('id, image_url')
         .single()
     },
   }

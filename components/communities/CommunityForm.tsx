@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 import { createCommunity, ApiError } from '@/lib/api/communities'
 import { createCommunitySchema, type CreateCommunityInput } from '@/lib/validations/communities'
 import type { Community } from '@/lib/types/communities'
+import { CommunityImageInput } from './CommunityImageInput'
 
 interface CommunityFormProps {
   onSuccess?: (community: Community) => void
@@ -24,6 +25,8 @@ export function CommunityForm({ onSuccess }: CommunityFormProps) {
     register,
     handleSubmit,
     setError,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<CreateCommunityInput>({
     resolver: zodResolver(createCommunitySchema),
@@ -90,18 +93,14 @@ export function CommunityForm({ onSuccess }: CommunityFormProps) {
         )}
       </div>
 
-      {/* Imagen (URL externa, opcional) */}
+      {/* Imagen */}
       <div className="space-y-2">
-        <Label htmlFor="imageUrl" className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
-          Imagen <span className="text-sm font-normal" style={{ color: 'var(--color-text-muted)' }}>(URL externa, opcional)</span>
+        <Label className="text-sm font-medium" style={{ color: 'var(--color-text-primary)' }}>
+          Imagen <span className="text-sm font-normal" style={{ color: 'var(--color-text-muted)' }}>(opcional)</span>
         </Label>
-        <Input
-          id="imageUrl"
-          type="url"
-          placeholder="https://ejemplo.com/imagen.jpg"
-          aria-invalid={!!errors.imageUrl}
-          aria-describedby={errors.imageUrl ? 'imageUrl-error' : undefined}
-          {...register('imageUrl')}
+        <CommunityImageInput
+          value={watch('imageUrl') || null}
+          onChange={(url) => setValue('imageUrl', url ?? '', { shouldValidate: true })}
         />
         {errors.imageUrl && (
           <p id="imageUrl-error" className="text-sm text-destructive" role="alert">
