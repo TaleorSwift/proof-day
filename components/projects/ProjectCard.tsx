@@ -74,7 +74,8 @@ export function ProjectCard({
     )
   }
 
-  const imageSrc = project.imageUrls[0] ?? null
+  const rawSrc = project.imageUrls[0] ?? ''
+  const imageSrc = rawSrc.startsWith('http://') || rawSrc.startsWith('https://') ? rawSrc : null
   const builderLabel = project.builderName ?? project.builderId.slice(0, 8)
   const projectUrl = buildProjectUrl(communitySlug, project.slug)
   const description = project.tagline ?? project.problem
