@@ -281,6 +281,7 @@ function makeSupabaseMock(overrides: {
 }
 
 const defaultParams = Promise.resolve({ slug: 'producto-alpha', projectSlug: 'pulse-check' })
+const defaultSearchParams = Promise.resolve({})
 
 function setupDefaultRepos() {
   createFeedbackRepoMock.mockReturnValue({
@@ -311,13 +312,13 @@ describe('ProjectDetailPage 13.6 — AC1: historial visible con iteraciones', ()
   })
 
   it('renderiza IterationHistory cuando el proyecto tiene iteraciones', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.getByTestId('iteration-history-mock')).toBeInTheDocument()
   })
 
   it('pasa las iteraciones mapeadas a IterationHistory', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(mockIterationHistory).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -337,7 +338,7 @@ describe('ProjectDetailPage 13.6 — AC1: historial visible con iteraciones', ()
         feedbackCounts: feedbackCountRows,
       })
     )
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.getByTestId('iteration-history-mock')).toBeInTheDocument()
   })
@@ -363,13 +364,13 @@ describe('ProjectDetailPage 13.6 — AC1: historial oculto sin iteraciones', () 
   })
 
   it('NO renderiza IterationHistory cuando no hay iteraciones', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.queryByTestId('iteration-history-mock')).not.toBeInTheDocument()
   })
 
   it('pasa array vacío a IterationHistory cuando no hay iteraciones', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(mockIterationHistory).toHaveBeenCalledWith(
       expect.objectContaining({ iterations: [] })
@@ -425,7 +426,7 @@ describe('ProjectDetailPage 13.6 — AC3: Proof Score filtrado por iteración re
   })
 
   it('ProofScoreSidebar recibe feedbackCount de la iteración más reciente', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     // iter-2 es la más reciente; solo fb-001 tiene iteration_id: 'iter-2'
     // feedbackCount para el ProofScoreSidebar debe ser 1 (solo fb de iter-2)
@@ -485,7 +486,7 @@ describe('ProjectDetailPage 13.6 — AC3: sin iteraciones, Proof Score usa todos
   })
 
   it('ProofScoreSidebar recibe todos los feedbacks cuando no hay iteraciones', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     // Sin iteraciones: feedbackCount = 2 (todos los feedbacks)
     expect(mockProofScoreSidebar).toHaveBeenCalledWith(

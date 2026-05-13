@@ -193,7 +193,7 @@ describe('EditProjectPage — AC-3: proyecto live → redirect al detalle', () =
   it('redirige al detalle cuando el proyecto tiene status live', async () => {
     await expect(EditProjectPage({ params: defaultParams })).rejects.toThrow('NEXT_REDIRECT')
     expect(mockRedirect).toHaveBeenCalledWith(
-      `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_SLUG}`
+      `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_SLUG}?error=not-editable`
     )
   })
 })
@@ -212,7 +212,7 @@ describe('EditProjectPage — AC-3b: proyecto inactive → redirect al detalle',
   it('redirige al detalle cuando el proyecto tiene status inactive', async () => {
     await expect(EditProjectPage({ params: defaultParams })).rejects.toThrow('NEXT_REDIRECT')
     expect(mockRedirect).toHaveBeenCalledWith(
-      `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_SLUG}`
+      `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_SLUG}?error=not-editable`
     )
   })
 })

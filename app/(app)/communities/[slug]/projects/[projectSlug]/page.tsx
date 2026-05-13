@@ -32,14 +32,16 @@ import { IterationHistory } from '@/components/projects/IterationHistory'
 
 interface Props {
   params: Promise<{ slug: string; projectSlug: string }>
+  searchParams: Promise<{ error?: string }>
 }
 
 // ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
-export default async function ProjectPage({ params }: Props) {
+export default async function ProjectPage({ params, searchParams }: Props) {
   const { slug, projectSlug } = await params
+  const { error: errorParam } = await searchParams
   const supabase = await createClient()
 
   const { data: authData, error: authError } = await supabase.auth.getUser()
@@ -180,6 +182,22 @@ export default async function ProjectPage({ params }: Props) {
             label="Volver al feed"
           />
         </div>
+
+        {errorParam === 'not-editable' && (
+          <div
+            role="alert"
+            style={{
+              backgroundColor: 'var(--color-hypothesis-bg)',
+              border: '1px solid var(--color-hypothesis-border)',
+              borderRadius: 'var(--radius-md)',
+              padding: 'var(--space-4)',
+              fontSize: 'var(--text-sm)',
+              color: 'var(--color-text-primary)',
+            }}
+          >
+            Este proyecto ya está publicado y no puede editarse.
+          </div>
+        )}
 
         {/* AC-6: Banner draft — visible para cualquier miembro que acceda al proyecto en estado draft */}
         {project.status === 'draft' && <DraftBanner />}

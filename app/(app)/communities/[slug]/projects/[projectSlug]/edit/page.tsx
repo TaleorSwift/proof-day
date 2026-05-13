@@ -37,7 +37,7 @@ export default async function EditProjectPage({ params }: Props) {
   if (typedProject.builder_id !== authData.user.id) redirect(`/communities/${slug}/projects/${projectSlug}`)
 
   // Solo se puede editar en estado draft
-  if (typedProject.status !== 'draft') redirect(`/communities/${slug}/projects/${projectSlug}`)
+  if (typedProject.status !== 'draft') redirect(`/communities/${slug}/projects/${projectSlug}?error=not-editable`)
 
   return (
     <main

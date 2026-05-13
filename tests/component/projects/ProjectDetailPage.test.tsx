@@ -239,6 +239,7 @@ const makeSupabaseMock = (overrides: {
 }
 
 const defaultParams = Promise.resolve({ slug: 'producto-alpha', projectSlug: 'pulse-check' })
+const defaultSearchParams = Promise.resolve({})
 
 // ---------------------------------------------------------------------------
 // Setup común de repos
@@ -273,7 +274,7 @@ describe('ProjectPage — AC-1: no autenticado → redirect /login', () => {
   })
 
   it('llama a redirect("/login") cuando no hay sesión', async () => {
-    await expect(ProjectPage({ params: defaultParams })).rejects.toThrow('NEXT_REDIRECT')
+    await expect(ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })).rejects.toThrow('NEXT_REDIRECT')
     expect(mockRedirect).toHaveBeenCalledWith('/login')
   })
 })
@@ -298,7 +299,7 @@ describe('ProjectPage — AC-2: comunidad no existe → notFound()', () => {
   })
 
   it('llama a notFound() cuando la comunidad no existe', async () => {
-    await expect(ProjectPage({ params: defaultParams })).rejects.toThrow('NEXT_NOT_FOUND')
+    await expect(ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })).rejects.toThrow('NEXT_NOT_FOUND')
     expect(mockNotFound).toHaveBeenCalledTimes(1)
   })
 })
@@ -323,7 +324,7 @@ describe('ProjectPage — AC-3: proyecto no existe → notFound()', () => {
   })
 
   it('llama a notFound() cuando el proyecto no existe', async () => {
-    await expect(ProjectPage({ params: defaultParams })).rejects.toThrow('NEXT_NOT_FOUND')
+    await expect(ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })).rejects.toThrow('NEXT_NOT_FOUND')
     expect(mockNotFound).toHaveBeenCalledTimes(1)
   })
 })
@@ -345,25 +346,25 @@ describe('ProjectPage — AC-4: isOwner = true → sidebar de owner', () => {
   })
 
   it('renderiza FeedbackList cuando el usuario es el builder', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.getByTestId('feedback-list')).toBeInTheDocument()
   })
 
   it('renderiza ProjectStateActions cuando el usuario es el builder', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.getByTestId('project-state-actions')).toBeInTheDocument()
   })
 
   it('NO renderiza FeedbackFormInline cuando el usuario es el builder', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.queryByTestId('feedback-form-inline')).not.toBeInTheDocument()
   })
 
   it('pasa isBuilder: true a ProjectStateActions', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(mockProjectStateActions).toHaveBeenCalledWith(
       expect.objectContaining({ isBuilder: true })
@@ -371,7 +372,7 @@ describe('ProjectPage — AC-4: isOwner = true → sidebar de owner', () => {
   })
 
   it('pasa isBuilder: true a ProofScoreSidebar', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(mockProofScoreSidebar).toHaveBeenCalledWith(
       expect.objectContaining({ isBuilder: true })
@@ -379,7 +380,7 @@ describe('ProjectPage — AC-4: isOwner = true → sidebar de owner', () => {
   })
 
   it('pasa isBuilder: true a FeedbackList', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(mockFeedbackList).toHaveBeenCalledWith(
       expect.objectContaining({ isBuilder: true })
@@ -404,19 +405,19 @@ describe('ProjectPage — AC-5: isOwner = false → sidebar de reviewer (live)',
   })
 
   it('renderiza FeedbackFormInline cuando el usuario NO es el builder y el proyecto es live', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.getByTestId('feedback-form-inline')).toBeInTheDocument()
   })
 
   it('NO renderiza FeedbackList cuando el usuario NO es el builder', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.queryByTestId('feedback-list')).not.toBeInTheDocument()
   })
 
   it('NO renderiza ProjectStateActions cuando el usuario NO es el builder', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.queryByTestId('project-state-actions')).not.toBeInTheDocument()
   })
@@ -444,26 +445,26 @@ describe('ProjectPage — AC-6: proyecto draft + non-owner', () => {
   })
 
   it('renderiza DraftBanner cuando el proyecto está en borrador', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(mockDraftBanner).toHaveBeenCalled()
   })
 
   it('NO renderiza FeedbackFormInline para reviewer en proyecto draft (sidebar oculta)', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     // showSidebar = isOwner || live || inactive → false para non-owner + draft
     expect(screen.queryByTestId('feedback-form-inline')).not.toBeInTheDocument()
   })
 
   it('NO renderiza ValidationSignalCard para non-owner en proyecto draft (sidebar oculta)', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.queryByTestId('validation-signal-card')).not.toBeInTheDocument()
   })
 
   it('NO llama a redirect ni notFound para non-owner en draft (no hay protección de ruta)', async () => {
-    await ProjectPage({ params: defaultParams })
+    await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     expect(mockRedirect).not.toHaveBeenCalled()
     expect(mockNotFound).not.toHaveBeenCalled()
   })
@@ -484,7 +485,7 @@ describe('ProjectPage — AC-7: happy path renderiza estructura base', () => {
   })
 
   it('renderiza BackButton con href a la comunidad', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     const btn = screen.getByTestId('back-button')
     expect(btn).toBeInTheDocument()
@@ -492,7 +493,7 @@ describe('ProjectPage — AC-7: happy path renderiza estructura base', () => {
   })
 
   it('NO llama a redirect ni notFound en happy path', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(mockRedirect).not.toHaveBeenCalled()
     expect(mockNotFound).not.toHaveBeenCalled()
@@ -553,7 +554,7 @@ describe('ProjectPage — AC-8: métricas de validación calculadas correctament
   })
 
   it('ValidationSignalCard recibe understandPercent y wouldUsePercent calculados por la implementación real', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
 
     expect(mockValidationSignalCard).toHaveBeenCalledWith(
@@ -566,7 +567,7 @@ describe('ProjectPage — AC-8: métricas de validación calculadas correctament
   })
 
   it('ValidationSignalCard se renderiza en el DOM para el reviewer en proyecto live', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.getByTestId('validation-signal-card')).toBeInTheDocument()
   })
@@ -595,25 +596,25 @@ describe('ProjectPage — AC-9: proyecto inactive + non-owner', () => {
   })
 
   it('reviewer ve mensaje "Esta idea ya no acepta feedback."', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.getByText('Esta idea ya no acepta feedback.')).toBeInTheDocument()
   })
 
   it('NO renderiza FeedbackFormInline para reviewer en proyecto inactive', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.queryByTestId('feedback-form-inline')).not.toBeInTheDocument()
   })
 
   it('renderiza InactiveBanner cuando el proyecto está inactivo', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(mockInactiveBanner).toHaveBeenCalled()
   })
 
   it('renderiza ValidationSignalCard para reviewer en proyecto inactive', async () => {
-    const jsx = await ProjectPage({ params: defaultParams })
+    const jsx = await ProjectPage({ params: defaultParams, searchParams: defaultSearchParams })
     render(jsx as React.ReactElement)
     expect(screen.getByTestId('validation-signal-card')).toBeInTheDocument()
     expect(mockValidationSignalCard).toHaveBeenCalledWith(
