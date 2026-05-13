@@ -176,14 +176,11 @@ describe('EditProjectPage — AC-2: non-owner → redirect a la página del proy
 })
 
 // ---------------------------------------------------------------------------
-// AC-3: Proyecto no-draft → notFound()
+// AC-3: Proyecto no-draft → redirect al detalle del proyecto
 // ---------------------------------------------------------------------------
 
-describe('EditProjectPage — AC-3: proyecto no-draft → notFound()', () => {
+describe('EditProjectPage — AC-3: proyecto live → redirect al detalle', () => {
   beforeEach(() => {
-    mockNotFound.mockImplementation(() => {
-      throw new Error('NEXT_NOT_FOUND')
-    })
     createClientMock.mockResolvedValue(
       makeSupabaseMock({ project: { ...defaultProject, status: 'live' } })
     )
@@ -193,17 +190,16 @@ describe('EditProjectPage — AC-3: proyecto no-draft → notFound()', () => {
     vi.clearAllMocks()
   })
 
-  it('llama a notFound() cuando el proyecto tiene status live', async () => {
-    await expect(EditProjectPage({ params: defaultParams })).rejects.toThrow('NEXT_NOT_FOUND')
-    expect(mockNotFound).toHaveBeenCalledTimes(1)
+  it('redirige al detalle cuando el proyecto tiene status live', async () => {
+    await expect(EditProjectPage({ params: defaultParams })).rejects.toThrow('NEXT_REDIRECT')
+    expect(mockRedirect).toHaveBeenCalledWith(
+      `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_SLUG}`
+    )
   })
 })
 
-describe('EditProjectPage — AC-3b: proyecto inactive → notFound()', () => {
+describe('EditProjectPage — AC-3b: proyecto inactive → redirect al detalle', () => {
   beforeEach(() => {
-    mockNotFound.mockImplementation(() => {
-      throw new Error('NEXT_NOT_FOUND')
-    })
     createClientMock.mockResolvedValue(
       makeSupabaseMock({ project: { ...defaultProject, status: 'inactive' } })
     )
@@ -213,9 +209,11 @@ describe('EditProjectPage — AC-3b: proyecto inactive → notFound()', () => {
     vi.clearAllMocks()
   })
 
-  it('llama a notFound() cuando el proyecto tiene status inactive', async () => {
-    await expect(EditProjectPage({ params: defaultParams })).rejects.toThrow('NEXT_NOT_FOUND')
-    expect(mockNotFound).toHaveBeenCalledTimes(1)
+  it('redirige al detalle cuando el proyecto tiene status inactive', async () => {
+    await expect(EditProjectPage({ params: defaultParams })).rejects.toThrow('NEXT_REDIRECT')
+    expect(mockRedirect).toHaveBeenCalledWith(
+      `/communities/${COMMUNITY_SLUG}/projects/${PROJECT_SLUG}`
+    )
   })
 })
 
