@@ -1,5 +1,6 @@
 -- Story 10.1: Seed de 5 tipos de project_templates (Phase 2)
--- Idempotente gracias a ON CONFLICT (type) DO UPDATE
+-- Nota: datos de configuración en migración (no en seed.sql) porque deben llegar a producción
+-- vía supabase db push. ON CONFLICT DO UPDATE hace la operación idempotente.
 INSERT INTO project_templates (type, name, description_structure, reviewer_context)
 VALUES
   (
