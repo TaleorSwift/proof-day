@@ -9,7 +9,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 const mockMaybeSingle = vi.fn()
 const mockInsert = vi.fn()
-const mockSelectNotifications = vi.fn()
 const mockSelectAdmins = vi.fn()
 
 // La query de deduplicación en notifications es:

@@ -87,10 +87,6 @@ const MOCK_TEMPLATE_ROWS = [
   },
 ]
 
-function buildGetRequest(): Request {
-  return new Request('http://localhost/api/templates')
-}
-
 function mockAuthOk() {
   requireAuthMock.mockResolvedValue({ user: MOCK_USER, supabase: supabaseMock, error: null })
 }

@@ -73,19 +73,6 @@ function mockAuthOk() {
   requireAuthMock.mockResolvedValue({ user: MOCK_USER, supabase: supabaseMock, error: null })
 }
 
-function buildFeedbackRow(qualityScore: number) {
-  return {
-    id: 'fb-001',
-    project_id: VALID_BODY.projectId,
-    reviewer_id: MOCK_USER.id,
-    community_id: VALID_BODY.communityId,
-    scores: VALID_BODY.scores,
-    text_responses: VALID_BODY.textResponses,
-    created_at: '2026-01-01T00:00:00Z',
-    custom_answer: null,
-    quality_score: qualityScore,
-  }
-}
 
 // ---------------------------------------------------------------------------
 // T2.1 — body válido con 200 chars → quality_score calculado = 1.0

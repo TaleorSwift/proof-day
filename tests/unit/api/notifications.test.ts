@@ -88,12 +88,6 @@ function makeSelectChain<T>(result: ChainResult<T>) {
   }
 }
 
-function makeUpdateChain<T>(result: ChainResult<T>) {
-  return {
-    update: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockResolvedValue(result),
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Setup — restaurar mocks entre tests

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { createFeedbackReminderService } from '@/lib/services/feedbackReminder.service'
 
 // ---------------------------------------------------------------------------
@@ -6,61 +6,6 @@ import { createFeedbackReminderService } from '@/lib/services/feedbackReminder.s
 // Story 11.4 — AC-3, AC-4, AC-5, AC-6
 // TDD Outside-In: T2.5, T3.3, T4.2
 // ---------------------------------------------------------------------------
-
-// ---------------------------------------------------------------------------
-// Builder de mock de Supabase
-// ---------------------------------------------------------------------------
-
-function buildSupabaseMock(overrides: Record<string, unknown> = {}) {
-  const defaultFromChain = {
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    gte: vi.fn().mockReturnThis(),
-    contains: vi.fn().mockReturnThis(),
-    maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
-    insert: vi.fn().mockResolvedValue({ data: null, error: null }),
-    single: vi.fn().mockResolvedValue({ data: null, error: null }),
-  }
-
-  return {
-    from: vi.fn().mockReturnValue({ ...defaultFromChain, ...overrides }),
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Helpers para construir chains con datos específicos
-// ---------------------------------------------------------------------------
-
-interface SupabaseChain {
-  select: ReturnType<typeof vi.fn>
-  eq: ReturnType<typeof vi.fn>
-  gte: ReturnType<typeof vi.fn>
-  contains: ReturnType<typeof vi.fn>
-  maybeSingle: ReturnType<typeof vi.fn>
-  insert: ReturnType<typeof vi.fn>
-  single: ReturnType<typeof vi.fn>
-}
-
-function buildProjectsChain(projects: unknown[]): SupabaseChain {
-  const chain = {
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    gte: vi.fn().mockReturnThis(),
-    contains: vi.fn().mockReturnThis(),
-    maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
-    insert: vi.fn().mockResolvedValue({ data: null, error: null }),
-    single: vi.fn().mockResolvedValue({ data: null, error: null }),
-  }
-  // La última llamada de la cadena de proyectos resuelve con la lista
-  chain.eq.mockImplementationOnce(() => ({
-    ...chain,
-    // Simula que el select con .eq('status','live') resuelve a los proyectos
-    then: (resolve: (v: unknown) => void) =>
-      resolve({ data: projects, error: null }),
-    [Symbol.asyncIterator]: undefined,
-  }))
-  return chain
-}
 
 // ---------------------------------------------------------------------------
 // Estrategia de mock: factory de supabase con comportamiento por tabla

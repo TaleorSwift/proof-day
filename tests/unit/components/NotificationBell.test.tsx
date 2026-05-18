@@ -8,7 +8,7 @@
 // - click en notificación con projectSlug y communitySlug navega a la ruta
 
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
-import { render, screen, waitFor, fireEvent } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 
@@ -81,14 +81,6 @@ function mockFetchSuccess(data: unknown) {
   return vi.spyOn(global, 'fetch').mockResolvedValueOnce({
     ok: true,
     json: async () => ({ data }),
-  } as Response)
-}
-
-function mockFetchError(status: number) {
-  return vi.spyOn(global, 'fetch').mockResolvedValueOnce({
-    ok: false,
-    status,
-    json: async () => ({ error: 'Error' }),
   } as Response)
 }
 

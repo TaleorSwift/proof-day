@@ -28,7 +28,6 @@ function buildResponse(options: {
   body?: string | Uint8Array
 }): Response {
   const {
-    ok = true,
     status = 200,
     contentType = 'image/jpeg',
     body = 'fake-image-data',

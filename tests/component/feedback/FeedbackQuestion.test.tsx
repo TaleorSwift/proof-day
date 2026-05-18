@@ -4,7 +4,6 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 import { FeedbackQuestion } from '@/components/feedback/FeedbackQuestion'
-import type { FeedbackScore } from '@/lib/types/feedback'
 
 // ---------------------------------------------------------------------------
 // Fixtures

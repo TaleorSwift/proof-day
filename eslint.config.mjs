@@ -23,6 +23,8 @@ const eslintConfig = [
     "_bmad/**",
     "_bmad-output/**",
     ".claude/**",
+    "playwright-report/**",
+    "test-results/**",
     // next-env.d.ts es generado por Next.js — usa triple-slash reference necesario
     "next-env.d.ts",
     // app/auth/confirm/route.ts es el template oficial de Supabase Next.js.

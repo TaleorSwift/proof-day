@@ -7,37 +7,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 // Mock del módulo de Supabase para service role
 const mockFrom = vi.fn()
-const mockSelect = vi.fn()
-const mockEq = vi.fn()
-const mockSingle = vi.fn()
-const mockUpdate = vi.fn()
-const mockInsert = vi.fn()
-const mockRpc = vi.fn()
-
-// Cadena de mocks para Supabase query builder
-const buildSelectChain = (resolvedValue: unknown) => {
-  const chain = {
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    single: vi.fn().mockResolvedValue(resolvedValue),
-  }
-  return chain
-}
-
-const buildUpdateChain = (resolvedValue: unknown) => {
-  const chain = {
-    update: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockResolvedValue(resolvedValue),
-  }
-  return chain
-}
-
-const buildInsertChain = (resolvedValue: unknown) => {
-  const chain = {
-    insert: vi.fn().mockResolvedValue(resolvedValue),
-  }
-  return chain
-}
 
 vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => ({

@@ -112,7 +112,7 @@ describe('GET /api/gamification/feedback-count', () => {
     mockAuth()
 
     let callCount = 0
-    supabaseMock.from.mockImplementation((table: string) => {
+    supabaseMock.from.mockImplementation(() => {
       callCount++
       if (callCount === 1) {
         // Primera llamada: verificación de membresía
@@ -201,7 +201,7 @@ describe('GET /api/gamification/top-reviewer', () => {
     mockAuth()
 
     let callCount = 0
-    supabaseMock.from.mockImplementation((table: string) => {
+    supabaseMock.from.mockImplementation(() => {
       callCount++
       if (callCount === 1) return mockMembershipOk()
       // feedbacks: array vacío
@@ -233,10 +233,10 @@ describe('GET /api/gamification/top-reviewer', () => {
     const mockProfile = { id: 'user-A', name: 'Ana García', avatar_url: null }
 
     let callCount = 0
-    supabaseMock.from.mockImplementation((table: string) => {
+    supabaseMock.from.mockImplementation((_table: string) => {
       callCount++
       if (callCount === 1) return mockMembershipOk()
-      if (table === 'feedbacks') {
+      if (_table === 'feedbacks') {
         return {
           select: vi.fn().mockReturnValue({
             eq: vi.fn().mockReturnValue({
@@ -245,7 +245,7 @@ describe('GET /api/gamification/top-reviewer', () => {
           }),
         }
       }
-      if (table === 'profiles') {
+      if (_table === 'profiles') {
         return {
           select: vi.fn().mockReturnValue({
             eq: vi.fn().mockReturnValue({

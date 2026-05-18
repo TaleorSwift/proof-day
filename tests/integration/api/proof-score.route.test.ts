@@ -135,9 +135,7 @@ describe('GET /api/proof-score/[projectId]', () => {
   it('retorna 500 cuando Supabase falla al obtener los feedbacks', async () => {
     mockAuth()
 
-    let callCount = 0
     supabaseMock.from.mockImplementation((table: string) => {
-      callCount++
       if (table === 'projects') {
         return {
           select: vi.fn().mockReturnValue({

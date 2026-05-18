@@ -116,7 +116,6 @@ describe('POST /api/communities/[communityId]/invitations', () => {
       created_by: MOCK_USER.id,
     }
 
-    let callCount = 0
     supabaseMock.from.mockImplementation((table: string) => {
       if (table === 'community_members') {
         return {

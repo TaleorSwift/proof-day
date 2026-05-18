@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { NextResponse } from 'next/server'
 
 // ---------------------------------------------------------------------------
 // Mocks hoisted
@@ -58,7 +59,6 @@ function mockAuthOk() {
 }
 
 function mockAuthFail() {
-  const { NextResponse } = require('next/server')
   const errorResponse = NextResponse.json({ error: 'No autenticado', code: 'AUTH_REQUIRED' }, { status: 401 })
   requireAuthMock.mockResolvedValue({ user: null, supabase: null, error: errorResponse })
 }

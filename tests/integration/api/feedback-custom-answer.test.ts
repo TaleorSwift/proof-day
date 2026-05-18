@@ -84,10 +84,6 @@ function mockAuthOk() {
   requireAuthMock.mockResolvedValue({ user: MOCK_USER, supabase: supabaseMock, error: null })
 }
 
-function getFeedbackRepoInstance() {
-  return createFeedbackRepositoryMock.mock.results[0]?.value
-}
-
 // ---------------------------------------------------------------------------
 // T4.1: body con customAnswer → repo.create recibe customAnswer
 // ---------------------------------------------------------------------------

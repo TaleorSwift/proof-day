@@ -233,18 +233,20 @@ describe('ProjectForm — AC-3: submit modo editar', () => {
     })
   })
 
-  it('llama router.refresh() tras un submit exitoso en modo editar', async () => {
+  it('llama router.push() al detalle tras un submit exitoso en modo editar', async () => {
     const user = userEvent.setup()
     renderModoEditar()
 
     await user.click(screen.getByRole('button', { name: /guardar cambios/i }))
 
     await waitFor(() => {
-      expect(mockRouterRefresh).toHaveBeenCalledTimes(1)
+      expect(mockRouterPush).toHaveBeenCalledWith(
+        `/communities/${COMMUNITY_SLUG}/projects/${defaultProject.slug}`
+      )
     })
   })
 
-  it('NO llama router.push() en modo editar (solo refresh)', async () => {
+  it('NO llama router.refresh() en modo editar (solo push)', async () => {
     const user = userEvent.setup()
     renderModoEditar()
 
@@ -253,7 +255,7 @@ describe('ProjectForm — AC-3: submit modo editar', () => {
     await waitFor(() => {
       expect(mockUpdateProject).toHaveBeenCalled()
     })
-    expect(mockRouterPush).not.toHaveBeenCalled()
+    expect(mockRouterRefresh).not.toHaveBeenCalled()
   })
 })
 

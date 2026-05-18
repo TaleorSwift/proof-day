@@ -12,8 +12,6 @@ import { createProjectsRepository } from '@/lib/repositories/projects.repository
 // ---------------------------------------------------------------------------
 
 function buildSupabaseMock() {
-  const chain: Record<string, unknown> = {}
-
   const fluent = {
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),

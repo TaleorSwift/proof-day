@@ -83,9 +83,7 @@ describe('GET /api/profiles/[id]', () => {
   it('retorna 200 con el perfil propio sin verificar comunidades compartidas', async () => {
     mockAuth()
 
-    let fromCallCount = 0
     supabaseMock.from.mockImplementation((table: string) => {
-      fromCallCount++
       if (table === 'profiles') {
         return {
           select: vi.fn().mockReturnValue({
@@ -192,7 +190,6 @@ describe('GET /api/profiles/[id]', () => {
     mockAuth()
 
     let profileCalled = false
-    let countCalls = 0
     supabaseMock.from.mockImplementation((table: string) => {
       if (table === 'profiles' && !profileCalled) {
         profileCalled = true
@@ -204,7 +201,6 @@ describe('GET /api/profiles/[id]', () => {
           }),
         }
       }
-      countCalls++
       const countValue = table === 'feedbacks' ? 5 : 2
       return {
         select: vi.fn().mockReturnValue({

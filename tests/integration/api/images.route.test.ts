@@ -180,7 +180,7 @@ describe('POST /api/projects/[id]/images', () => {
     mockAuth()
 
     let fromCallCount = 0
-    supabaseMock.from.mockImplementation((table: string) => {
+    supabaseMock.from.mockImplementation(() => {
       fromCallCount++
       if (fromCallCount === 1) return mockProjectFound()
       // Segunda llamada: update image_urls
