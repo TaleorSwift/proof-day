@@ -57,7 +57,7 @@ jobs:
           curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v8.27.2/gitleaks_8.27.2_linux_x64.tar.gz" | tar -xz
           sudo mv gitleaks /usr/local/bin/
       - name: Run Gitleaks
-        run: gitleaks detect --source . --no-git --verbose
+        run: gitleaks detect --source . --no-git --verbose --config .gitleaks.toml
 
   semgrep:
     name: Semgrep — SAST

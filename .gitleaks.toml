@@ -1,0 +1,13 @@
+title = "Gitleaks config — Proof Day"
+
+[allowlist]
+description = "Directorios y archivos generados que no contienen secretos reales"
+paths = [
+  '''node_modules''',
+  '''\.next''',
+  '''storybook-static''',
+  '''playwright-report''',
+  '''test-results''',
+  '''\.cache''',
+  '''coverage''',
+]
