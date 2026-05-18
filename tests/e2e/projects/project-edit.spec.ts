@@ -67,14 +67,13 @@ test.describe('ProjectEdit — /edit page (flujo de edición)', () => {
 
       await page.getByRole('button', { name: /guardar cambios/i }).click()
 
-      // Esperar señal de éxito: el botón vuelve a estar habilitado (submit terminó)
-      await expect(page.getByRole('button', { name: /guardar cambios/i })).not.toBeDisabled({ timeout: 5_000 })
-      // Verificar que no hay alertas de validación del formulario (excluye el route announcer de Next.js)
-      await expect(page.locator('p[role="alert"]')).not.toBeVisible()
+      // Tras guardar, redirige al detalle del proyecto (toast + redirect)
+      await expect(page).not.toHaveURL(/\/edit/, { timeout: 5_000 })
+      await expect(page).toHaveURL(/\/communities\/producto-alpha\/projects\/e2e-draft-project/)
 
-      // Recargar para confirmar persistencia real (evita falsos positivos con cache stale de router.refresh)
+      // Recargar para confirmar persistencia real
       await page.reload()
-      await expect(page.getByLabel(/usuario objetivo/i)).toHaveValue(newValue)
+      await expect(page.getByText(newValue)).toBeVisible()
     }
   )
 

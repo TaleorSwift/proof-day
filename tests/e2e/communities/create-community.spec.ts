@@ -93,11 +93,27 @@ test.describe('Crear comunidad — usuario autenticado', () => {
   })
 
   test('crea comunidad con imageUrl válida y redirige fuera de /communities/new', async ({ page }) => {
+    // La API descarga imágenes externas con redirect:error — mockeamos el POST para validar
+    // solo el comportamiento del frontend (tab URL → API call → redirect a /communities).
     const nameWithImage = `Comunidad Imagen ${Date.now()}`
+    await page.route('**/api/communities', async (route, request) => {
+      if (request.method() === 'POST') {
+        await route.fulfill({
+          status: 201,
+          contentType: 'application/json',
+          body: JSON.stringify({ data: { id: 'mock-id', slug: 'mock-slug', name: nameWithImage } }),
+        })
+      } else {
+        await route.continue()
+      }
+    })
+
     await page.goto('/communities/new')
     await page.getByLabel('Nombre').fill(nameWithImage)
     await page.getByLabel('Descripción').fill('Comunidad con imagen de portada')
-    await page.getByLabel('Imagen').fill('https://picsum.photos/200')
+    await page.getByRole('button', { name: 'Desde URL' }).click()
+    await page.getByLabel('URL de imagen externa').fill('https://picsum.photos/200')
+    await page.getByRole('button', { name: 'Usar URL' }).click()
     await page.getByRole('button', { name: 'Crear comunidad' }).click()
 
     // Redirige — la URL ya no es /communities/new
@@ -108,10 +124,11 @@ test.describe('Crear comunidad — usuario autenticado', () => {
     await page.goto('/communities/new')
     await page.getByLabel('Nombre').fill('Comunidad URL Inválida')
     await page.getByLabel('Descripción').fill('Descripción válida para este test')
-    await page.getByLabel('Imagen').fill('esto-no-es-una-url')
-    await page.getByRole('button', { name: 'Crear comunidad' }).click()
+    await page.getByRole('button', { name: 'Desde URL' }).click()
+    await page.getByLabel('URL de imagen externa').fill('esto-no-es-una-url')
+    await page.getByRole('button', { name: 'Usar URL' }).click()
 
-    await expect(page.getByText('URL de imagen inválida')).toBeVisible()
+    await expect(page.getByText('URL inválida')).toBeVisible()
     await expect(page).toHaveURL(/\/communities\/new/)
   })
 

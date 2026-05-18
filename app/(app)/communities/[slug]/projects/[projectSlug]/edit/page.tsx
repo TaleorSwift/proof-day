@@ -36,6 +36,9 @@ export default async function EditProjectPage({ params }: Props) {
   // Solo el builder puede editar su proyecto
   if (typedProject.builder_id !== authData.user.id) redirect(`/communities/${slug}/projects/${projectSlug}`)
 
+  // Solo se pueden editar proyectos en estado draft
+  if (typedProject.status !== 'draft') notFound()
+
   return (
     <main
       style={{
