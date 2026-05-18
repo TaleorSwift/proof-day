@@ -53,7 +53,7 @@ import { POST } from '@/app/api/cron/feedback-reminder/route'
 // Fixtures
 // ---------------------------------------------------------------------------
 
-const VALID_SECRET = 'test-cron-secret-abc123'
+const VALID_SECRET = 'test-cron-secret-abc123' // gitleaks:allow
 
 function buildRequest(authHeader?: string): Request {
   const headers: Record<string, string> = {
