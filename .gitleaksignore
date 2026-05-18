@@ -1,0 +1,5 @@
+# Fingerprints de falsos positivos verificados
+# Formato: <commit>:<file>:<rule>:<line>
+
+# VALID_SECRET en feedback-reminder.test.ts es un fixture de test, no un secreto real
+b2991b44aeb809110804b73d837e9caaea8dbaa6:tests/integration/cron/feedback-reminder.test.ts:generic-api-key:56
