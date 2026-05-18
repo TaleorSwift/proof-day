@@ -17,7 +17,7 @@ export async function GET() {
     .order('name')
 
   if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: 'Error al obtener templates' }, { status: 500 })
 
-  return NextResponse.json({ data: (data as ProjectTemplateRow[]).map(templateFromRow) })
+  return NextResponse.json({ data: ((data ?? []) as ProjectTemplateRow[]).map(templateFromRow) })
 }

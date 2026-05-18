@@ -1,5 +1,7 @@
 // Story 10.1 — Tipos para project_templates (Phase 2)
 
+export type TemplateType = 'saas' | 'feature' | 'internal_process' | 'physical_product' | 'service'
+
 export interface FieldConfig {
   placeholder: string
   example: string
@@ -13,7 +15,7 @@ export interface DescriptionStructure {
 /** Dominio (camelCase) */
 export interface ProjectTemplate {
   id: string
-  type: string
+  type: TemplateType
   name: string
   descriptionStructure: DescriptionStructure
   reviewerContext: string
@@ -23,7 +25,7 @@ export interface ProjectTemplate {
 /** Row tal como lo devuelve Supabase (snake_case) */
 export interface ProjectTemplateRow {
   id: string
-  type: string
+  type: TemplateType
   name: string
   description_structure: DescriptionStructure
   reviewer_context: string

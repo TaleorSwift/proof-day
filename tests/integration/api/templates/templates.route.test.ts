@@ -158,6 +158,6 @@ describe('GET /api/templates', () => {
     const body = await res.json()
 
     expect(res.status).toBe(500)
-    expect(body.error).toBeDefined()
+    expect(body.error).toBe('Error al obtener templates')
   })
 })
