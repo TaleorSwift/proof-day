@@ -1,4 +1,29 @@
 workflows:
+  - id: "20260519-homer-DS-fix-auth-confirm-cr-followup-closing"
+    timestamp: "2026-05-19T23:15:00"
+    agent: "Homer (Developer)"
+    trigger: "DS"
+    workflow: "dev-story"
+    mode: "REFINE"
+    result: "SUCCESS"
+    story: "fix/auth-confirm-anti-scanner-page"
+    branch: "fix/auth-confirm-anti-scanner-page"
+    commit: "b459cf5"
+    pr: "129"
+    artifacts:
+      - ".github/workflows/deploy.yml (MODIFIED — Node 20→24, vercel@50→@54)"
+      - "tests/component/auth/confirmPage.test.tsx (MODIFIED — assertion verifyOtp AC1)"
+      - "stories/auth/ConfirmPage.stories.tsx (MODIFIED — variante MissingParams añadida)"
+      - "docs/project/modules/auth.md (MODIFIED — secciones Tests+Storybook actualizadas)"
+      - "components/auth/ConfirmButton.tsx (MODIFIED — cast EmailOtpType eliminado)"
+      - "_bmad-output/implementation-artifacts/tech-spec-fix-auth-confirm-anti-scanner-page.md (MODIFIED — ruta test corregida)"
+      - "tsconfig.json (MODIFIED — jsx preserve→react-jsx)"
+    tests: "1938 passed, 0 failed. Lint: 0 errors."
+    findings_resolved:
+      high: ["H1: deploy.yml Node24+vercel@54", "H2: tech-spec ruta test corregida"]
+      medium: ["M1: verifyOtp assertion AC1", "M2: MissingParams story", "M3: auth.md Tests+Storybook", "M4: cast EmailOtpType eliminado"]
+    summary: "Todos los findings CR resueltos. PR #129 actualizado — listo para re-CR."
+
   - id: "20260519-homer-DS-fix-auth-confirm-cr-followup-started"
     timestamp: "2026-05-19T23:10:00"
     agent: "Homer (Developer)"
