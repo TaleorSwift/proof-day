@@ -227,6 +227,37 @@ Para workflows que deben completarse sin supervisión (DS, QA, sprint batch):
 - Se combina con `--dangerously-skip-permissions` en entornos sandbox
 - Máximo de iteraciones como safety limit
 
+## Bash — reglas de ejecución (OBLIGATORIO para TODOS los agentes)
+
+El directorio de trabajo es siempre `/Users/ximolozano/MaxidevLabs/proof-day`.
+
+**NUNCA usar `cd` en comandos Bash.** `cd` modifica el CWD persistente de la shell y rompe hooks de Husky, Playwright y cualquier herramienta que dependa de rutas relativas. Además genera prompts de permiso innecesarios que ralentizan el desarrollo.
+
+Patrones correctos:
+
+```bash
+# ✅ Git — funciona desde cualquier CWD, ya conoce el repo
+git status
+git checkout feat/mi-rama
+git -C /Users/ximolozano/MaxidevLabs/proof-day log --oneline   # si hay duda del CWD
+
+# ✅ npm / npx — ejecutar directamente
+npm test
+npm run build
+npx vitest run
+
+# ✅ Rutas de ficheros — siempre absolutas
+cat /Users/ximolozano/MaxidevLabs/proof-day/package.json
+```
+
+```bash
+# ❌ PROHIBIDO
+cd /Users/ximolozano/MaxidevLabs/proof-day && git status
+cd /Users/ximolozano/MaxidevLabs/proof-day && npm test
+```
+
+Si un comando falla por CWD incorrecto, usar `git -C <ruta>` o la opción equivalente del CLI — NUNCA `cd`.
+
 ## Reglas críticas
 
 - NUNCA generar un documento completo en una respuesta — seguir workflow paso a paso
