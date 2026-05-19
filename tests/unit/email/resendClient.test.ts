@@ -7,12 +7,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 // Mocks
 // ---------------------------------------------------------------------------
 
-const { MockResend } = vi.hoisted(() => {
-  const MockResend = vi.fn().mockImplementation(() => ({ emails: { send: vi.fn() } }))
-  return { MockResend }
+const MockResend = vi.fn(function ResendMock() {
+  return { emails: { send: vi.fn() } }
 })
-
-vi.mock('resend', () => ({ Resend: MockResend }))
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -20,9 +17,11 @@ vi.mock('resend', () => ({ Resend: MockResend }))
 
 describe('getResendClient — singleton', () => {
   beforeEach(() => {
-    // Resetear el módulo singleton entre tests para poder probar la construcción
+    // Resetear el módulo singleton entre tests para poder probar la construcción.
+    // En Vitest 4, vi.resetModules() requiere vi.doMock() para reregistrar el mock.
     vi.resetModules()
     MockResend.mockClear()
+    vi.doMock('resend', () => ({ Resend: MockResend }))
     vi.stubEnv('RESEND_API_KEY', 'test-resend-api-key')
   })
 
