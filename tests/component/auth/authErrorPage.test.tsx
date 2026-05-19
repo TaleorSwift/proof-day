@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi } from 'vitest'
-import React, { Suspense } from 'react'
+import React, { Suspense, act } from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
@@ -42,22 +42,26 @@ function buildSearchParams(error?: string): Promise<{ error: string }> {
 // ---------------------------------------------------------------------------
 
 describe('AuthErrorPage — renderizado del título', () => {
-  it('muestra el título "Sorry, something went wrong."', () => {
-    render(
-      <Suspense fallback={null}>
-        <AuthErrorPage searchParams={buildSearchParams()} />
-      </Suspense>
-    )
+  it('muestra el título "Sorry, something went wrong."', async () => {
+    await act(async () => {
+      render(
+        <Suspense fallback={null}>
+          <AuthErrorPage searchParams={buildSearchParams()} />
+        </Suspense>
+      )
+    })
 
     expect(screen.getByText('Sorry, something went wrong.')).toBeInTheDocument()
   })
 
-  it('renderiza la tarjeta contenedora', () => {
-    render(
-      <Suspense fallback={null}>
-        <AuthErrorPage searchParams={buildSearchParams()} />
-      </Suspense>
-    )
+  it('renderiza la tarjeta contenedora', async () => {
+    await act(async () => {
+      render(
+        <Suspense fallback={null}>
+          <AuthErrorPage searchParams={buildSearchParams()} />
+        </Suspense>
+      )
+    })
 
     expect(screen.getByTestId('card')).toBeInTheDocument()
   })
