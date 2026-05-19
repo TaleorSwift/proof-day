@@ -47,7 +47,7 @@ const {
   }
   const createProjectsRepositoryMock = vi.fn().mockReturnValue(projectsRepoInstance)
 
-  // Admin client mock para el lookup de communitySlug
+  // Admin client mock (requerido por el mock de createAdminClient)
   const mockAdminFrom = vi.fn()
 
   return {
@@ -139,10 +139,6 @@ const MOCK_PROJECT = {
   community_id: COMMUNITY_UUID,
 }
 
-const MOCK_COMMUNITY = {
-  slug: 'startup-madrid',
-}
-
 const MOCK_FEEDBACK = {
   id: 'fb-001',
   projectId: PROJECT_ID,
@@ -166,24 +162,6 @@ function buildPostRequest(body: unknown) {
 
 function mockAuthOk() {
   requireAuthMock.mockResolvedValue({ user: MOCK_USER, supabase: supabaseMock, error: null })
-}
-
-/** Mock para la query admin: from('communities').select('slug').eq('id', ...).single() */
-function mockAdminCommunityQuery(slug: string | null = 'startup-madrid') {
-  mockAdminFrom.mockReturnValueOnce({
-    select: vi.fn().mockReturnValue({
-      eq: vi.fn().mockReturnValue({
-        single: vi.fn().mockResolvedValue({ data: slug ? { slug } : null, error: null }),
-      }),
-    }),
-  })
-}
-
-/** Mock para la query admin: from('notifications').insert(...) */
-function mockAdminNotificationsInsert() {
-  mockAdminFrom.mockReturnValueOnce({
-    insert: vi.fn().mockResolvedValue({ data: null, error: null }),
-  })
 }
 
 // ---------------------------------------------------------------------------
@@ -269,7 +247,8 @@ describe('POST /api/feedback (Story 13.5) — trigger notificación feedback_att
   afterEach(() => vi.clearAllMocks())
 
   // AC1 — Con iteración activa: notifyFeedbackAttributed es llamada con params correctos
-  it('llama a notifyFeedbackAttributed con parámetros correctos cuando hay iteración activa', async () => {
+  // M2 fix: la route pasa communityId (no communitySlug) — el helper resuelve internamente
+  it('llama a notifyFeedbackAttributed con communityId cuando hay iteración activa', async () => {
     mockAuthOk()
 
     const iterationsRepo = createProjectIterationsRepositoryMock()
@@ -279,10 +258,6 @@ describe('POST /api/feedback (Story 13.5) — trigger notificación feedback_att
       findById: vi.fn().mockResolvedValue({ data: MOCK_PROJECT }),
     })
 
-    // Admin client: primero para communitySlug, después para insert de notificación
-    mockAdminCommunityQuery('startup-madrid')
-    mockAdminNotificationsInsert()
-
     createFeedbackRepositoryMock.mockReturnValueOnce({
       create: vi.fn().mockResolvedValue({ data: MOCK_FEEDBACK, error: null }),
       countCompleteByProject: vi.fn().mockResolvedValue(0),
@@ -290,7 +265,7 @@ describe('POST /api/feedback (Story 13.5) — trigger notificación feedback_att
 
     await POST(buildPostRequest(VALID_BODY))
 
-    // Esperar a que la promise fire-and-forget se resuelva
+    // fire-and-forget — void no bloquea, pero notifyFeedbackAttributed está mockeada
     await new Promise((resolve) => setTimeout(resolve, 10))
 
     expect(notifyFeedbackAttributed).toHaveBeenCalledWith(
@@ -300,7 +275,7 @@ describe('POST /api/feedback (Story 13.5) — trigger notificación feedback_att
         projectSlug: MOCK_PROJECT.slug,
         projectTitle: MOCK_PROJECT.title,
         versionNumber: MOCK_ITERATION.versionNumber,
-        communitySlug: MOCK_COMMUNITY.slug,
+        communityId: MOCK_PROJECT.community_id,
       })
     )
   })
@@ -325,6 +300,38 @@ describe('POST /api/feedback (Story 13.5) — trigger notificación feedback_att
     expect(notifyFeedbackAttributed).not.toHaveBeenCalled()
   })
 
+  // M1 fix — projectSlug vacío: notifyFeedbackAttributed es llamada pero el helper la cancela
+  // La route siempre llama al helper cuando hay iteración; el guard vive en el helper.
+  it('llama a notifyFeedbackAttributed con projectSlug vacío cuando el proyecto no se resuelve', async () => {
+    mockAuthOk()
+
+    const iterationsRepo = createProjectIterationsRepositoryMock()
+    iterationsRepo.getLatestIteration.mockResolvedValue(MOCK_ITERATION)
+
+    // Proyecto no encontrado — findById retorna null
+    createProjectsRepositoryMock.mockReturnValueOnce({
+      findById: vi.fn().mockResolvedValue({ data: null }),
+    })
+
+    createFeedbackRepositoryMock.mockReturnValueOnce({
+      create: vi.fn().mockResolvedValue({ data: MOCK_FEEDBACK, error: null }),
+      countCompleteByProject: vi.fn().mockResolvedValue(0),
+    })
+
+    const response = await POST(buildPostRequest(VALID_BODY))
+
+    await new Promise((resolve) => setTimeout(resolve, 10))
+
+    expect(response.status).toBe(201)
+    // La route siempre llama al helper; el helper aplica el guard internamente
+    expect(notifyFeedbackAttributed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        projectSlug: '',
+        communityId: '',
+      })
+    )
+  })
+
   // AC2 — Fire-and-forget: la respuesta 201 se devuelve sin esperar la notificación
   it('devuelve 201 sin esperar a que se complete la notificación', async () => {
     mockAuthOk()
@@ -335,9 +342,6 @@ describe('POST /api/feedback (Story 13.5) — trigger notificación feedback_att
     createProjectsRepositoryMock.mockReturnValueOnce({
       findById: vi.fn().mockResolvedValue({ data: MOCK_PROJECT }),
     })
-
-    mockAdminCommunityQuery('startup-madrid')
-    mockAdminNotificationsInsert()
 
     createFeedbackRepositoryMock.mockReturnValueOnce({
       create: vi.fn().mockResolvedValue({ data: MOCK_FEEDBACK, error: null }),

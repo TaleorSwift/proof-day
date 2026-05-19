@@ -10,7 +10,6 @@ import { calculateQualityScore } from '@/lib/utils/feedbackQuality'
 import { triggerSynthesisWebhook } from '@/lib/ai/triggerSynthesisWebhook'
 // Story 13.5 — notificación fire-and-forget al reviewer cuando el feedback queda atribuido
 import { notifyFeedbackAttributed } from '@/lib/notifications/notify-feedback-attributed'
-import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(request: Request) {
   const auth = await requireAuth()
@@ -99,10 +98,11 @@ export async function POST(request: Request) {
   let projectCommunityId = ''
   if (iterationId !== null) {
     const projectsRepo = createProjectsRepository(supabase)
-    const { data: project } = await projectsRepo.findById(projectId, 'id, slug, title, community_id')
-    projectSlug = (project as Record<string, unknown> | null)?.slug as string ?? ''
-    projectTitle = (project as Record<string, unknown> | null)?.title as string ?? ''
-    projectCommunityId = (project as Record<string, unknown> | null)?.community_id as string ?? ''
+    const { data: proj } = await projectsRepo.findById(projectId, 'id, slug, title, community_id')
+    const projData = proj as Record<string, unknown> | null
+    projectSlug = projData?.slug as string ?? ''
+    projectTitle = projData?.title as string ?? ''
+    projectCommunityId = projData?.community_id as string ?? ''
   }
 
   const feedbackRepo = createFeedbackRepository(supabase)
@@ -130,28 +130,16 @@ export async function POST(request: Request) {
   }
 
   // Story 13.5 — notificar al Reviewer cuando el feedback queda atribuido a una iteración
-  if (iterationId !== null && latestIteration !== null && projectSlug) {
-    void (async () => {
-      try {
-        const adminClient = createAdminClient()
-        const { data: community } = await adminClient
-          .from('communities')
-          .select('slug')
-          .eq('id', projectCommunityId)
-          .single()
-        const communitySlug = community?.slug ?? ''
-        await notifyFeedbackAttributed({
-          reviewerId: user.id,
-          projectId,
-          projectSlug,
-          projectTitle,
-          versionNumber: latestIteration!.versionNumber,
-          communitySlug,
-        })
-      } catch (err) {
-        console.error('[feedback/route] Error en notifyFeedbackAttributed:', err)
-      }
-    })()
+  // El helper resuelve communitySlug internamente (SRP). Guard de projectSlug también en el helper.
+  if (iterationId !== null && latestIteration !== null) {
+    void notifyFeedbackAttributed({
+      reviewerId: user.id,
+      projectId,
+      projectSlug,
+      projectTitle,
+      versionNumber: latestIteration.versionNumber,
+      communityId: projectCommunityId,
+    })
   }
 
   return NextResponse.json({ data: feedback }, { status: 201 })
