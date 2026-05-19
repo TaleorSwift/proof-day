@@ -1,4 +1,31 @@
 workflows:
+  - id: "20260519-homer-DS-13.5-M1M2-fix-started"
+    timestamp: "2026-05-19T17:28:00"
+    agent: "Homer (Developer)"
+    trigger: "DS"
+    workflow: "dev-story"
+    mode: "REFINE"
+    result: "STARTED"
+    story: "13.5"
+    summary: "Correcciones M1 y M2 del CR de Story 13.5. M1: guard projectSlug vacío con test. M2: mover resolución communitySlug dentro del helper (SRP)."
+
+  - id: "20260519-homer-DS-13.5-M1M2-fix-closing"
+    timestamp: "2026-05-19T17:35:00"
+    agent: "Homer (Developer)"
+    trigger: "DS"
+    workflow: "dev-story"
+    mode: "REFINE"
+    result: "SUCCESS"
+    story: "13.5"
+    summary: "M1 y M2 corregidos. notifyFeedbackAttributed recibe communityId (no communitySlug) y resuelve internamente. Guard projectSlug con console.error explícito. 1937 tests verdes, lint 0, type-check limpio. Commit 6245196 pusheado."
+    artifacts_modified:
+      - "lib/notifications/notify-feedback-attributed.ts"
+      - "app/api/feedback/route.ts"
+      - "tests/unit/notifications/notifyFeedbackAttributed.test.ts"
+      - "tests/integration/api/feedback-iteration-attribution.test.ts"
+    errors: []
+    next_recommended: "/cr para re-review de Story 13.5."
+
   - id: "20260519-homer-CR-13.5-notificacion-atribucion-reviewer-etiquetado"
     timestamp: "2026-05-19T16:00:00"
     agent: "Homer (Developer)"
