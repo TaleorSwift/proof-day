@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
-import { buildConfirmParams } from '@/lib/auth/confirm'
+import { buildConfirmParams, DEFAULT_REDIRECT } from '@/lib/auth/confirm'
 
 // ---------------------------------------------------------------------------
 // Tipos
@@ -23,13 +23,21 @@ interface ConfirmButtonProps {
 export function ConfirmButton({
   token,
   type,
-  redirectTo = '/communities',
+  redirectTo = DEFAULT_REDIRECT,
 }: ConfirmButtonProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // CSRF: el token es de un solo uso y se verifica contra Supabase desde el
+  // navegador del usuario — los bots no pueden completar el flujo porque no
+  // pasan por este onClick (solo hacen GET a la URL del email).
   async function handleConfirm() {
+    if (!token || token.trim() === '') {
+      setError('El enlace ha expirado. Solicita uno nuevo.')
+      return
+    }
+
     setIsLoading(true)
     setError(null)
 
@@ -43,6 +51,7 @@ export function ConfirmButton({
       })
 
       if (otpError) {
+        console.error('[ConfirmButton] verifyOtp error:', otpError)
         setError('El enlace ha expirado. Solicita uno nuevo.')
         return
       }

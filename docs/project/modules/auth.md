@@ -20,11 +20,12 @@ Gestiona la autenticación de usuarios mediante magic links (sin contraseña). E
 - Rutas públicas exactas (sin subrutas): `/` y `/login`. Rutas públicas con subrutas: `/auth/callback`, `/auth/confirm`, `/invite`. El resto requieren sesión activa. (story 1.3, QD-auth-confirm)
 - El middleware redirige a `/login` automáticamente cualquier request sin sesión a ruta protegida. (story 1.3)
 - La sesión se refresca en cada request via `updateSession()` de `lib/supabase/middleware.ts` — el token se mantiene activo sin logout inesperado. (story 1.3)
-- El magic link del email apunta a `/auth/confirm?token=...&type=email&redirect_to=...` — página intermedia que requiere que el usuario pulse un botón antes de verificar el OTP. Esto impide que los escáneres de email (Google Workspace, Outlook) consuman el token automáticamente. (QD-auth-confirm)
+- El magic link del email apunta a `/auth/confirm?token={{ .TokenHash }}&type=magiclink&redirect_to={{ .RedirectTo }}` — página intermedia que requiere que el usuario pulse un botón antes de verificar el OTP. Esto impide que los escáneres de email (Google Workspace, Outlook) consuman el token automáticamente. Template configurado manualmente en Supabase Dashboard → Authentication → Email Templates → Magic Link. Subject: "Tu enlace de acceso a Proof Day". (QD-auth-confirm, fix-auth-confirm-anti-scanner-page)
+- Doble opt-in (Confirm email) desactivado en Supabase Dashboard — `signInWithOtp` envía únicamente el email "Magic Link". (fix-auth-confirm-anti-scanner-page)
 - Si los parámetros `token` o `type` están ausentes en `/auth/confirm`, se redirige a `/login?error=link-invalid`. (QD-auth-confirm)
 - El parámetro `redirect_to` solo se acepta si es una ruta interna (empieza por `/` pero no por `//`). URLs absolutas o protocol-relative se descartan silenciosamente y se usa `/communities` como fallback — prevención de open redirect. (CR-PR34)
 - El parámetro `type` se valida contra el union de `EmailOtpType` antes del cast. Valores desconocidos retornan `valid:false` y redirigen a `/login?error=link-invalid`. (CR-PR34)
-- El template de Magic Link en Supabase Dashboard debe configurarse manualmente para apuntar a `/auth/confirm` (ver PR #34 para instrucciones). (QD-auth-confirm)
+- El template de Magic Link en Supabase Dashboard usa `{{ .SiteURL }}/auth/confirm?token={{ .TokenHash }}&type=magiclink&redirect_to={{ .RedirectTo }}` — el parámetro es `token` (no `token_hash`) para coincidir con `validateConfirmSearchParams`. (QD-auth-confirm, fix-auth-confirm-anti-scanner-page)
 
 ## Ficheros clave
 
@@ -67,4 +68,4 @@ Variantes:
 
 ## Última actualización
 
-chore/login-coverage-gaps — extraer BrandHeader y LegalNotice, cobertura unit/e2e — 2026-04-27
+fix/auth-confirm-anti-scanner-page — restaurar página intermedia anti-scanner, desactivar doble opt-in — 2026-05-19

@@ -32,7 +32,7 @@ export interface OtpParams {
 // Constantes
 // ---------------------------------------------------------------------------
 
-const DEFAULT_REDIRECT = "/communities";
+export const DEFAULT_REDIRECT = "/communities";
 const DEFAULT_OTP_TYPE: EmailOtpType = "email";
 
 const VALID_OTP_TYPES: ReadonlyArray<EmailOtpType> = [
