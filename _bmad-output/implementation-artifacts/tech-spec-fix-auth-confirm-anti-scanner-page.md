@@ -7,9 +7,9 @@ stepsCompleted: [1, 2, 3, 4]
 tech_stack: ['Next.js 16.2.6', '@supabase/ssr 0.10.3', '@supabase/supabase-js 2.106.0', 'Vitest', 'Playwright', 'Storybook nextjs-vite', 'TypeScript']
 files_to_modify:
   - 'app/auth/confirm/route.ts (DELETE)'
-  - 'tests/unit/auth/confirmRoute.test.ts (DELETE — reemplazar por confirmPage.test.tsx)'
+  - 'tests/unit/auth/confirmRoute.test.ts (DELETE — reemplazado por tests/component/auth/confirmPage.test.tsx)'
   - 'app/auth/confirm/page.tsx (CREATE)'
-  - 'tests/unit/auth/confirmPage.test.tsx (CREATE)'
+  - 'tests/component/auth/confirmPage.test.tsx (CREATE)'
   - 'tests/e2e/auth/confirm.spec.ts (CREATE)'
   - 'stories/auth/ConfirmPage.stories.tsx (CREATE)'
   - 'docs/project/modules/auth.md (UPDATE)'
@@ -115,7 +115,7 @@ Orden TDD Outside-In: eliminar regresión → tests E2E (outer) → tests unit (
   - Notas: Usar `getByRole('button', { name: /acceder/i })` para el botón. Para las redirecciones, `expect(page).toHaveURL(/login.*error=link-invalid/)`. No llamar a Supabase real — solo verificar UI/redirect. Seguir reglas `tests/e2e/`: `test.beforeEach clearCookies`, nombres en español, comillas simples.
 
 - [x] **Task 3: Crear test unitario del page (inner ring)**
-  - Archivo: `tests/unit/auth/confirmPage.test.tsx` (crear nuevo)
+  - Archivo: `tests/component/auth/confirmPage.test.tsx` (crear nuevo)
   - Acción: Testear el Server Component `ConfirmPage`. Patrón idéntico a `confirmRoute.test.ts`: `vi.mock('next/navigation', () => ({ redirect: (url) => { redirectMock(url); throw new Error('REDIRECT:' + url) } }))`. Casos:
     1. `token` presente + `type` válido → NO se llama a `redirect`, el componente retorna contenido (verificar que no lanza `REDIRECT:`).
     2. Sin `token` → `redirect('/login?error=link-invalid')` llamado.
@@ -210,7 +210,7 @@ Orden TDD Outside-In: eliminar regresión → tests E2E (outer) → tests unit (
 ### Testing Strategy
 
 **Unit (Vitest):**
-- `tests/unit/auth/confirmPage.test.tsx` — Server Component: mocks de `next/navigation` (redirect lanza), `lib/auth/confirm` (validateConfirmSearchParams mockeable) o llamada directa con params reales. Cubre 5 casos: válido (no lanza REDIRECT), sin token, sin type, type inválido, open redirect (acepta con fallback).
+- `tests/component/auth/confirmPage.test.tsx` — Server Component: mocks de `next/navigation` (redirect lanza), `lib/auth/confirm` (validateConfirmSearchParams mockeable) o llamada directa con params reales. Cubre 5 casos: válido (no lanza REDIRECT), sin token, sin type, type inválido, open redirect (acepta con fallback).
 - `tests/unit/auth/confirmButton.test.ts` — ya existente, cubre `validateConfirmSearchParams` y `buildConfirmParams`. NO TOCAR.
 
 **E2E (Playwright):**

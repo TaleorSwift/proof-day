@@ -16,6 +16,15 @@ vi.mock('next/navigation', () => ({
   },
 }))
 
+// AC1: la página NO llama a verifyOtp en el GET — el OTP solo se consume en el
+// onClick del ConfirmButton (Client Component), nunca en la carga de la página.
+const verifyOtpMock = vi.fn()
+vi.mock('@/lib/supabase/client', () => ({
+  createClient: vi.fn(() => ({
+    auth: { verifyOtp: verifyOtpMock },
+  })),
+}))
+
 // data-* attributes exponen los props solo en el DOM de tests para assertions —
 // el ConfirmButton real no renderiza ningún atributo con el token.
 vi.mock('@/components/auth/ConfirmButton', () => ({
@@ -84,6 +93,14 @@ describe('ConfirmPage — parámetros válidos', () => {
     const searchParams = Promise.resolve({ token: 'abc123', type: 'magiclink' })
     await ConfirmPage({ searchParams })
     expect(redirectMock).not.toHaveBeenCalled()
+  })
+
+  // AC1 — segunda parte: la página NO llama a verifyOtp en el GET.
+  // El OTP solo se consume cuando el usuario pulsa el botón (onClick de ConfirmButton).
+  it('AC1: no llama a verifyOtp al cargar la página (GET)', async () => {
+    const searchParams = Promise.resolve({ token: 'abc123', type: 'magiclink' })
+    await ConfirmPage({ searchParams })
+    expect(verifyOtpMock).not.toHaveBeenCalled()
   })
 
   it('renderiza el ConfirmButton con el token y type correctos', async () => {

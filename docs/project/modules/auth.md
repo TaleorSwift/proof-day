@@ -46,13 +46,18 @@ Gestiona la autenticación de usuarios mediante magic links (sin contraseña). E
 - `tests/unit/auth/sendMagicLink.test.ts` — email válido + Supabase ok → `{ success: true }`, email inválido no llama a Supabase, error de Supabase → `{ error }`.
 - `tests/unit/auth/loginPage.test.tsx` — con sesión → redirect a `/communities`, sin sesión → render LoginForm, searchParams.error → pasa errorParam.
 - `tests/unit/auth/login-schema.test.ts` — validación zod del schema de login.
-- `tests/unit/auth/confirmButtonComponent.test.tsx` — botón de confirmación de magic link.
+- `tests/component/auth/confirmButtonComponent.test.tsx` — botón de confirmación de magic link: verifyOtp success → push router, verifyOtp error → mensaje inline, token vacío → guard sin llamada a Supabase.
+- `tests/component/auth/confirmPage.test.tsx` — Server Component página anti-scanner: parámetros inválidos → redirect `/login?error=link-invalid`; parámetros válidos → no redirect, no verifyOtp en GET (AC1), ConfirmButton recibe token/type/redirectTo correctos; open redirect normalizado a `/communities`. (fix-auth-confirm-anti-scanner-page)
 
 ### E2E (Playwright)
 
 - `tests/e2e/auth/login.spec.ts`:
   - **Visitante no autenticado**: formulario visible, validación email inválido, success state al enviar, CTA link-invalid.
   - **Usuario autenticado**: `/login` redirige a `/communities`.
+- `tests/e2e/auth/confirm.spec.ts`:
+  - **Params válidos**: `GET /auth/confirm?token=abc&type=magiclink` → renderiza botón "Acceder a Proof Day".
+  - **Sin params**: `GET /auth/confirm` → redirige a `/login?error=link-invalid`.
+  - **Type inválido**: `GET /auth/confirm?token=abc&type=hackedtype` → redirige a `/login?error=link-invalid`. (fix-auth-confirm-anti-scanner-page)
 
 ## Storybook
 
@@ -65,6 +70,13 @@ Variantes:
 - `CheckEmail` — success state tras envío.
 - `Loading` — estado efímero de submit (documentado; verificar manualmente).
 - `ServerError` — error genérico de servidor pre-poblado.
+
+Story: `auth/ConfirmPage` (fix-auth-confirm-anti-scanner-page)
+
+Variantes:
+
+- `Default` — token válido, type magiclink, listo para confirmar.
+- `MissingParams` — estado visual antes de la redirección por parámetros inválidos.
 
 ## Última actualización
 
