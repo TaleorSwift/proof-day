@@ -65,7 +65,7 @@ jobs:
       - name: Deploy to Vercel
         run: |
           set -e
-          # Crea project.json para que Vercel CLI v50 resuelva el proyecto localmente
+          # Crea project.json para que Vercel CLI v54 resuelva el proyecto localmente
           # y no intente detectarlo via GitHub Actions (lo que inyecta --repo internamente)
           mkdir -p .vercel
           jq -n --arg pid "$VERCEL_PROJECT_ID" --arg oid "$VERCEL_ORG_ID" \
