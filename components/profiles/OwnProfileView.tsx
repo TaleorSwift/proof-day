@@ -35,7 +35,7 @@ export function OwnProfileView({ profile: initialProfile }: OwnProfileViewProps)
       {!isEditing ? (
         <>
           {/* Cabecera con nombre y botón editar */}
-          <div className="flex items-start justify-between gap-[var(--space-4)]">
+          <div className="flex items-start justify-between gap-(--space-4)">
             <div>
               <h1
                 style={{
@@ -75,7 +75,7 @@ export function OwnProfileView({ profile: initialProfile }: OwnProfileViewProps)
           {/* Intereses */}
           {profile.interests && profile.interests.length > 0 && (
             <div
-              className="flex flex-wrap gap-[var(--space-2)]"
+              className="flex flex-wrap gap-(--space-2)"
               style={{ marginTop: 'var(--space-4)' }}
             >
               {profile.interests.map((tag) => (
@@ -99,7 +99,7 @@ export function OwnProfileView({ profile: initialProfile }: OwnProfileViewProps)
           <Separator style={{ margin: 'var(--space-6) 0' }} />
 
           {/* Métricas */}
-          <div className="flex gap-[var(--space-8)]">
+          <div className="flex gap-(--space-8)">
             <div>
               <p
                 style={{

@@ -73,9 +73,9 @@ export function ProfileForm({ profile, onSuccess, onCancel }: ProfileFormProps) 
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-[var(--space-4)]">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-(--space-4)">
       {/* Nombre */}
-      <div className="space-y-[var(--space-2)]">
+      <div className="space-y-(--space-2)">
         <Label htmlFor="profile-name">Nombre / Alias</Label>
         <Input
           id="profile-name"
@@ -83,14 +83,14 @@ export function ProfileForm({ profile, onSuccess, onCancel }: ProfileFormProps) 
           {...register('name')}
         />
         {errors.name && (
-          <p className="text-[var(--text-sm)] text-[var(--color-weak-text)]" role="alert">
+          <p className="text-(--text-sm) text-(--color-weak-text)" role="alert">
             {errors.name.message}
           </p>
         )}
       </div>
 
       {/* Bio */}
-      <div className="space-y-[var(--space-2)]">
+      <div className="space-y-(--space-2)">
         <Label htmlFor="profile-bio">Bio</Label>
         <Textarea
           id="profile-bio"
@@ -99,16 +99,16 @@ export function ProfileForm({ profile, onSuccess, onCancel }: ProfileFormProps) 
           {...register('bio')}
         />
         {errors.bio && (
-          <p className="text-[var(--text-sm)] text-[var(--color-weak-text)]" role="alert">
+          <p className="text-(--text-sm) text-(--color-weak-text)" role="alert">
             {errors.bio.message}
           </p>
         )}
       </div>
 
       {/* Intereses (tags) */}
-      <div className="space-y-[var(--space-2)]">
+      <div className="space-y-(--space-2)">
         <Label htmlFor="profile-interest-input">Intereses</Label>
-        <div className="flex gap-[var(--space-2)]">
+        <div className="flex gap-(--space-2)">
           <Input
             id="profile-interest-input"
             placeholder="Añadir interés (Enter)"
@@ -127,22 +127,22 @@ export function ProfileForm({ profile, onSuccess, onCancel }: ProfileFormProps) 
           </Button>
         </div>
         {errors.interests && (
-          <p className="text-[var(--text-sm)] text-[var(--color-weak-text)]" role="alert">
+          <p className="text-(--text-sm) text-(--color-weak-text)" role="alert">
             {errors.interests.message}
           </p>
         )}
         {interests.length > 0 && (
-          <div className="flex flex-wrap gap-[var(--space-2)] mt-[var(--space-2)]">
+          <div className="flex flex-wrap gap-(--space-2) mt-(--space-2)">
             {interests.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center gap-[var(--space-1)] px-[var(--space-3)] py-[var(--space-1)] rounded-full text-[var(--text-sm)] bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text-secondary)]"
+                className="inline-flex items-center gap-(--space-1) px-(--space-3) py-(--space-1) rounded-full text-(--text-sm) bg-surface border border-border text-text-secondary"
               >
                 {tag}
                 <button
                   type="button"
                   onClick={() => removeInterest(tag)}
-                  className="text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] leading-none"
+                  className="text-text-muted hover:text-text-primary leading-none"
                   aria-label={`Eliminar interés ${tag}`}
                 >
                   ×
@@ -155,13 +155,13 @@ export function ProfileForm({ profile, onSuccess, onCancel }: ProfileFormProps) 
 
       {/* Error global */}
       {error && (
-        <p className="text-[var(--text-sm)] text-[var(--color-weak-text)]" role="alert">
+        <p className="text-(--text-sm) text-(--color-weak-text)" role="alert">
           {error}
         </p>
       )}
 
       {/* Acciones */}
-      <div className="flex gap-[var(--space-3)] justify-end pt-[var(--space-2)]">
+      <div className="flex gap-(--space-3) justify-end pt-(--space-2)">
         <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
           Cancelar
         </Button>

@@ -54,11 +54,11 @@ export function ConfirmButton({
   }
 
   return (
-    <div className="space-y-[var(--space-4)]">
+    <div className="space-y-(--space-4)">
       {error && (
         <p
           role="alert"
-          className="text-[var(--color-weak-text)] text-[var(--text-sm)]"
+          className="text-(--color-weak-text) text-(--text-sm)"
         >
           {error}
         </p>
