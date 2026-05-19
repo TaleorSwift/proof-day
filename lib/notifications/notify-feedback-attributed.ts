@@ -12,7 +12,12 @@ interface NotifyFeedbackAttributedParams {
   projectSlug: string
   projectTitle: string
   versionNumber: number
-  communitySlug: string
+  /**
+   * ID de la comunidad del proyecto.
+   * El helper resuelve internamente el slug con una query admin para no
+   * exponer lógica de resolución en el caller (SRP).
+   */
+  communityId: string
 }
 
 // ── Función principal ─────────────────────────────────────────────────────────
@@ -21,7 +26,9 @@ interface NotifyFeedbackAttributedParams {
  * Notifica al Reviewer que su feedback quedó atribuido a una iteración
  * específica del proyecto.
  *
+ * - Resuelve el communitySlug internamente desde communityId (SRP).
  * - Usa createAdminClient() (service role) para bypasear RLS.
+ * - Guard: si projectSlug está vacío, no inserta y registra warning.
  * - No bloquea la respuesta de la API — llamar con `void`.
  * - Captura errores con console.error — no propaga la excepción.
  */
@@ -29,7 +36,21 @@ export async function notifyFeedbackAttributed(
   params: NotifyFeedbackAttributedParams
 ): Promise<void> {
   try {
+    if (!params.projectSlug) {
+      console.error('[notifyFeedbackAttributed] projectSlug vacío — notificación cancelada')
+      return
+    }
+
     const adminClient = createAdminClient()
+
+    // Resolver communitySlug desde communityId
+    const { data: community } = await adminClient
+      .from('communities')
+      .select('slug')
+      .eq('id', params.communityId)
+      .single()
+    const communitySlug = community?.slug ?? ''
+
     const { error } = await adminClient.from('notifications').insert({
       user_id: params.reviewerId,
       type: 'feedback_attributed',
@@ -38,7 +59,7 @@ export async function notifyFeedbackAttributed(
         projectSlug: params.projectSlug,
         projectTitle: params.projectTitle,
         versionNumber: params.versionNumber,
-        communitySlug: params.communitySlug,
+        communitySlug,
       },
       read: false,
     })

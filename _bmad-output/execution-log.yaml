@@ -1,4 +1,47 @@
 workflows:
+  - id: "20260519-homer-CR-13.5-notificacion-atribucion-reviewer-etiquetado"
+    timestamp: "2026-05-19T16:00:00"
+    agent: "Homer (Developer)"
+    trigger: "CR"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "STARTED"
+    story: "13.5"
+    pr: "126"
+    summary: "Code review de Story 13.5 — PR #126. Revisión de notify-feedback-attributed.ts, app/api/feedback/route.ts, NotificationBell.tsx, lib/types/ai.ts y tests unitarios, integración y componente."
+
+  - id: "20260519-homer-CR-13.5-notificacion-atribucion-reviewer-etiquetado-closing"
+    timestamp: "2026-05-19T16:30:00"
+    agent: "Homer (Developer)"
+    trigger: "CR"
+    workflow: "code-review"
+    mode: "VERIFY"
+    result: "CHANGES_REQUESTED"
+    story: "13.5"
+    pr: "126"
+    verdict: "CHANGES_REQUESTED"
+    summary: "CR Story 13.5 CHANGES_REQUESTED. 2 issues CRITICAL: M1 (guard projectSlug vacío no testeado cuando iterationId !== null) y M2 (IIFE con query communitySlug en route viola SRP — la resolución del slug debe ir en el helper o en una función extractada). 5 issues no bloqueantes (M3-M7). AC1-AC4 cubiertos. Tests completos en unit/integration/component pero gap en integración para projectSlug vacío."
+    issues_critical:
+      - "M1: guard && projectSlug en route.ts crea caso sin test — notificación silenciosa cuando project no se resuelve con iterationId !== null"
+      - "M2: IIFE async en route.ts con query communitySlug viola SRP — la lógica de resolución del slug debe estar en el helper"
+    issues_medium:
+      - "M3: await notifyFeedbackAttributed dentro del IIFE es correcto pero asimétrico con el patrón directo de triggerSynthesisWebhook"
+      - "M4: triple cast as Record<string, unknown> en route.ts por falta de tipado de proyección en findById"
+    issues_low:
+      - "M5: sin deduplicación en notifyFeedbackAttributed — inconsistente con notifyPreviousReviewers"
+      - "M6: setTimeout(resolve, 10) en tests de integración — frágil en CI bajo carga"
+      - "M7: prefijos de console.error distintos en el helper dificultan debugging"
+    artifacts_reviewed:
+      - "lib/notifications/notify-feedback-attributed.ts"
+      - "app/api/feedback/route.ts"
+      - "components/shared/NotificationBell.tsx"
+      - "lib/types/ai.ts"
+      - "tests/unit/notifications/notifyFeedbackAttributed.test.ts"
+      - "tests/integration/api/feedback-iteration-attribution.test.ts"
+      - "tests/unit/components/NotificationBell.test.tsx"
+    errors: []
+    next_recommended: "DS — corregir M1 y M2. Luego re-abrir CR."
+
   - id: "20260519-homer-DS-13.5-notificacion-atribucion-reviewer-etiquetado"
     timestamp: "2026-05-19T15:00:00"
     agent: "Homer (Developer)"
