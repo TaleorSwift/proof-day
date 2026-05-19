@@ -7,14 +7,13 @@ const ERROR_MESSAGES: Record<string, string> = {
 
 const DEFAULT_ERROR_MESSAGE = "Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo más tarde.";
 
-async function ErrorContent({
+function ErrorContent({
   searchParams,
 }: {
-  searchParams: Promise<{ error: string }>;
+  searchParams: { error: string };
 }) {
-  const params = await searchParams;
-  const message = params?.error
-    ? (ERROR_MESSAGES[params.error] ?? DEFAULT_ERROR_MESSAGE)
+  const message = searchParams?.error
+    ? (ERROR_MESSAGES[searchParams.error] ?? DEFAULT_ERROR_MESSAGE)
     : DEFAULT_ERROR_MESSAGE;
 
   return (
@@ -24,11 +23,12 @@ async function ErrorContent({
   );
 }
 
-export default function Page({
-  searchParams,
-}: {
-  searchParams: Promise<{ error: string }>;
-}) {
+export default async function Page(
+  props: {
+    searchParams: Promise<{ error: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
