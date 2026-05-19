@@ -258,6 +258,21 @@ cd /Users/ximolozano/MaxidevLabs/proof-day && npm test
 
 Si un comando falla por CWD incorrecto, usar `git -C <ruta>` o la opción equivalente del CLI — NUNCA `cd`.
 
+## Cambios de infraestructura — audit obligatorio
+
+Cuando un cambio afecte a versiones de runtime, herramientas o dependencias con impacto en CI/CD, el agente DEBE auditar **todos** los ficheros afectados antes de planificar y antes de cerrar el PR.
+
+**Regla:** antes de declarar completo cualquier cambio en `package.json` (engines, versiones de herramientas), `.nvmrc`, o versiones en un workflow de CI, ejecutar:
+
+```bash
+# Auditar TODOS los workflows para detectar referencias inconsistentes
+grep -rn "node-version" .github/
+grep -rn "vercel@" .github/
+# Adaptar el patrón al tipo de cambio (python-version, java-version, etc.)
+```
+
+El plan no puede nombrar un único fichero sin haber hecho el grep primero. Identificar la superficie completa es parte del análisis, no del implementación.
+
 ## Reglas críticas
 
 - NUNCA generar un documento completo en una respuesta — seguir workflow paso a paso
