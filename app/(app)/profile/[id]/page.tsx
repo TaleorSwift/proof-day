@@ -123,7 +123,7 @@ export default async function UserProfilePage({ params }: Props) {
         {/* Intereses */}
         {profile.interests && profile.interests.length > 0 && (
           <div
-            className="flex flex-wrap gap-[var(--space-2)]"
+            className="flex flex-wrap gap-(--space-2)"
             style={{ marginTop: 'var(--space-4)' }}
           >
             {profile.interests.map((tag) => (
@@ -147,7 +147,7 @@ export default async function UserProfilePage({ params }: Props) {
         <Separator style={{ margin: 'var(--space-6) 0' }} />
 
         {/* Métricas — solo proyectos para terceros */}
-        <div className="flex gap-[var(--space-8)]">
+        <div className="flex gap-(--space-8)">
           <div>
             <p
               style={{

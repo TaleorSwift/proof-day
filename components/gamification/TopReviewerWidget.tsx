@@ -36,7 +36,7 @@ export function TopReviewerWidget({ communityId }: TopReviewerWidgetProps) {
         }}
       >
         <Skeleton style={{ height: '16px', width: '120px', marginBottom: 'var(--space-3)' }} />
-        <div className="flex items-center gap-[var(--space-3)]">
+        <div className="flex items-center gap-(--space-3)">
           <Skeleton style={{ height: '40px', width: '40px', borderRadius: 'var(--radius-full)' }} />
           <div>
             <Skeleton style={{ height: '14px', width: '100px', marginBottom: 'var(--space-2)' }} />
@@ -108,7 +108,7 @@ export function TopReviewerWidget({ communityId }: TopReviewerWidgetProps) {
       >
         Top Reviewer esta semana
       </p>
-      <div className="flex items-center gap-[var(--space-3)]">
+      <div className="flex items-center gap-(--space-3)">
         <Link href={`/profile/${data.userId}`} aria-label={`Ver perfil de ${data.name ?? 'usuario'}`}>
           <Avatar style={{ width: '40px', height: '40px' }}>
             {data.avatarUrl && <AvatarImage src={data.avatarUrl} alt={data.name ?? 'Avatar'} />}
